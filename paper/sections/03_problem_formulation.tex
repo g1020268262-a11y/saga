@@ -1,0 +1,154 @@
+\section{Security Gap and Problem Formulation}
+
+\subsection{Authentication Is Not Authorization}
+
+SAGA uses identity checks and access-control tokens to govern contact between
+agents. These mechanisms answer different questions. Authentication establishes
+which participant completed a protocol step; token validation establishes that
+a presented token satisfies the checks performed by the receiving agent.
+Authorization additionally asks whether the receiving agent's user-defined
+contact policy permits the initiating agent to contact it. A credential can be
+authentic and valid under the token checks while the decision to make that
+credential available disagrees with the policy's intended meaning.
+
+The reference communication model expresses authentication as correspondences
+between agent and Provider events and between the two peers' token events. It
+also asks whether the symbolic network attacker can obtain the private token.
+None of these queries refers to a contact rulebook, a policy decision, or the
+acceptance of an application message under that rulebook. Their truth therefore
+establishes the stated authentication and secrecy guarantees within the model,
+but does not establish contact-policy compliance. Token secrecy concerns
+knowledge of the external symbolic attacker; delivery of a token to a protocol
+participant is a separate event.
+
+This distinction motivates a separate safety requirement: an accepted contact
+must have an authorization basis in the receiving agent's policy. The question
+is whether the policy meaning used to justify a grant is preserved through
+credential issuance and eventual message acceptance. Chapter~4 examines where
+the current implementation may disagree with that meaning. The present section
+specifies the requirement without treating a code-level mismatch as an already
+demonstrated end-to-end access violation.
+
+% Evidence: proofs/proverif/agent_communication.pv, authentication and secrecy queries.
+% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 2--5.
+
+\subsection{Policy--Authorization Consistency}
+
+Let $I$ be an initiating agent, $R$ a receiving agent, and $P_R$ the contact
+rulebook selected by $R$'s user. Each rule associates an agent-identity pattern
+with a budget. We write $\mathsf{Allow}_{\mathrm{spec}}(P_R,I)$ for the decision
+prescribed by the intended policy semantics, rather than the value returned by
+any particular implementation of the matcher. In the cases considered here,
+the uniquely most specific matching rule determines the budget; a positive
+budget permits contact, whereas a nonpositive budget or no matching rule does
+not. Ties between equally specific rules and policy changes during a session
+require an explicit convention before a general theorem can be stated. We
+therefore initially consider a fixed rulebook with a unique highest-scoring
+match.
+
+For this scope, $\mathsf{Grant}(I,R)$ denotes a Provider decision that releases
+the material needed to continue the contact protocol. We write
+\[
+  \mathsf{MessageAccepted}(R,I,T,m)
+\]
+when the receiving agent accepts an application message $m$ presented by $I$
+with token $T$ after its token checks.
+These are analysis-level events, not claims that the current ProVerif model
+already contains them. The two necessary consistency conditions are
+\[
+  \mathsf{Grant}(I,R)
+  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
+\]
+\[
+  \mathsf{MessageAccepted}(R,I,T,m)
+  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
+\]
+The first condition concerns the Provider's authorization decision; the
+second concerns the final enforcement point. Neither says that policy
+permission alone is sufficient for access: certificate checks, key
+availability, token validity, expiry, and quota may still prevent a permitted
+contact.
+
+For a policy that can change over time, the allow decision must also be
+associated with the relevant policy version, participants, and grant. Whether
+a later revocation invalidates an already issued token is a separate design
+choice. Until that choice is fixed, the displayed implications are a precise
+target for the static-policy case, not a claim about revocation.
+
+The repository's existing authorization diagnostic uses an event named
+$\mathsf{Accept}$ for the initiating peer's successful receipt and verification
+of a token. It does not model the receiving peer's acceptance of an application
+message. Thus its falsified correspondence is evidence of a proof-coverage gap
+at token receipt; it is not by itself a violation of the second condition
+above. A message-level claim requires an event placed at the receiving agent's
+message-acceptance point and a model connecting policy evaluation to that
+event.
+
+% Evidence: saga/common/contact_policy.py, match() documentation and default budget.
+% Evidence: saga/provider/provider.py, access() decision and OTK response.
+% Evidence: saga/agent.py, token checks and receive_conversation().
+% Evidence: proofs/proverif/agent_communication_authz.pv, AUTHZ event comments.
+
+\subsection{Authorization Pipeline}
+
+The relevant decision is distributed across several stages. The user's
+rulebook determines an intended answer for $I$ contacting $R$. The Provider
+evaluates its stored copy of that rulebook and, if the request passes its
+checks, returns one-time key material. The initiating and receiving agents
+then complete the credential exchange; the receiving agent generates a token
+and later validates a token presented with a message. An authorization
+argument must connect the same initiating identity and receiving identity
+across these stages, rather than infer permission solely from the presence of
+a valid token.
+
+Two boundaries are especially relevant. The Provider's successful response
+is an authorization grant, but it is not itself proof that a token was issued
+or a message accepted: later checks and protocol steps can fail. Likewise,
+successful token issuance is not proof that the receiving agent processed a
+protected message. We therefore keep grant, issuance, and message acceptance
+as distinct observations. The later analysis can identify the earliest
+boundary at which a policy disagreement is demonstrated, while leaving
+stronger downstream claims conditional on corresponding evidence.
+
+The desired relation is also temporal. Under a fixed policy, an allow decision
+must precede the grant it justifies, and any accepted message must be linked
+to an authorization for the same $I$ and $R$. A model that represents only
+peer authentication or token confidentiality cannot establish this relation
+by construction. Chapter~6 addresses the events and correspondence needed to
+express it; Chapter~7 sets out how implementation observations and model
+results should be evaluated separately.
+
+% Evidence: saga/provider/provider.py, access() and returned key material.
+% Evidence: saga/agent.py, policy check, token issuance, and token validation.
+
+\subsection{Threat Model}
+
+We consider a normally registered initiating agent that can request contact
+with another agent through SAGA's ordinary interfaces and participate in the
+subsequent protocol. Its identity and certificate may be genuine. The
+receiving user's contact policy is taken as an existing configuration; the
+initiating agent is not assumed to edit that policy, control the Provider or
+CA, or possess another honest party's private keys. The potential failure is
+a disagreement between the configured policy's intended semantics and the
+authorization decisions made along the protocol path, rather than a break of
+a cryptographic primitive.
+
+This implementation-level actor should not be silently identified with the
+attacker in the original symbolic model. That model provides an active network
+attacker over public communication and uses idealized cryptography, while its
+fixed peer processes execute their prescribed roles. The existing diagnostic
+extension preserves those assumptions and adds policy events without making
+policy evaluation an execution guard. It therefore demonstrates that the
+original authentication and secrecy queries do not entail its added token-
+receipt authorization query; it does not yet model a malicious registered
+agent driving a matcher-dependent message acceptance.
+
+Our target claim is consequently bounded. We study whether policy meaning can
+be lost between decision and enforcement under ordinary protocol operation.
+Any assertion of unauthorized message acceptance requires evidence for all
+intervening checks and an acceptance event with the semantics defined above.
+Policy updates, compromise of trusted parties, and arbitrary actions performed
+after contact are outside the static-policy question posed in this chapter.
+
+% Evidence: proofs/proverif/agent_communication.pv, channels, keys, processes, queries.
+% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 4 and 7.
