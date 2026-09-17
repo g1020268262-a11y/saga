@@ -1,0 +1,13 @@
+proofs\proverif\agent_communication_authz_chat_allow.pv
+RESULT not event(ChatAccept(aid_A[],aid_B[],tok,msg)) is false.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(PolicyAllow(receiver,sender_1)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(MatcherAllow(receiver,sender_1)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(TokenIssue(receiver,sender_1,tok)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(ChatSend(receiver,sender_1,tok,msg)) is true.
+
+proofs\proverif\agent_communication_authz_chat_deny.pv
+RESULT not event(ChatAccept(aid_A[],aid_B[],tok,msg)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(PolicyAllow(receiver,sender_1)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(MatcherAllow(receiver,sender_1)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(TokenIssue(receiver,sender_1,tok)) is true.
+RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(ChatSend(receiver,sender_1,tok,msg)) is true.

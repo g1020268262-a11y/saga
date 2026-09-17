@@ -1,0 +1,99 @@
+{
+  "started_utc": "2026-09-17T08:01:31.987769+00:00",
+  "git_head_before": "78e06379ec01f49d7b07067402ee60585dfe36c4",
+  "branch": "my-modification",
+  "pre_run_git_status": "?? proofs/AUTHORIZATION_CHAT_GUARDED.zh-CN.md\n?? proofs/proverif/agent_communication_authz_chat_allow.pv\n?? proofs/proverif/agent_communication_authz_chat_deny.pv\n?? proofs/run_authz_chat_guarded.py",
+  "proverif_executable": "D:\\Proverif\\proverif2.05\\proverif.exe",
+  "proverif_sha256": "702273912616a46919d5a2ecd0c5465cffdea9ff66296171d44d01d1700b8894",
+  "source_sha256_before": {
+    "proofs\\proverif\\registration.pv": "183b2867162ee2862861b84dff153f22f1a33d03616efc90f48f688c809e2da0",
+    "proofs\\proverif\\agent_communication.pv": "3faf15a801658dc70ceacf1752557cec62ad965854304ad703dce8bdee008302",
+    "proofs\\proverif\\agent_communication_authz.pv": "20dc6fe128b89b8da46a2d1d4adb410de0945ab6036cd093dee40eb8fdca7166",
+    "saga\\common\\contact_policy.py": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+    "saga\\provider\\provider.py": "097fd8ed76756d61336689259f496144484f8fa72d7d040dd2df90eedc934c6e",
+    "saga\\agent.py": "94bebf70df4f76e55c0bb8a54c5f29b7fa688ead197ece18f8ac9dec8edae8d5",
+    "proofs\\proverif\\agent_communication_authz_chat_allow.pv": "cb0e2ce84d95eddeef6725893cdfaeb10679bb6b84656ec1d4f3e55df2d6f88b",
+    "proofs\\proverif\\agent_communication_authz_chat_deny.pv": "ddae27b3b8dfbc23878a72a5135d0a85129ae189640ff70814b0e592c7b1c507",
+    "proofs\\run_authz_chat_guarded.py": "2d57cb7feac366daea1c70b19faa8b4e189af8f1f44fd152f44b1a6ea315d175"
+  },
+  "models": [
+    {
+      "model": "proofs\\proverif\\agent_communication_authz_chat_allow.pv",
+      "command": [
+        "D:\\Proverif\\proverif2.05\\proverif.exe",
+        "D:\\Users\\10202\\Desktop\\saga\\proofs\\proverif\\agent_communication_authz_chat_allow.pv"
+      ],
+      "started_utc": "2026-09-17T08:01:32.590730+00:00",
+      "stdout": "agent_communication_authz_chat_allow.stdout.txt",
+      "stderr": "agent_communication_authz_chat_allow.stderr.txt",
+      "exit_code": 0,
+      "elapsed_seconds": 761.319,
+      "finished_utc": "2026-09-17T08:14:13.911648+00:00",
+      "results": [
+        "RESULT not event(ChatAccept(aid_A[],aid_B[],tok,msg)) is false.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(PolicyAllow(receiver,sender_1)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(MatcherAllow(receiver,sender_1)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(TokenIssue(receiver,sender_1,tok)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(ChatSend(receiver,sender_1,tok,msg)) is true."
+      ],
+      "stdout_sha256": "46946628386186c79e457bead5e48c5d4945895da782882ee2f05436f1f0b66e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "model": "proofs\\proverif\\agent_communication_authz_chat_deny.pv",
+      "command": [
+        "D:\\Proverif\\proverif2.05\\proverif.exe",
+        "D:\\Users\\10202\\Desktop\\saga\\proofs\\proverif\\agent_communication_authz_chat_deny.pv"
+      ],
+      "started_utc": "2026-09-17T08:14:13.915792+00:00",
+      "stdout": "agent_communication_authz_chat_deny.stdout.txt",
+      "stderr": "agent_communication_authz_chat_deny.stderr.txt",
+      "exit_code": 0,
+      "elapsed_seconds": 365.059,
+      "finished_utc": "2026-09-17T08:20:18.975570+00:00",
+      "results": [
+        "RESULT not event(ChatAccept(aid_A[],aid_B[],tok,msg)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(PolicyAllow(receiver,sender_1)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(MatcherAllow(receiver,sender_1)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(TokenIssue(receiver,sender_1,tok)) is true.",
+        "RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(ChatSend(receiver,sender_1,tok,msg)) is true."
+      ],
+      "stdout_sha256": "e24da98423904d73336bd46139c1dc0d192814b3de1a052a912087872cc39c3a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Guarded allow/deny controls only; no implementation-mismatch execution model.",
+  "completed": true,
+  "checks": {
+    "allow_chat_reachable": true,
+    "allow_policy_correspondence": true,
+    "allow_issued_token_correspondence": true,
+    "allow_matcher_correspondence": true,
+    "allow_chat_send_correspondence": true,
+    "deny_chat_unreachable": true,
+    "sources_unchanged": true,
+    "git_head_unchanged": true
+  },
+  "finished_utc": "2026-09-17T08:20:19.071587+00:00",
+  "git_head_after": "78e06379ec01f49d7b07067402ee60585dfe36c4",
+  "post_run_git_status": "?? proofs/AUTHORIZATION_CHAT_GUARDED.zh-CN.md\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/agent_communication_authz_chat_allow.stderr.txt\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/agent_communication_authz_chat_allow.stdout.txt\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/agent_communication_authz_chat_deny.stderr.txt\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/agent_communication_authz_chat_deny.stdout.txt\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/manifest.json\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/proverif-version.txt\n?? proofs/evidence/authz-chat-guarded-20260917T080131985337Z/verification-summary.txt\n?? proofs/proverif/agent_communication_authz_chat_allow.pv\n?? proofs/proverif/agent_communication_authz_chat_deny.pv\n?? proofs/run_authz_chat_guarded.py",
+  "source_sha256_after": {
+    "proofs\\proverif\\registration.pv": "183b2867162ee2862861b84dff153f22f1a33d03616efc90f48f688c809e2da0",
+    "proofs\\proverif\\agent_communication.pv": "3faf15a801658dc70ceacf1752557cec62ad965854304ad703dce8bdee008302",
+    "proofs\\proverif\\agent_communication_authz.pv": "20dc6fe128b89b8da46a2d1d4adb410de0945ab6036cd093dee40eb8fdca7166",
+    "saga\\common\\contact_policy.py": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+    "saga\\provider\\provider.py": "097fd8ed76756d61336689259f496144484f8fa72d7d040dd2df90eedc934c6e",
+    "saga\\agent.py": "94bebf70df4f76e55c0bb8a54c5f29b7fa688ead197ece18f8ac9dec8edae8d5",
+    "proofs\\proverif\\agent_communication_authz_chat_allow.pv": "cb0e2ce84d95eddeef6725893cdfaeb10679bb6b84656ec1d4f3e55df2d6f88b",
+    "proofs\\proverif\\agent_communication_authz_chat_deny.pv": "ddae27b3b8dfbc23878a72a5135d0a85129ae189640ff70814b0e592c7b1c507",
+    "proofs\\run_authz_chat_guarded.py": "2d57cb7feac366daea1c70b19faa8b4e189af8f1f44fd152f44b1a6ea315d175"
+  },
+  "evidence_sha256": {
+    "agent_communication_authz_chat_allow.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_communication_authz_chat_allow.stdout.txt": "46946628386186c79e457bead5e48c5d4945895da782882ee2f05436f1f0b66e",
+    "agent_communication_authz_chat_deny.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_communication_authz_chat_deny.stdout.txt": "e24da98423904d73336bd46139c1dc0d192814b3de1a052a912087872cc39c3a",
+    "proverif-version.txt": "c00f1890d591537c078cc8ce60db401be65197779353e07a6fdbb8ae2b07ec5f",
+    "verification-summary.txt": "d904180888dc7903ce0bff3ece85eb274b786624c98806e5c6f086b5e8cd1a84"
+  }
+}
