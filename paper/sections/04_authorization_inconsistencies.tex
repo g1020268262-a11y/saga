@@ -1,26 +1,309 @@
 \section{Authorization Inconsistencies in SAGA}
 
-\subsection{Policy Matching Semantics}
-% TODO:
-% - Locate and quote the authoritative intended rule-selection semantics.
-% - Specify tie and no-match behavior if the source defines them.
+This chapter examines how the reference implementation interprets contact
+policy at its enforcement points. We distinguish the documented selection of
+a rule from the interpretation of the selected budget. The analysis concerns
+the fixed-policy setting of Chapter~3 and is based on source inspection;
+runtime propagation to the three security boundaries requires separate
+execution evidence.
 
-\subsection{Rule-Specificity Implementation Flaw}
-% TODO:
-% - Compare the stated specificity rule with the current match implementation.
-% - Verify whether rule ordering changes the returned budget.
+% Evidence baseline: source inspected at commit 12a0373258a5cd3c49d332e4f3af55d2be019c35.
+% No protocol implementation or verification model was changed for this chapter.
 
-\subsection{Budget Semantic Inconsistency}
-% TODO:
-% - Compare Provider and receiving-agent treatment of negative, zero, and positive budgets.
-% - Determine whether the zero-budget difference reaches an accepted access.
+\subsection{Intended Contact-Policy Semantics}
+
+A contact rulebook is represented as an ordered list of rules, each carrying
+a \texttt{pattern} and an integer \texttt{budget}. A pattern matches an agent
+identifier, or AID. For contact from $I$ to $R$, the relevant object is $R$'s
+rulebook evaluated against $I$'s AID: permission has a direction. Its evaluation
+does not distinguish individual application commands or tool actions.
+Throughout this chapter, \emph{policy budget} denotes the
+\texttt{budget} field of a contact rule, not the communication quota associated
+with an access-control token.
+
+In \texttt{contact\_policy.py}, \texttt{check\_rulebook()} checks rule fields
+and admits integer budgets from $-1$ upwards. The \texttt{match()} function
+first checks AID syntax and then tests patterns with \texttt{fnmatch.fnmatch()}.
+Its documentation states that the returned budget belongs to the most
+specific matching pattern. The function \texttt{aid\_specificity()} supplies
+the comparison score, using weighted contributions from literals and wildcard
+constructs in the user and agent-name components. We use this numerical
+ordering as the documented selection criterion, without assuming that it is
+a general ordering by containment between pattern languages.
+
+For a well-formed fixed rulebook with a unique highest-scoring match, let
+$b^*$ denote the budget attached to that rule. For no match, take $b^*=0$,
+consistent with the matcher's default result. The policy baseline is
+\[
+  \mathsf{Allow}_{\mathrm{spec}}(P_R,I)
+  \Longleftrightarrow b^*>0.
+\]
+The positivity convention comes from the Provider's \texttt{/access} handler,
+which rejects both negative and zero results. Thus the baseline combines a
+documented rule-selection contract with the Provider's explicit interpretation
+of the result. It does not assert a separate published policy language or
+resolve conflicts between equally specific rules. A malformed AID produces a
+separate error result and is outside the valid-identity cases considered here.
+
+A positive policy decision is only permission to proceed through this check.
+The Provider additionally uses resource availability and remaining contact
+allowance, and later protocol stages impose their own checks. Accordingly,
+this baseline specifies contact eligibility rather than sufficient conditions
+for token issuance or application-message acceptance.
+
+% Evidence: saga/common/contact_policy.py, check_rulebook(), match() docstring,
+% aid_specificity(), and pattern_specificity_component().
+% Evidence: saga/provider/provider.py, access() negative/zero branches.
+
+\subsection{Rule-Specificity Selection Flaw}
+
+The implementation of \texttt{match()} does not maintain the state needed by
+its documented selection rule. It initializes \texttt{best\_pattern} to
+\texttt{None} and the return budget to zero. For each matching rule, it compares
+that rule's specificity with \texttt{aid\_specificity(best\_pattern)} and
+updates the budget when the comparison succeeds. It never updates
+\texttt{best\_pattern}. Consequently, later rules are compared with the initial
+sentinel, not with the most specific rule already encountered.
+
+This is more precise than saying that specificity is ignored: the comparison
+is executed, but its reference value remains wrong. The score of
+\texttt{None} is $-1$, whereas the scores computed for well-formed patterns
+are nonnegative, including zero for the universal wildcard. Therefore every
+matching rule handled normally by the scorer passes the comparison. For a
+valid AID and a well-formed rule list, the returned budget is the budget of
+the last matching rule encountered; with no match it remains zero.
+
+The order involved is the rulebook's list order, not the order of keys within
+each rule dictionary. The registration path carries the list in the
+\texttt{contact\_rulebook} field, the Provider stores that field, and the Agent
+loads it into its local state. None of these paths sorts the rules by
+specificity. The matcher's ordinary list traversal consequently preserves
+the distinction between earlier and later rules.
+
+Consider two rules that both match the same valid identity $I$. Let $r_s$
+have a strictly higher specificity score and budget $-1$, and let $r_g$ have
+a lower score and budget $10$. This is an abstract policy example; it does
+not assume that $I$ can edit $R$'s configuration. The documented selection is
+$r_s$ in either ordering. Inspection of the loop yields the following
+different implementation results:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Rule order & Intended budget & Returned budget \\
+\hline
+$[r_s,r_g]$ & $-1$ (deny) & $10$ \\
+$[r_g,r_s]$ & $-1$ (deny) & $-1$ \\
+\hline
+\end{tabular}
+\end{center}
+
+To compare Boolean decisions, define
+\[
+  \mathsf{Allow}_{\mathrm{impl}}(P_R,I)
+  \Longleftrightarrow \mathtt{match}(P_R,I)>0.
+\]
+This is the actual matcher result interpreted by the Provider's policy
+check, not the success of the entire endpoint. For the first ordering above,
+\[
+  \mathsf{Allow}_{\mathrm{impl}}(P_R,I)
+  \neq \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
+\]
+The same logical rule set thus has an order-dependent implementation result
+despite an unchanged unique maximum under the documented semantics. Equal
+scores are unnecessary for this disagreement. The observation establishes a
+policy-evaluation mismatch; it does not, by itself, establish any of the
+credential or message events defined in Chapter~3.
+
+% Evidence: saga/common/contact_policy.py, match() loop and aid_specificity(None).
+% Evidence: saga/user/user.py, agent_register() rulebook input and application.
+% Evidence: saga/provider/provider.py, registration storage and access() rulebook lookup.
+% Evidence: saga/agent.py, Agent initialization of self.contact_rulebook.
+% The two-rule table is a static derivation, not a reported execution experiment.
+
+\subsection{Budget-Semantics Inconsistency}
+
+The two enforcement points also differ in how they interpret an identical
+matcher result. In \texttt{provider.py}, \texttt{access()} returns a denial for
+\texttt{budget < 0} and separately for \texttt{budget == 0}. Only a positive
+value proceeds to the resource-allocation part of the handler. Writing
+$\mathsf{ProviderAllow}$ for this policy check alone gives
+\[
+  \mathsf{ProviderAllow}(b) \Longleftrightarrow b>0.
+\]
+This predicate excludes the endpoint's identity, registration, and resource
+checks; a true value is not yet a Provider grant.
+
+In \texttt{agent.py}, the incoming connection handler evaluates the local
+rulebook against the initiating AID using \texttt{match()}. It rejects only
+when the returned value is negative. The budget is not tested for equality
+to zero at this point. For this particular precheck,
+\[
+  \mathsf{AgentPrecheckAllow}(b) \Longleftrightarrow b\geq0.
+\]
+Here ``allow'' means only that this conditional does not reject the
+connection. It is neither a statement that a token is generated nor a
+statement that an application message is accepted.
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Policy result & Provider policy check & Agent precheck \\
+\hline
+$b<0$ & Reject & Reject \\
+$b=0$ & Reject & Continue \\
+$b>0$ & Continue & Continue \\
+\hline
+\end{tabular}
+\end{center}
+
+The difference includes an explicit zero-budget match and the zero returned
+when no rule matches. At either source of zero, the Provider treats the
+result as insufficient permission, while the Agent's precheck does not stop
+the connection. However, the ordinary fresh-contact path obtains material
+through the Provider first. Its zero-budget denial remains effective at that
+boundary. The receiver-side difference therefore does not independently
+establish a complete unauthorized execution.
+
+Several distinct quantities must be kept separate when assessing this
+behavior. The configured rule budget is an input to policy evaluation. The
+Provider's \texttt{counter} stores a remaining allowance for each initiating
+AID within a target Agent's record. A first allocation initializes the entry
+to the selected budget minus one; subsequent allocations decrement that
+entry, with a floor of zero. An exhausted entry blocks further allocation.
+Despite its name, this is remaining contact allowance, not an accumulated
+count of accepted application messages. Allocation consumes allowance before
+the later credential exchange has necessarily completed.
+
+Token-use state is maintained separately. The \texttt{generate\_token()}
+function sets the token's \texttt{communication\_quota} from the configured
+\texttt{Q\_MAX} value, not from the matched contact-rule budget. Token validation checks the
+receiver's active-token state, expiration, remaining token quota, and
+recipient access-control key. The conversation loop decrements token quota
+and also has a separate \texttt{MAX\_QUERIES} guard. These checks concern token
+use and local conversation processing. Neither their presence nor their
+success establishes that the correct policy rule was selected, and the
+zero-budget comparison cannot be interpreted as a token-quota exhaustion
+test.
+
+% Evidence: saga/provider/provider.py, access() sign checks and counter update.
+% Evidence: saga/agent.py, handle_i_agent_connection(), generate_token(),
+% token_is_valid(), receive_conversation(), and MAX_QUERIES.
+% Evidence: saga/config.py, Q_MAX.
 
 \subsection{Cross-Layer Authorization Inconsistency}
-% TODO:
-% - Relate policy meaning to both enforcement points.
-% - Separate observed mismatches from unverified downstream effects.
 
-\subsection{Security Consequence}
-% TODO:
-% - Explain the security consequence supported by the verified execution path.
-% - Distinguish credential issuance from final access acceptance.
+The findings concern two different relationships. The rule-selection flaw is
+a \emph{specification-to-implementation inconsistency}: the matcher can return
+a budget that disagrees with the documented most-specific-rule contract.
+The zero-budget difference is an \emph{enforcement-to-enforcement
+inconsistency}: two consumers of the same policy result apply different
+predicates. In the latter case,
+\[
+  \mathsf{ProviderAllow}(0)
+  \neq \mathsf{AgentPrecheckAllow}(0).
+\]
+The second disagreement does not depend on overlapping rules. Conversely,
+the first can change the sign of the returned budget without involving zero.
+They should not be assigned the same consequence merely because both concern
+authorization.
+
+The Provider and receiving Agent both invoke the common matcher. The Agent's
+incoming policy check therefore supplies an additional enforcement point,
+but it does not independently recover the documented rule selection. With
+the same ordered rulebook and identity, both invocations inherit the same
+selection error. Agreement between two implementations of a check is
+insufficient when both rely on the same incorrect decision procedure.
+At zero, even their interpretation of that shared result differs.
+
+These observations concern the preservation of policy meaning along the
+pipeline defined in Chapter~3. The Provider's successful response supplies
+contact material, including one public one-time key and its signature, the
+target Agent's certificate and public access-control material, and the target
+user's certificate. It removes the rulebook and counter from that response.
+This response is not an access-control token; the receiving Agent generates
+the token at a later boundary.
+
+The incoming handler performs its policy precheck before credential handling.
+Subsequent identity, Provider-stamp, signature, and one-time-key checks can
+still stop a new credential exchange. Their purpose differs from choosing the
+applicable contact rule. In particular, the Provider stamp authenticates an
+Agent card constructed at registration, rather than a decision selecting a
+rule for this contact. Later, \texttt{token\_is\_valid()} checks credential
+state without re-evaluating rule specificity. Thus successful cryptographic
+checks cannot be substituted for the missing semantic agreement.
+
+Cryptographic correctness does not repair an incorrect authorization
+decision. Even assuming that signatures, certificates, token checks, and the
+authenticated transport work as intended, those mechanisms do not establish
+that a credential was made available in accordance with the user's policy.
+This is a separation of obligations, not a claim that every policy mismatch
+survives all later checks or that the entire protocol has been exercised.
+
+% Evidence: saga/provider/provider.py, registration card/stamp and access() response.
+% Evidence: saga/agent.py, incoming policy precheck, credential-handling branches,
+% generate_token(), and token_is_valid().
+
+\subsection{Security Consequences}
+
+For the rule-selection flaw, source inspection directly establishes that a
+documented denial can become a positive implementation decision. Because
+\texttt{access()} uses that value for its policy check, the mismatch changes
+whether execution proceeds towards allocation. The successful allocation
+branch returns contact material. Conditional on the endpoint's other checks
+and ordinary resource requirements succeeding, the mismatch can therefore
+reach the Provider-grant boundary. This is a conditional control-flow
+conclusion, not a report of an experimentally observed grant.
+
+In the terminology of Chapter~3, that boundary would constitute a Level~1
+violation when
+\[
+  \neg\mathsf{Allow}_{\mathrm{spec}}(P_R,I)
+  \land \mathsf{ProviderGrant}(I,R).
+\]
+An incorrect positive matcher result alone is not this event: the material
+must actually be released. The distinction matters because a policy mismatch
+can coexist with an unsuccessful endpoint request.
+
+A Level~2 consequence would additionally require
+\[
+  \neg\mathsf{Allow}_{\mathrm{spec}}(P_R,I)
+  \land \mathsf{TokenIssued}(R,I,T).
+\]
+The shared matcher means that the receiver's policy precheck need not correct
+the earlier decision, making propagation relevant to investigate. Nevertheless,
+token generation occurs after additional checks and depends on valid protocol
+state. The static mismatch neither satisfies those checks by itself nor
+records a token being released. It is therefore insufficient as standalone
+evidence of credential issuance.
+
+Likewise, the Level~3 condition
+\[
+  \neg\mathsf{Allow}_{\mathrm{spec}}(P_R,I)
+  \land \mathsf{MessageAccepted}(R,I,T,m)
+\]
+requires the receiving application boundary to be reached with an accepted
+message and valid credential state. Entering a credential-handling branch,
+generating a token, and accepting a protected message are distinct
+observations. This chapter establishes no execution exhibiting this final
+condition.
+
+For the zero-budget discrepancy, the supported conclusion is narrower. The
+Agent precheck disagrees with the baseline denial at zero, but the Provider's
+own decision is unchanged: it rejects that value. The discrepancy alone
+therefore does not produce a Provider grant on the fresh-contact path.
+Neither token issuance nor message acceptance follows from the receiver's
+failure to reject at this single check. Without additional execution
+evidence, this finding is a latent authorization inconsistency, not an
+independently confirmed access violation.
+
+The two findings thus establish concrete policy-evaluation and enforcement
+disagreements, with different implications for the intermediate boundaries.
+They show why the authorization-soundness obligations of Chapter~3 cannot be
+assumed from the implementation's cryptographic checks. An implementation
+mismatch is not automatically an end-to-end exploit. Chapter~5 examines
+concrete execution paths and the evidence needed to determine which, if any,
+of the Provider-grant, credential-issuance, and message-acceptance boundaries
+each inconsistency reaches.
+
+% Evidence: saga/provider/provider.py, access() policy rejection, allocation, and response.
+% Evidence: saga/agent.py, incoming precheck, token generation, and message validation.
+% Scope: source-level mismatch and conditional propagation; no runtime exploit result.

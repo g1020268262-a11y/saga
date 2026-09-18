@@ -27,24 +27,27 @@ defines the requirement without asserting an end-to-end access violation.
 
 \subsection{Policy--Authorization Consistency}
 
-We call the requirement \emph{policy--authorization consistency}: every
-accepted access must be traceable to an applicable authorization decision.
-We apply it separately at each authorization boundary: releasing contact
-material, issuing a credential, and accepting a message.
-For every execution and every access event $e$, we require
+We call the end-to-end requirement \emph{policy--authorization consistency}:
+every accepted access must be traceable to an applicable authorization decision.
+For every execution and every accepted-access event $e$, we require
 \[
   \mathsf{AccessAccepted}(e)
   \Longrightarrow
   \exists d.\;\mathsf{AllowDecision}(d)
   \land \mathsf{Justifies}(d,e).
 \]
+In addition to this end-to-end property, we consider authorization-soundness
+conditions at intermediate protocol boundaries, including Provider grants
+and credential issuance. These intermediate events are not themselves
+instances of $\mathsf{AccessAccepted}$.
+
 Here, $d$ is a decision occurring in that execution, and
 $\mathsf{AllowDecision}(d)$ means that it grants permission under the intended
 policy semantics. An implementation's report of ``allow'' alone does not
 establish this predicate. The relation $\mathsf{Justifies}(d,e)$ requires that
-the decision precede the accepted access, cover the same subject, target, and
-operation, and remain applicable under the relevant policy state. Where a
-credential mediates access, the decision must also be linked to the grant and
+the decision precede the accepted access, cover the same subject, target, and,
+where applicable, operation, and remain applicable under the relevant policy
+state. Where a credential mediates access, the decision must also be linked to the grant and
 credential used for that access. An unrelated earlier allow decision is not
 a sufficient justification. This is a general requirement whose concrete
 events and policy-state conditions must be fixed for each formal model.
@@ -77,24 +80,28 @@ application message $m$ from $I$ with token $T$, after the receiving agent's
 access checks, for application processing. It does not assert the completion
 of a downstream tool action.
 
-Under this static-policy scope, two necessary conditions at the Provider and
-message-acceptance boundaries are
+Under this static-policy scope, the intermediate condition at the Provider
+boundary is
 \[
   \mathsf{ProviderGrant}(I,R)
   \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
 \]
+whereas a necessary permission condition for end-to-end consistency at the
+final message-acceptance boundary is
 \[
   \mathsf{MessageAccepted}(R,I,T,m)
   \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
 \]
-The analogous requirement at token issuance is
+The intermediate condition at token issuance is
 \[
   \mathsf{TokenIssued}(R,I,T)
   \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
 \]
 All three implications range over every occurrence of the respective events
-and all their arguments. They express permission at specific enforcement
-boundaries; they do not replace the decision-to-access linkage required by
+and all their arguments. The intermediate conditions are separate obligations,
+not logical consequences of end-to-end consistency alone. These implications
+express permission at their respective boundaries; they do not replace the
+decision-to-access linkage required by
 $\mathsf{Justifies}$. Nor does policy permission alone suffice for access:
 certificate checks, key availability, token validity, expiry, and quota may
 still prevent a permitted contact. These conditions address contact
