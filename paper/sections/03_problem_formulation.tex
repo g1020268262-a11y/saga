@@ -11,83 +11,108 @@ contact policy permits the initiating agent to contact it. A credential can be
 authentic and valid under the token checks while the decision to make that
 credential available disagrees with the policy's intended meaning.
 
-The reference communication model expresses authentication as correspondences
-between agent and Provider events and between the two peers' token events. It
-also asks whether the symbolic network attacker can obtain the private token.
-None of these queries refers to a contact rulebook, a policy decision, or the
-acceptance of an application message under that rulebook. Their truth therefore
-establishes the stated authentication and secrecy guarantees within the model,
-but does not establish contact-policy compliance. Token secrecy concerns
-knowledge of the external symbolic attacker; delivery of a token to a protocol
-participant is a separate event.
+The reference communication model focuses on participant authentication and
+token secrecy. These guarantees concern the origin of protocol messages and
+the confidentiality of credentials; they do not, by themselves, establish
+that a contact complies with the receiving user's policy. In particular,
+confidential delivery to an authenticated participant does not establish that
+the participant is entitled to receive a credential under that policy.
 
-This distinction motivates a separate safety requirement: an accepted contact
-must have an authorization basis in the receiving agent's policy. The question
-is whether the policy meaning used to justify a grant is preserved through
-credential issuance and eventual message acceptance. Chapter~4 examines where
-the current implementation may disagree with that meaning. The present section
-specifies the requirement without treating a code-level mismatch as an already
-demonstrated end-to-end access violation.
+The missing requirement is an authorization basis for accepted contact,
+preserved through credential issuance and message acceptance. Chapter~4
+examines implementation disagreements with policy meaning. This chapter
+defines the requirement without asserting an end-to-end access violation.
 
 % Evidence: proofs/proverif/agent_communication.pv, authentication and secrecy queries.
-% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 2--5.
 
 \subsection{Policy--Authorization Consistency}
+
+We call the requirement \emph{policy--authorization consistency}: every
+accepted access must be traceable to an applicable authorization decision.
+We apply it separately at each authorization boundary: releasing contact
+material, issuing a credential, and accepting a message.
+For every execution and every access event $e$, we require
+\[
+  \mathsf{AccessAccepted}(e)
+  \Longrightarrow
+  \exists d.\;\mathsf{AllowDecision}(d)
+  \land \mathsf{Justifies}(d,e).
+\]
+Here, $d$ is a decision occurring in that execution, and
+$\mathsf{AllowDecision}(d)$ means that it grants permission under the intended
+policy semantics. An implementation's report of ``allow'' alone does not
+establish this predicate. The relation $\mathsf{Justifies}(d,e)$ requires that
+the decision precede the accepted access, cover the same subject, target, and
+operation, and remain applicable under the relevant policy state. Where a
+credential mediates access, the decision must also be linked to the grant and
+credential used for that access. An unrelated earlier allow decision is not
+a sufficient justification. This is a general requirement whose concrete
+events and policy-state conditions must be fixed for each formal model.
 
 Let $I$ be an initiating agent, $R$ a receiving agent, and $P_R$ the contact
 rulebook selected by $R$'s user. Each rule associates an agent-identity pattern
 with a budget. We write $\mathsf{Allow}_{\mathrm{spec}}(P_R,I)$ for the decision
 prescribed by the intended policy semantics, rather than the value returned by
 any particular implementation of the matcher. In the cases considered here,
-the uniquely most specific matching rule determines the budget; a positive
+the unique highest-scoring matching rule determines the budget; a positive
 budget permits contact, whereas a nonpositive budget or no matching rule does
-not. Ties between equally specific rules and policy changes during a session
-require an explicit convention before a general theorem can be stated. We
-therefore initially consider a fixed rulebook with a unique highest-scoring
-match.
+not. Rule selection follows the matcher's documented most-specific-rule
+contract and its AID specificity score; the positive-budget convention follows
+the Provider's access check.\footnote{\raggedright See \texttt{match()} and
+\texttt{aid\_specificity()} in
+\texttt{saga/\allowbreak common/\allowbreak contact\_policy.py}, and
+\texttt{access()} in \texttt{saga/\allowbreak provider/\allowbreak provider.py}.}
+We initially fix the rulebook throughout an execution and consider either no
+matching rule or a unique highest-scoring match. Equal-score conflicts require
+an explicit convention and are outside this initial scope.
 
-For this scope, $\mathsf{Grant}(I,R)$ denotes a Provider decision that releases
-the material needed to continue the contact protocol. We write
+We distinguish three analysis-level events.
+$\mathsf{ProviderGrant}(I,R)$ denotes the Provider's release, through its
+access interface, of the material needed for $I$ to continue the contact
+protocol with $R$. The event $\mathsf{TokenIssued}(R,I,T)$ denotes $R$'s
+creation of token $T$ for $I$ and its release for delivery through the
+protocol; it does not assert that $I$ has received or used $T$.
+Finally, $\mathsf{MessageAccepted}(R,I,T,m)$ denotes $R$'s acceptance of an
+application message $m$ from $I$ with token $T$, after the receiving agent's
+access checks, for application processing. It does not assert the completion
+of a downstream tool action.
+
+Under this static-policy scope, two necessary conditions at the Provider and
+message-acceptance boundaries are
 \[
-  \mathsf{MessageAccepted}(R,I,T,m)
-\]
-when the receiving agent accepts an application message $m$ presented by $I$
-with token $T$ after its token checks.
-These are analysis-level events, not claims that the current ProVerif model
-already contains them. The two necessary consistency conditions are
-\[
-  \mathsf{Grant}(I,R)
+  \mathsf{ProviderGrant}(I,R)
   \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
 \]
 \[
   \mathsf{MessageAccepted}(R,I,T,m)
   \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
 \]
-The first condition concerns the Provider's authorization decision; the
-second concerns the final enforcement point. Neither says that policy
-permission alone is sufficient for access: certificate checks, key
-availability, token validity, expiry, and quota may still prevent a permitted
-contact.
+The analogous requirement at token issuance is
+\[
+  \mathsf{TokenIssued}(R,I,T)
+  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I).
+\]
+All three implications range over every occurrence of the respective events
+and all their arguments. They express permission at specific enforcement
+boundaries; they do not replace the decision-to-access linkage required by
+$\mathsf{Justifies}$. Nor does policy permission alone suffice for access:
+certificate checks, key availability, token validity, expiry, and quota may
+still prevent a permitted contact. These conditions address contact
+permission, not quantitative bounds on credential issuance or message use.
 
-For a policy that can change over time, the allow decision must also be
-associated with the relevant policy version, participants, and grant. Whether
-a later revocation invalidates an already issued token is a separate design
-choice. Until that choice is fixed, the displayed implications are a precise
-target for the static-policy case, not a claim about revocation.
+For a policy that can change over time, the applicable policy version and the
+effect of revocation on existing credentials must additionally be specified.
+Quota consumption and token expiry likewise require explicit state and
+validity conditions. The general requirement leaves room for these
+obligations, but the static permission conditions above do not establish them.
 
-The repository's existing authorization diagnostic uses an event named
-$\mathsf{Accept}$ for the initiating peer's successful receipt and verification
-of a token. It does not model the receiving peer's acceptance of an application
-message. Thus its falsified correspondence is evidence of a proof-coverage gap
-at token receipt; it is not by itself a violation of the second condition
-above. A message-level claim requires an event placed at the receiving agent's
-message-acceptance point and a model connecting policy evaluation to that
-event.
+A message-level authorization claim therefore requires a model connecting
+policy evaluation, credential issuance, and the final message-acceptance event.
+Chapter~6 develops the corresponding formalization and states its assumptions.
 
 % Evidence: saga/common/contact_policy.py, match() documentation and default budget.
 % Evidence: saga/provider/provider.py, access() decision and OTK response.
 % Evidence: saga/agent.py, token checks and receive_conversation().
-% Evidence: proofs/proverif/agent_communication_authz.pv, AUTHZ event comments.
 
 \subsection{Authorization Pipeline}
 
@@ -100,55 +125,67 @@ and later validates a token presented with a message. An authorization
 argument must connect the same initiating identity and receiving identity
 across these stages, rather than infer permission solely from the presence of
 a valid token.
+The intended progression is
+\[
+  P_R \longrightarrow \mathsf{ProviderGrant}
+  \longrightarrow \mathsf{TokenIssued}
+  \longrightarrow \mathsf{MessageAccepted}.
+\]
+The arrows indicate protocol stages and authorization dependencies, not a
+guarantee that reaching one stage causes the next to succeed.
 
-Two boundaries are especially relevant. The Provider's successful response
-is an authorization grant, but it is not itself proof that a token was issued
-or a message accepted: later checks and protocol steps can fail. Likewise,
-successful token issuance is not proof that the receiving agent processed a
-protected message. We therefore keep grant, issuance, and message acceptance
-as distinct observations. The later analysis can identify the earliest
-boundary at which a policy disagreement is demonstrated, while leaving
-stronger downstream claims conditional on corresponding evidence.
+Each boundary requires separate evidence: a Provider response does not
+establish token issuance, and token issuance does not establish message
+acceptance. Later checks and protocol steps may fail.
 
-The desired relation is also temporal. Under a fixed policy, an allow decision
-must precede the grant it justifies, and any accepted message must be linked
-to an authorization for the same $I$ and $R$. A model that represents only
-peer authentication or token confidentiality cannot establish this relation
-by construction. Chapter~6 addresses the events and correspondence needed to
-express it; Chapter~7 sets out how implementation observations and model
-results should be evaluated separately.
+When $\neg\mathsf{Allow}_{\mathrm{spec}}(P_R,I)$ holds, we distinguish three
+levels of violation:
+\begin{enumerate}
+  \item \textbf{Provider decision violation:}
+    $\mathsf{ProviderGrant}(I,R)$ occurs despite the policy denial.
+  \item \textbf{Credential issuance violation:}
+    $\mathsf{TokenIssued}(R,I,T)$ occurs despite the policy denial.
+    Issuance alone does not establish delivery or subsequent use.
+  \item \textbf{End-to-end authorization violation:}
+    $\mathsf{MessageAccepted}(R,I,T,m)$ occurs despite the policy denial.
+    This is acceptance at the receiving agent's application boundary.
+\end{enumerate}
+These levels classify possible observations rather than assert results.
+A sound pipeline must preserve the link to the applicable decision,
+participants, and credential across stages. Chapter~6 specifies the
+corresponding events; Chapter~7 evaluates implementation observations and
+model results separately.
 
 % Evidence: saga/provider/provider.py, access() and returned key material.
 % Evidence: saga/agent.py, policy check, token issuance, and token validation.
 
 \subsection{Threat Model}
 
-We consider a normally registered initiating agent that can request contact
-with another agent through SAGA's ordinary interfaces and participate in the
-subsequent protocol. Its identity and certificate may be genuine. The
-receiving user's contact policy is taken as an existing configuration; the
-initiating agent is not assumed to edit that policy, control the Provider or
-CA, or possess another honest party's private keys. The potential failure is
-a disagreement between the configured policy's intended semantics and the
-authorization decisions made along the protocol path, rather than a break of
-a cryptographic primitive.
+We consider a normally registered initiating agent controlled by the adversary.
+It can choose its contact requests and participate in the protocol under its
+genuine identity and certificate. The receiving user's rulebook is an existing
+configuration: the adversary cannot change its contents or rule order, control
+the Provider or CA, or obtain another honest party's private keys.
 
-This implementation-level actor should not be silently identified with the
-attacker in the original symbolic model. That model provides an active network
-attacker over public communication and uses idealized cryptography, while its
-fixed peer processes execute their prescribed roles. The existing diagnostic
-extension preserves those assumptions and adds policy events without making
-policy evaluation an execution guard. It therefore demonstrates that the
-original authentication and secrecy queries do not entail its added token-
-receipt authorization query; it does not yet model a malicious registered
-agent driving a matcher-dependent message acceptance.
+The Provider and receiving agent execute their implementations with the same
+fixed rulebook. Cryptographic checks are assumed effective. The failure under
+study is a disagreement between policy meaning and enforcement during ordinary
+protocol operation, without compromise of either enforcement point.
 
-Our target claim is consequently bounded. We study whether policy meaning can
-be lost between decision and enforcement under ordinary protocol operation.
-Any assertion of unauthorized message acceptance requires evidence for all
-intervening checks and an acceptance event with the semantics defined above.
-Policy updates, compromise of trusted parties, and arbitrary actions performed
-after contact are outside the static-policy question posed in this chapter.
+The adversary's objective is an execution in which the intended policy denies
+contact by $I$, yet the system performs one of the authorization-relevant
+actions above. At the message level, the violation condition is
+\[
+  \mathsf{MessageAccepted}(R,I,T,m)
+  \land \neg\mathsf{Allow}_{\mathrm{spec}}(P_R,I).
+\]
+This end-to-end violation is distinct from an erroneous Provider grant or
+credential issuance. Claiming it requires evidence that the intervening
+checks and protocol steps reach the receiving agent's acceptance boundary.
 
-% Evidence: proofs/proverif/agent_communication.pv, channels, keys, processes, queries.
-% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 4 and 7.
+We study this objective under a static policy. Policy updates and revocation,
+disagreement between stored policy versions, quantitative exhaustion of
+budgets or quotas, compromise of trusted parties, and arbitrary actions after
+contact require additional assumptions and are outside this initial question.
+The distinction between zero, negative, and positive configured budgets
+remains part of the contact-permission semantics.

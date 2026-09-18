@@ -1,9 +1,39 @@
 \section{Formalization}
 
 \subsection{Limitations of the Original Model}
+
+The registered initiating agent in Chapter~3 should not be silently identified
+with the attacker in the original symbolic model. That model provides an
+active network attacker over public communication and uses idealized
+cryptography, while its fixed peer processes execute their prescribed roles.
+Its authentication and token-secrecy queries do not include a contact rulebook
+or link a policy decision to credential use.
+
+The Stage-1 authorization diagnostic preserves those assumptions and adds
+policy events without making policy evaluation an execution guard. In that
+diagnostic, a deny event is recorded but does not block the protocol, and the
+allow event is declared but never executed. The recorded failure of its added
+correspondence therefore identifies a missing modeled authorization
+dependence while the baseline authentication and secrecy results are retained.
+It does not by itself establish a matcher-dependent execution by a malicious
+registered agent in the implementation.
+
+In particular, the diagnostic event named $\mathsf{Accept}$ denotes the
+initiating peer's successful receipt and verification of a token. It does not
+denote the receiving peer's acceptance of an application message. Its failed
+correspondence is thus evidence about authorization coverage at token receipt,
+not a violation of Chapter~3's message-level condition. A message-level claim
+requires an event at the receiving agent's message-acceptance point and a model
+connecting policy evaluation, credential issuance, and that event.
+
+% Evidence: proofs/proverif/agent_communication.pv, channels, keys, processes, queries.
+% Evidence: proofs/proverif/agent_communication_authz.pv, AUTHZ event comments.
+% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 2--4 and 7.
+% Evidence: proofs/evidence/authz-stage1-20260916T123834944479Z/verification-summary.txt.
 % TODO:
 % - Map existing events and queries to the guarantees they actually establish.
 % - Identify missing policy-decision, issuance, and acceptance relationships.
+% - Discuss subsequent guarded message models separately from the Stage-1 diagnostic.
 
 \subsection{Authorization Events}
 % TODO:
