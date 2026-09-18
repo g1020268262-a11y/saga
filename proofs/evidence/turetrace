@@ -1,0 +1,212 @@
+
+new SK_CA: skey creating SK_CA_2 at {1}
+
+new SK_Prov: skey creating SK_Prov_2 at {3}
+
+new SK_A: skey creating SK_A_2 at {5}
+
+new SK_B: skey creating SK_B_2 at {7}
+
+out(a, (~M,~M_1,~M_2,~M_3)) with ~M = pk(SK_A_2), ~M_1 = pk(SK_B_2), ~M_2 = pk(SK_Prov_2), ~M_3 = pk(SK_CA_2) at {9}
+
+event start at {10}
+
+insert ScenarioSpecDeny(BuggyPolicy,aid_B) at {11}
+
+insert ScenarioImplAllow(BuggyPolicy,aid_B) at {12}
+
+out(prov_ca, (~M_4,~M_5,~M_6)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M_6 = pk(SK_A_2) at {17} in copy a_1
+
+out(prov_ca, (~M_7,~M_8,~M_9)) with ~M_7 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_8 = aid_A, ~M_9 = pk(SK_A_2) at {17} in copy a_2
+
+out(c, (~M_10,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_10 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {61} in copy a_3
+
+out(c, (~M_16,~M_17,~M_18,~M_19,~M_20,~M_21)) with ~M_16 = aid_A, ~M_17 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_18 = pk(SOTK1_A), ~M_19 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_20 = pk(SAC_A), ~M_21 = ED_A at {61} in copy a_4
+
+out(c, (~M_22,~M_23,~M_24,~M_25,~M_26,~M_27)) with ~M_22 = aid_A, ~M_23 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_24 = pk(SOTK1_A), ~M_25 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_26 = pk(SAC_A), ~M_27 = ED_A at {61} in copy a_5
+
+in(prov_ca, (~M_4,~M_5,~M)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M = pk(SK_A_2) at {26} in copy a_6
+
+in(c, (~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {28} in copy a_6
+
+event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {33} in copy a_6
+
+out(c, ~M_28) with ~M_28 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {34} in copy a_6
+
+in(prov_ca, (~M_4,~M_5,~M)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M = pk(SK_A_2) at {26} in copy a_7
+
+in(c, (~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {28} in copy a_7
+
+event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {33} in copy a_7
+
+out(c, ~M_29) with ~M_29 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {34} in copy a_7
+
+in(prov_ca, (~M_4,~M_5,~M)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M = pk(SK_A_2) at {26} in copy a_8
+
+in(c, (~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {28} in copy a_8
+
+event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {33} in copy a_8
+
+out(c, ~M_30) with ~M_30 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {34} in copy a_8
+
+in(prov_ca, (~M_4,~M_5,~M)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M = pk(SK_A_2) at {26} in copy a_9
+
+in(c, (~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {28} in copy a_9
+
+event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {33} in copy a_9
+
+out(c, ~M_31) with ~M_31 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {34} in copy a_9
+
+in(prov_ca, (~M_4,~M_5,~M)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M = pk(SK_A_2) at {26} in copy a_10
+
+in(c, (~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {28} in copy a_10
+
+event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {33} in copy a_10
+
+out(c, ~M_32) with ~M_32 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {34} in copy a_10
+
+in(c, ~M_28) with ~M_28 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {62} in copy a_5
+
+event EndAuthA(ED_A,aid_A,pk(SOTK1_A)) at {64} in copy a_5
+
+in(c, ~M_28) with ~M_28 = sign(SK_Prov_2,concat3(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))))) at {62} in copy a_3
+
+event EndAuthA(ED_A,aid_A,pk(SOTK1_A)) at {64} in copy a_3
+
+out(prov_ca, (~M_33,~M_34,~M_35)) with ~M_33 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_34 = aid_B, ~M_35 = pk(SK_B_2) at {21} in copy a_1
+
+out(prov_ca, (~M_36,~M_37,~M_38)) with ~M_36 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_37 = aid_B, ~M_38 = pk(SK_B_2) at {21} in copy a_2
+
+out(c, (~M_39,~M_40,~M_41,~M_42,~M_43,~M_44)) with ~M_39 = aid_B, ~M_40 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_41 = pk(SOTK1_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_43 = pk(SAC_B), ~M_44 = ED_B at {91} in copy a_11
+
+out(c, (~M_45,~M_46,~M_47,~M_48,~M_49,~M_50)) with ~M_45 = aid_B, ~M_46 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_47 = pk(SOTK1_B), ~M_48 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_49 = pk(SAC_B), ~M_50 = ED_B at {91} in copy a_12
+
+in(prov_ca, (~M_33,~M_34,~M_1)) with ~M_33 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_34 = aid_B, ~M_1 = pk(SK_B_2) at {37} in copy a_6
+
+in(c, (~M_34,~M_40,~M_41,~M_42,~M_43,~M_44)) with ~M_34 = aid_B, ~M_40 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_41 = pk(SOTK1_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_43 = pk(SAC_B), ~M_44 = ED_B at {39} in copy a_6
+
+event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {44} in copy a_6
+
+out(c, ~M_51) with ~M_51 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {45} in copy a_6
+
+in(prov_ca, (~M_33,~M_34,~M_1)) with ~M_33 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_34 = aid_B, ~M_1 = pk(SK_B_2) at {37} in copy a_7
+
+in(c, (~M_34,~M_40,~M_41,~M_42,~M_43,~M_44)) with ~M_34 = aid_B, ~M_40 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_41 = pk(SOTK1_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_43 = pk(SAC_B), ~M_44 = ED_B at {39} in copy a_7
+
+event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {44} in copy a_7
+
+out(c, ~M_52) with ~M_52 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {45} in copy a_7
+
+in(prov_ca, (~M_33,~M_34,~M_1)) with ~M_33 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_34 = aid_B, ~M_1 = pk(SK_B_2) at {37} in copy a_8
+
+in(c, (~M_34,~M_40,~M_41,~M_42,~M_43,~M_44)) with ~M_34 = aid_B, ~M_40 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_41 = pk(SOTK1_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_43 = pk(SAC_B), ~M_44 = ED_B at {39} in copy a_8
+
+event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {44} in copy a_8
+
+out(c, ~M_53) with ~M_53 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {45} in copy a_8
+
+in(prov_ca, (~M_33,~M_34,~M_1)) with ~M_33 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_34 = aid_B, ~M_1 = pk(SK_B_2) at {37} in copy a_9
+
+in(c, (~M_34,~M_40,~M_41,~M_42,~M_43,~M_44)) with ~M_34 = aid_B, ~M_40 = sign(SK_B_2,rb(pk(SOTK1_B))), ~M_41 = pk(SOTK1_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_43 = pk(SAC_B), ~M_44 = ED_B at {39} in copy a_9
+
+event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {44} in copy a_9
+
+out(c, ~M_54) with ~M_54 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {45} in copy a_9
+
+in(c, ~M_51) with ~M_51 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {92} in copy a_12
+
+event EndAuthB(ED_B,aid_B,pk(SOTK1_B)) at {94} in copy a_12
+
+get ScenarioSpecDeny(BuggyPolicy,aid_B) at {52} in copy a_6
+
+event SpecIntendedDeny(aid_B,aid_A) at {47} in copy a_6
+
+get ScenarioImplAllow(BuggyPolicy,aid_B) at {51} in copy a_6
+
+out(prov_b, (~M_55,~M_56,~M_57,~M_58,~M_59,~M_60,~M_61,~M_62)) with ~M_55 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_56 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_57 = aid_A, ~M_58 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_59 = pk(SOTK1_A), ~M_60 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_61 = pk(SAC_A), ~M_62 = ED_A at {48} in copy a_6
+
+event ProviderRelease(aid_A,aid_B) at {49} in copy a_6
+
+insert ProviderReleased(aid_A,aid_B) at {50} in copy a_6
+
+get ScenarioSpecDeny(BuggyPolicy,aid_B) at {52} in copy a_7
+
+event SpecIntendedDeny(aid_B,aid_A) at {47} in copy a_7
+
+get ScenarioImplAllow(BuggyPolicy,aid_B) at {51} in copy a_7
+
+out(prov_b, (~M_63,~M_64,~M_65,~M_66,~M_67,~M_68,~M_69,~M_70)) with ~M_63 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_64 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_65 = aid_A, ~M_66 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_67 = pk(SOTK1_A), ~M_68 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_69 = pk(SAC_A), ~M_70 = ED_A at {48} in copy a_7
+
+event ProviderRelease(aid_A,aid_B) at {49} in copy a_7
+
+insert ProviderReleased(aid_A,aid_B) at {50} in copy a_7
+
+get ScenarioSpecDeny(BuggyPolicy,aid_B) at {52} in copy a_8
+
+event SpecIntendedDeny(aid_B,aid_A) at {47} in copy a_8
+
+get ScenarioImplAllow(BuggyPolicy,aid_B) at {51} in copy a_8
+
+out(prov_b, (~M_71,~M_72,~M_73,~M_74,~M_75,~M_76,~M_77,~M_78)) with ~M_71 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_72 = sign(SK_CA_2,concat1(aid_B,pk(SK_B_2))), ~M_73 = aid_A, ~M_74 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_75 = pk(SOTK1_A), ~M_76 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_77 = pk(SAC_A), ~M_78 = ED_A at {48} in copy a_8
+
+event ProviderRelease(aid_A,aid_B) at {49} in copy a_8
+
+insert ProviderReleased(aid_A,aid_B) at {50} in copy a_8
+
+in(c, (~M_34,a_13,~M_44,~M_43,~M_42,~M_51)) with ~M_34 = aid_B, ~M_44 = ED_B, ~M_43 = pk(SAC_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_51 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {66} in copy a_5
+
+get ProviderReleased(aid_A,aid_B) at {82} in copy a_5
+
+get ScenarioImplAllow(BuggyPolicy,aid_B) at {81} in copy a_5
+
+new token: bitstring creating token_3 at {69} in copy a_5
+
+event EndAgentAuthA(token_3,ED_A,dh(pk(SAC_B),SOTK1_A)) at {71} in copy a_5
+
+insert ActiveToken(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3),pk(SAC_B)) at {73} in copy a_5
+
+event TokenIssue(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3)) at {74} in copy a_5
+
+out(c, (~M_79,~M_80)) with ~M_79 = sign(SK_A_2,token_3), ~M_80 = senc(dh(pk(SAC_B),SOTK1_A),token_3) at {75} in copy a_5
+
+in(c, (~M_34,a_14,~M_44,~M_43,~M_42,~M_51)) with ~M_34 = aid_B, ~M_44 = ED_B, ~M_43 = pk(SAC_B), ~M_42 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_51 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {66} in copy a_3
+
+get ProviderReleased(aid_A,aid_B) at {82} in copy a_3
+
+get ScenarioImplAllow(BuggyPolicy,aid_B) at {81} in copy a_3
+
+new token: bitstring creating token_4 at {69} in copy a_3
+
+event EndAgentAuthA(token_4,ED_A,dh(pk(SAC_B),SOTK1_A)) at {71} in copy a_3
+
+insert ActiveToken(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_4),pk(SAC_B)) at {73} in copy a_3
+
+event TokenIssue(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_4)) at {74} in copy a_3
+
+out(c, (~M_81,~M_82)) with ~M_81 = sign(SK_A_2,token_4), ~M_82 = senc(dh(pk(SAC_B),SOTK1_A),token_4) at {75} in copy a_3
+
+in(prov_b, (~M_4,a_15,~M_5,~M_11,~M_12,~M_13,~M_14,~M_15)) with ~M_4 = sign(SK_CA_2,concat1(aid_A,pk(SK_A_2))), ~M_5 = aid_A, ~M_11 = sign(SK_A_2,rb(pk(SOTK1_A))), ~M_12 = pk(SOTK1_A), ~M_13 = sign(SK_A_2,concat2(aid_A,ED_A,pk(SK_A_2),pk(SAC_A),pk(SK_Prov_2))), ~M_14 = pk(SAC_A), ~M_15 = ED_A at {96} in copy a_12
+
+out(c, (~M_83,~M_84,~M_85,~M_86,~M_87,~M_88)) with ~M_83 = aid_B, ~M_84 = a_15, ~M_85 = ED_B, ~M_86 =pk(SAC_B), ~M_87 = sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))), ~M_88 = sign(SK_Prov_2,concat3(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),sign(SK_B_2,concat2(aid_B,ED_B,pk(SK_B_2),pk(SAC_B),pk(SK_Prov_2))))) at {101} in copy a_12
+
+in(c, (~M_79,~M_80)) with ~M_79 = sign(SK_A_2,token_3), ~M_80 = senc(dh(pk(SAC_B),SOTK1_A),token_3) at {103} in copy a_12
+
+event EndAgentAuthB(token_3,ED_A,dh(pk(SOTK1_A),SAC_B)) at {106} in copy a_12
+
+event TokenReceive(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3)) at {107} in copy a_12
+
+event Accept(aid_A,aid_B,token_3) at {108} in copy a_12
+
+new chat_msg_1: bitstring creating chat_msg_3 at {109} in copy a_12
+
+event ChatSend(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3),chat_msg_3) at {110} in copy a_12
+
+out(tls_chat, (aid_B,pk(SAC_B),senc(dh(pk(SAC_B),SOTK1_A),token_3),chat_msg_3)) at {111} in copy a_12received at {77} in copy a_3
+
+get ActiveToken(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3),pk(SAC_B)) at {80} in copy a_3
+
+event ChatAccept(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3),chat_msg_3) at {79} in copy a_3 (goal)
+
+The event ChatAccept(aid_A,aid_B,senc(dh(pk(SAC_B),SOTK1_A),token_3),chat_msg_3) is executed at {79} in copy a_3.
+A trace has been found.
+RESULT not event(ChatAccept(receiver,sender_1,tok,msg)) is false.
