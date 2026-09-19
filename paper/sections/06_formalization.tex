@@ -1,56 +1,158 @@
 \section{Formalization}
+\label{sec:formalization}
 
-\subsection{Limitations of the Original Model}
+\subsection{Modeling Approach}
 
-The registered initiating agent in Chapter~3 should not be silently identified
-with the attacker in the original symbolic model. That model provides an
-active network attacker over public communication and uses idealized
-cryptography, while its fixed peer processes execute their prescribed roles.
-Its authentication and token-secrecy queries do not include a contact rulebook
-or link a policy decision to credential use.
+The formal model captures the consequence of authorization divergence rather
+than reproducing the matcher implementation. We separate implementation
+evidence of decision inconsistency from symbolic analysis of what follows
+when that inconsistency is assumed:
+\[
+\begin{array}{c}
+\textnormal{Concrete implementation} \\
+\downarrow\;\textnormal{abstraction boundary} \\
+\textnormal{Authorization divergence abstraction} \\
+\downarrow \\
+\textnormal{Formal protocol consequence}.
+\end{array}
+\]
+The first arrow is a conceptual connection, not a proved refinement relation.
+ProVerif neither executes the Python matcher nor discovers its implementation
+inconsistency. The analysis concerns fixed scenarios and the permission
+boundaries defined in Chapter~3.
 
-The Stage-1 authorization diagnostic preserves those assumptions and adds
-policy events without making policy evaluation an execution guard. In that
-diagnostic, a deny event is recorded but does not block the protocol, and the
-allow event is declared but never executed. The recorded failure of its added
-correspondence therefore identifies a missing modeled authorization
-dependence while the baseline authentication and secrecy results are retained.
-It does not by itself establish a matcher-dependent execution by a malicious
-registered agent in the implementation.
+% Sources: paper/PAPER_STORY.md; proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--4;
+% paper/sections/03_problem_formulation.tex; paper/sections/05_attack.tex.
 
-In particular, the diagnostic event named $\mathsf{Accept}$ denotes the
-initiating peer's successful receipt and verification of a token. It does not
-denote the receiving peer's acceptance of an application message. Its failed
-correspondence is thus evidence about authorization coverage at token receipt,
-not a violation of Chapter~3's message-level condition. A message-level claim
-requires an event at the receiving agent's message-acceptance point and a model
-connecting policy evaluation, credential issuance, and that event.
+\subsection{Protocol Model}
 
-% Evidence: proofs/proverif/agent_communication.pv, channels, keys, processes, queries.
-% Evidence: proofs/proverif/agent_communication_authz.pv, AUTHZ event comments.
-% Evidence: proofs/AUTHORIZATION_DIAGNOSTIC.zh-CN.md, Sections 2--4 and 7.
-% Evidence: proofs/evidence/authz-stage1-20260916T123834944479Z/verification-summary.txt.
-% TODO:
-% - Map existing events and queries to the guarantees they actually establish.
-% - Identify missing policy-decision, issuance, and acceptance relationships.
-% - Discuss subsequent guarded message models separately from the Stage-1 diagnostic.
+The Provider abstracts registration checks, participant authentication, and
+the authorization-related release of contact material. \texttt{PeerA}, the
+receiver $R$, issues tokens and receives application messages.
+\texttt{PeerB}, the initiator $I$, requests a token and sends a message after
+receiving it. A CA process supplies certificates. Replicated processes use
+symbolic cryptography and public communication; the private
+\texttt{tls\_chat} channel abstracts authenticated, confidential transport.
 
-\subsection{Authorization Events}
-% TODO:
-% - Specify candidate policy, credential, token, and access events.
-% - Bind participants, resource, policy version, and session consistently.
+We distinguish the divergence model, \texttt{turepass}, from three independent
+gate controls. The controls differ only in their preset gate permissions.
+They use a fixed private token, whereas \texttt{turepass} generates fresh
+tokens. The controls are not verified repairs or a refinement of that model.
 
-\subsection{Authorization Security Property}
-% TODO:
-% - State a candidate correspondence between accepted access and an applicable allow decision.
-% - Decide whether stronger or injective correspondence is needed after modeling.
+% Models share the prefix proofs/proverif/agent_communication_authz_chat_:
+% turepass.pv; p_allow_r_allow.pv; p_deny_r_allow.pv; p_allow_r_deny.pv.
 
-\subsection{Vulnerable Model}
-% TODO:
-% - Plan an abstraction that represents the verified policy mismatch.
-% - Record assumptions required to interpret any counterexample trace.
+\subsection{Authorization Events and State}
 
-\subsection{Repaired Model}
-% TODO:
-% - Describe the proposed repair only after the design is fixed.
-% - Recheck the new authorization property and original claims in the repaired model.
+In \texttt{turepass}, \texttt{ScenarioSpecDeny} and
+\texttt{ScenarioImplAllow} are initialized table facts: analysis-level
+assumptions representing the observed inconsistency, not matcher execution
+events. They share a scenario identifier and initiating identity.
+\texttt{SpecIntendedDeny}$(I,R)$ records the assumed denial. The following
+protocol events use receiver-first arguments; $t$ denotes the wire token.
+\begin{center}
+\begin{tabular}{p{0.43\linewidth}p{0.47\linewidth}}
+\hline
+Event & Observation \\
+\hline
+\texttt{ProviderRelease}$(R,I)$ & Contact material released. \\
+\texttt{TokenIssue}$(R,I,t)$ & Token issued for the initiator. \\
+\texttt{TokenReceive}$(R,I,t)$ & Initiator received and verified the token. \\
+\texttt{ChatSend}$(R,I,t,m)$ & Initiator sent message $m$ with $t$. \\
+\texttt{ChatAccept}$(R,I,t,m)$ & Receiver accepted the application message. \\
+\hline
+\end{tabular}
+\end{center}
+
+The \texttt{ProviderReleased} table abstracts a handoff to receiver processing.
+\texttt{ActiveToken} associates receiver, initiator, token, and the sender's
+access-control public key. Gate controls additionally require
+\texttt{ProviderAuthorized} for release and \texttt{ReceiverAuthorized} for
+issuance. Receiver processing also requires the handoff state. These tables
+govern execution; recording an event alone does not grant or deny permission.
+
+% Source: event declarations, tables, and process guards in the four models.
+
+\subsection{Verification Queries}
+
+\emph{Reachability.} The divergence model queries whether
+\texttt{ChatAccept} can occur. The controls separately query
+\texttt{ProviderRelease}, \texttt{TokenIssue}, and \texttt{ChatAccept} for
+the fixed peer identities. A false \texttt{not event(...)} result with a
+reconstructed witness establishes an existential modeled consequence under
+the scenario assumptions, not a security guarantee. There is no independent
+\texttt{TokenIssue} reachability query in \texttt{turepass}.
+
+\emph{Correspondence.} All four models query
+\[
+\mathsf{ChatAccept}(R,I,t,m)\Longrightarrow\mathsf{TokenIssue}(R,I,t).
+\]
+The controls also query
+\[
+\mathsf{ChatAccept}(R,I,t,m)\Longrightarrow\mathsf{ChatSend}(R,I,t,m).
+\]
+Variables are universally quantified. These non-injective correspondences
+require prior issuance for the same participants and token, or prior sending
+of the same message, respectively. They do not establish policy permission,
+unique sessions, or Chapter~3's full decision-to-access justification.
+
+\emph{Gate placement.} The controls preset Provider/receiver permissions to
+allow/allow, deny/allow, and allow/deny. Comparing their three reachability
+queries locates blocking stages under the shared handoff abstraction.
+
+% Source: final query blocks in the four models; no queries were added.
+
+\subsection{Formal Results}
+
+The archived ProVerif~2.05 results cover the unchanged inputs; their hashes
+match the corresponding manifests. In \texttt{turepass}, message acceptance
+is reachable with the assumed denial and abstract implementation permission,
+and the issuance correspondence is true. Token issuance appears in the
+witness; it is not reported as a separate query result.
+
+For the controls, the results are:
+\begin{center}
+\begin{tabular}{llll}
+\hline
+Provider / Receiver & Release & Issue & Accept \\
+\hline
+Allow / Allow & Reachable & Reachable & Reachable \\
+Deny / Allow & Unreachable & Unreachable & Unreachable \\
+Allow / Deny & Reachable & Unreachable & Unreachable \\
+\hline
+\end{tabular}
+\end{center}
+Provider denial stops release and downstream events. Receiver denial stops
+issuance and message acceptance after material release remains possible.
+Both control correspondences are true in all three scenarios. They are
+non-vacuous on the allow/allow path; in each denial scenario, acceptance is
+unreachable and the correspondences hold vacuously.
+
+These results are documented in archived summaries and raw output.
+The divergence package records its command, version,
+input hash, and zero exit status; it documents a fresh execution separately
+from the historical witness discussed in Chapter~5.\footnote{Evidence under
+\texttt{proofs/evidence/}: \texttt{authz-turepass-\allowbreak
+20260919T090826295518Z/} and \texttt{authz-chat-gates-\allowbreak
+20260918T023621017067Z/}.}
+
+% Results: proofs/evidence/authz-turepass-20260919T090826295518Z/
+% manifest.json, verification-summary.txt, and raw stdout;
+% proofs/evidence/authz-chat-gates-20260918T023621017067Z/
+% manifest.json, verification-summary.txt, and scenario stdout files.
+
+\subsection{Formalization Boundary}
+
+The matcher inconsistency is demonstrated at implementation level, and
+ProVerif models its protocol-level consequence under explicit assumptions.
+The models do not prove Python execution correctness, concrete rulebook
+evaluation, or a production deployment result. They establish reachability,
+blocking, and correspondences within the stated symbolic scenarios.
+
+The prescribed peer processes do not represent arbitrary application behavior
+under attacker control. Private transport and shared state remain abstractions;
+token expiry, quota consumption, revocation, and policy updates are not
+covered. No cryptographic primitive failure or key compromise is established.
+The recorded correspondences are not a revalidation of every original
+authentication or secrecy property. A strict implementation-to-model mapping
+and service-level reproduction remain outside the completed evidence.
