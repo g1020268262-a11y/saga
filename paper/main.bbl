@@ -1,0 +1,81 @@
+\begin{thebibliography}{10}
+
+\bibitem{becker2007secpal}
+Moritz~Y. Becker, C{\'e}dric Fournet, and Andrew~D. Gordon.
+\newblock Design and semantics of a decentralized authorization language.
+\newblock In {\em 20th IEEE Computer Security Foundations Symposium (CSF)},
+  pages 3--15. IEEE, 2007.
+
+\bibitem{becker2004cassandra}
+Moritz~Y. Becker and Peter Sewell.
+\newblock {Cassandra}: Distributed access control policies with tunable
+  expressiveness.
+\newblock In {\em 5th IEEE International Workshop on Policies for Distributed
+  Systems and Networks (POLICY)}, 2004.
+
+\bibitem{birgisson2014macaroons}
+Arnar Birgisson, Joe~Gibbs Politz, {\'U}lfar Erlingsson, Ankur Taly, Michael
+  Vrable, and Mark Lentczner.
+\newblock Macaroons: Cookies with contextual caveats for decentralized
+  authorization in the cloud.
+\newblock In {\em Network and Distributed System Security Symposium (NDSS)}.
+  Internet Society, 2014.
+
+\bibitem{blanchet2016proverif}
+Bruno Blanchet.
+\newblock Modeling and verifying security protocols with the applied pi
+  calculus and {ProVerif}.
+\newblock {\em Foundations and Trends in Privacy and Security}, 1(1--2):1--135,
+  2016.
+
+\bibitem{debenedetti2024agentdojo}
+Edoardo Debenedetti, Jie Zhang, Mislav Balunovi{\'c}, Luca Beurer-Kellner, Marc
+  Fischer, and Florian Tram{\`e}r.
+\newblock {AgentDojo}: A dynamic environment to evaluate prompt injection
+  attacks and defenses for {LLM} agents.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~37, 2024.
+
+\bibitem{ellison1999spki}
+C.~Ellison, B.~Frantz, B.~Lampson, R.~Rivest, B.~Thomas, and T.~Ylonen.
+\newblock {SPKI} certificate theory.
+\newblock RFC 2693, RFC Editor, September 1999.
+\newblock Experimental.
+
+\bibitem{fisler2005margrave}
+Kathi Fisler, Shriram Krishnamurthi, Leo~A. Meyerovich, and Michael~Carl
+  Tschantz.
+\newblock Verification and change-impact analysis of access-control policies.
+\newblock In {\em 27th International Conference on Software Engineering
+  (ICSE)}, 2005.
+
+\bibitem{hardt2012oauth}
+D.~Hardt.
+\newblock The {OAuth 2.0} authorization framework.
+\newblock RFC 6749, RFC Editor, October 2012.
+\newblock Editor; Standards Track.
+
+\bibitem{lampson1992authentication}
+Butler Lampson, Mart{\'i}n Abadi, Michael Burrows, and Edward Wobber.
+\newblock Authentication in distributed systems: Theory and practice.
+\newblock {\em ACM Transactions on Computer Systems}, 10(4):265--310, 1992.
+
+\bibitem{meier2013tamarin}
+Simon Meier, Benedikt Schmidt, Cas Cremers, and David Basin.
+\newblock The {TAMARIN} prover for the symbolic analysis of security protocols.
+\newblock In {\em Computer Aided Verification (CAV)}, volume 8044 of {\em
+  Lecture Notes in Computer Science}, pages 696--701. Springer, 2013.
+
+\bibitem{ramchurn2004trust}
+Sarvapali~D. Ramchurn, Dong Huynh, and Nicholas~R. Jennings.
+\newblock Trust in multi-agent systems.
+\newblock {\em The Knowledge Engineering Review}, 19(1):1--25, 2004.
+
+\bibitem{wang2024agents}
+Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao Yang, Jingsen Zhang, Zhiyuan
+  Chen, Jiakai Tang, Xu~Chen, Yankai Lin, Wayne~Xin Zhao, Zhewei Wei, and
+  Jirong Wen.
+\newblock A survey on large language model based autonomous agents.
+\newblock {\em Frontiers of Computer Science}, 18(6):186345, 2024.
+
+\end{thebibliography}
