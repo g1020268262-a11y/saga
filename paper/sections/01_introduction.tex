@@ -1,20 +1,62 @@
 \section{Introduction}
 
-\subsection{Motivation}
-% TODO:
-% - Explain why autonomous agent communication and resource access need governance.
-% - State why user policy enforcement matters alongside identity checks.
+% Background: paper/PAPER_STORY.md, Section 1;
+% paper/sections/03_problem_formulation.tex, Authentication Is Not Authorization.
+As agentic systems increasingly rely on autonomous agent-to-agent communication,
+they require identity verification, secure communication, and contact policies:
+authentication answers ``who is communicating,'' whereas authorization answers
+``who should be allowed to communicate.'' Authenticating a participant and
+protecting its messages do not establish that a user's policy permits that
+participant to communicate.
 
-\subsection{Problem}
-% TODO:
-% - Describe the possible gap between authentic credentials and policy-compliant access.
-% - State the research question without claiming a demonstrated outcome.
+% Problem: proofs/CLAIM_EVIDENCE_MATRIX.md, Claim 1;
+% paper/sections/03_problem_formulation.tex, Policy--Authorization Consistency.
+Authentication and confidentiality verification can establish credential origin
+and secrecy without establishing authorization correctness. That additional
+guarantee requires consistency among policy semantics, implementation, and
+protocol enforcement. We investigate this gap through a SAGA case study, asking
+whether its authorization pipeline preserves
+\emph{policy--authorization consistency}: accepted contact must be justified by
+an applicable decision under the receiving user's intended policy semantics.
 
-\subsection{Key Observation}
-% TODO:
-% - Identify the scope of the existing authentication and secrecy claims.
-% - Explain which authorization relationship needs separate examination.
+% Observation: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1--2;
+% proofs/AUDIT_STATUS.md, Stages 1 and 3.
+In the diagnostic extension of SAGA's reference communication model, the
+existing authentication and token-secrecy queries remain satisfied, while an
+added authorization correspondence fails. This result identifies a proof
+coverage gap at token receipt. Separately, the contact policy matcher can allow
+contact where its documented most-specific-rule semantics require denial.
+Together, these observations motivate examining the chain from policy
+specification, through matcher implementation and authorization decision, to
+protocol capability, with separate evidence for each boundary.
 
-\subsection{Contributions}
-% TODO:
-% - Add contributions only after the implementation, model, and evidence are complete.
+% Approach: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--4;
+% proofs/AUDIT_STATUS.md, Stages 2--4.
+Our analysis has three steps. First, archived direct calls to the matcher show
+order-dependent decisions: a general permission can override a specific denial.
+Second, we use ProVerif to analyze the consequences. The formal model
+abstracts the mismatch using fixed scenario facts: the specification denies
+contact while the implementation allows it. It does not execute the Python
+matcher. A saved trace reaches
+token issuance (\texttt{TokenIssue}) and message acceptance
+(\texttt{ChatAccept}) under these assumptions. Third, we compare Provider and
+receiver authorization gates:
+Provider denial prevents material release, whereas receiver denial can prevent
+issuance after release, under the modeled gate and handoff assumptions.
+A strict semantic mapping from concrete matcher execution
+to formal events remains unfinished; service-level end-to-end reproduction is
+outside the completed evidence.
+
+% Contributions: paper/PAPER_STORY.md, Section 6;
+% proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1--4.
+Our contributions are:
+\begin{itemize}
+  \item We identify an authorization enforcement gap between cryptographic
+    verification and policy enforcement in agentic systems through the SAGA
+    case study.
+  \item We demonstrate an implementation-level, order-dependent authorization
+    inconsistency in SAGA's contact policy matcher.
+  \item We formally analyze how authorization divergence can affect agent
+    communication authorization under explicit modeling assumptions, including
+    the effect of Provider and receiver gate placement.
+\end{itemize}
