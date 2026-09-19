@@ -1,31 +1,91 @@
-\section{Background and SAGA Overview}
+\section{Background}
 
-\subsection{System Model}
-% TODO:
-% - Introduce User, CA, Provider, Initiating Agent, and Receiving Agent.
-% - State only roles and trust assumptions needed later.
+\subsection{Agentic Systems and Inter-Agent Communication}
 
-\subsection{Agent Registration}
-% TODO:
-% - Outline certificates, agent keys, PAC/SAC, one-time keys, registration, and Provider stamp.
-% - Check the exact order against the implementation and specification.
+% Sources: README.md, Abstract, Agent Communication, and Experiments;
+% paper/PAPER_STORY.md, Section 1; paper/sections/01_introduction.tex.
+Large language model (LLM)-based agents can interact with other agents to
+coordinate work and delegate tasks on behalf of users. Such interaction allows
+a task to involve multiple participants, each contributing information or
+performing part of the work. Communication may proceed autonomously, with
+limited human involvement in individual exchanges. In this setting,
+delegation describes assigning work to another agent; the permission to
+contact that agent is governed by the communication system's authorization
+policy.
 
-\subsection{Contact Policy}
-% TODO:
-% - Describe rulebook patterns, specificity, and budget values.
-% - Distinguish documented policy intent from implementation behavior.
+Inter-agent communication therefore involves both task messages and mechanisms
+for governing their exchange. Agent identities identify the participants,
+secure transport protects communication, and authorization policies specify
+which contacts are permitted. We call the participant requesting contact the
+\emph{initiating agent} and the participant receiving that request the
+\emph{receiving agent}.
 
-\subsection{Agent Access Protocol}
-% TODO:
-% - Trace the intended access request, policy decision, OTK release, agent connection, and token flow.
-% - Record which participant makes each decision.
+SAGA provides a concrete setting for these roles. Users register their agents
+with a Provider that maintains agent contact information and user-defined
+access-control policies. The Provider assists agents in enforcing these
+policies, while access-control tokens mediate subsequent communication.
+This separates the user's configuration of contact permissions from the
+agents' autonomous exchange of task messages.
 
-\subsection{Access-Control Token}
-% TODO:
-% - Confirm the actual token fields, including nonce, time, quota, and recipient identity.
-% - Explain only the fields needed for the authorization argument.
+\subsection{Authentication, Authorization, and Confidentiality}
 
-\subsection{Existing Formal Security Claims}
-% TODO:
-% - Inventory the original ProVerif authentication and token secrecy queries.
-% - Cite exact model locations and results after checking them.
+% Sources: paper/PAPER_STORY.md, Section 1;
+% paper/sections/03_problem_formulation.tex, Authentication Is Not Authorization.
+\emph{Authentication} answers ``Who is communicating?'' It establishes the
+identity of a participant in a protocol exchange. Identity credentials and
+checks on protocol messages provide the basis for associating an exchange
+with that participant.
+
+\emph{Authorization} answers ``Who is allowed to communicate?'' It determines
+whether a participant has permission to perform the requested interaction
+under an applicable policy. For contact authorization, the relevant decision
+concerns an initiating agent's permission to communicate with a receiving
+agent according to the receiving user's rules.
+
+\emph{Confidentiality} answers ``Who can learn the exchanged information?''
+It concerns restricting disclosure of protected information to the parties
+permitted to learn it within the specified security model. Protected
+information may include communication content and credentials exchanged by
+the protocol.
+
+These properties are complementary. Authentication supplies the participant
+identity to which a policy can apply; authorization determines the permitted
+interaction; confidentiality protects information exchanged during the
+protocol. Each describes a distinct aspect of communication security.
+
+\subsection{Policy-Based Authorization}
+
+% Sources: paper/PAPER_STORY.md, Section 1;
+% paper/sections/03_problem_formulation.tex, Policy--Authorization Consistency
+% and Authorization Pipeline; README.md, Abstract and Agent Registration.
+Policy-based access control expresses permissions through rules and applies
+those rules when handling requests. Three concepts organize this process:
+policy specification, policy evaluation, and enforcement.
+
+\emph{Policy specification} defines the meaning of the rules, including which
+subjects and interactions they cover and how applicable rules determine a
+decision. In SAGA, a receiving user's contact rulebook associates agent-identity
+patterns with budget values. Pattern matching identifies applicable rules;
+the policy's rule-selection convention and interpretation of the selected
+budget determine contact permission.
+
+\emph{Policy evaluation} applies those semantics to a particular request.
+Its inputs include the requesting identity, the target, and the applicable
+policy. The result expresses whether the request is permitted under those
+inputs. Policy meaning defines the decision to be computed, while the
+evaluation procedure implements that computation.
+
+\emph{Enforcement} applies the decision at the relevant protocol boundary.
+In SAGA's communication flow, the Provider evaluates the receiving user's
+stored rulebook before releasing the material needed to continue contact.
+The receiving agent performs policy and credential checks, issues an
+access-control token, and subsequently checks a presented token when handling
+a message. These stages distinguish permission to proceed, credential
+issuance, and message acceptance.
+
+The authorization outcome thus depends on the specified policy semantics,
+their evaluation for the request, and the application of the resulting
+decision at the appropriate stages. A policy decision concerns a particular
+initiating agent and receiving agent; where a credential mediates contact,
+its use is part of this authorization context. This terminology provides the
+basis for the policy--authorization consistency requirement developed next.
