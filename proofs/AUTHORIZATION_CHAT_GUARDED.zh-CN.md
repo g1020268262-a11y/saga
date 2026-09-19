@@ -1,5 +1,7 @@
 # SAGA 聊天消息授权控制模型
 
+> Current status update, 2026-09-19: Previous assessment outdated: matcher evidence was later confirmed through test-matcher. 本页是旧版 Stage 2 控制模型记录；当前统一状态见 [AUDIT_STATUS.md](AUDIT_STATUS.md)。
+
 > 历史 Stage 2 控制模型：两道门控共用 `Authorized(A,B)`，无法分别验证 Provider 与接收方的阻断作用；`MatcherAllow` 也只是预置场景事件。独立门控修订及新证据见 [AUTHORIZATION_CHAT_GATES.zh-CN.md](AUTHORIZATION_CHAT_GATES.zh-CN.md)。本页保留原始运行说明与结果，不应作为独立门控或真实 matcher 验证的证据。
 
 本阶段在 Stage 1 的 token 接收模型之外，建立一个**授权门控正确执行**时的单消息模型，用来检查事件放置、token 绑定和正常/拒绝两条控制路径。它不表示当前 Python matcher 的行为，也不构造策略拒绝但消息被接受的执行链。

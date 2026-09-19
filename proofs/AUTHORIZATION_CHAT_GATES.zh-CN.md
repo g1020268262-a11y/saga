@@ -1,5 +1,7 @@
 # SAGA Provider 与接收方独立授权门控控制模型
 
+> Current status update, 2026-09-19: Previous assessment outdated: matcher evidence was later confirmed through test-matcher. 本页仍只作为 Stage 2 授权门控 control experiment；matcher 实现级越权已由独立测试确认，当前统一状态见 [AUDIT_STATUS.md](AUDIT_STATUS.md)。
+
 本次修订解决旧版 `agent_communication_authz_chat_allow.pv` / `agent_communication_authz_chat_deny.pv` 共用一张 `Authorized(A,B)` 表的问题。旧版拒绝场景没有插入该表，因此只能说明“至少一道门控阻断了聊天”，不能分别判断 Provider 与 PeerA 接收方的作用。旧模型与既有证据保持原样，供追溯；以下三个新模型是当前控制实验。
 
 ## 模型变化

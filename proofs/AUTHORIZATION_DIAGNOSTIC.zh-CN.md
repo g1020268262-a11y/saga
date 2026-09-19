@@ -1,5 +1,7 @@
 # SAGA 授权覆盖诊断：第一阶段
 
+> Current status update, 2026-09-19: Previous assessment outdated: matcher evidence was later confirmed through test-matcher. 本页保留 Stage 1 的历史诊断语境；关于当前四阶段审查状态、已确认的 matcher 实现级越权和下一步映射任务，见 [AUDIT_STATUS.md](AUDIT_STATUS.md)。
+
 本次执行承接「saga」对话最后提出的任务：复制原通信模型，加入授权事件及 correspondence query，重跑原有性质，保存新增查询的实际反例轨迹。第二阶段的 matcher 形式化和业务消息接受模型尚未执行。
 
 **已完成并实际运行验证：原通信模型的 3 条认证性质及 token 保密性仍为 `true`，新增授权 correspondence 为 `false`，且 ProVerif 成功重建了反例轨迹。** 这确认了本轮构造场景中的授权覆盖缺口；结论范围是 token 接收阶段，尚不包含 matcher 驱动的端到端消息越权。

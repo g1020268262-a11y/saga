@@ -1,5 +1,20 @@
 Symbolic Formal Verification of the SAGA protocol
 
+# Authorization Audit Status
+
+The current authorization-audit record is
+[AUDIT_STATUS.md](AUDIT_STATUS.md). It supersedes older interim statements that
+described the matcher bypass as unproved.
+
+Current boundary:
+
+- matcher implementation-level bypass: confirmed by
+  [test_matcher_bug.py](test_matcher_bug.py) and the earlier direct matcher
+  evidence in
+  [policy-matcher-sanity.json](evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json).
+- authorization gate / protocol consequence modeling: partially complete.
+- full service-level end-to-end exploit: next stage.
+
 # Reproduction Steps
 1. Install the [nix package manager](https://nixos.org/download/)
 2. Navigate to the current directory, and run `nix develop`. You will get dropped into a devshell with [ProVerif](https://en.wikipedia.org/wiki/ProVerif) and [Verifpal](https://verifpal.com/). Feel free to execute another shell if you don't like `bash`.
