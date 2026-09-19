@@ -29,39 +29,13 @@ what those identities may do.
 % Sources: paper/sections/03_problem_formulation.tex;
 % paper/sections/07_evaluation.tex, Authorization coverage gap and consequence model.
 
-\subsection{Authorization as a Security-Critical Layer}
-
-The case study motivates treating policy evaluation code as a security-critical
-component. The relevant chain is policy specification, decision
-implementation, and enforcement point. The specification defines permission;
-the evaluator implements that meaning; enforcement uses the resulting
-decision to release material, issue a credential, or accept communication.
-Reviewing only the last check leaves the correctness of its authorization
-input unresolved.
-
-The confirmed inconsistency thus raises a question beyond the local coding
-error: how does the evaluator's contract justify subsequent protocol actions?
-That relationship remains a verification obligation, not a completed
-refinement result or evidence of defects in other matchers.
-
-The gate controls further distinguish enforcement stages. In the model,
-receiver denial prevents issuance and acceptance even when Provider release
-remains possible; Provider denial blocks the earlier release boundary.
-Assessing message acceptance alone therefore does not settle the obligation
-governing material release. The protected action and its enforcement point
-must be explicit. These controls do not establish a deployment repair.
-
-% Sources: paper/PAPER_STORY.md, Sections 1, 6, and 8;
-% proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2 and 4;
-% paper/sections/03_problem_formulation.tex, intermediate permission conditions.
-
 \subsection{Formal Verification Coverage}
 
-Formal verification makes assumptions and obligations precise. Authentication
-correspondences constrain the origins of protocol events, while secrecy
-queries constrain adversarial knowledge. Their value is preserved when an
-authorization obligation falls outside their scope: the missing obligation
-does not invalidate the properties that were actually established.
+ProVerif verifies modeled properties under explicit assumptions.
+Authentication correspondences constrain event origins; secrecy queries
+constrain adversarial knowledge. An absent or abstract authorization decision
+layer leaves implementation authorization correctness unestablished, without
+invalidating the properties actually verified.
 
 The distinction is particularly important in the diagnostic model, where
 \texttt{PolicyAllow} is never emitted. Its failed correspondence identifies
@@ -72,34 +46,61 @@ rather than calculating a concrete matcher decision. The implementation
 observation and the formal reachability witness must therefore remain
 separate evidence layers.
 
-For an authorization claim, verification scope must account for the relevant
-decision layer, either through an explicit representation or through a
-justified connection to independently analyzed implementation behavior.
-Merely naming an event after a policy decision does not supply that connection.
-Likewise, a true acceptance correspondence requires interpretation alongside
-reachability: in the denial controls, it holds vacuously. The issue is the
-alignment of model, query, and claimed behavior, rather than a limitation
-inferred about ProVerif from behavior the model does not represent.
+An authorization claim requires representing the decision layer or justifying
+its connection to independently analyzed implementation behavior. An event
+name alone does not supply that connection. Correspondences also require
+reachability context: they hold vacuously in the denial controls. The concern
+is alignment between model, query, and claim, not the verification tool.
 
 % Sources: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1 and 3--4;
 % paper/sections/06_formalization.tex, modeling boundary and queries;
 % paper/sections/07_evaluation.tex, formal verification results.
 
+\subsection{Policy Semantics as Security-Critical State}
+
+Authorization decisions are security-critical state: they determine whether
+an enforcement point may release material, issue a credential, or accept
+communication. Their meaning depends on the relationship between policy
+semantics, evaluation, and enforcement. Protecting a decision in transit or
+checking the resulting credential does not establish that the evaluator
+computed the intended permission.
+
+In this case study, rule ordering, specificity, and budget interpretation
+connect the policy to that decision. Specificity defines which matching
+rule should determine the result; the observed order dependence shows why
+list traversal must preserve that rule-selection contract. The selected
+budget then needs an explicit permission interpretation. In the recorded
+case, $-1$ denotes denial and $10$ denotes permission. This use of a budget
+as a contact decision is distinct from enforcing quota consumption over
+subsequent messages, which the evaluated models do not establish.
+
+The gate controls show why the decision's consumer also matters. Receiver
+denial blocks issuance and acceptance while Provider release remains
+possible; Provider denial blocks the earlier release boundary. Thus, policy
+meaning and the protected action must be connected at each relevant stage.
+These observations motivate treating policy evaluation as security-critical
+code. They neither establish a deployed repair nor imply that all policy
+engines contain the observed inconsistency.
+
+% Sources: paper/PAPER_STORY.md, Sections 3 and 6;
+% proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2 and 4;
+% paper/sections/07_evaluation.tex, Matcher Evaluation and gate experiments.
+
 \subsection{Generalization Beyond SAGA}
 
 SAGA is a case study, not a representative sample of all agentic systems.
-The observed gap is relevant to systems where policy decisions are delegated
-to software components and then consumed at a separate enforcement point.
+Programmable authorization components create consistency requirements
+between the policy they express, the decisions they compute, and the actions
+that consume those decisions. The SAGA observation motivates examining
+these requirements when evaluation and enforcement are separated.
 Agent frameworks, API gateways, capability systems, and policy engines offer
 contexts in which this separation may warrant examination. This relevance
 concerns the verification question, not evidence of a shared vulnerability.
 
-Applying the question elsewhere requires identifying local policy semantics,
-the evaluator, and the action relying on its decision, with evidence connecting
-them under that system's assumptions. We have not verified these systems for
-the same inconsistency or consequence. The transferable perspective is to
-examine the policy-to-enforcement connection; prevalence and impact beyond
-SAGA remain unmeasured.
+Applying this perspective requires evidence connecting local policy semantics,
+evaluation, and enforcement under each system's assumptions. We have not
+verified these systems for the same inconsistency or consequence; prevalence
+and impact beyond SAGA remain unmeasured.
 
 % Sources: paper/PAPER_STORY.md, case-study positioning;
 % proofs/CLAIM_EVIDENCE_MATRIX.md, Overall Research Argument;
@@ -116,28 +117,29 @@ participant direction to the formal state and observations. The present
 combination of evidence does not establish that refinement relation.
 
 \paragraph{Deployment evidence.}
-No production deployment exploit is demonstrated. The study does not report
-a remote exploit, an attack on a deployed service, or an experiment involving
-malicious infrastructure. The symbolic witness follows the prescribed peer
-processes and does not establish arbitrary attacker control. It also does not
-show completion of a downstream application or tool action. These limits
-qualify the communication impact, not the confirmed matcher discrepancy.
+No production deployment exploit, remote attack, or malicious infrastructure
+experiment is demonstrated. The symbolic witness follows prescribed peer
+processes, without establishing arbitrary attacker control or completion of
+downstream tool actions. These limits qualify communication impact, not the
+confirmed matcher discrepancy.
 
 \paragraph{Model abstraction.}
 Private transport abstracts an authenticated, confidential channel rather
 than verifying TLS. The Provider-to-receiver handoff is also abstract.
 Although issuance and acceptance are modeled, the complete token lifecycle
 is not: expiry, revocation, policy updates, and quota consumption are outside
-the evaluated properties. Fresh tokens do not establish session isolation
-or injective agreement. The models therefore do not simulate a complete
+the evaluated properties. Concurrency is represented by replicated processes
+and shared token state, not by the concrete service scheduling and storage
+implementation. The witness can involve different issuing and accepting
+process instances; fresh tokens do not establish session isolation or
+injective agreement. The models therefore do not simulate a complete
 deployment or establish the correctness of these omitted behaviors.
 
 \paragraph{Single case study.}
-The evidence concerns SAGA and the explicit scenarios evaluated here. It
-provides neither a survey of policy implementations nor a measure of how
-often such inconsistencies occur. Further studies of additional agent
-systems are needed to assess the broader applicability of the analysis,
-with separate implementation evidence and modeling assumptions for each.
+The evidence concerns SAGA and the evaluated scenarios, not the prevalence
+of such inconsistencies. Assessing broader applicability requires additional
+agent-system studies, each with its own implementation evidence and modeling
+assumptions.
 
 % Sources: paper/sections/03_problem_formulation.tex, static-policy scope;
 % paper/sections/05_attack.tex, Evidence Boundary;
