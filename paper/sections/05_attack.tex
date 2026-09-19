@@ -105,9 +105,11 @@ facts \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} for the scenario
 identifier \texttt{BuggyPolicy} and the initiating agent.
 
 This is the abstraction boundary. The terms \emph{SpecDecision} and
-\emph{ImplDecision} describe the two sides of the analysis; they are not
-declared events in this model. Likewise, the two scenario predicates are
-table facts supplied at initialization. The
+\emph{ImplDecision} are analysis-level labels rather than formal event
+predicates. They describe the two sides of the authorization inconsistency
+being modeled. ProVerif models the protocol consequence after the assumed
+mismatch; it does not compute the matcher result. The two scenario predicates
+are table facts supplied at initialization. The
 event \texttt{SpecIntendedDeny} records the assumed policy denial. The table
 fact representing implementation permission allows the modeled enforcement
 processes to continue.
@@ -146,11 +148,11 @@ analysis.
 % Evidence: proofs/proverif/agent_communication_authz_chat_turepass.pv;
 % proofs/CLAIM_EVIDENCE_MATRIX.md, Claim 3 and event conventions.
 
-\subsection{Attack Trace}
+\subsection{Formal Reachability Witness}
 
-The saved \texttt{proofs/evidence/turetrace} contains a reconstructed symbolic
-execution reaching \texttt{ChatAccept}. The projection below retains the
-observations relevant to authorization. Line numbers refer to the saved file,
+The historical \texttt{proofs/evidence/turetrace} contains an existential
+symbolic reachability witness for \texttt{ChatAccept}. The projection below
+retains the observations relevant to authorization. Line numbers refer to that file,
 not to the process-position numbers printed inside the trace.
 \begin{center}
 \begin{tabular}{rp{0.76\linewidth}}
@@ -168,13 +170,11 @@ Line & Observation \\
 \end{tabular}
 \end{center}
 
-First, the intended denial is present together with permission attributed to
-the implementation. Denial here is a recorded scenario fact,
-not a guard that stops the process. Second, the trace includes Provider
-release and credential issuance under the implementation-side assumption.
-Third, the issued token appears in the receipt, send, and acceptance events.
-Thus the witness extends beyond receipt of a credential to an application
-message accepted by the receiving process.
+In the reachability witness, \texttt{TokenIssue} and \texttt{ChatAccept}
+coexist with the assumed policy denial and abstract implementation permission.
+Denial is a recorded scenario fact, not a blocking guard.
+The token recorded at issuance also appears in receipt, sending, and message
+acceptance; the witness therefore extends beyond credential receipt.
 
 \texttt{ChatAccept} means that the receiving agent accepts an application
 message under a token-mediated communication path, after the checks represented
@@ -182,22 +182,21 @@ in this model. It does not mean that a production service handled the message
 or that a downstream tool operation completed. It is also distinct from
 \texttt{Accept}, which denotes token receipt and verification in these models.
 
-The final saved result states that
-\texttt{not event(ChatAccept(...))} is false, following the report that a trace
-has been found. Its interpretation is existential reachability of message
-acceptance. In conjunction with the recorded denial assumption, it supports
-the abstract authorization consequence. It is not a failed cryptographic
-authentication query.
+The saved result states that \texttt{not event(ChatAccept(...))} is false,
+with a reconstructed witness: message acceptance is existentially reachable.
+Together with the denial assumption, this supports the abstract authorization
+consequence, not a failed cryptographic authentication query. The fresh
+ProVerif~2.05 run reproduces this result and archives the full output.
 
-The projection must not be read as a single isolated session. The saved
-execution contains replicated process instances and shared token state; the
-instance issuing the token at line~168 differs from the instance accepting it
-at line~208. Fresh token generation alone therefore does not establish
-session isolation or injective agreement. Furthermore, although the model
-declares a \texttt{ChatAccept} to \texttt{TokenIssue} correspondence, this
-saved trace does not include its final verification result. Observing a prior
-issuance in this witness is narrower than proving that correspondence for all
-executions.
+The witness contains replicated processes and shared token state: the issuing
+instance at line~168 differs from the accepting instance at line~208. Fresh
+tokens therefore do not establish session isolation or injective agreement.
+The historical file omitted the final issuance-correspondence result; the
+fresh run records \texttt{ChatAccept} implying \texttt{TokenIssue} as true.
+This establishes prior issuance with the same receiver, sender, and token
+within the model, not intended policy permission. No independent
+\texttt{TokenIssue} reachability query exists; the summary distinguishes this
+absence from issuance observed in the witness.
 
 % Evidence: proofs/evidence/turetrace, lines 14, 16, 122, 128, 168,
 % 196, 202, 208, and 211--212; process copies a_5 and a_3.
@@ -205,15 +204,12 @@ executions.
 \subsection{Evidence Boundary}
 
 \paragraph{Established results.}
-The evidence supports two claims at different levels. First, the matcher
-implementation can produce permission inconsistent with the intended rule
-semantics. The self-contained \texttt{test\_matcher\_bug.py} illustrates the
-mechanism, and the archived sanity JSON supplies the direct implementation
-observation. Second, authorization divergence can coexist with credential
-issuance and communication acceptance in the formal model. The consequence
-model specifies the assumptions, and \texttt{turetrace} supplies the saved
-reachability witness. A model file alone is not the record of a successful
-verification run.
+The example script and direct sanity JSON record support the matcher
+inconsistency. Separately, the
+consequence model and its witnesses support coexistence of abstract divergence,
+issuance, and communication acceptance. The fresh run records message
+acceptance as reachable and the issuance correspondence as true. Matcher
+evidence remains distinct from formal execution evidence.
 
 \paragraph{Claims outside the evidence.}
 These results do not establish a cryptographic primitive failure, certificate
@@ -226,19 +222,26 @@ is not an additional completed path in this chapter.
 
 \paragraph{Remaining limitation.}
 The formal model abstracts the matcher result. Direct executable integration
-of the Python matcher with the formal model remains future work. This also
-requires an explicit, auditable semantic mapping of identities, policy
-decisions, and protocol observations. Such integration would need to justify
-the mapping, rather than merely pass a Boolean result into a scenario. The
-current \texttt{BuggyPolicy} identifier does not encode the concrete rulebook.
+with Python and an auditable semantic mapping of identities, policy decisions,
+and protocol observations remain future work. The \texttt{BuggyPolicy}
+identifier does not encode the concrete rulebook.
 
-The saved consequence trace also lacks an accompanying independent run
-manifest and complete verification output. Its visible events and reachability
-result can be reported, but missing provenance and query results cannot be
-inferred. Service-level end-to-end reproduction remains outside the completed
-evidence. This limitation does not retract the confirmed implementation-level
-mismatch; it defines the remaining connection between that result and the
-abstract communication consequence.
+The historical consequence trace lacks an independent run manifest for its
+original execution. The updated evidence package provides
+reproducible provenance for a fresh execution of the unchanged ProVerif
+consequence model.\footnote{New-run evidence:
+\texttt{proofs/\allowbreak evidence/\allowbreak authz-turepass-\allowbreak
+20260919T090826295518Z/}.}
+It records the execution timestamps, Git commit and branch, verifier version,
+executable and model hashes, command, exit status, raw standard output and
+error, and a summary extracted from that output. This package documents the
+new run; it does not retrospectively establish the origin of the historical
+\texttt{turetrace} file.
+
+Service-level end-to-end reproduction remains outside the completed evidence.
+New provenance supplies neither an implementation-to-model mapping nor a
+production execution, while the implementation-level mismatch remains confirmed.
 
 % Evidence boundary: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--3;
 % paper/PAPER_STORY.md, Sections 5 and 8.
+% New-run evidence: proofs/evidence/authz-turepass-20260919T090826295518Z/.
