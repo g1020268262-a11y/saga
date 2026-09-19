@@ -1,26 +1,244 @@
-\section{Attack Construction}
+\section{Attack Path: From Policy Inconsistency\\to Unauthorized Communication}
+\label{sec:attack-path}
 
-\subsection{Attack Goal}
-% TODO:
-% - Define a trace with a policy-denied subject and a later accepted access.
-% - Fix the policy version and relevant resource in the goal.
+\subsection{Overview}
 
-\subsection{Attacker Capabilities}
-% TODO:
-% - Record the legitimate registration and protocol actions needed by the counterexample.
-% - State which keys and trusted components remain uncompromised.
+The starting point of this case study is an authorization decision inconsistent
+with the receiving user's policy. Following the fixed-policy scope of
+Chapter~3, the initiating agent has a genuine identity, and the policy is an
+existing configuration outside its control. The relevant evidence connects
+two distinct levels: a confirmed matcher-level decision mismatch and a formal
+analysis of its possible communication consequences. The latter uses an
+abstraction of the mismatch rather than an execution of the complete service.
 
-\subsection{Rule-Ordering Attack}
-% TODO:
-% - Present the minimal counterexample once its result is reproduced and recorded.
-% - Separate policy-evaluation, credential, and access-acceptance observations.
+The conceptual chain is
+\[
+\begin{array}{c}
+\textnormal{Policy specification} \\
+\downarrow \\
+\textnormal{Matcher evaluation} \\
+\downarrow \\
+\textnormal{Authorization decision} \\
+\downarrow \\
+\textnormal{Credential issuance} \\
+\downarrow \\
+\textnormal{Message acceptance}.
+\end{array}
+\]
+These arrows identify dependencies to examine, not implications that every
+decision necessarily reaches the next stage. In particular, a matcher result,
+a Provider grant, and an accepted application message require different
+evidence.
 
-\subsection{Zero-Budget Semantic Attack}
-% TODO:
-% - Test whether zero-budget handling yields an independent complete trace.
-% - If it does not, report only a semantic inconsistency and its boundary.
+Cryptographic checks remain part of the modeled protocol: the consequence
+analysis does not disable them or assume that their primitives fail. The
+saved baseline diagnostic separately preserves its authentication and
+token-secrecy results. Those results do not automatically transfer to every
+query in the consequence model. The path studied here concerns the use of an
+incorrect authorization decision within the modeled protocol.
 
-\subsection{Why Existing Cryptographic Protections Do Not Prevent the Attack}
-% TODO:
-% - Explain which ordinary authentication and cryptographic checks still execute.
-% - Connect the failure to the authorization decision, using observed evidence.
+% Evidence: paper/PAPER_STORY.md, Sections 4--5;
+% proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1--3;
+% paper/sections/03_problem_formulation.tex, Threat Model.
+
+\subsection{Matcher-Level Counterexample}
+
+The existing \texttt{proofs/test\_matcher\_bug.py} illustrates the rule-selection
+inconsistency using this ordered rulebook:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Pattern & Budget & Role \\
+\hline
+\texttt{mallory@example.com:*} & $-1$ & Specific deny \\
+\texttt{*} & $10$ & General allow \\
+\hline
+\end{tabular}
+\end{center}
+Both rules match the example's initiating identity. Under the documented
+most-specific-rule semantics, the first rule determines the result. The
+expected budget is therefore $-1$, interpreted as denial. The illustrated
+implementation instead returns $10$, interpreted as permission. Using the
+decision predicates of Chapters~3 and~4,
+\[
+\begin{array}{rcl}
+\mathsf{Allow}_{\mathrm{spec}}(P_R,I) &=& \mathsf{false}, \\
+\mathsf{Allow}_{\mathrm{impl}}(P_R,I) &=& \mathsf{true}.
+\end{array}
+\]
+
+The script is a self-contained comparison of defective and corrected
+selection logic with a simplified specificity score. It does not import the
+production matcher. Its role is to expose the decision discrepancy, not to
+establish general correctness of the corrected procedure.
+
+Direct implementation evidence is provided separately by the archived
+\texttt{policy-matcher-sanity.json}.\footnote{The file is stored under
+\texttt{proofs/\allowbreak evidence/\allowbreak
+authz-stage1-\allowbreak 20260916T123834944479Z/}.}
+That record uses an Alice identity with the same specific-deny/general-allow
+structure. It reports a valid rulebook, specificity scores of $70$ and $0$,
+an expected budget of $-1$, and an actual result of $10$. Reversing the rule
+order returns $-1$. The identity strings in this record differ from the
+Mallory illustration and are not presented as the same execution.
+
+Together, these materials establish an implementation-level authorization
+bypass: the policy enforcement implementation produces an authorization
+decision inconsistent with the intended semantics. The direct-call record
+does not exercise Provider requests, token issuance, or message acceptance.
+The existing rule order is a condition of the example, not an adversarial
+ability to modify the receiving user's policy.
+
+% Evidence: proofs/test_matcher_bug.py;
+% proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json;
+% proofs/CLAIM_EVIDENCE_MATRIX.md, Claim 2.
+
+\subsection{Formalizing the Authorization Divergence}
+
+The ProVerif model
+\texttt{agent\_communication\_authz\_chat\_turepass.pv}, under
+\texttt{proofs/proverif/}, asks a conditional question: given an authorization
+divergence, can the modeled protocol reach communication acceptance?
+It does not execute Python, calculate pattern specificity, or select a rule
+from a concrete rulebook. Instead, initialization supplies the fixed table
+facts \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} for the scenario
+identifier \texttt{BuggyPolicy} and the initiating agent.
+
+This is the abstraction boundary. The terms \emph{SpecDecision} and
+\emph{ImplDecision} describe the two sides of the analysis; they are not
+declared events in this model. Likewise, the two scenario predicates are
+table facts supplied at initialization. The
+event \texttt{SpecIntendedDeny} records the assumed policy denial. The table
+fact representing implementation permission allows the modeled enforcement
+processes to continue.
+
+The participant directions are fixed: \texttt{PeerA} represents the receiver
+$R$, and \texttt{PeerB} represents the initiator $I$. The relevant observations
+have the following meanings:
+\begin{center}
+\begin{tabular}{p{0.40\linewidth}p{0.50\linewidth}}
+\hline
+Model observation & Meaning \\
+\hline
+\texttt{SpecIntendedDeny}$(I,R)$ & Records the intended denial of contact by
+$I$ with $R$. \\
+\texttt{ProviderRelease}$(R,I)$ & Records the release of contact material. \\
+\texttt{TokenIssue}$(R,I,t)$ & Records issuance of the wire token $t$. \\
+\texttt{ChatAccept}$(R,I,t,m)$ & Records $R$ accepting message $m$ from $I$
+using $t$. \\
+\hline
+\end{tabular}
+\end{center}
+The denial event uses the opposite argument order from the release and
+communication events. This distinction matters when relating the observations
+to Chapter~3's \textsf{ProviderGrant}, \textsf{TokenIssued}, and
+\textsf{MessageAccepted} concepts. That conceptual correspondence is not an
+implementation-to-model refinement proof.
+
+The model includes a \texttt{ProviderReleased} table to represent the handoff
+from Provider release to receiver processing. Message acceptance uses an
+\texttt{ActiveToken} association between the receiver, sender, wire token,
+and sender's access-control public key. The private channel
+\texttt{tls\_chat} abstracts authenticated, confidential transport;
+it is not a verification of TLS. These assumptions delimit the consequence
+analysis.
+
+% Evidence: proofs/proverif/agent_communication_authz_chat_turepass.pv;
+% proofs/CLAIM_EVIDENCE_MATRIX.md, Claim 3 and event conventions.
+
+\subsection{Attack Trace}
+
+The saved \texttt{proofs/evidence/turetrace} contains a reconstructed symbolic
+execution reaching \texttt{ChatAccept}. The projection below retains the
+observations relevant to authorization. Line numbers refer to the saved file,
+not to the process-position numbers printed inside the trace.
+\begin{center}
+\begin{tabular}{rp{0.76\linewidth}}
+\hline
+Line & Observation \\
+\hline
+14, 16 & Specification-deny and implementation-allow table facts are inserted. \\
+122 & \texttt{SpecIntendedDeny} records the intended denial. \\
+128 & \texttt{ProviderRelease} records material release. \\
+168 & \texttt{TokenIssue} records the token later used in acceptance. \\
+196 & \texttt{TokenReceive} records receipt of that wire token. \\
+202 & \texttt{ChatSend} records the message with that token. \\
+208 & \texttt{ChatAccept} records acceptance of that message. \\
+\hline
+\end{tabular}
+\end{center}
+
+First, the intended denial is present together with permission attributed to
+the implementation. Denial here is a recorded scenario fact,
+not a guard that stops the process. Second, the trace includes Provider
+release and credential issuance under the implementation-side assumption.
+Third, the issued token appears in the receipt, send, and acceptance events.
+Thus the witness extends beyond receipt of a credential to an application
+message accepted by the receiving process.
+
+\texttt{ChatAccept} means that the receiving agent accepts an application
+message under a token-mediated communication path, after the checks represented
+in this model. It does not mean that a production service handled the message
+or that a downstream tool operation completed. It is also distinct from
+\texttt{Accept}, which denotes token receipt and verification in these models.
+
+The final saved result states that
+\texttt{not event(ChatAccept(...))} is false, following the report that a trace
+has been found. Its interpretation is existential reachability of message
+acceptance. In conjunction with the recorded denial assumption, it supports
+the abstract authorization consequence. It is not a failed cryptographic
+authentication query.
+
+The projection must not be read as a single isolated session. The saved
+execution contains replicated process instances and shared token state; the
+instance issuing the token at line~168 differs from the instance accepting it
+at line~208. Fresh token generation alone therefore does not establish
+session isolation or injective agreement. Furthermore, although the model
+declares a \texttt{ChatAccept} to \texttt{TokenIssue} correspondence, this
+saved trace does not include its final verification result. Observing a prior
+issuance in this witness is narrower than proving that correspondence for all
+executions.
+
+% Evidence: proofs/evidence/turetrace, lines 14, 16, 122, 128, 168,
+% 196, 202, 208, and 211--212; process copies a_5 and a_3.
+
+\subsection{Evidence Boundary}
+
+\paragraph{Established results.}
+The evidence supports two claims at different levels. First, the matcher
+implementation can produce permission inconsistent with the intended rule
+semantics. The self-contained \texttt{test\_matcher\_bug.py} illustrates the
+mechanism, and the archived sanity JSON supplies the direct implementation
+observation. Second, authorization divergence can coexist with credential
+issuance and communication acceptance in the formal model. The consequence
+model specifies the assumptions, and \texttt{turetrace} supplies the saved
+reachability witness. A model file alone is not the record of a successful
+verification run.
+
+\paragraph{Claims outside the evidence.}
+These results do not establish a cryptographic primitive failure, certificate
+forgery, private-key compromise, or arbitrary attacker control. In particular,
+the initiating participant in the symbolic witness executes the prescribed
+peer process; the trace does not demonstrate arbitrary application behavior
+by an external attacker. The static policy and the genuine-identity setting
+remain those of Chapter~3. The zero-budget discrepancy discussed in Chapter~4
+is not an additional completed path in this chapter.
+
+\paragraph{Remaining limitation.}
+The formal model abstracts the matcher result. Direct executable integration
+of the Python matcher with the formal model remains future work. This also
+requires an explicit, auditable semantic mapping of identities, policy
+decisions, and protocol observations. Such integration would need to justify
+the mapping, rather than merely pass a Boolean result into a scenario. The
+current \texttt{BuggyPolicy} identifier does not encode the concrete rulebook.
+
+The saved consequence trace also lacks an accompanying independent run
+manifest and complete verification output. Its visible events and reachability
+result can be reported, but missing provenance and query results cannot be
+inferred. Service-level end-to-end reproduction remains outside the completed
+evidence. This limitation does not retract the confirmed implementation-level
+mismatch; it defines the remaining connection between that result and the
+abstract communication consequence.
+
+% Evidence boundary: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--3;
+% paper/PAPER_STORY.md, Sections 5 and 8.
