@@ -1,28 +1,212 @@
 \section{Evaluation}
+\label{sec:evaluation}
 
-\subsection{Research Questions}
-% TODO:
-% - RQ1: Does implementation behavior agree with intended contact-policy semantics?
-% - RQ2: Can a mismatch produce accepted unauthorized access?
-% - RQ3: Does the added formal property detect the verified mismatch?
-% - RQ4: Does the repair restore authorization consistency?
-% - RQ5: Are original authentication and secrecy claims preserved?
+\subsection{Experimental Setup}
 
-\subsection{Implementation Validation}
-% TODO:
-% - Plan tests of rule ordering and budget boundaries.
-% - Record the evidence needed to distinguish local mismatch from complete access.
+We evaluate three distinct questions using archived evidence: whether the
+matcher respects its documented policy semantics, whether the existing
+verification covers authorization, and what consequences follow from an
+explicit authorization divergence in the symbolic model. Implementation
+observations and formal results are reported separately. This evaluation
+introduces no additional experiments.
 
-\subsection{Formal Verification}
-% TODO:
-% - Compare the vulnerable and repaired models under stated assumptions.
-% - Report tool versions, queries, traces, and logs only after running them.
+The matcher record uses Python~3.14.3 for direct function calls.
+The formal records use ProVerif~2.05 on Windows. Three evidence packages
+provide the inputs and results: Stage~1 (S), the divergence model (D), and
+independent gate controls (G).\footnote{\raggedright Packages under
+\texttt{proofs/evidence/}: S = \texttt{authz-stage1-\allowbreak
+20260916T123834944479Z/}; D = \texttt{authz-turepass-\allowbreak
+20260919T090826295518Z/}; G = \texttt{authz-chat-gates-\allowbreak
+20260918T023621017067Z/}.}
+Their manifests record execution metadata, source revisions, commands,
+input hashes, and output provenance; raw standard output, standard error,
+and verification summaries accompany the runs. The reported model inputs
+match their recorded hashes. These archives originate from separate
+revisions, rather than a single integrated service experiment.
 
-\subsection{Regression of Existing Properties}
-% TODO:
-% - Recheck the original authentication and token secrecy queries after repair.
-% - Keep inherited claims separate from newly produced verification evidence.
+Table~\ref{tab:evaluation-runs} reports the six communication-model runs
+used here. Each completed with exit status zero. Counts refer to final
+query results, not to satisfied security properties: reachability is
+reported through negated-event queries. Durations are single recorded
+verifier runs, rounded to one decimal place. They do not measure service
+overhead or establish a performance comparison; repeated measurements and
+a controlled hardware benchmark are outside this evaluation.
 
-\subsection{Performance and Compatibility}
-% TODO:
-% - Optional: retain only if the repair changes measurable cost or compatibility.
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llrr}
+\hline
+Package & Model / scenario & Results & Seconds \\
+\hline
+S & Original communication & 11 & 334.6 \\
+S & Authorization diagnostic & 12 & 353.7 \\
+D & Divergence (\texttt{turepass}) & 2 & 598.4 \\
+G & Provider allow / Receiver allow & 5 & 813.6 \\
+G & Provider deny / Receiver allow & 5 & 507.1 \\
+G & Provider allow / Receiver deny & 5 & 552.5 \\
+\hline
+\end{tabular}
+\caption{Archived ProVerif runs used in the evaluation.}
+\label{tab:evaluation-runs}
+\end{table}
+
+% S: agent_communication.pv; agent_communication_authz.pv.
+% D: agent_communication_authz_chat_turepass.pv.
+% G: agent_communication_authz_chat_p_allow_r_allow.pv;
+% agent_communication_authz_chat_p_deny_r_allow.pv;
+% agent_communication_authz_chat_p_allow_r_deny.pv.
+% Source: the three package manifests and verification-summary.txt files.
+
+\subsection{Matcher Evaluation}
+
+The intended semantics select the most specific matching rule. The
+self-contained \texttt{proofs/test\_matcher\_bug.py} illustrates the
+inconsistency with a specific deny rule for
+\texttt{mallory@example.com:*} followed by a wildcard allow rule.
+This explanatory script defines its own matcher variants and simplified
+specificity function; it does not import the implementation matcher.
+
+Package S supplies direct implementation evidence in
+\texttt{policy-\allowbreak matcher-\allowbreak sanity.json}.
+Its recorded invocation uses
+\texttt{alice@example.com:agent}, a specific rule
+\texttt{alice@example.com:*} with budget $-1$, and a wildcard rule with
+budget $10$. The rulebook is valid, and the recorded specificity scores
+are $70$ and $0$. The documented semantics therefore require budget $-1$
+in either ordering. Table~\ref{tab:matcher-evaluation} reports the saved
+results for these two orderings.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrr}
+\hline
+Rule order & Expected budget & Returned budget \\
+\hline
+Specific deny, then wildcard allow & $-1$ (deny) & $10$ (allow) \\
+Wildcard allow, then specific deny & $-1$ (deny) & $-1$ (deny) \\
+\hline
+\end{tabular}
+\caption{Direct matcher observations for the recorded Alice rulebook.}
+\label{tab:matcher-evaluation}
+\end{table}
+
+The first ordering establishes a concrete policy decision mismatch; the
+second shows that reordering the same rules changes the result. This is
+an implementation-level, order-dependent authorization bypass. The record
+covers matcher calls, not Provider processing, token issuance, or message
+acceptance in a running service. Two observed orderings do not estimate
+the prevalence of the defect across rulebooks or deployments.
+
+\subsection{Formal Verification Results}
+
+\paragraph{Authorization coverage gap.}
+The original communication model in S produces eleven results: seven
+event-reachability results, three authentication correspondences, and one
+token-secrecy result. The diagnostic model preserves these results and
+adds the authorization correspondence
+\[
+\mathsf{Accept}(R,I,t)\Longrightarrow\mathsf{PolicyAllow}(R,I).
+\]
+This added correspondence is false, while the three authentication
+correspondences and token secrecy remain true. Here, \texttt{Accept}
+denotes receipt and verification of a token by the initiating peer;
+it is not application-message acceptance.
+
+The diagnostic process never emits \texttt{PolicyAllow}. Consequently,
+the failed correspondence exposes an authorization obligation absent from
+the original verification; it does not independently demonstrate a
+matcher execution error. The retained authentication and secrecy results
+apply to these Stage~1 queries. They are not automatically inherited by
+the later communication models.
+
+\paragraph{Authorization consequence model.}
+Package D contains two final results for \texttt{turepass}.
+The query asserting that \texttt{ChatAccept} is unreachable is false,
+with a reconstructed formal reachability witness. Under preset
+\texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} facts, the
+witness contains intended denial, material release, token issuance, and
+application-message acceptance. This is a symbolic reachability
+consequence of the divergence abstraction.
+
+The second result establishes
+\[
+\mathsf{ChatAccept}(R,I,t,m)\Rightarrow\mathsf{TokenIssue}(R,I,t).
+\]
+Thus, acceptance can coexist with the assumed policy denial while still
+having corresponding prior token issuance. Credential provenance and
+policy permission remain separate obligations. Issuance is observed in
+the witness; this model has no standalone \texttt{TokenIssue} reachability
+query and no \texttt{ChatAccept}--\texttt{ChatSend} correspondence query.
+The complete D archive supplies these two final results with independent
+execution provenance, beyond the historical \texttt{turetrace} excerpt.
+
+\paragraph{Authorization gate experiments.}
+Package G evaluates three fixed pairs of Provider and receiver permissions.
+Each control has three reachability queries and two correspondences.
+Table~\ref{tab:gate-evaluation} translates the reachability results into
+reachable (R) or unreachable (U), avoiding ambiguity about negated-query
+truth values.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llccc}
+\hline
+Provider & Receiver & Release & Issue & Accept \\
+\hline
+Allow & Allow & R & R & R \\
+Deny & Allow & U & U & U \\
+Allow & Deny & R & U & U \\
+\hline
+\end{tabular}
+\caption{Gate-control reachability: \texttt{ProviderRelease},
+\texttt{TokenIssue}, and \texttt{ChatAccept}.}
+\label{tab:gate-evaluation}
+\end{table}
+
+Provider denial prevents release and downstream actions. Receiver denial
+prevents issuance and acceptance, while Provider release remains reachable.
+The allow/allow control establishes an executable permitted path.
+Both acceptance-to-issuance and acceptance-to-send correspondences are
+true in all three controls. In the denial cases they hold vacuously,
+because acceptance is unreachable; only the allow/allow case supplies
+a non-vacuous control. These experiments locate blocking stages within
+the model, rather than evaluate a deployed repair. The controls use a
+fixed private token, unlike the fresh tokens in D, and are not a verified
+refinement of the divergence model.
+
+\subsection{Security Findings Summary}
+
+The evidence supports three complementary findings. First, direct matcher
+calls demonstrate a decision inconsistent with documented specificity
+semantics. Second, the coverage diagnostic distinguishes authorization
+from the authentication and secrecy properties actually queried in
+Stage~1. Third, given explicit divergence assumptions, the consequence
+model permits message acceptance, while the gate controls identify
+distinct release and issuance boundaries.
+
+Together, these findings support the SAGA case study's authorization
+enforcement gap. The implementation observation establishes the local
+defect; the formal results characterize modeled consequences and control
+positions. Neither evidence layer substitutes for the other. No result
+establishes cryptographic primitive failure, certificate forgery, key
+compromise, or arbitrary attacker control of the modeled peer processes.
+
+\subsection{Limitations}
+
+The formal model abstracts the matcher result. It neither executes Python
+nor evaluates the concrete rulebook, so the implementation record and the
+formal reachability witness are not a single executable reproduction.
+A strict semantic mapping from concrete rules, specificity, and returned
+budgets to scenario facts and formal events remains necessary.
+
+Private transport and the \texttt{ProviderReleased} handoff are model
+abstractions. The evaluated queries do not establish token expiry, quota
+consumption, revocation, policy-update behavior, session isolation, or
+injective agreement. No complete production-service reproduction or
+deployment-scale measurement is reported. Future work may extend the
+semantic mapping and evaluate service behavior and larger deployments;
+the present results establish neither their outcomes nor generality
+across agentic systems.

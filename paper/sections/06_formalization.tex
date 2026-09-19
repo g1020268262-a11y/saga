@@ -73,6 +73,40 @@ govern execution; recording an event alone does not grant or deny permission.
 
 % Source: event declarations, tables, and process guards in the four models.
 
+Table~\ref{tab:claim-formalization} separates scenario assumptions from
+observations and verification queries. Divergence is an input to the
+consequence model; its implementation evidence is independent of the solver
+results. Gate effects require comparisons between scenarios, not merely
+the declaration of a release or issuance event.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.38\linewidth}p{0.53\linewidth}}
+\hline
+\raggedright Claim or assumption &
+\raggedright Formal representation and scope \tabularnewline
+\hline
+\raggedright Assumed authorization divergence &
+\raggedright \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} table facts;
+preset assumptions, not a derived result. \tabularnewline
+\raggedright Provider permission affects release &
+\raggedright \texttt{ProviderRelease} reachability across gate controls. \tabularnewline
+\raggedright Token issuance depends on gate state &
+\raggedright \texttt{TokenIssue} reachability across gate controls. \tabularnewline
+\raggedright Acceptance requires prior issuance &
+\raggedright \texttt{ChatAccept} $\Rightarrow$ \texttt{TokenIssue};
+queried in all four models. \tabularnewline
+\raggedright Acceptance has a matching send &
+\raggedright \texttt{ChatAccept} $\Rightarrow$ \texttt{ChatSend};
+queried in the three gate controls only. \tabularnewline
+\hline
+\end{tabular}
+\caption{Claim-to-Formalization Mapping. Correspondence arguments and
+their limitations are specified below.}
+\label{tab:claim-formalization}
+\end{table}
+
 \subsection{Verification Queries}
 
 \emph{Reachability.} The divergence model queries whether
