@@ -3,150 +3,90 @@
 
 \subsection{Agent Security and Governance}
 
-Research on autonomous agents examines both how agents act and how their
-interactions can be made trustworthy. Wang et al.~\cite{wang2024agents}
-organize work on LLM-based agents around their construction, applications,
-and evaluation. This architectural perspective provides context for agents
-that plan and use external capabilities, but is not itself an implementation
-verification of a contact-policy evaluator. Earlier work by Ramchurn et
-al.~\cite{ramchurn2004trust} surveys trust in multi-agent systems as a means
-of managing uncertainty in interactions. Trust assessment concerns
-expectations about another agent's behavior; an authorization rule instead
-specifies whether a particular interaction is permitted.
-
-AgentDojo~\cite{debenedetti2024agentdojo} studies agent security through
-an extensible environment for evaluating prompt injection attacks and
-defenses when agents use tools over untrusted data. Its threat model and
-behavioral evaluation address whether externally supplied content can redirect
-an agent's actions. This is complementary to the governance question studied
-here: whether a software decision that grants communication agrees with the
-receiving user's policy. Our case does not require a prompt injection or an
-LLM to misinterpret an instruction.
-
-These works motivate scrutiny of agent behavior, coordination, and trust
-without implying that they establish every authorization property of a
-framework. We focus on consistency between policy evaluation and enforcement
-for contact by an identified agent. The distinction is in the object of
-analysis, not a finding that the cited approaches fail at their own goals.
+Wang et al.~\cite{wang2024agents} survey LLM-based autonomous agents,
+including their construction and evaluation. Ramchurn et
+al.~\cite{ramchurn2004trust} examine trust in multi-agent interactions,
+while AgentDojo~\cite{debenedetti2024agentdojo} evaluates prompt injection
+attacks and defenses for tool-using agents. These works primarily focus on
+agent behavior, trust, and evaluation, informing how agent interactions can
+be governed. Our governance question concerns authorization decision
+consistency between policy evaluation and enforcement: does granting contact
+to an identified agent preserve the receiving user's intended policy?
+This differs from assessing behavioral trust or resistance to prompt injection.
 
 \subsection{Capability and Token-Based Authorization}
 
-Credential systems provide explicit representations of authority and ways to
-delegate or restrict it. The SPKI certificate theory~\cite{ellison1999spki}
-connects names and authorizations to keys, with rules for deriving authority
-from certificates and access-control lists. Its treatment of SDSI names and
-authorization certificates already distinguishes naming a principal from
-granting that principal permission. Macaroons~\cite{birgisson2014macaroons}
-support decentralized delegation using credentials that can be restricted
-with contextual caveats. Such attenuation constrains the authority exercised
-through a credential rather than simply asserting an identity.
+SPKI~\cite{ellison1999spki} represents naming and authority in certificates.
+OAuth~2.0~\cite{hardt2012oauth} supports scoped service access.
+Macaroons~\cite{birgisson2014macaroons} support delegation and attenuation
+through contextual caveats. These designs address credential representation
+and controlled delegation.
 
-OAuth~2.0~\cite{hardt2012oauth} specifies a framework for obtaining limited
-access to HTTP services, separating the resource owner, client, authorization
-server, and resource server. Access tokens represent authorization with scope
-and duration; OAuth does not prescribe a particular token representation.
-We cite RFC~6749 as the foundational framework, not as a complete account of
-subsequent OAuth security guidance. SPKI is an Experimental RFC and OAuth is
-a Standards Track RFC; they are published specifications rather than
-conference papers.
-
-These mechanisms address credential meaning, delegation, and restrictions;
-they do not all use the same capability model. Their relevance to SAGA is
-that credential validation and the correctness of the decision producing
-authority are separate obligations. A valid credential does not, by its
-existence alone, establish that an external policy evaluator implemented the
-intended rule semantics. We examine that evaluator-to-protocol relationship,
-not weaknesses in SPKI, OAuth, or Macaroons. The case study introduces neither
-a credential format nor an attenuation mechanism.
+Credential correctness does not automatically establish authorization decision
+correctness. Issuance must depend on a decision consistent with the intended
+policy, not merely produce a credential that later passes validation. We
+examine that decision-to-enforcement connection in SAGA; we propose neither
+a new token format nor an attenuation mechanism.
 
 \subsection{Formal Verification of Authentication Protocols}
 
-Blanchet's account of ProVerif~\cite{blanchet2016proverif} describes symbolic
-verification using the applied pi calculus, including secrecy,
-authentication, and equivalence properties. Authentication can be expressed
-through correspondences between protocol events. The Tamarin prover of
-Meier, Schmidt, Cremers, and Basin~\cite{meier2013tamarin} represents
-protocol behavior with multiset rewriting and checks trace properties under
-specified adversary and equational models. Its rules and trace lemmas can
-express stateful behavior as well as authentication and secrecy requirements.
-Neither method is intrinsically limited to identity authentication.
+ProVerif~\cite{blanchet2016proverif} and Tamarin~\cite{meier2013tamarin}
+support symbolic analysis of properties including authentication correspondences
+and secrecy. Their results depend on the modeled behavior, assumptions, and
+queries; neither tool is intrinsically restricted to authentication.
 
-The connection to our work is therefore one of verification scope. A result
-about message origin or adversarial knowledge does not automatically include
-a policy-evaluation obligation absent from the modeled behavior and queries.
-Conversely, explicitly modeling authorization can make such obligations
-amenable to protocol analysis. Our coverage diagnostic retains the original
-queried authentication and secrecy results while identifying the missing
-authorization basis; it does not challenge the soundness of the verifier.
-
-We use ProVerif for a conditional consequence analysis with explicit
-specification-deny and implementation-allow assumptions. The resulting
-reachability witness concerns token issuance and message acceptance in that
-model. It is not execution of the Python matcher or a proof of refinement
-from the implementation. We do not compare ProVerif and Tamarin experimentally
-or claim that changing tools would remove this modeling boundary.
+Our distinction concerns verification scope: an authorization claim must
+include authorization-relevant decision layers or justify their connection
+to the model. The original queried authentication and secrecy results remain
+valid in our diagnostic extension. Separately, ProVerif analyzes communication
+consequences under explicit authorization-divergence assumptions. It does not
+execute the Python matcher or establish implementation correctness. The
+coverage question concerns the model-to-claim relationship, not tool soundness.
 
 \subsection{Formal Verification of Authorization Policies}
 
-Authorization languages and policy-analysis tools directly address permission
-semantics. Cassandra~\cite{becker2004cassandra} combines role-based trust
-management with Datalog constraints, allowing the choice of constraint domain
-to control expressiveness. It supplies semantics for query evaluation and
-the enforcement engine, together with distributed evaluation. SecPAL's
-design~\cite{becker2007secpal} supports constraints, controlled delegation,
-recursion, and negated queries. Its authors establish soundness, completeness,
-and termination of the evaluation strategy under stated syntactic conditions.
-These works thus extend beyond specifying policy syntax: they explicitly
-connect logical meaning and evaluation.
+Cassandra~\cite{becker2004cassandra} specifies policy evaluation and
+enforcement semantics. SecPAL~\cite{becker2007secpal} connects declarative
+authorization to an evaluation strategy with soundness, completeness, and
+termination results under stated conditions. Margrave~\cite{fisler2005margrave}
+checks policy properties and change impact for a supported subset of XACML.
+These works analyze policy semantics and consistency; they also address the
+relationship between policies, evaluation, and their surrounding software.
 
-Margrave~\cite{fisler2005margrave} analyzes access-control policies using
-decision diagrams, including property checking and the effects of policy
-changes for a supported subset of XACML. It helps determine which requests
-receive which decisions and how those decisions change. The work also
-recognizes that policy verification and analysis of the enclosing program
-are distinct, related tasks. Policy consistency and the integration of
-policy decisions into software are therefore established research concerns,
-not questions introduced by this case study.
-
-Our emphasis is a concrete implementation that disagrees with its documented
-rule-selection contract and the consequences of abstracting that disagreement
-at protocol boundaries. We do not offer a competing authorization language,
-a general policy analyzer, or evaluation-correctness results comparable to
-SecPAL's. The observed matcher discrepancy has implementation evidence, while
-the modeled communication consequence has separate formal evidence. Their
-remaining semantic mapping is precisely the connection that must be supplied
-before claiming a complete implementation-to-protocol argument.
+Our case study connects an observed implementation-level disagreement with a
+rule-selection contract to its modeled protocol-level consequence. This is
+not a competing policy language or a general evaluation-correctness result.
+Concrete matcher evidence and formal consequence evidence remain distinct;
+a strict semantic mapping between them is unfinished.
 
 \subsection{Authentication--Authorization Gaps}
 
-The distinction between identifying a principal and deciding its authority
-is longstanding. Lampson, Abadi, Burrows, and Wobber~\cite{lampson1992authentication}
-develop authentication theory together with its use in distributed access
-control, including principals, secure channels, and delegation. This is
-an important counterpoint to treating authentication and authorization as
-historically unrelated topics. SPKI~\cite{ellison1999spki} likewise gives
-authorization an explicit role in certificate reasoning, while
-SecPAL~\cite{becker2007secpal} gives permission derivation a formal execution
-strategy. The conceptual distinction is not our novelty claim.
+Authentication asks ``who are you,'' while authorization asks ``what may you
+do.'' These are distinct obligations, but their connection is longstanding:
+Lampson et al.~\cite{lampson1992authentication} develop authentication theory
+together with distributed access control. SPKI~\cite{ellison1999spki} and
+SecPAL~\cite{becker2007secpal} likewise make authority and its derivation
+explicit. The distinction itself is not our novelty claim. These foundations
+leave open the question of whether a particular agent implementation preserves
+its intended policy semantics across protocol actions.
 
-In an agent communication architecture, an authorization decision can become
-an input to material release, credential issuance, and eventual message
-acceptance. Our question is whether those protocol actions preserve the
-intended policy meaning when the decision is computed by software. This
-question combines concerns addressed by credential systems, policy analysis,
-and protocol verification, but requires evidence at their interfaces. A
-correspondence to prior token issuance answers a different question from
-whether the token should have been issued under the intended policy.
+In SAGA, a software authorization decision can feed material release,
+credential issuance, and message acceptance. We study the gap between that
+decision's implementation and the actions consuming it. The required
+consistency spans policy semantics, policy evaluation implementation, and
+protocol enforcement. A correspondence to prior token issuance establishes
+credential provenance, but does not alone establish that issuance was
+permitted under the user's policy.
 
-The SAGA contribution is a bounded case study connecting a confirmed local
-authorization inconsistency with formal analysis of its possible protocol
-consequence. Here, connecting means relating two explicitly separated evidence
-layers, not claiming an established executable refinement. The gate controls
-further locate where the modeled communication path can be blocked. We do
-not claim priority over all studies of authentication and authorization,
-generalize the inconsistency to other agent systems, or report a production
-deployment exploit. Strict matcher-to-model mapping remains future work.
+Our contribution relates a confirmed local authorization inconsistency to
+formal analysis of its possible communication consequence under explicit
+assumptions. The gate controls further distinguish the modeled release and
+issuance boundaries. This connection is supported by two evidence layers,
+not an executable refinement proof. We neither claim to originate the study
+of authorization gaps nor report a production deployment exploit. The
+remaining matcher-to-model mapping limits the cross-layer conclusion without
+negating the confirmed implementation discrepancy.
 
 % Positioning sources: paper/PAPER_STORY.md; paper/sections/01_introduction.tex;
 % paper/sections/03_problem_formulation.tex; paper/sections/08_discussion.tex.
-% Bibliographic verification sources and edition notes are in paper/references.bib.
+% All twelve existing references are retained; bibliography unchanged.

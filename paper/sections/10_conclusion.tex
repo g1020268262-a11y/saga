@@ -1,4 +1,37 @@
 \section{Conclusion}
-% TODO:
-% - Summarize the established missing property and evidenced implementation behavior.
-% - State the completed formal verification and repair results only after validation.
+\label{sec:conclusion}
+
+Policy-governed agent communication requires authorization decisions to remain
+consistent with policy semantics, evaluation implementation, and enforcement
+actions. Authentication and confidentiality provide complementary guarantees;
+establishing them does not discharge the separate obligation to justify
+communication under the receiving user's policy. Our SAGA case study examines
+this connection between policy decisions and the protocol actions that consume
+them.
+
+We identify an order-dependent authorization decision inconsistency in the
+studied contact policy matcher through implementation-level analysis. We then
+use symbolic verification to analyze the protocol consequence of an abstract
+authorization divergence, including message acceptance and the distinct
+blocking stages of Provider and receiver gates. The evaluation combines
+archived implementation observations and formal results while preserving
+their boundaries: direct matcher calls demonstrate the local inconsistency,
+whereas the formal model characterizes consequences under explicit assumptions.
+These evidence layers do not constitute a single executable service reproduction.
+
+The findings demonstrate that authentication and secrecy properties can remain
+valid while authorization consistency obligations are not established.
+Specifically, the Stage~1 diagnostic preserves the queried authentication
+correspondences and token secrecy without establishing the added authorization
+correspondence. Separately, the consequence model permits message acceptance
+under assumed policy denial and implementation permission, while preserving
+the correspondence to prior token issuance. This distinction between credential
+provenance and policy permission characterizes an authorization enforcement
+gap, not a cryptographic failure.
+
+Matcher-to-formal semantic integration remains open: the current model abstracts
+the implementation result rather than deriving it from concrete policy
+evaluation. Future work should establish that connection, extend modeling to
+the complete deployment lifecycle, and examine additional agent systems.
+These extensions are needed to assess applicability beyond the studied SAGA
+implementation and symbolic scenarios.
