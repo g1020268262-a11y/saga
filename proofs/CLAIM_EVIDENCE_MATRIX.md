@@ -4,6 +4,8 @@
 
 整理日期：2026-09-19。核对时仓库提交：`ae0025c11b2c3bc00d946bc5c90b455aeb706e9c`。
 
+证据同步：2026-09-20，补充既有独立运行归档 `authz-turepass-20260919T090826295518Z`。本次仅同步研究状态，保留历史 `turetrace` 及其来源限制，不重跑实验。
+
 **Authorization correctness is not guaranteed by cryptographic authentication alone.**
 
 本研究关注 **policy semantics + policy implementation + protocol consequence**：用户策略的预期含义是否被 matcher 正确实现，以及授权决定的偏差能否影响凭证签发和 Agent 通信授权。现有成果包括已确认的 matcher 实现级授权绕过、授权证明覆盖缺口、抽象授权分歧的通信后果模型，以及授权门控位置控制实验。它们不构成对 SAGA 密码学原语的破解结论。
@@ -14,7 +16,7 @@
 |---|---|---|---|---|
 | 1 | Authorization proof coverage gap | Stage 1 模型、查询摘要、重建轨迹 | 原认证与 token 保密结果不建立所需的授权可靠性 | 密码协议被破解，或实现层消息越权已复现 |
 | 2 | Matcher implementation-level vulnerability | `test_matcher_bug.py`；原实现直接调用的 `policy-matcher-sanity.json` | 预期 DENY、实现 ALLOW；规则顺序影响授权决定 | Provider、token 和消息处理完整运行链已复现 |
-| 3 | Authorization consequence modeling | `agent_communication_authz_chat_turepass.pv`、`turetrace` | 在预置规范拒绝／实现允许场景下，保存轨迹到达 `ChatAccept` | 已经建立具体 Python 执行到形式事件的精化关系 |
+| 3 | Authorization consequence modeling | `agent_communication_authz_chat_turepass.pv`、历史 `turetrace`、`authz-turepass-20260919T090826295518Z` | 在预置规范拒绝／实现允许场景下，`ChatAccept` 可达；独立运行归档确认 `ChatAccept ==> TokenIssue` 为 `true` | 独立 `TokenIssue` 可达性查询、执行 Python matcher、实现到模型的精化证明 |
 | 4 | Authorization gate placement experiments | 三个独立门控模型及其查询摘要 | Provider 与 Receiver 门控在不同阶段阻断后续事件 | 对生产实现门控机制或实际部署安全性的完整证明 |
 
 **事件口径。** 本系列模型中，`PeerA = R` 是 token 签发方和聊天接收方，`PeerB = I` 是 token 接收方和聊天发送方。`Accept` 表示 B 收到并验证 token；`ChatAccept` 才表示 A 接受模型中的一条聊天消息。论文的 `ProviderGrant`、`TokenIssued`、`MessageAccepted` 与模型的 `ProviderRelease`、`TokenIssue`、`ChatAccept` 可作概念对照，但该对照本身不是实现到模型的语义映射证明。`turepass` 中的 `SpecIntendedDeny(B,A)` 参数顺序与 `TokenIssue(A,B,t)` 相反，使用时不能交换授权方向。
@@ -27,6 +29,7 @@
 | [历史共享门控](evidence/authz-chat-guarded-20260917T080131985337Z/manifest.json) | `78e06379ec01f49d7b07067402ee60585dfe36c4` | 两个控制模型及其结果、输入与输出哈希 |
 | [独立门控](evidence/authz-chat-gates-20260918T023621017067Z/manifest.json) | `2685d956b2f98fb1c4634dd6ec817fe4d9c448b8` | 三个控制模型及其结果、输入与输出哈希 |
 | [`turetrace`](evidence/turetrace) | 本次快照中可读取；没有对应的独立运行 manifest | 已保存轨迹及 `ChatAccept` 可达性结果；不能用本次仓库快照补造其原始运行元数据 |
+| [authz-turepass-20260919T090826295518Z](evidence/authz-turepass-20260919T090826295518Z/manifest.json) | `f8bf8273bc41c82c2fb117f1be395877a55c6e13` | 独立运行的命令、ProVerif 2.05、输入哈希、stdout/stderr、查询摘要与退出码；不是历史 `turetrace` 的追溯来源证明 |
 
 # Claim 1
 
@@ -143,7 +146,25 @@ Implementation decision != Specification decision
 |---|---|
 | [agent_communication_authz_chat_turepass.pv](proverif/agent_communication_authz_chat_turepass.pv) | 预置规范拒绝／实现允许场景；包含材料发布、token 签发和聊天消息接受 |
 | [turetrace](evidence/turetrace) | 已保存的重建轨迹，包含 `SpecIntendedDeny`、`ProviderRelease`、`TokenIssue` 和 `ChatAccept` |
-| [AUDIT_STATUS.md](AUDIT_STATUS.md) | 将该模型定位为 authorization consequence model，并将 Stage 4 整体标记为部分完成，待补语义映射与结构化证据归档 |
+| [AUDIT_STATUS.md](AUDIT_STATUS.md) | 将该模型定位为 authorization consequence model；其中待补结构化归档的历史状态由下述独立运行归档更新，语义映射仍未完成 |
+| [独立运行 manifest](evidence/authz-turepass-20260919T090826295518Z/manifest.json) | 记录未修改模型的独立执行、ProVerif 2.05、输入哈希与退出码 `0` |
+| [独立运行 stdout](evidence/authz-turepass-20260919T090826295518Z/agent_communication_authz_chat_turepass.stdout.txt)、[stderr](evidence/authz-turepass-20260919T090826295518Z/agent_communication_authz_chat_turepass.stderr.txt) | 完整查询结果和符号可达性 witness；stderr 为空 |
+| [独立运行 verification summary](evidence/authz-turepass-20260919T090826295518Z/verification-summary.txt)、[版本记录](evidence/authz-turepass-20260919T090826295518Z/proverif-version.txt) | 区分已声明查询、最终结果与 witness 中的事件观察 |
+
+### Established by the independent evidence package
+
+以下结果来自 `authz-turepass-20260919T090826295518Z` 的原始输出，不是对历史 `turetrace` 补写结果：
+
+| 查询／性质 | 已归档结果 | 支持的结论 |
+|---|---|---|
+| `ChatAccept` reachability | `RESULT not event(ChatAccept(receiver,sender_1,tok,msg)) is false.`，并重建 witness | 在明确授权分歧假设和模型抽象下，消息接受可达 |
+| `ChatAccept ==> TokenIssue` | `RESULT event(ChatAccept(receiver,sender_1,tok,msg)) ==> event(TokenIssue(receiver,sender_1,tok)) is true.` | 接受事件对应此前相同接收方、发送方及 token 的签发事件；不等于策略允许 |
+
+**Boundary:**
+
+- **No independent TokenIssue reachability query.** witness 中观察到 `TokenIssue`，但模型没有独立的 `TokenIssue` 可达性查询，不能报告不存在的查询结果。
+- **No matcher execution inside ProVerif.** 模型预置授权分歧，不执行 Python matcher 或具体 rulebook 求值。
+- **No implementation refinement proof.** 独立运行归档补齐的是形式后果模型的运行来源，不是实现到形式模型的语义精化证明。
 
 为避免把分析名称误写成已有模型事件，采用以下对照：
 
@@ -190,11 +211,11 @@ RESULT not event(ChatAccept(receiver,sender_1,tok,msg)) is false.
 - `tls_chat` 是私有信道，用来抽象经过认证且保密的传输，不是 TLS 实现证明。
 - `ProviderReleased` 是连接 Provider 放行与接收方处理的控制流程抽象，尚未建立其与生产实现的完整对应。
 - 模型中新生成 token 不等于已经证明会话隔离或 injective agreement。保存轨迹包含多份复制进程，不能改写为已证明的严格单会话执行。
-- 当前模型声明了 `ChatAccept ==> TokenIssue` 查询，但 `turetrace` 只保存消息接受可达性结果，未保存该 correspondence 的最终结果。轨迹中观察到先前签发，不等于已经归档其所有执行上的证明。
+- 历史 `turetrace` 只保存消息接受可达性结果，未保存 `ChatAccept ==> TokenIssue` 的最终结果；单独观察轨迹不能证明 correspondence。独立归档 `authz-turepass-20260919T090826295518Z` 已保存该查询为 `true` 的结果，其范围限于该模型。
 - 不能把 Claim 1 的认证与保密结果直接继承为此模型的新验证结果；`turepass` 没有查询原模型的完整性质集合。
-- 该保存文件缺少独立的运行命令、版本、完整 stdout/stderr 和输入哈希 manifest。文件存在及轨迹内容可核对；严格的运行来源归档仍需补全，不能由本次材料整理补造。
+- 历史 `turetrace` 仍缺少对应的独立运行命令、版本、完整 stdout/stderr 和输入哈希 manifest。新增归档提供另一独立运行的完整来源，不能反向作为历史文件的运行元数据。
 
-因此，**授权分歧后果建模及到达 `ChatAccept` 的保存轨迹已经存在**；Stage 4 作为完整研究阶段仍有语义映射和证据归档工作。这与 matcher 缺陷已确认的结论一致。
+因此，**授权分歧后果建模、`ChatAccept` 可达性及其与 `TokenIssue` 的 correspondence 已有独立运行归档**；Stage 4 作为完整研究阶段仍有实现到形式模型的语义映射工作。这与 matcher 缺陷已确认的结论一致。
 
 # Claim 4
 
@@ -252,12 +273,12 @@ Agent communication capability
 - Matcher bug reproduction：规则顺序导致的实现级授权绕过已有直接调用证据。
 - Authorization proof-coverage diagnostic：保留原认证／保密结果的同时，新增授权对应关系失败。
 - Authorization divergence modeling：固定规范拒绝／实现允许场景和到达 `ChatAccept` 的保存轨迹已有。
+- Formal consequence provenance：`authz-turepass-20260919T090826295518Z` 已归档 `ChatAccept` 可达性和 `ChatAccept ==> TokenIssue` 结果、完整输出、版本及 manifest；历史 `turetrace` 单独保留。
 - Authorization gate placement controls：历史共享 gate 和三个独立 gate 场景已有归档结果。
 
 **Remaining:**
 
 - **Explicit semantic mapping from concrete matcher execution to formal events.** 将具体规则、评分、预算解释、参与方方向与场景表项／事件逐项对应；当前通用 `BuggyPolicy` 和固定表项不提供这一映射。
-- 完成后果模型的结构化证据归档，区分模型中声明的查询、保存轨迹中的事实与已保存的最终验证结果；保留原始运行来源，不能补造历史执行信息。
 - **Optional service-level end-to-end reproduction.** 如后续选择扩展实现证据，再评价运行中服务的各授权边界；本文件没有执行或新增此类实验。
 
 **End-to-end implementation-to-formal mapping remains.** 这准确描述当前剩余边界，同时保留 matcher implementation-level vulnerability 已确认的结论。
