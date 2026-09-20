@@ -24,8 +24,9 @@ an applicable decision under the receiving user's intended policy semantics.
 In the diagnostic extension of SAGA's reference communication model, the
 existing authentication and token-secrecy queries remain satisfied, while an
 added authorization correspondence fails. This result identifies a proof
-coverage gap at token receipt. Separately, the contact policy matcher can allow
-contact where its documented most-specific-rule semantics require denial.
+coverage gap at token receipt. Separately, the contact policy matcher can return
+a permission-indicating budget where its documented most-specific-rule semantics
+require denial.
 Together, these observations motivate examining the chain from policy
 specification, through matcher implementation and authorization decision, to
 protocol capability, with separate evidence for each boundary.

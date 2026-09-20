@@ -23,8 +23,8 @@ all later models or to deployments.
 As formulated in Chapter~3, accepted contact needs an applicable policy
 decision linked to the same participants and credential. Prior issuance
 establishes credential provenance, but not permission to issue.
-Authentication binds decisions to identities; authorization determines
-what those identities may do.
+Authentication establishes the identities to which authorization decisions
+must be bound; authorization determines what those identities may do.
 
 % Sources: paper/sections/03_problem_formulation.tex;
 % paper/sections/07_evaluation.tex, Authorization coverage gap and consequence model.
@@ -95,7 +95,8 @@ that consume those decisions. The SAGA observation motivates examining
 these requirements when evaluation and enforcement are separated.
 Agent frameworks, API gateways, capability systems, and policy engines offer
 contexts in which this separation may warrant examination. This relevance
-concerns the verification question, not evidence of a shared vulnerability.
+concerns the verification question, not evidence of a shared authorization
+inconsistency.
 
 Applying this perspective requires evidence connecting local policy semantics,
 evaluation, and enforcement under each system's assumptions. We have not

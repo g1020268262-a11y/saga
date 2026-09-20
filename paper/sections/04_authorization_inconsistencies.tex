@@ -300,9 +300,9 @@ disagreements, with different implications for the intermediate boundaries.
 They show why the authorization-soundness obligations of Chapter~3 cannot be
 assumed from the implementation's cryptographic checks. An implementation
 mismatch is not automatically an end-to-end exploit. Chapter~5 examines
-concrete execution paths and the evidence needed to determine which, if any,
-of the Provider-grant, credential-issuance, and message-acceptance boundaries
-each inconsistency reaches.
+matcher-level evidence separately from the modeled consequences of an assumed
+authorization divergence at material release, token issuance, and message
+acceptance.
 
 % Evidence: saga/provider/provider.py, access() policy rejection, allocation, and response.
 % Evidence: saga/agent.py, incoming precheck, token generation, and message validation.
