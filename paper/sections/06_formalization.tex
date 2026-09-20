@@ -6,17 +6,9 @@
 The formal model captures the consequence of authorization divergence rather
 than reproducing the matcher implementation. We separate implementation
 evidence of decision inconsistency from symbolic analysis of what follows
-when that inconsistency is assumed:
-\[
-\begin{array}{c}
-\textnormal{Concrete implementation} \\
-\downarrow\;\textnormal{abstraction boundary} \\
-\textnormal{Authorization divergence abstraction} \\
-\downarrow \\
-\textnormal{Formal protocol consequence}.
-\end{array}
-\]
-The first arrow is a conceptual connection, not a proved refinement relation.
+when that inconsistency is assumed. Figure~\ref{fig:implementation-mapping}
+shows the observation and abstraction steps. The implementation-to-model
+connection is manually specified, not a proved refinement relation.
 ProVerif neither executes the Python matcher nor discovers its implementation
 inconsistency. The analysis concerns fixed scenarios and the permission
 boundaries defined in Chapter~3.
@@ -41,6 +33,110 @@ tokens. The controls are not verified repairs or a refinement of that model.
 
 % Models share the prefix proofs/proverif/agent_communication_authz_chat_:
 % turepass.pv; p_allow_r_allow.pv; p_deny_r_allow.pv; p_allow_r_deny.pv.
+
+\subsection{Implementation-to-Model Mapping}
+\label{sec:implementation-mapping}
+
+\emph{Implementation observation.} The archived
+\texttt{policy-matcher-\allowbreak sanity.json} records a direct call to the unmodified
+\texttt{contact\_policy.py} matcher: for \texttt{alice@example.com:agent},
+the ordered specific-deny/general-allow rulebook returns $10$, whereas
+the documented most-specific-rule semantics selects $-1$.
+The specificity scores are $70$ and $0$; reversing the rule order returns
+$-1$. Chapter~5 distinguishes this record from
+\texttt{test\_matcher\_bug.py}, a self-contained Mallory illustration
+that does not execute the production matcher.
+
+\emph{Decision abstraction.} For the fixed rulebook $P_R$ and initiator $I$,
+let $D_{\mathrm{spec}}(P_R,I)$ and $D_{\mathrm{impl}}(P_R,I)$ denote
+the decisions obtained from the intended rule selection and the recorded
+matcher result, respectively. Applying Chapter~3's contact-permission
+convention (positive budget means allow) gives
+\[
+ (D_{\mathrm{spec}}(P_R,I),D_{\mathrm{impl}}(P_R,I))
+       =(\mathsf{Deny},\mathsf{Allow}).
+\]
+We manually represent this pair by the two initialized scenario table facts
+in Table~\ref{tab:implementation-mapping}. The concrete initiating identity
+is represented by \texttt{aid\_B}; the target receiver is fixed as
+\texttt{aid\_A}. \texttt{BuggyPolicy} names the scenario, not an encoded
+rulebook. This abstraction retains the decision pair and contact direction,
+but omits patterns, ordering, specificity computation, and budget magnitude.
+It is a mapping for this recorded case, not a translation of arbitrary policies.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{0.36\linewidth}p{0.55\linewidth}}
+\hline
+\raggedright Evidence or analysis statement &
+\raggedright Representation in \texttt{turepass} \tabularnewline
+\hline
+\raggedright Intended budget $-1$: deny &
+\raggedright \texttt{ScenarioSpecDeny(BuggyPolicy,\allowbreak aid\_B)}
+table fact. \tabularnewline
+\raggedright Recorded budget $10$: allow &
+\raggedright \texttt{ScenarioImplAllow(BuggyPolicy,\allowbreak aid\_B)}
+table fact. \tabularnewline
+\raggedright Authorization divergence &
+\raggedright Coexistence of these facts; no separate
+\texttt{SpecDivergence} event is declared. \tabularnewline
+\raggedright Modeled message acceptance; not a matcher observation &
+\raggedright \texttt{ChatAccept}$(R,I,t,m)$ in the symbolic witness. \tabularnewline
+\hline
+\end{tabular}
+\caption{Observed decisions and their manual formal abstraction.}
+\label{tab:implementation-mapping}
+\end{table}
+
+\emph{Scope.} ProVerif analyzes the consequences after this abstraction;
+it does not execute the matcher or derive the table facts from the JSON.
+Both Provider and receiver consult the implementation-allow fact, assuming
+the same fixed decision for the modeled contact. The matcher record does not
+validate these consumers, their handoff, or message acceptance.
+The mapping represents an abstraction from observed implementation behavior
+to formal authorization states. It establishes neither an automatically
+verified refinement relation nor a manual refinement proof. Existing
+reachability and correspondence results remain conditional on the protocol
+abstractions below.
+
+\begin{figure}[htbp]
+\centering
+\small
+\fbox{\parbox{0.86\linewidth}{\centering
+\textbf{Implementation observation}\\
+\texttt{contact\_policy.py}: archived direct matcher call\\
+Expected budget $-1$; recorded result $10$}}
+\par\smallskip
+$\downarrow$\quad Contact-permission interpretation
+\par\smallskip
+\fbox{\parbox{0.86\linewidth}{\centering
+\textbf{Decision abstraction}\\
+$D_{\mathrm{spec}}=\mathsf{Deny}$;
+$D_{\mathrm{impl}}=\mathsf{Allow}$}}
+\par\smallskip
+$\downarrow$\quad Manual abstraction boundary
+\par\smallskip
+\fbox{\parbox{0.86\linewidth}{\centering
+\textbf{Formal authorization state}\\
+\texttt{ScenarioSpecDeny} + \texttt{ScenarioImplAllow}\\
+Initialized table facts, not matcher execution events}}
+\par\smallskip
+$\downarrow$\quad Symbolic analysis under model assumptions
+\par\smallskip
+\fbox{\parbox{0.86\linewidth}{\centering
+\textbf{Modeled protocol consequence}\\
+Witness includes \texttt{TokenIssue} and \texttt{ChatAccept}}}
+\caption{Implementation-to-formal mapping. Observed decisions motivate
+formal states; the arrows do not establish an implementation refinement
+proof or a running-service execution.}
+\label{fig:implementation-mapping}
+\end{figure}
+
+% Observation: proofs/evidence/authz-stage1-20260916T123834944479Z/
+% policy-matcher-sanity.py and policy-matcher-sanity.json.
+% Abstraction: turepass table declarations, initialization, and gate reads.
+% Consequences: proofs/evidence/authz-turepass-20260919T090826295518Z/.
 
 \subsection{Authorization Events and State}
 

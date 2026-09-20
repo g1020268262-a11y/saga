@@ -18,6 +18,7 @@
 | 2 | Matcher implementation-level vulnerability | `test_matcher_bug.py`；原实现直接调用的 `policy-matcher-sanity.json` | 预期 DENY、实现 ALLOW；规则顺序影响授权决定 | Provider、token 和消息处理完整运行链已复现 |
 | 3 | Authorization consequence modeling | `agent_communication_authz_chat_turepass.pv`、历史 `turetrace`、`authz-turepass-20260919T090826295518Z` | 在预置规范拒绝／实现允许场景下，`ChatAccept` 可达；独立运行归档确认 `ChatAccept ==> TokenIssue` 为 `true` | 独立 `TokenIssue` 可达性查询、执行 Python matcher、实现到模型的精化证明 |
 | 4 | Authorization gate placement experiments | 三个独立门控模型及其查询摘要 | Provider 与 Receiver 门控在不同阶段阻断后续事件 | 对生产实现门控机制或实际部署安全性的完整证明 |
+| Mapping（Claims 2--3 的连接说明） | Matcher observation can be abstracted into formal authorization divergence | 真实 matcher 调用归档；第六章 Implementation-to-Model Mapping 小节、对照表和图 | 对已记录决定对给出明确的人工抽象说明 | 自动转换、映射正确性验证、实现精化证明或新安全结论 |
 
 **事件口径。** 本系列模型中，`PeerA = R` 是 token 签发方和聊天接收方，`PeerB = I` 是 token 接收方和聊天发送方。`Accept` 表示 B 收到并验证 token；`ChatAccept` 才表示 A 接受模型中的一条聊天消息。论文的 `ProviderGrant`、`TokenIssued`、`MessageAccepted` 与模型的 `ProviderRelease`、`TokenIssue`、`ChatAccept` 可作概念对照，但该对照本身不是实现到模型的语义映射证明。`turepass` 中的 `SpecIntendedDeny(B,A)` 参数顺序与 `TokenIssue(A,B,t)` 相反，使用时不能交换授权方向。
 
@@ -177,6 +178,20 @@ Implementation decision != Specification decision
 | Message acceptance | `ChatAccept(aid_A,aid_B,tok,msg)` | A 通过该模型的 token／发送方绑定检查后接受一条消息 |
 
 `SpecDecision` 和 `ImplDecision` 是上表的分析标签，不是当前文件中声明的事件名；`ScenarioSpecDeny` 和 `ScenarioImplAllow` 是 **table facts**，也不能误写为模型内计算得到的 policy events。
+
+### Implementation-to-Model Mapping（叙事补充，2026-09-20）
+
+新增说明见 [第六章](../paper/sections/06_formalization.tex) 的 `Implementation-to-Model Mapping` 小节、对照表和示意图。它连接 Claims 2--3 的证据解释，不增加独立安全贡献、实验或查询。
+
+| Claim | Evidence | Boundary |
+|---|---|---|
+| Matcher observation can be abstracted into formal authorization divergence | [真实调用脚本](evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.py)、[JSON](evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json)、第六章映射说明，以及 `turepass` 的表项初始化 | Manual abstraction for the recorded case; no automatic translation, mapping validation, or refinement proof |
+
+具体映射以真实调用归档为依据：`alice@example.com:agent` 对应 specific-deny/general-allow 规则，specificity 为 `70` 和 `0`，规范预期 budget 为 `-1`，实际返回 `10`；反转顺序返回 `-1`。[test_matcher_bug.py](test_matcher_bug.py) 是采用 Mallory 身份和简化 specificity 的独立示例，不是该真实调用的执行脚本。
+
+第六章按第三章的正 budget 许可约定，将该记录解释为 `(D_spec(P_R,I), D_impl(P_R,I)) = (Deny, Allow)`。人工抽象将发起方表示为 `aid_B`，接收方固定为 `aid_A`，用 `BuggyPolicy` 命名场景，并以 `ScenarioSpecDeny(BuggyPolicy,aid_B)` 和 `ScenarioImplAllow(BuggyPolicy,aid_B)` 表示决定对。该场景标识不是具体 rulebook 编码；模型不保存规则模式、顺序、specificity 计算或 budget 数值。
+
+授权分歧由两个表项共同表示，模型没有 `SpecDivergence` 事件。`ChatAccept` 属于形式后果证据，不是 matcher JSON 的观察。Provider 与 Receiver 读取同一个实现侧允许表项仍是模型假设；函数级记录没有验证这些消费者或 `ProviderReleased` handoff。新增文字和图使人工映射显式化，**没有完成自动或手工精化证明，也没有消除现有语义映射限制**。历史 `turetrace` 和独立 `authz-turepass-20260919T090826295518Z` 归档及其查询范围均保持不变。
 
 保存轨迹支持的抽象事件关系为：
 
