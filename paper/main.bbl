@@ -71,6 +71,13 @@ Sarvapali~D. Ramchurn, Dong Huynh, and Nicholas~R. Jennings.
 \newblock Trust in multi-agent systems.
 \newblock {\em The Knowledge Engineering Review}, 19(1):1--25, 2004.
 
+\bibitem{syros2025saga}
+Georgios Syros, Anshuman Suri, Jacob Ginesin, Cristina Nita-Rotaru, and Alina
+  Oprea.
+\newblock {SAGA}: A security architecture for governing {AI} agentic systems.
+\newblock arXiv preprint arXiv:2504.21034v2, 2025.
+\newblock Version 2, revised 29 August 2025.
+
 \bibitem{wang2024agents}
 Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao Yang, Jingsen Zhang, Zhiyuan
   Chen, Jiakai Tang, Xu~Chen, Yankai Lin, Wayne~Xin Zhao, Zhewei Wei, and

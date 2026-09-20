@@ -3,7 +3,7 @@
 % TODO: Replace the document class when a venue is selected.
 \input{macros}
 
-\title{SAGA Authorization Study: Paper Outline}
+\title{SAGA Authorization Study: Organization of the Paper}
 \author{}
 \date{}
 
@@ -11,7 +11,26 @@
 \maketitle
 
 \begin{abstract}
-% TODO: Write the abstract after the technical sections are finalized.
+Agentic systems rely on policy-governed communication, where authorization
+decisions connect user policies and agent interactions. By themselves,
+authentication and confidentiality do not establish consistency among policy semantics,
+policy evaluation implementation, and enforcement actions. We investigate
+this requirement through a SAGA case study. Implementation-level analysis
+identifies an order-dependent authorization decision inconsistency in the
+studied contact policy matcher: a general permission can override a more
+specific denial. We use ProVerif to analyze protocol-level consequences under
+an explicit abstraction of this divergence and compare Provider and receiver
+authorization gates. Our evaluation combines archived matcher observations
+and symbolic verification results while distinguishing their evidentiary
+scope. In the diagnostic extension, the queried authentication correspondences
+and token secrecy remain satisfied while an added authorization correspondence
+does not hold. Separately, the consequence model admits message acceptance
+under assumed policy denial and implementation permission, while retaining
+correspondence to prior token issuance. These findings concern authorization
+enforcement without demonstrating a cryptographic compromise. The formal
+model abstracts the matcher result; it neither executes Python nor establishes
+an implementation-to-model refinement. A strict semantic mapping and
+production-service reproduction remain outside the completed evidence.
 \end{abstract}
 
 \input{sections/01_introduction}
