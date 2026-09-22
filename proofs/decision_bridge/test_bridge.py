@@ -1,7 +1,11 @@
 import copy
 import unittest
+from unittest.mock import patch
+import json
 from bridge import (ROOT, ARCHIVE, read, digest, make_context, build, evaluate,
-                    generate, policy_hash, write_json)
+                    generate, policy_hash, write_json, verify_historical_source, current_source_state, SOURCE, MODEL)
+from generate_model import derive_model
+from run_verification import summarize
 import tempfile
 from pathlib import Path
 
@@ -18,6 +22,63 @@ def historical(reverse=False):
 
 
 class BridgeTests(unittest.TestCase):
+    def test_historical_replay_does_not_require_current_source_match(self):
+        real_read = Path.read_bytes
+        def changed_current(path):
+            return b"hypothetical later matcher repair\n" if path == ROOT / SOURCE else real_read(path)
+        context, ref = historical()
+        with patch.object(Path, "read_bytes", changed_current):
+            result = build(context, ref)
+            self.assertTrue(result["divergence"])
+            self.assertFalse(current_source_state(context["source_sha256"])["current_source_matches_historical"])
+
+    def test_missing_historical_commit(self):
+        with self.assertRaises(ValueError):
+            verify_historical_source("0" * 40, "0" * 64)
+
+    def test_wrong_historical_blob(self):
+        context, _ = historical()
+        with patch("bridge.git", return_value=b"unrelated historical contents\n"):
+            with self.assertRaises(ValueError):
+                verify_historical_source(context["source_commit"], context["source_sha256"])
+
+    def test_explicit_eol_verification(self):
+        with patch("bridge.git", return_value=b"a\nb\n"):
+            binding = verify_historical_source("1" * 40, digest(b"a\r\nb\r\n"))
+            self.assertEqual(binding["verified_byte_encoding"], "uniform-CRLF")
+            self.assertNotEqual(binding["historical_git_blob_sha256"], binding["archived_source_byte_sha256"])
+            with self.assertRaises(ValueError):
+                verify_historical_source("1" * 40, digest(b"a\r\nb\n"))
+
+    def test_full_model_preserves_source(self):
+        data = json.dumps(build(*historical())).encode()
+        generated = derive_model(data)
+        header, body = generated.split(b"*)\n", 1)
+        self.assertEqual(body, (ROOT / MODEL).read_bytes())
+        self.assertIn(digest(data).encode(), header)
+
+    def test_full_model_rejects_tampered_pair(self):
+        result = build(*historical())
+        result["impl_observed"]["budget"] = -1
+        with self.assertRaises(ValueError):
+            derive_model(json.dumps(result).encode())
+
+    def test_frozen_template_check(self):
+        data = json.dumps(build(*historical())).encode()
+        with patch("generate_model.TEMPLATE_SHA256", "0" * 64):
+            with self.assertRaises(ValueError):
+                derive_model(data)
+
+    def test_result_parser_not_missing_or_unknown(self):
+        # Parser fixtures only; these are NOT verifier evidence.
+        output = ("RESULT event(ChatAccept(r,s,t,m)) ==> event(TokenIssue(r,s,t)) is true.\n"
+                  "RESULT not event(ChatAccept(r,s,t,m)) is false.\n")
+        self.assertTrue(summarize(output)["chat_accept_reachable"])
+        self.assertTrue(summarize(output)["chat_accept_implies_token_issue"])
+        self.assertTrue(summarize(output)["expected_query_set"])
+        self.assertFalse(summarize("")["expected_query_set"])
+        self.assertFalse(summarize(output.replace(" is false.", " cannot be proved."))["chat_accept_reachable"])
+
     def test_real_counterexample(self):
         result = build(*historical())
         self.assertEqual(result["spec"]["budget"], -1)

@@ -4,7 +4,14 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 from bridge import (ROOT, ARCHIVE, SOURCE, MODEL, VERSION, read, digest, git,
-                    make_context, build, generate, write_json)
+                    make_context, build, generate, write_json, current_source_state)
+
+
+def default_input():
+    data = read(ARCHIVE)
+    return {"context": make_context(data["rules"], data["aid"], data["source_sha256"], data["base_commit"], "stage1-alice"),
+            "observation": {"path": ARCHIVE, "sha256": digest((ROOT / ARCHIVE).read_bytes()),
+                            "format": "stage1", "field": "actual_specific_deny_then_wildcard_allow"}}
 
 
 def main():
@@ -19,10 +26,7 @@ def main():
     if args.input:
         input_record = read(args.input)
     else:
-        data = read(ARCHIVE)
-        input_record = {"context": make_context(data["rules"], data["aid"], data["source_sha256"], data["base_commit"], "stage1-alice"),
-                        "observation": {"path": ARCHIVE, "sha256": digest((ROOT / ARCHIVE).read_bytes()),
-                                        "format": "stage1", "field": "actual_specific_deny_then_wildcard_allow"}}
+        input_record = default_input()
     result = build(input_record["context"], input_record["observation"])
     # Validate before creating output; then independently consume the saved pair.
     if result["status"] == "OK":
@@ -41,10 +45,11 @@ def main():
     summary += "Fragment generated: " + str(fragment is not None) + "\nNo ProVerif run. No refinement proof. Historical evidence unchanged.\n"
     with (dest / "summary.txt").open("x", encoding="utf-8", newline="\n") as stream:
         stream.write(summary)
-    paths = [SOURCE, MODEL, input_record["observation"]["path"]]
+    paths = [MODEL, input_record["observation"]["path"]]
     paths += [p.relative_to(ROOT).as_posix() for p in Path(__file__).parent.glob("*.py")]
     write_json(dest / "manifest.json", {"executed_utc": stamp, "git_commit": git("rev-parse", "HEAD").decode().strip(),
                "git_status": git("status", "--short").decode(), "generator_version": VERSION,
+               "current_source_state": current_source_state(input_record["context"]["source_sha256"]),
                "command": "python proofs/decision_bridge/run_bridge.py" + (f" --input {args.input}" if args.input else ""),
                "input_hashes": {p: digest((ROOT / p).read_bytes()) for p in paths},
                "output_hashes": {p.name: digest(p.read_bytes()) for p in dest.iterdir()},

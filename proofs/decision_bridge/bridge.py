@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-VERSION = "decision-bridge-1"
+VERSION = "decision-bridge-1.1"
 SOURCE = "saga/common/contact_policy.py"
 ARCHIVE = "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json"
 MODEL = "proofs/proverif/agent_communication_authz_chat_turepass.pv"
@@ -105,6 +105,36 @@ def make_context(rules, aid, source_hash, source_commit, policy_id):
     return context
 
 
+def verify_historical_source(commit, source_hash):
+    """Bind to Git history, never to the current checkout. Only explicit EOL encodings."""
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("Invalid source revision")
+    try:
+        blob = git("show", commit + ":" + SOURCE)
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("Historical source revision unavailable") from exc
+    lf = blob.replace(b"\r\n", b"\n")
+    candidates = [("git-blob-raw", blob), ("uniform-LF", lf),
+                  ("uniform-CRLF", lf.replace(b"\n", b"\r\n"))]
+    for encoding, candidate in candidates:
+        if digest(candidate) == source_hash:
+            return {"source_commit": commit, "source_path": SOURCE,
+                    "archived_source_byte_sha256": source_hash,
+                    "historical_git_blob_sha256": digest(blob),
+                    "historical_normalized_lf_sha256": digest(lf),
+                    "verified_byte_encoding": encoding,
+                    "historical_git_blob_matches_normalized_source": True}
+    raise ValueError("Historical Git blob does not match archived source hash under supported EOL encodings")
+
+
+def current_source_state(historical_hash):
+    """Informational only; absence or a later repair cannot invalidate historical replay."""
+    path = ROOT / SOURCE
+    current_hash = digest(path.read_bytes()) if path.is_file() else None
+    return {"current_source_sha256": current_hash,
+            "current_source_matches_historical": current_hash == historical_hash}
+
+
 def load_observation(context, reference):
     data = read(reference["path"])
     if digest(relative_file(reference["path"]).read_bytes()) != reference["sha256"]:
@@ -124,16 +154,8 @@ def load_observation(context, reference):
         raise ValueError("Observation policy/order/identity mismatch")
     if (data["source"], data["source_sha256"], data["base_commit"]) != (SOURCE, context["source_sha256"], context["source_commit"]):
         raise ValueError("Observation source context mismatch")
-    if not re.fullmatch(r"[0-9a-f]{40}", data["base_commit"]):
-        raise ValueError("Invalid source revision")
-    current = relative_file(SOURCE).read_bytes()
-    if digest(current) != data["source_sha256"]:
-        raise ValueError("Current source differs from observation source")
-    # Git normalizes text to LF, whereas the historical Windows hash binds CRLF bytes.
-    blob = git("show", data["base_commit"] + ":" + SOURCE)
-    if blob.replace(b"\r\n", b"\n") != current.replace(b"\r\n", b"\n"):
-        raise ValueError("Recorded revision does not match source (LF normalized)")
-    return {**budget_decision(budget), "observation": reference}
+    historical = verify_historical_source(data["base_commit"], data["source_sha256"])
+    return {**budget_decision(budget), "observation": reference, "historical_source": historical}
 
 
 def build(context, reference):

@@ -1,4 +1,4 @@
-# Authorization Decision Bridge v1
+# Authorization Decision Bridge v1.1
 
 This independent, executable finite semantics layer replaces hand-entered
 decision labels for the recorded case with a checked decision pair. It does
@@ -13,6 +13,20 @@ From repository root (Python 3, standard library only):
 python -B proofs/decision_bridge/run_bridge.py
 python -B -m unittest discover -s proofs/decision_bridge -p test_bridge.py -v
 ```
+
+For a NEW independent full-model verification archive, commit reviewed bridge
+changes first and start from a clean working tree:
+
+```text
+python -B proofs/decision_bridge/run_verification.py --proverif proverif
+```
+
+Use `--proverif <installed-executable>` if it is not on PATH. No absolute local
+tool path is archived: manifests record its basename, executable byte hash,
+version, and command with repository-relative model path. The default timeout is
+3600 seconds (`--timeout`). This runner creates
+`proofs/evidence/authz-bridge-turepass-<timestamp>/` and actually invokes ProVerif;
+the earlier `run_bridge.py` remains a lightweight replay/fragment-only command.
 
 The default runner only reads archived observations. It creates a NEW timestamped
 directory in `proofs/decision_bridge/evidence/` with `input.json`,
@@ -51,16 +65,29 @@ ownership of a deployed policy. Both decision branches use this same context.
 
 Observation references contain a repository-relative path, file SHA-256, format,
 and (for Stage 1) an actual-result field selector. The loader compares the exact
-ordered patterns/budgets and identity. It checks source hash against current
-source bytes and source commit against the corresponding Git blob (CRLF/LF
-normalized for Git comparison only). The recorded byte hash is not normalized.
-Different source revisions require a new, reviewed observation; v1 fails closed.
-This requires local Git history containing the recorded commit.
+ordered patterns/budgets and identity. It reads `git show <base_commit>:<source>`
+and checks the archived byte hash against three explicitly enumerated encodings:
+raw Git blob, uniform LF, and uniform CRLF. It records which encoding matched,
+the raw blob hash, normalized LF hash, and archived byte hash separately. It never
+claims that unequal raw hashes are equal. Mixed-EOL encodings not matching these
+candidates are rejected. Missing historical revision or mismatched blob fails closed.
+
+Historical source revision may differ from current checkout source, and this does
+not invalidate replay as long as the archived observation is correctly bound to
+the historical Git revision. **Current source equality is NOT required for
+historical replay.** Current source hash/equality are informational manifest fields,
+not part of the historical decision pair. Even a missing current matcher does not
+invalidate the historical binding. The local Git history must contain the revision.
 
 Manifests record execution time, current commit/status, generator version,
-script/source/model/observation hashes and output hashes. Uncommitted bridge code
-is bound by file hashes, not falsely attributed to HEAD. Hashes provide integrity
-binding, not signatures or independent attestation of archive authenticity.
+script/model/observation hashes and output hashes. The formal runner rejects dirty
+trees before creating output and records the actual bridge code commit. `git_status:
+clean` refers to this pre-run state; the post-run status honestly records the new
+untracked archive. Code commit and subsequent evidence commit are separate, avoiding
+a self-referential commit hash. Development archives remain unchanged.
+Hashes provide integrity binding, not signatures or independent attestation of
+archive authenticity. They do not protect against coordinated rewriting of all
+input provenance by an untrusted archive author.
 
 ## Independent specification semantics
 
@@ -128,10 +155,26 @@ The generator checks these insert statements exist in the unchanged turepass
 model. The manifest binds that model's hash. This is an adapter interface check,
 not proof of equivalence to protocol consumers.
 
-The `.inc` is a text fragment intended to replace the existing two initial inserts
-in a future derived model. It is NOT a standalone ProVerif input, and no native
-ProVerif include directive is assumed. No full model is generated or verifier run
-in v1. The current artifact provides the generated input and its derivation only.
+The `.inc` is not standalone ProVerif input; no native include directive is assumed.
+In v1.1, `generate_model.py` additionally produces a complete `.pv` from the frozen
+turepass template, pinned by its raw SHA-256. It rechecks the serialized decision
+pair and reconstructs the two inserts from its result. The template must contain
+that block exactly once. For this fixed Deny/Allow case the derived body is byte-for-
+byte identical to the template: only a provenance header is added. Queries, processes,
+channels, events and token handling are unchanged. The header binds evaluation
+fingerprint, exact bridge-result bytes hash, template path/hash and bridge version.
+
+`run_verification.py` saves that model, input, decision pair, a run-start record,
+actual verifier stdout/stderr/version, test logs, summary and final manifest.
+It extracts the two `RESULT` lines from NEW stdout and checks ChatAccept reachability
+and the ChatAccept-to-TokenIssue correspondence. Missing/unknown/additional results,
+nonzero exit, timeout, failed tests or changes to tracked input files prevent a
+successful run status. No standalone TokenIssue query is added. A failed run is
+retained as failed evidence, never converted to success or replaced with old stdout.
+
+This separates five layers: historical observation provenance; informational current
+source state; independently derived decision pair; generated full model; and new
+ProVerif execution. A verified source binding alone does not prove the other layers.
 
 ## Limits and claims
 
@@ -140,14 +183,19 @@ pattern grammar, three budget classes, and the two archived orderings plus contr
 Unsupported: full fnmatch/Python semantics, tied maxima, dynamic policies, concurrent
 mutation, quota consumption, token lifecycle, and deployed enforcement correctness.
 
-The layer supports: **the ProVerif scenario input is derived from an independently
-evaluated specification decision and a provenance-bound implementation observation
-for the same concrete policy evaluation.** The same-evaluation claim concerns the
-matched identity, ordered rulebook and source, not an observed service session.
+After a successful formal run, the layer supports: **the specification decision is
+independently derived from the concrete ordered policy input, the implementation-side
+decision is bound to an archived execution of the production matcher at a specific
+historical source revision, and the resulting checked decision pair is used to generate
+and execute a derived ProVerif consequence model.** The same-evaluation claim concerns
+the matched identity, ordered rulebook and source, not an observed service session.
 
 It does NOT establish Python refinement, full matcher correctness, a formal proof
 of this evaluator, consumer equivalence, or an end-to-end exploit. The semantics
 and adapter are reviewable/tested Python, not mechanically proved translations.
 Historical ProVerif evidence does not automatically upgrade: ChatAccept reachability
 and its TokenIssue correspondence remain results of the historical model under its
-assumptions. This bridge adds no TokenIssue query or new reachability result.
+assumptions. A new derived-model run is separate corroborating execution evidence,
+not an upgrade of old results. This bridge adds no TokenIssue query, full matcher
+correctness claim, deployed policy ownership claim, current upstream vulnerability
+status claim, or correctness claim for arbitrary policies.
