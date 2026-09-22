@@ -15,8 +15,10 @@ The SAGA case study makes this distinction concrete without identifying an
 authentication failure. The Stage~1 results retain the three queried
 authentication correspondences and token secrecy, while the authorization
 diagnostic exposes an obligation absent from that model. Separately, the
-consequence model permits message acceptance under an assumed disagreement
-between intended denial and implementation permission. These results have
+bridge-derived consequence model permits message acceptance after an
+externally established policy-decision inconsistency is transferred into
+its symbolic scenario. This does not indicate cryptographic failure or
+invalidate an authentication proof. These results have
 different scopes; the Stage~1 guarantees do not automatically transfer to
 all later models or to deployments.
 
@@ -40,17 +42,40 @@ invalidating the properties actually verified.
 The distinction is particularly important in the diagnostic model, where
 \texttt{PolicyAllow} is never emitted. Its failed correspondence identifies
 missing authorization support in the model; it does not independently detect
-the Python defect. In the consequence model, authorization divergence is
-supplied as scenario facts. ProVerif analyzes what follows under those facts,
-rather than calculating a concrete matcher decision. The implementation
-observation and the formal reachability witness must therefore remain
-separate evidence layers.
+the Python defect. Coverage also depends on how security-critical
+implementation decisions are connected to their formal abstractions.
+In this case study, that connection has three distinct evidentiary roles:
+historical function-level observation, checked decision transfer, and
+symbolic consequence analysis. The bridge independently evaluates finite
+specification semantics, binds an archived implementation observation to
+the same policy evaluation, and reconstructs the scenario from the checked
+pair. The resulting full model is then executed by ProVerif.
 
-An authorization claim requires representing the decision layer or justifying
-its connection to independently analyzed implementation behavior. An event
-name alone does not supply that connection. Correspondences also require
+The bridge narrows the evidence gap for the recorded evaluation by removing
+hand-entered decision labels. The specification-side Deny comes from the
+independent evaluator, while the implementation-side Allow comes from the
+archived matcher execution. ProVerif analyzes consequences of the resulting
+scenario facts; it neither executes Python nor discovers the implementation
+inconsistency. Mechanizing this transfer does not eliminate the abstraction
+between concrete deployment roles and symbolic participants or prove
+implementation refinement. Historical package D used a preset divergence;
+package B reconstructs decision values while preserving the symbolic
+consequence structure. B does not retroactively change D's provenance.
+
+Three questions therefore require separate justification: was the decision
+computed according to the intended policy; was it correctly consumed at the
+relevant enforcement boundary; and do authentication and credential
+properties hold once execution proceeds? The third cannot substitute for
+the first, while the gate controls show why the second depends on where
+enforcement occurs. This distinction organizes the case study's security
+argument rather than establishing a universal security theorem.
+Correspondences also require
 reachability context: they hold vacuously in the denial controls. The concern
-is alignment between model, query, and claim, not the verification tool.
+is alignment between implementation evidence, model, query, and claim,
+not a limitation attributed to the verification tool. The case study
+demonstrates a reproducible evidence chain with distinguishable observation,
+specification evaluation, checked scenario construction, and symbolic
+analysis; it does not introduce a new policy logic or verified compiler.
 
 % Sources: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1 and 3--4;
 % paper/sections/06_formalization.tex, modeling boundary and queries;
@@ -58,7 +83,7 @@ is alignment between model, query, and claim, not the verification tool.
 
 \subsection{Policy Semantics as Security-Critical State}
 
-Authorization decisions are security-critical state: they determine whether
+Authorization decisions are security-critical derived state: they determine whether
 an enforcement point may release material, issue a credential, or accept
 communication. Their meaning depends on the relationship between policy
 semantics, evaluation, and enforcement. Protecting a decision in transit or
@@ -74,10 +99,22 @@ case, $-1$ denotes denial and $10$ denotes permission. This use of a budget
 as a contact decision is distinct from enforcing quota consumption over
 subsequent messages, which the evaluated models do not establish.
 
+Explicitly binding the concrete input, specification evaluation,
+implementation observation, and formal scenario makes the origin of an
+authorization state inspectable. Otherwise, a consequence analysis could
+verify properties of a supplied permission without establishing that the
+permission follows the intended policy. The bridge addresses decision-value
+transfer for the recorded case; correctness of the evaluator and of the
+downstream consumers remains a separate obligation.
+
 The gate controls show why the decision's consumer also matters. Receiver
 denial blocks issuance and acceptance while Provider release remains
-possible; Provider denial blocks the earlier release boundary. Thus, policy
-meaning and the protected action must be connected at each relevant stage.
+possible; Provider denial blocks the earlier release boundary. These are
+results of the gate-control models, not validation of equivalent gates in
+a running deployment. Decision correctness and enforcement placement are
+distinct questions: which permission was derived, and at which boundary
+was it consumed? Policy meaning and the protected action must be connected
+at each relevant stage.
 These observations motivate treating policy evaluation as security-critical
 code. They neither establish a deployed repair nor imply that all policy
 engines contain the observed inconsistency.
@@ -91,8 +128,10 @@ engines contain the observed inconsistency.
 SAGA is a case study, not a representative sample of all agentic systems.
 Programmable authorization components create consistency requirements
 between the policy they express, the decisions they compute, and the actions
-that consume those decisions. The SAGA observation motivates examining
-these requirements when evaluation and enforcement are separated.
+that consume those decisions. The SAGA observation motivates a verification
+question: when executable policy code derives a decision that another
+component later consumes, how is the intended policy meaning preserved
+across that boundary?
 Agent frameworks, API gateways, capability systems, and policy engines offer
 contexts in which this separation may warrant examination. This relevance
 concerns the verification question, not evidence of a shared authorization
@@ -101,7 +140,9 @@ inconsistency.
 Applying this perspective requires evidence connecting local policy semantics,
 evaluation, and enforcement under each system's assumptions. We have not
 verified these systems for the same inconsistency or consequence; prevalence
-and impact beyond SAGA remain unmeasured.
+and impact beyond SAGA remain unmeasured. Likewise, the bridge is a
+case-specific evidence-transfer mechanism, not a general verification
+framework validated for arbitrary systems.
 
 % Sources: paper/PAPER_STORY.md, case-study positioning;
 % proofs/CLAIM_EVIDENCE_MATRIX.md, Overall Research Argument;
@@ -109,24 +150,38 @@ and impact beyond SAGA remain unmeasured.
 
 \subsection{Limitations}
 
-\paragraph{Matcher-to-formal mapping.}
-The matcher inconsistency is confirmed at implementation level, but the formal
-model abstracts its result. The semantic boundary between Python execution
-and scenario facts remains. Executable policy semantics integration would
-need to relate concrete rules, specificity, budget interpretation, and
-participant direction to the formal state and observations. The present
-combination of evidence does not establish that refinement relation.
+\paragraph{Implementation-to-model correspondence.}
+For the recorded evaluation, the bridge mechanizes decision-value transfer
+from concrete policy input and an archived implementation observation to
+the executed symbolic scenario. Independent specification evaluation,
+provenance binding, checked-pair construction, and scenario reconstruction
+are completed parts of that chain. However, evaluator correctness is not
+theorem-proved, and its finite pattern grammar does not cover complete
+Python or \texttt{fnmatch} semantics. This is neither full formal verification
+of the matcher implementation nor correctness for arbitrary policies.
+
+The model represents the concrete initiator by \texttt{aid\_B} and the
+unobserved receiver by \texttt{aid\_A}, with \texttt{BuggyPolicy} as a local
+scenario label. These bindings remain modeling abstractions. Correspondence
+with deployed Provider and receiver consumers, including equivalence of
+their behavior to the model, is not established. General refinement between
+the Python implementation and the symbolic protocol remains unproved.
 
 \paragraph{Deployment evidence.}
-No production deployment exploit, remote attack, or malicious infrastructure
-experiment is demonstrated. The symbolic witness follows prescribed peer
+Direct matcher calls provide observations at the function level, not
+executions of a deployed service. No deployed-service exploit, remote
+attack, or malicious infrastructure experiment is demonstrated. The archive
+does not identify deployed receiver or policy ownership, or establish that
+the matcher observation and symbolic witness describe the same concrete
+service session. The symbolic witness follows prescribed peer
 processes, without establishing arbitrary attacker control or completion of
 downstream tool actions. These limits qualify communication impact, not the
 confirmed matcher discrepancy.
 
 \paragraph{Model abstraction.}
-Private transport abstracts an authenticated, confidential channel rather
-than verifying TLS. The Provider-to-receiver handoff is also abstract.
+The private \texttt{tls\_chat} channel abstracts authenticated, confidential
+transport rather than verifying TLS. The handoff represented by the
+\texttt{ProviderReleased} table is also abstract.
 Although issuance and acceptance are modeled, the complete token lifecycle
 is not: expiry, revocation, policy updates, and quota consumption are outside
 the evaluated properties. Concurrency is represented by replicated processes
@@ -135,12 +190,19 @@ implementation. The witness can involve different issuing and accepting
 process instances; fresh tokens do not establish session isolation or
 injective agreement. The models therefore do not simulate a complete
 deployment or establish the correctness of these omitted behaviors.
+Neither D nor B includes a standalone \texttt{TokenIssue} reachability
+query: issuance in a witness and the acceptance-to-issuance correspondence
+must not be reported as such an additional query result.
 
 \paragraph{Single case study.}
-The evidence concerns SAGA and the evaluated scenarios, not the prevalence
-of such inconsistencies. Assessing broader applicability requires additional
-agent-system studies, each with its own implementation evidence and modeling
-assumptions.
+The evidence concerns SAGA and the evaluated scenarios, not deployment
+prevalence or current upstream vulnerability status. Bridge v1.1.1
+demonstrates reproducible evidence transfer for one recorded policy
+evaluation, not validation over a large policy corpus. Normal allow/deny
+controls and the reversed-order check support the bridge evaluation;
+they are not a deployment-scale sample. Assessing broader applicability
+requires additional agent-system studies, each with its own implementation
+evidence and modeling assumptions.
 
 % Sources: paper/sections/03_problem_formulation.tex, static-policy scope;
 % paper/sections/05_attack.tex, Evidence Boundary;
