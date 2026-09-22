@@ -4,14 +4,16 @@
 \subsection{Modeling Approach}
 
 The formal model captures the consequence of authorization divergence rather
-than reproducing the matcher implementation. We separate implementation
-evidence of decision inconsistency from symbolic analysis of what follows
-when that inconsistency is assumed. Figure~\ref{fig:implementation-mapping}
-shows the observation and abstraction steps. The implementation-to-model
-connection is manually specified, not a proved refinement relation.
-ProVerif neither executes the Python matcher nor discovers its implementation
-inconsistency. The analysis concerns fixed scenarios and the permission
-boundaries defined in Chapter~3.
+than reproducing the matcher implementation. We distinguish four layers:
+an archived production matcher observation, independent finite specification
+evaluation, a provenance-bound decision bridge, and symbolic protocol
+consequence analysis. For the recorded case, the bridge reconstructs the
+executed model's scenario input from a checked decision pair
+(Figure~\ref{fig:implementation-mapping}). It does not establish a general
+refinement relation between Python and the symbolic protocol model.
+ProVerif neither executes Python nor discovers the implementation
+inconsistency. The analysis retains Chapter~3's fixed-policy setting and
+permission boundaries.
 
 % Sources: paper/PAPER_STORY.md; proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--4;
 % paper/sections/03_problem_formulation.tex; paper/sections/05_attack.tex.
@@ -30,39 +32,71 @@ We distinguish the divergence model, \texttt{turepass}, from three independent
 gate controls. The controls differ only in their preset gate permissions.
 They use a fixed private token, whereas \texttt{turepass} generates fresh
 tokens. The controls are not verified repairs or a refinement of that model.
+The current bridge-derived model preserves the consequence structure of
+\texttt{turepass}, with scenario input reconstructed before verification;
+the historical and bridge-derived executions have separate evidence packages.
 
 % Models share the prefix proofs/proverif/agent_communication_authz_chat_:
 % turepass.pv; p_allow_r_allow.pv; p_deny_r_allow.pv; p_allow_r_deny.pv.
 
-\subsection{Implementation-to-Model Mapping}
+\subsection{Implementation-to-Model Decision Bridge}
 \label{sec:implementation-mapping}
 
-\emph{Implementation observation.} The archived
-\texttt{policy-matcher-\allowbreak sanity.json} records a direct call to the unmodified
-\texttt{contact\_policy.py} matcher: for \texttt{alice@example.com:agent},
-the ordered specific-deny/general-allow rulebook returns $10$, whereas
-the documented most-specific-rule semantics selects $-1$.
-The specificity scores are $70$ and $0$; reversing the rule order returns
-$-1$. Chapter~5 distinguishes this record from
-\texttt{test\_matcher\_bug.py}, a self-contained Mallory illustration
-that does not execute the production matcher.
+\emph{Concrete evaluation context.} Bridge v1.1.1 binds an ordered policy
+$P$, its matched initiating identity $I$, a policy hash, the historical
+matcher revision and source hash, and the archived observation's location
+and hash. These fields identify the policy evaluation being compared, not
+a protocol session. The matched identity is the initiator, not the receiver.
+Policy labels and rule identifiers organize the artifact; they do not
+establish deployed policy ownership.
 
-\emph{Decision abstraction.} For the fixed rulebook $P_R$ and initiator $I$,
-let $D_{\mathrm{spec}}(P_R,I)$ and $D_{\mathrm{impl}}(P_R,I)$ denote
-the decisions obtained from the intended rule selection and the recorded
-matcher result, respectively. Applying Chapter~3's contact-permission
-convention (positive budget means allow) gives
+\emph{Independent specification decision.} An executable evaluator supports
+the finite pattern subset needed for the recorded case: \texttt{*},
+lowercase ASCII literal AIDs, and literal UIDs followed by \texttt{:*}.
+It independently computes matching and the numerical specificity described
+in Chapter~4, then selects the unique highest-scoring match. It neither
+imports production \texttt{match()} nor reads the archive's expected result
+as an answer. Budgets are classified as Negative, Zero, or Positive; only
+Positive grants contact permission. No match yields Zero. Tied highest
+scores and unsupported patterns produce \texttt{Unsupported}; malformed
+inputs produce \texttt{Invalid}. Neither status is silently interpreted as
+denial. This is finite executable specification semantics, not theorem-proved
+evaluator correctness or complete \texttt{fnmatch} semantics.
+
+\emph{Implementation observation.} The archived matcher record contains a direct production
+matcher call for \texttt{alice@\allowbreak example.com:\allowbreak agent}. A specific denial followed
+by general permission returns $10$; the reversed order returns $-1$.
+The bridge loads the observation for the selected order, checks its identity
+and ordered rules, and binds its source hash to the historical Git revision
+using explicit line-ending encodings. Equality with the current checkout is
+not required. The implementation decision is an archived execution result,
+not a prediction by the evaluator or an execution inside ProVerif.
+
+\emph{Decision-pair construction.} For this bound context, let
+$D_{\mathrm{spec}}(P,I)$ be the independently computed specification decision
+and $D_{\mathrm{impl}}^{\mathrm{obs}}(P,I)$ the archived matcher result
+interpreted using Chapter~3's positive-budget convention. The evaluator
+selects the specific rule, with score $70$ rather than $0$ and budget $-1$;
+the bound observation supplies budget $10$. Thus,
 \[
- (D_{\mathrm{spec}}(P_R,I),D_{\mathrm{impl}}(P_R,I))
+ (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
        =(\mathsf{Deny},\mathsf{Allow}).
 \]
-We manually represent this pair by the two initialized scenario table facts
-in Table~\ref{tab:implementation-mapping}. The concrete initiating identity
-is represented by \texttt{aid\_B}; the target receiver is fixed as
-\texttt{aid\_A}. \texttt{BuggyPolicy} names the scenario, not an encoded
-rulebook. This abstraction retains the decision pair and contact direction,
-but omits patterns, ordering, specificity computation, and budget magnitude.
-It is a mapping for this recorded case, not a translation of arbitrary policies.
+Only decisions bound to the same concrete policy evaluation are compared.
+This observation-based relation does not define implementation outputs for
+arbitrary inputs.
+
+\emph{Scenario reconstruction.} Before generating the full model, the bridge
+recomputes the specification decision, reloads and validates the observation,
+and rechecks their context; saved decision labels are not trusted. It locates
+a unique scenario region in the hash-pinned consequence template and joins
+the retained prefix and suffix around the generated statements in
+Table~\ref{tab:implementation-mapping}. The executed model reconstructs its
+authorization-divergence scenario region from the checked pair, while
+protocol processes, events, channels, token logic, and queries remain frozen.
+Only the provenance header, scenario region, and three approved comment-only
+normalizations may differ. Exact structural checks and mutation tests support
+this artifact-level checked transformation, not semantic refinement.
 
 \begin{table}[htbp]
 \centering
@@ -70,9 +104,9 @@ It is a mapping for this recorded case, not a translation of arbitrary policies.
 \begin{tabular}{p{0.36\linewidth}p{0.55\linewidth}}
 \hline
 \raggedright Evidence or analysis statement &
-\raggedright Representation in \texttt{turepass} \tabularnewline
+\raggedright Bridge-derived model representation \tabularnewline
 \hline
-\raggedright Intended budget $-1$: deny &
+\raggedright Independently evaluated budget $-1$: deny &
 \raggedright \texttt{ScenarioSpecDeny(BuggyPolicy,\allowbreak aid\_B)}
 table fact. \tabularnewline
 \raggedright Recorded budget $10$: allow &
@@ -85,65 +119,79 @@ table fact. \tabularnewline
 \raggedright \texttt{ChatAccept}$(R,I,t,m)$ in the symbolic witness. \tabularnewline
 \hline
 \end{tabular}
-\caption{Observed decisions and their manual formal abstraction.}
+\caption{Checked decision values and generated scenario facts. Symbolic
+participant bindings remain modeling abstractions.}
 \label{tab:implementation-mapping}
 \end{table}
 
-\emph{Scope.} ProVerif analyzes the consequences after this abstraction;
-it does not execute the matcher or derive the table facts from the JSON.
-Both Provider and receiver consult the implementation-allow fact, assuming
-the same fixed decision for the modeled contact. The matcher record does not
-validate these consumers, their handoff, or message acceptance.
-The mapping represents an abstraction from observed implementation behavior
-to formal authorization states. It establishes neither an automatically
-verified refinement relation nor a manual refinement proof. Existing
-reachability and correspondence results remain conditional on the protocol
-abstractions below.
+\emph{Remaining abstraction boundary.} The concrete initiating identity is
+represented by \texttt{aid\_B}; the unobserved receiving policy owner by
+\texttt{aid\_A}; and the policy evaluation by the scenario-local label
+\texttt{BuggyPolicy}. These role bindings remain analysis abstractions.
+The matcher archive identifies neither a deployed receiver nor a deployed
+policy owner, and does not describe the same concrete service session as the
+symbolic witness. Both Provider and receiver consume the fixed allow fact;
+their handoff and behavior are not validated by the matcher observation.
+Removing hand-entered decision values therefore does not remove the
+implementation-to-model refinement boundary.
 
 \begin{figure}[htbp]
 \centering
 \small
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Implementation observation}\\
-\texttt{contact\_policy.py}: archived direct matcher call\\
-Expected budget $-1$; recorded result $10$}}
+\textbf{Concrete policy evaluation}\\
+Ordered rules, matched identity, historical source provenance}}
 \par\smallskip
-$\downarrow$\quad Contact-permission interpretation
+$\swarrow$\hspace{0.35\linewidth}$\searrow$
+\par\smallskip
+\fbox{\parbox{0.40\linewidth}{\centering
+Independent finite evaluator\\
+$D_{\mathrm{spec}}=\mathsf{Deny}$}}
+\hfill
+\fbox{\parbox{0.40\linewidth}{\centering
+Archived production observation\\
+$D_{\mathrm{impl}}^{\mathrm{obs}}=\mathsf{Allow}$}}
+\par\smallskip
+$\searrow$\hspace{0.35\linewidth}$\swarrow$
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Decision abstraction}\\
-$D_{\mathrm{spec}}=\mathsf{Deny}$;
-$D_{\mathrm{impl}}=\mathsf{Allow}$}}
+\textbf{Checked decision pair}\\
+Same bound evaluation; not a concrete service session}}
 \par\smallskip
-$\downarrow$\quad Manual abstraction boundary
+$\downarrow$\quad Scenario reconstruction
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Formal authorization state}\\
+\textbf{ProVerif consequence model}\\
 \texttt{ScenarioSpecDeny} + \texttt{ScenarioImplAllow}\\
-Initialized table facts, not matcher execution events}}
+Fixed table facts during symbolic execution}}
 \par\smallskip
 $\downarrow$\quad Symbolic analysis under model assumptions
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Modeled protocol consequence}\\
-Witness includes \texttt{TokenIssue} and \texttt{ChatAccept}}}
-\caption{Implementation-to-formal mapping. Observed decisions motivate
-formal states; the arrows do not establish an implementation refinement
-proof or a running-service execution.}
+\textbf{Symbolic consequences}\\
+\texttt{ChatAccept} reachable; acceptance implies issuance}}
+\caption{Decision bridge for the recorded evaluation. Symbolic role mapping
+remains an explicit modeling abstraction; the arrows do not establish
+refinement or production-service execution.}
 \label{fig:implementation-mapping}
 \end{figure}
 
 % Observation: proofs/evidence/authz-stage1-20260916T123834944479Z/
 % policy-matcher-sanity.py and policy-matcher-sanity.json.
-% Abstraction: turepass table declarations, initialization, and gate reads.
-% Consequences: proofs/evidence/authz-turepass-20260919T090826295518Z/.
+% Bridge: proofs/decision_bridge/{bridge.py,generate_model.py,run_verification.py}.
+% Current consequences: proofs/evidence/authz-bridge-turepass-20260922T111657792091Z/.
+% Historical consequences: proofs/evidence/authz-turepass-20260919T090826295518Z/.
 
 \subsection{Authorization Events and State}
 
-In \texttt{turepass}, \texttt{ScenarioSpecDeny} and
-\texttt{ScenarioImplAllow} are initialized table facts: analysis-level
-assumptions representing the observed inconsistency, not matcher execution
-events. They share a scenario identifier and initiating identity.
+In both the historical and bridge-derived models, \texttt{ScenarioSpecDeny}
+and \texttt{ScenarioImplAllow} are initialized table facts, not Python
+matcher events or ProVerif-computed policy decisions. The facts are fixed
+symbolic inputs during ProVerif execution, but their values for the recorded
+case are reconstructed by the external bridge rather than entered as
+independent analyst labels. The historical \texttt{turepass} execution used
+a manually stated divergence scenario. These separate evidence packages
+must not be conflated. The facts share a scenario identifier and initiating identity.
 \texttt{SpecIntendedDeny}$(I,R)$ records the assumed denial. The following
 protocol events use receiver-first arguments; $t$ denotes the wire token.
 \begin{center}
@@ -183,16 +231,17 @@ the declaration of a release or issuance event.
 \raggedright Claim or assumption &
 \raggedright Formal representation and scope \tabularnewline
 \hline
-\raggedright Assumed authorization divergence &
+\raggedright Authorization divergence input &
 \raggedright \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} table facts;
-preset assumptions, not a derived result. \tabularnewline
+externally reconstructed from the checked pair in the bridge-derived model,
+not computed by ProVerif. \tabularnewline
 \raggedright Provider permission affects release &
 \raggedright \texttt{ProviderRelease} reachability across gate controls. \tabularnewline
 \raggedright Token issuance depends on gate state &
 \raggedright \texttt{TokenIssue} reachability across gate controls. \tabularnewline
 \raggedright Acceptance requires prior issuance &
 \raggedright \texttt{ChatAccept} $\Rightarrow$ \texttt{TokenIssue};
-queried in all four models. \tabularnewline
+queried in the divergence models and all three controls. \tabularnewline
 \raggedright Acceptance has a matching send &
 \raggedright \texttt{ChatAccept} $\Rightarrow$ \texttt{ChatSend};
 queried in the three gate controls only. \tabularnewline
@@ -211,9 +260,10 @@ their limitations are specified below.}
 the fixed peer identities. A false \texttt{not event(...)} result with a
 reconstructed witness establishes an existential modeled consequence under
 the scenario assumptions, not a security guarantee. There is no independent
-\texttt{TokenIssue} reachability query in \texttt{turepass}.
+\texttt{TokenIssue} reachability query in either historical \texttt{turepass}
+or its bridge-derived execution.
 
-\emph{Correspondence.} All four models query
+\emph{Correspondence.} Both divergence models and the three controls query
 \[
 \mathsf{ChatAccept}(R,I,t,m)\Longrightarrow\mathsf{TokenIssue}(R,I,t).
 \]
@@ -234,11 +284,16 @@ queries locates blocking stages under the shared handoff abstraction.
 
 \subsection{Formal Results}
 
-The archived ProVerif~2.05 results cover the unchanged inputs; their hashes
-match the corresponding manifests. In \texttt{turepass}, message acceptance
-is reachable with the assumed denial and abstract implementation permission,
-and the issuance correspondence is true. Token issuance appears in the
-witness; it is not reported as a separate query result.
+The historical \texttt{turepass} archive reports message acceptance reachable
+under its preset divergence and the acceptance-to-issuance correspondence
+true. Separately, a fresh ProVerif~2.05 execution of the bridge v1.1.1 derived
+model reports the same two query outcomes after scenario reconstruction:
+\texttt{ChatAccept} is reachable, and acceptance implies prior
+\texttt{TokenIssue}. The new archive binds the input decision pair, generated
+model, clean code revision, and verifier output. It does not retroactively
+upgrade the historical execution or constitute a production-service run.
+Token issuance occurs in the witness; neither divergence model has a
+standalone issuance-reachability query.
 
 For the controls, the results are:
 \begin{center}
@@ -265,6 +320,10 @@ from the historical witness discussed in Chapter~5.\footnote{Evidence under
 \texttt{proofs/evidence/}: \texttt{authz-turepass-\allowbreak
 20260919T090826295518Z/} and \texttt{authz-chat-gates-\allowbreak
 20260918T023621017067Z/}.}
+The bridge-derived execution is recorded separately in
+\texttt{authz-bridge-turepass-\allowbreak 20260922T111657792091Z/}
+under the same evidence directory. Its archived results support the current
+scenario reconstruction, while gate results retain their original scope.
 
 % Results: proofs/evidence/authz-turepass-20260919T090826295518Z/
 % manifest.json, verification-summary.txt, and raw stdout;
@@ -275,14 +334,21 @@ from the historical witness discussed in Chapter~5.\footnote{Evidence under
 
 The matcher inconsistency is demonstrated at implementation level, and
 ProVerif models its protocol-level consequence under explicit assumptions.
-The models do not prove Python execution correctness, concrete rulebook
-evaluation, or a production deployment result. They establish reachability,
-blocking, and correspondences within the stated symbolic scenarios.
+The external evaluator computes finite specification decisions, and the bridge
+checks their connection to archived implementation observations and generated
+scenario input. These executable checks are not proofs of evaluator correctness,
+complete Python or \texttt{fnmatch} semantics, or arbitrary policy correctness.
+ProVerif establishes reachability, blocking, and correspondences only within
+the stated symbolic scenarios; it does not prove Python execution correctness
+or a production deployment result.
 
 The prescribed peer processes do not represent arbitrary application behavior
 under attacker control. Private transport and shared state remain abstractions;
 token expiry, quota consumption, revocation, and policy updates are not
 covered. No cryptographic primitive failure or key compromise is established.
 The recorded correspondences are not a revalidation of every original
-authentication or secrecy property. A strict implementation-to-model mapping
-and service-level reproduction remain outside the completed evidence.
+authentication or secrecy property. The recorded decision values no longer
+require manual transfer, but symbolic role binding, correspondence with
+deployed consumers, general implementation-to-model refinement, and
+service-level reproduction remain outside the completed evidence. The bridge
+is not a verified compiler or a new general verification framework.
