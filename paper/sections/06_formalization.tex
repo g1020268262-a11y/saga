@@ -63,8 +63,9 @@ inputs produce \texttt{Invalid}. Neither status is silently interpreted as
 denial. This is finite executable specification semantics, not theorem-proved
 evaluator correctness or complete \texttt{fnmatch} semantics.
 
-\emph{Implementation observation.} The archived matcher record contains a direct production
-matcher call for \texttt{alice@\allowbreak example.com:\allowbreak agent}. A specific denial followed
+\emph{Implementation observation.} The archived matcher record contains a direct
+function-level call to the unmodified matcher implementation for
+\texttt{alice@\allowbreak example.com:\allowbreak agent}. A specific denial followed
 by general permission returns $10$; the reversed order returns $-1$.
 The bridge loads the observation for the selected order, checks its identity
 and ordered rules, and binds its source hash to the historical Git revision
@@ -192,7 +193,8 @@ case are reconstructed by the external bridge rather than entered as
 independent analyst labels. The historical \texttt{turepass} execution used
 a manually stated divergence scenario. These separate evidence packages
 must not be conflated. The facts share a scenario identifier and initiating identity.
-\texttt{SpecIntendedDeny}$(I,R)$ records the assumed denial. The following
+\texttt{SpecIntendedDeny}$(I,R)$ records the specification-side denial represented
+in the symbolic scenario. The following
 protocol events use receiver-first arguments; $t$ denotes the wire token.
 \begin{center}
 \begin{tabular}{p{0.43\linewidth}p{0.47\linewidth}}

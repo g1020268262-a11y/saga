@@ -1,34 +1,52 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
+\subsection{Evaluation Questions}
+
+We address four questions using archived evidence:
+\begin{enumerate}
+\item[Q1.] Does the recorded matcher decision agree with the documented
+most-specific policy semantics?
+\item[Q2.] Do the original authentication and secrecy queries establish
+the authorization relation required by this case study?
+\item[Q3.] Given authorization divergence, which symbolic protocol
+consequences are reachable, and where do Provider and receiver gates block them?
+\item[Q4.] Can the recorded specification/implementation decision pair be
+transferred through a checked, provenance-bound bridge without hand-entering
+the two decision labels?
+\end{enumerate}
+Q4 concerns evidence transfer and artifact integrity, not a new security
+theorem. Implementation observations, bridge checks, and symbolic results
+retain distinct evidentiary roles. No additional experiments are introduced.
+
 \subsection{Experimental Setup}
 
-We evaluate three distinct questions using archived evidence: whether the
-matcher respects its documented policy semantics, whether the existing
-verification covers authorization, and what consequences follow from an
-explicit authorization divergence in the symbolic model. Implementation
-observations and formal results are reported separately. This evaluation
-introduces no additional experiments.
-
 The matcher record uses Python~3.14.3 for direct function calls.
-The formal records use ProVerif~2.05 on Windows. Three evidence packages
-provide the inputs and results: Stage~1 (S), the divergence model (D), and
-independent gate controls (G).\footnote{\raggedright Packages under
+The formal records use ProVerif~2.05 on Windows. Four evidence packages
+provide the inputs and results: Stage~1 (S), historical divergence (D),
+bridge-derived divergence (B), and independent gate controls (G).
+\footnote{\raggedright Packages under
 \texttt{proofs/evidence/}: S = \texttt{authz-stage1-\allowbreak
 20260916T123834944479Z/}; D = \texttt{authz-turepass-\allowbreak
-20260919T090826295518Z/}; G = \texttt{authz-chat-gates-\allowbreak
+20260919T090826295518Z/}; B = \texttt{authz-bridge-turepass-\allowbreak
+20260922T111657792091Z/}; G = \texttt{authz-chat-gates-\allowbreak
 20260918T023621017067Z/}.}
 Their manifests record execution metadata, source revisions, commands,
 input hashes, and output provenance; raw standard output, standard error,
 and verification summaries accompany the runs. The reported model inputs
 match their recorded hashes. These archives originate from separate
-revisions, rather than a single integrated service experiment.
+revisions, rather than a single integrated service experiment. D executes
+a preset divergence scenario; B executes a scenario reconstructed from a
+checked decision pair by bridge v1.1.1. B supplies separate execution
+provenance and does not retroactively upgrade D.
 
-Table~\ref{tab:evaluation-runs} reports the six communication-model runs
+Table~\ref{tab:evaluation-runs} reports the seven communication-model runs
 used here. Each completed with exit status zero. Counts refer to final
 query results, not to satisfied security properties: reachability is
-reported through negated-event queries. Durations are single recorded
-verifier runs, rounded to one decimal place. They do not measure service
+reported through negated-event queries. Durations are archived elapsed
+times rounded to one decimal place. B's recorded interval includes the
+verifier execution and subsequent tests and integrity checks; it is not
+a verifier-only measurement. These times do not measure service
 overhead or establish a performance comparison; repeated measurements and
 a controlled hardware benchmark are outside this evaluation.
 
@@ -41,13 +59,15 @@ Package & Model / scenario & Results & Seconds \\
 \hline
 S & Original communication & 11 & 334.6 \\
 S & Authorization diagnostic & 12 & 353.7 \\
-D & Divergence (\texttt{turepass}) & 2 & 598.4 \\
+D & Historical divergence & 2 & 598.4 \\
+B & Bridge-derived divergence & 2 & 810.9 \\
 G & Provider allow / Receiver allow & 5 & 813.6 \\
 G & Provider deny / Receiver allow & 5 & 507.1 \\
 G & Provider allow / Receiver deny & 5 & 552.5 \\
 \hline
 \end{tabular}
-\caption{Archived ProVerif runs used in the evaluation.}
+\caption{Archived communication-model runs and recorded elapsed times.
+B includes post-verification checks.}
 \label{tab:evaluation-runs}
 \end{table}
 
@@ -56,7 +76,8 @@ G & Provider allow / Receiver deny & 5 & 552.5 \\
 % G: agent_communication_authz_chat_p_allow_r_allow.pv;
 % agent_communication_authz_chat_p_deny_r_allow.pv;
 % agent_communication_authz_chat_p_allow_r_deny.pv.
-% Source: the three package manifests and verification-summary.txt files.
+% B: agent_communication_authz_chat_bridge.pv.
+% Source: the four package manifests and verification-summary.txt files.
 
 \subsection{Matcher Evaluation}
 
@@ -94,10 +115,52 @@ Wildcard allow, then specific deny & $-1$ (deny) & $-1$ (deny) \\
 
 The first ordering establishes a concrete policy decision mismatch; the
 second shows that reordering the same rules changes the result. This is
-an implementation-level, order-dependent authorization bypass. The record
+an implementation-level, order-dependent authorization decision inconsistency. The record
 covers matcher calls, not Provider processing, token issuance, or message
 acceptance in a running service. Two observed orderings do not estimate
 the prevalence of the defect across rulebooks or deployments.
+
+For the same ordered rulebook, B's independent finite evaluator selects
+\texttt{r0}, the unique highest-specificity match, with score $70$ and
+budget $-1$. Its specification decision is therefore Deny; the bound
+implementation observation supplies budget $10$, classified as Allow.
+The archive's historical expected-result field is not used as the evaluator's
+answer. This independently derived decision and the direct observation
+provide the two sides of the recorded inconsistency.
+
+\subsection{Decision-Bridge Evaluation}
+
+Package B addresses Q4 by connecting the recorded evaluation to an executed
+consequence model. It binds the independently derived Deny decision and
+observed Allow decision to the same ordered rules, matched identity, and
+historical source provenance. Rechecking that pair reconstructs the
+\texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} table facts in the
+full model. They remain fixed symbolic inputs during ProVerif execution,
+not matcher execution events. Thus, the recorded decision values are
+transferred without hand-entered labels, while their symbolic role bindings
+remain abstractions as specified in Section~\ref{sec:implementation-mapping}.
+
+The archived ProVerif~2.05 run of this derived model exits with status zero
+and reports exactly the two expected queries: \texttt{ChatAccept} is
+reachable, and acceptance implies prior \texttt{TokenIssue}. The manifest
+records bridge v1.1.1, a clean pre-run code revision, and unchanged tracked
+files after execution. Its hashes bind the archived observation, decision
+pair, template, generated scenario and full model, and verifier executable
+and outputs. The separate run-start record, generated input, command,
+exit status, and final manifest document this execution. Hashes provide
+integrity binding, not independent attestation of archive authenticity.
+
+Separately, the saved test log reports 25 tests passed with exit status zero.
+These cover historical replay independent of current source equality;
+rejection of missing historical revisions and wrong blobs; explicit
+line-ending provenance; decision-pair tampering; template-hash mismatch;
+missing or duplicate scenario regions; protocol, query, channel, and token
+mutations; and enforcement of the approved comment changes. They also
+cover normal allow/deny and reversed-order controls, together with
+unsupported patterns, ties, and invalid inputs. These are artifact and
+reproducibility checks, not 25 security properties or a proof of the evaluator.
+Their success supports the checked transfer for this recorded case, not
+general implementation-to-model refinement.
 
 \subsection{Formal Verification Results}
 
@@ -121,7 +184,7 @@ matcher execution error. The retained authentication and secrecy results
 apply to these Stage~1 queries. They are not automatically inherited by
 the later communication models.
 
-\paragraph{Authorization consequence model.}
+\paragraph{Historical authorization consequence model.}
 Package D contains two final results for \texttt{turepass}.
 The query asserting that \texttt{ChatAccept} is unreachable is false,
 with a reconstructed formal reachability witness. Under preset
@@ -141,6 +204,17 @@ the witness; this model has no standalone \texttt{TokenIssue} reachability
 query and no \texttt{ChatAccept}--\texttt{ChatSend} correspondence query.
 The complete D archive supplies these two final results with independent
 execution provenance, beyond the historical \texttt{turetrace} excerpt.
+
+\paragraph{Bridge-derived consequence execution.}
+The fresh execution archived in B obtains the same two outcomes after
+reconstructing the scenario from the checked pair. Protocol statements
+and queries are intentionally preserved, so matching outcomes are expected;
+output agreement alone does not prove bridge correctness or execution
+freshness. B adds no query. As in D, token issuance occurs in the witness,
+but there is no standalone \texttt{TokenIssue} reachability query or
+acceptance-to-send query. The new evidence connects recorded decision values
+to the scenario used in this execution without turning the symbolic witness
+into a running-service observation.
 
 \paragraph{Authorization gate experiments.}
 Package G evaluates three fixed pairs of Provider and receiver permissions.
@@ -174,39 +248,57 @@ true in all three controls. In the denial cases they hold vacuously,
 because acceptance is unreachable; only the allow/allow case supplies
 a non-vacuous control. These experiments locate blocking stages within
 the model, rather than evaluate a deployed repair. The controls use a
-fixed private token, unlike the fresh tokens in D, and are not a verified
-refinement of the divergence model.
+fixed private token, unlike the fresh tokens in D and B, and are not verified
+repairs or refinements of either divergence model.
 
 \subsection{Security Findings Summary}
 
-The evidence supports three complementary findings. First, direct matcher
+The evidence supports four complementary findings. First, direct matcher
 calls demonstrate a decision inconsistent with documented specificity
 semantics. Second, the coverage diagnostic distinguishes authorization
 from the authentication and secrecy properties actually queried in
-Stage~1. Third, given explicit divergence assumptions, the consequence
-model permits message acceptance, while the gate controls identify
-distinct release and issuance boundaries.
+Stage~1. Third, independent finite specification evaluation and a
+provenance-bound observation yield a checked Deny/Allow pair for the same
+recorded policy evaluation; the bridge reconstructs the formal scenario
+from that pair. Fourth, the fresh derived-model execution reaches
+\texttt{ChatAccept} while establishing its correspondence to prior issuance;
+the independent gate controls identify distinct release and issuance boundaries.
 
 Together, these findings support the SAGA case study's authorization
 enforcement gap. The implementation observation establishes the local
-defect; the formal results characterize modeled consequences and control
-positions. Neither evidence layer substitutes for the other. No result
+inconsistency; the bridge supplies checked evidence transfer; the formal
+results characterize modeled consequences and control positions. This is
+neither a running-service reproduction, a refinement proof, nor a
+deployment-scale security evaluation. No evidence layer substitutes for
+another. No result
 establishes cryptographic primitive failure, certificate forgery, key
 compromise, or arbitrary attacker control of the modeled peer processes.
 
 \subsection{Limitations}
 
-The formal model abstracts the matcher result. It neither executes Python
-nor evaluates the concrete rulebook, so the implementation record and the
-formal reachability witness are not a single executable reproduction.
-A strict semantic mapping from concrete rules, specificity, and returned
-budgets to scenario facts and formal events remains necessary.
+The bridge now provides an executable, provenance-bound transfer for the
+recorded policy evaluation, but does not prove refinement between Python
+and the symbolic protocol model. The external evaluator covers a finite
+pattern grammar; its correctness is not theorem-proved. Neither complete
+Python or \texttt{fnmatch} semantics nor correctness for arbitrary policies
+is established. ProVerif does not execute the matcher.
 
-Private transport and the \texttt{ProviderReleased} handoff are model
-abstractions. The evaluated queries do not establish token expiry, quota
+Mapping the concrete evaluation to \texttt{aid\_B}, \texttt{aid\_A}, and
+\texttt{BuggyPolicy} remains an analysis abstraction. The historical
+function observation identifies neither a deployed receiver nor a deployed
+policy owner, and is not evidence of the same concrete service session as
+the symbolic witness. Production Provider and receiver consumers, their
+equivalence to the modeled consumers, and their use of the recorded
+decision have not been validated by this bridge.
+
+The model abstracts both transport and handoff through its private
+\texttt{tls\_chat} channel and \texttt{ProviderReleased} table, respectively.
+The evaluated queries do not
+establish token expiry, quota
 consumption, revocation, policy-update behavior, session isolation, or
 injective agreement. No complete production-service reproduction or
-deployment-scale measurement is reported. Future work may extend the
-semantic mapping and evaluate service behavior and larger deployments;
-the present results establish neither their outcomes nor generality
-across agentic systems.
+deployment-scale measurement is reported. The historical observations do
+not establish current upstream vulnerability status or prevalence across
+deployments. Future work may establish stronger semantic correspondence
+and evaluate service behavior and other agent systems; the present
+case study does not establish those outcomes or generality.
