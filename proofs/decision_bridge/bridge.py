@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-VERSION = "decision-bridge-1.1"
+VERSION = "decision-bridge-1.1.1"
 SOURCE = "saga/common/contact_policy.py"
 ARCHIVE = "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json"
 MODEL = "proofs/proverif/agent_communication_authz_chat_turepass.pv"

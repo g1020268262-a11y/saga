@@ -4,7 +4,8 @@ from unittest.mock import patch
 import json
 from bridge import (ROOT, ARCHIVE, read, digest, make_context, build, evaluate,
                     generate, policy_hash, write_json, verify_historical_source, current_source_state, SOURCE, MODEL)
-from generate_model import derive_model
+from generate_model import (derive_model, reconstruct, split_template, normalize_comments,
+                            validate_structure, COMMENT_NORMALIZATIONS)
 from run_verification import summarize
 import tempfile
 from pathlib import Path
@@ -54,8 +55,60 @@ class BridgeTests(unittest.TestCase):
         data = json.dumps(build(*historical())).encode()
         generated = derive_model(data)
         header, body = generated.split(b"*)\n", 1)
-        self.assertEqual(body, (ROOT / MODEL).read_bytes())
+        self.assertEqual(body, normalize_comments((ROOT / MODEL).read_bytes()))
         self.assertIn(digest(data).encode(), header)
+
+    def test_scenario_reconstructed_from_validated_generator(self):
+        result = build(*historical())
+        # Instrument the validated generator's output with harmless whitespace.
+        # The new body must consume it rather than retain the source block.
+        fragment = generate(result).replace("insert Scenario", "insert  Scenario")
+        with patch("generate_model.generate", return_value=fragment) as generator:
+            _, body, block = reconstruct(json.dumps(result).encode())
+            generator.assert_called_once_with(result)
+        self.assertIn(b"insert  ScenarioSpecDeny", block)
+        self.assertIn(block, body)
+        self.assertNotIn(b"  insert ScenarioSpecDeny(BuggyPolicy, aid_B);", body)
+
+    def test_nondivergent_pair_cannot_generate_full_model(self):
+        with self.assertRaises(ValueError):
+            derive_model(json.dumps(build(*historical(True))).encode())
+
+    def test_scenario_region_must_be_unique(self):
+        source = (ROOT / MODEL).read_bytes()
+        prefix, suffix, _ = split_template(source)
+        block = source[len(prefix):len(source)-len(suffix)]
+        for mutated in (source + block, prefix + suffix):
+            with self.subTest(kind="duplicate" if mutated.endswith(block) else "missing"):
+                with self.assertRaises(ValueError):
+                    split_template(mutated)
+
+    def test_structure_rejects_protocol_mutations(self):
+        _, body, block = reconstruct(json.dumps(build(*historical())).encode())
+        source = (ROOT / MODEL).read_bytes()
+        mutations = {
+            "query": (b"==> event(TokenIssue", b"==> event(TokenReceive"),
+            "event": (b"event ChatAccept(bitstring", b"event ChangedAccept(bitstring"),
+            "process": (b"if sender = aid_B then", b"if sender = aid_A then"),
+            "channel": (b"free tls_chat: channel [private].", b"free tls_chat: channel."),
+            "token": (b"new token: bitstring;", b"let token = BuggyPolicy in"),
+        }
+        for kind, (old, new) in mutations.items():
+            with self.subTest(kind=kind):
+                self.assertIn(old, body)
+                with self.assertRaises(ValueError):
+                    validate_structure(body.replace(old, new, 1), source, block)
+        with self.assertRaises(ValueError):
+            validate_structure(body + b"\nevent start();\n", source, block)
+
+    def test_only_approved_comment_changes(self):
+        _, body, block = reconstruct(json.dumps(build(*historical())).encode())
+        source = (ROOT / MODEL).read_bytes()
+        for old, new in COMMENT_NORMALIZATIONS:
+            self.assertNotIn(old.encode(), body)
+            self.assertIn(new.encode(), body)
+        with self.assertRaises(ValueError):
+            validate_structure(body + b"(* unapproved extra comment *)", source, block)
 
     def test_full_model_rejects_tampered_pair(self):
         result = build(*historical())

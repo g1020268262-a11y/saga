@@ -1,4 +1,4 @@
-# Authorization Decision Bridge v1.1
+# Authorization Decision Bridge v1.1.1
 
 This independent, executable finite semantics layer replaces hand-entered
 decision labels for the recorded case with a checked decision pair. It does
@@ -156,16 +156,39 @@ model. The manifest binds that model's hash. This is an adapter interface check,
 not proof of equivalence to protocol consumers.
 
 The `.inc` is not standalone ProVerif input; no native include directive is assumed.
-In v1.1, `generate_model.py` additionally produces a complete `.pv` from the frozen
+In v1.1.1, `generate_model.py` produces a complete `.pv` from the frozen
 turepass template, pinned by its raw SHA-256. It rechecks the serialized decision
-pair and reconstructs the two inserts from its result. The template must contain
-that block exactly once. For this fixed Deny/Allow case the derived body is byte-for-
-byte identical to the template: only a provenance header is added. Queries, processes,
-channels, events and token handling are unchanged. The header binds evaluation
-fingerprint, exact bridge-result bytes hash, template path/hash and bridge version.
+pair, splits the source into prefix and suffix around a uniquely located frozen
+scenario block, and constructs `prefix + generated_block + suffix`. The generated
+block comes from the revalidated bridge generator, not the old template block.
+Missing/duplicate scenario regions and template hash mismatches fail closed.
+
+Version distinction: v1.1 validated a pre-existing scenario interface and ran a
+derived full model. In v1.1.1, the scenario region of the executed model is
+reconstructed from the independently derived decision pair. No new template file
+is needed: the historical model remains the hash-pinned read-only source.
+
+Exactly three comments are normalized in the derived body only:
+the session-isolation claim becomes "Fresh symbolic token for this modeled execution";
+the claim about cryptographic checks becomes a ChatAccept-to-TokenIssue correspondence
+description; the end-to-end attack query label becomes a ChatAccept reachability
+description under the modeled divergence. Historical comments remain untouched.
+The explicit UTF-8 comment replacement whitelist requires each original exactly once.
+
+The structure checker compares exact bytes against the permitted transformation,
+rather than stripping arbitrary comments. It rejects changes to queries, events,
+processes, channels, token logic, extra statements, and unapproved comments.
+The header binds evaluation fingerprint, exact bridge-result bytes hash, template
+path/hash, generated scenario block hash and bridge version. Tests exercise each
+of these rejection boundaries; these executable checks are not a refinement proof.
+
+The executed bridge-derived model reconstructs its authorization-divergence scenario
+block from the checked decision pair; all other protocol semantics and queries remain
+frozen. The three approved comment changes do not alter ProVerif statements.
 
 `run_verification.py` saves that model, input, decision pair, a run-start record,
 actual verifier stdout/stderr/version, test logs, summary and final manifest.
+Archive-local `.gitattributes` preserves the exact model/output bytes in Git checkouts.
 It extracts the two `RESULT` lines from NEW stdout and checks ChatAccept reachability
 and the ChatAccept-to-TokenIssue correspondence. Missing/unknown/additional results,
 nonzero exit, timeout, failed tests or changes to tracked input files prevent a

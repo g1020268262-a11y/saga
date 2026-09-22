@@ -9,7 +9,7 @@ import sys
 import time
 
 from bridge import ROOT, MODEL, VERSION, build, current_source_state, digest, git, write_json
-from generate_model import derive_model, TEMPLATE_SHA256
+from generate_model import derive_model, reconstruct, TEMPLATE_SHA256
 from run_bridge import default_input
 
 
@@ -54,11 +54,13 @@ def main():
     tracked = [p for p in git("ls-files", "-z").decode().split("\0") if p]
     before = {p: digest((ROOT / p).read_bytes()) for p in tracked}
     dest.mkdir(exist_ok=False)
+    write_bytes(dest / ".gitattributes", b"# Preserve executed and archived bytes across checkouts.\n* -text\n")
     write_json(dest / "input.json", input_record)
     write_json(dest / "bridge-result.json", result)
     result_bytes = (dest / "bridge-result.json").read_bytes()
     model_name = "agent_communication_authz_chat_bridge.pv"
     model = derive_model(result_bytes)
+    _, _, scenario_block = reconstruct(result_bytes)
     write_bytes(dest / model_name, model)
     write_bytes(dest / "proverif-version.txt", version.stdout + version.stderr)
     command = [tool.name, dest.relative_to(ROOT).as_posix() + "/" + model_name]
@@ -71,6 +73,8 @@ def main():
                 "evaluation_fingerprint": result["evaluation_fingerprint"],
                 "bridge_result_sha256": digest(result_bytes), "source_model": MODEL,
                 "source_model_sha256": TEMPLATE_SHA256, "generated_model": command[1],
+                "template_path": MODEL, "template_sha256": TEMPLATE_SHA256,
+                "generated_scenario_block_sha256": digest(scenario_block),
                 "generated_model_sha256": digest(model),
                 "proverif_executable": tool.name, "proverif_executable_sha256": tool_hash,
                 "executable_resolution": "External executable supplied via --proverif; basename and bytes hash identify tool",
