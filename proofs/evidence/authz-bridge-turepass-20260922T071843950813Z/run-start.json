@@ -1,0 +1,53 @@
+{
+  "executed_utc": "20260922T071843950813Z",
+  "git_commit": "2db47d8f3460aa9f6652a83714afe98bc1eadaa4",
+  "git_status": "clean",
+  "git_status_scope": "pre-run, before creating this evidence directory",
+  "bridge_version": "decision-bridge-1.1",
+  "python_version": "3.14.3 (main, Feb  5 2026, 13:34:54)  [MINGW GCC UCRT 15.2.0 64 bit (AMD64)]",
+  "historical_source": {
+    "source_commit": "7372111bea150e32cee390a616849316d2780bfc",
+    "source_path": "saga/common/contact_policy.py",
+    "archived_source_byte_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+    "historical_git_blob_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+    "historical_normalized_lf_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+    "verified_byte_encoding": "uniform-CRLF",
+    "historical_git_blob_matches_normalized_source": true
+  },
+  "current_source_state": {
+    "current_source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+    "current_source_matches_historical": true
+  },
+  "observation": {
+    "path": "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json",
+    "sha256": "b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d",
+    "format": "stage1",
+    "field": "actual_specific_deny_then_wildcard_allow"
+  },
+  "policy_hash": "23cfaf931100d7e47702e962a38b99bd8c837e0b15624438658b9b8f4ca5138c",
+  "evaluation_fingerprint": "40888f0bb40808888091783a8f63adb9fb9a6615a04a13efdd9d31c4a8d010a5",
+  "bridge_result_sha256": "e977a28d1017e06edd7b242b1342b70dc6a8c8fcbb682d34ce3b7fb0c75eeac8",
+  "source_model": "proofs/proverif/agent_communication_authz_chat_turepass.pv",
+  "source_model_sha256": "e6ffbd5acebd3aa1f05ea7942c4f7eb23d4469357c7a01fea082de2b2e8ab121",
+  "generated_model": "proofs/evidence/authz-bridge-turepass-20260922T071843950813Z/agent_communication_authz_chat_bridge.pv",
+  "generated_model_sha256": "50ebcde1fb6cb22b9b4482802ed990d31bca3757cfcfc79bda8ee8ba4913afdc",
+  "proverif_executable": "proverif.exe",
+  "proverif_executable_sha256": "702273912616a46919d5a2ecd0c5465cffdea9ff66296171d44d01d1700b8894",
+  "executable_resolution": "External executable supplied via --proverif; basename and bytes hash identify tool",
+  "proverif_command": [
+    "proverif.exe",
+    "proofs/evidence/authz-bridge-turepass-20260922T071843950813Z/agent_communication_authz_chat_bridge.pv"
+  ],
+  "working_directory": ".",
+  "timeout_seconds": 3600,
+  "proverif_version": "Proverif 2.05. Cryptographic protocol verifier, by Bruno Blanchet, Vincent Cheval, and Marc Sylvestre",
+  "input_hashes": {
+    "proofs/decision_bridge/bridge.py": "d4b387960d14b6f80fcbaab8c2864765431be4a278dd9c60049f3bcf9613d625",
+    "proofs/decision_bridge/collect_controls.py": "a95d6e5bd325cf6a5b6c364f69a1c41e5397524de11d86a9856579c088d94e0c",
+    "proofs/decision_bridge/generate_model.py": "cb3dad5f8add7dc7e176100fe622592ca75805b598ecb11ffc70364fe5de163c",
+    "proofs/decision_bridge/run_bridge.py": "e7c6c989becac3b22ffd52df98a1bc1ec22d2141a7f074ead8eb9da3bd1c9e97",
+    "proofs/decision_bridge/run_verification.py": "d308639b9c6a85cab124c033c7bc6ba5fcb49c07888163c8eafd9fa53ddef9d0",
+    "proofs/decision_bridge/test_bridge.py": "e6f527bf8357402c12d7586333427d5e4507f67d56314f4d82ae420062b7142e"
+  },
+  "state": "running"
+}

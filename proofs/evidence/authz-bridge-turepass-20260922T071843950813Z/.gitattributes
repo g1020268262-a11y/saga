@@ -1,0 +1,2 @@
+# Preserve the exact executed model and recorded output bytes when checking out.
+* -text
