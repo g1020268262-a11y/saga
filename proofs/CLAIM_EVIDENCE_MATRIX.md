@@ -6,23 +6,25 @@
 
 证据同步：2026-09-20，补充既有独立运行归档 `authz-turepass-20260919T090826295518Z`。本次仅同步研究状态，保留历史 `turetrace` 及其来源限制，不重跑实验。
 
+证据同步：2026-09-22，基于 `6192c74e322692268b78c6f364eafb644da182e0`，纳入已完成的 bridge v1.1.1 及 `authz-bridge-turepass-20260922T111657792091Z`。本轮仅更新本矩阵并只读核对归档，不运行 matcher、bridge、测试或 ProVerif，不修改论文。下文将历史诊断、历史后果模型和当前 bridge-derived 后果证据分别标识。
+
 **Authorization correctness is not guaranteed by cryptographic authentication alone.**
 
 本研究关注 **policy semantics + policy implementation + protocol consequence**：用户策略的预期含义是否被 matcher 正确实现，以及授权决定的偏差能否影响凭证签发和 Agent 通信授权。现有成果包括已确认的 matcher 实现级授权绕过、授权证明覆盖缺口、抽象授权分歧的通信后果模型，以及授权门控位置控制实验。它们不构成对 SAGA 密码学原语的破解结论。
 
-本文件组织已有材料，不产生新实验或新安全结论。当前研究状态以 [AUDIT_STATUS.md](AUDIT_STATUS.md) 为准；历史阶段报告中的时间性表述仅描述当时的阶段。特别是，**matcher 实现级缺陷已经复现并确认**，待完成的是它与形式模型之间的严格语义映射，而不是重新确认该缺陷。
+本文件组织已有材料，不产生新实验或扩大安全结论。[AUDIT_STATUS.md](AUDIT_STATUS.md) 保留历史阶段状态；当前 bridge 完成情况以下述版本化归档为依据，不能让早期“待完成”表述覆盖后来的结果。**历史 matcher 实现级偏差已有直接调用证据；记录场景的决策计算、来源绑定及模型场景重构已完成，通用实现到模型的 refinement 仍未建立。**
 
 | Claim | 已完成工作 | 核心证据 | 当前支持的结论 | 不能自动扩展到的结论 |
 |---|---|---|---|---|
 | 1 | Authorization proof coverage gap | Stage 1 模型、查询摘要、重建轨迹 | 原认证与 token 保密结果不建立所需的授权可靠性 | 密码协议被破解，或实现层消息越权已复现 |
 | 2 | Matcher implementation-level vulnerability | `test_matcher_bug.py`；原实现直接调用的 `policy-matcher-sanity.json` | 预期 DENY、实现 ALLOW；规则顺序影响授权决定 | Provider、token 和消息处理完整运行链已复现 |
-| 3 | Authorization consequence modeling | `agent_communication_authz_chat_turepass.pv`、历史 `turetrace`、`authz-turepass-20260919T090826295518Z` | 在预置规范拒绝／实现允许场景下，`ChatAccept` 可达；独立运行归档确认 `ChatAccept ==> TokenIssue` 为 `true` | 独立 `TokenIssue` 可达性查询、执行 Python matcher、实现到模型的精化证明 |
+| 3 | Historical and bridge-derived consequence modeling | 历史 `turetrace`、`authz-turepass-20260919T090826295518Z`；当前 `authz-bridge-turepass-20260922T111657792091Z` | 历史预置场景与当前 bridge 重构场景的各自归档支持 `ChatAccept` 可达及接受到签发的 correspondence；新归档不反向升级旧来源 | 独立 `TokenIssue` 可达性查询、ProVerif 执行 Python matcher、实现精化或服务执行证明 |
 | 4 | Authorization gate placement experiments | 三个独立门控模型及其查询摘要 | Provider 与 Receiver 门控在不同阶段阻断后续事件 | 对生产实现门控机制或实际部署安全性的完整证明 |
-| Mapping（Claims 2--3 的连接说明） | Matcher observation can be abstracted into formal authorization divergence | 真实 matcher 调用归档；第六章 Implementation-to-Model Mapping 小节、对照表和图 | 对已记录决定对给出明确的人工抽象说明 | 自动转换、映射正确性验证、实现精化证明或新安全结论 |
+| Mapping A--F（Claims 2--3 的当前连接） | Independent decision derivation, provenance binding, scenario reconstruction and fresh verification | bridge v1.1.1 代码、decision pair、派生模型、新运行 manifest 与保存的 25-test 日志 | 记录场景的 decision values 经独立有限求值与来源绑定机械传递至执行模型的场景区域 | 角色抽象的正确性证明、任意策略正确性、实现 refinement、同一具体服务会话 |
 
 **事件口径。** 本系列模型中，`PeerA = R` 是 token 签发方和聊天接收方，`PeerB = I` 是 token 接收方和聊天发送方。`Accept` 表示 B 收到并验证 token；`ChatAccept` 才表示 A 接受模型中的一条聊天消息。论文的 `ProviderGrant`、`TokenIssued`、`MessageAccepted` 与模型的 `ProviderRelease`、`TokenIssue`、`ChatAccept` 可作概念对照，但该对照本身不是实现到模型的语义映射证明。`turepass` 中的 `SpecIntendedDeny(B,A)` 参数顺序与 `TokenIssue(A,B,t)` 相反，使用时不能交换授权方向。
 
-**证据来源核对。** 本轮只读核对了以下归档；所列模型的当前文件哈希与相应 manifest 的输入哈希一致，三个 manifest 所列的 12、6、8 个证据文件也分别匹配其记录。原 matcher 当前 SHA-256 与 sanity JSON 的记录一致。哈希核对是材料一致性检查，不是重跑实验。
+**历史证据来源核对（2026-09-19/20）。** 当时只读核对了以下归档；所列模型文件哈希与相应 manifest 的输入哈希一致，三个早期 manifest 所列的 12、6、8 个证据文件分别匹配记录。原 matcher 当时的 SHA-256 与 sanity JSON 一致。这些是历史核对记录，不是对当前上游实现状态的结论。2026-09-22 的 bridge provenance 核对见 Mapping A--F；历史 replay 不以当前源码相同为必要条件。
 
 | 归档 | 运行时基线 | 可核对材料 |
 |---|---|---|
@@ -31,6 +33,9 @@
 | [独立门控](evidence/authz-chat-gates-20260918T023621017067Z/manifest.json) | `2685d956b2f98fb1c4634dd6ec817fe4d9c448b8` | 三个控制模型及其结果、输入与输出哈希 |
 | [`turetrace`](evidence/turetrace) | 本次快照中可读取；没有对应的独立运行 manifest | 已保存轨迹及 `ChatAccept` 可达性结果；不能用本次仓库快照补造其原始运行元数据 |
 | [authz-turepass-20260919T090826295518Z](evidence/authz-turepass-20260919T090826295518Z/manifest.json) | `f8bf8273bc41c82c2fb117f1be395877a55c6e13` | 独立运行的命令、ProVerif 2.05、输入哈希、stdout/stderr、查询摘要与退出码；不是历史 `turetrace` 的追溯来源证明 |
+| [bridge v1 development runs](decision_bridge/evidence/) | 各自 manifest 记录的开发状态 | 保留 fragment-only 产物，不改写为已执行完整模型 |
+| [bridge v1.1](evidence/authz-bridge-turepass-20260922T071843950813Z/manifest.json) | `2db47d8f3460aa9f6652a83714afe98bc1eadaa4` | 校验已有场景接口并执行派生完整模型；不是 v1.1.1 的场景重构实现 |
+| [bridge v1.1.1](evidence/authz-bridge-turepass-20260922T111657792091Z/manifest.json) | `830ba37faae41788b10f3a9cf7bfc68426d52d26`（干净运行代码提交） | 重构场景区域后的新 ProVerif 2.05 执行，两个既有查询及 25 项测试；归档提交为 `6192c74e322692268b78c6f364eafb644da182e0` |
 
 # Claim 1
 
@@ -119,7 +124,7 @@ Implementation decision != Specification decision
 | `source` | `saga/common/contact_policy.py` |
 | `source_sha256` | `2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97` |
 
-该 source hash 与本次核对的原 matcher 文件一致。这里引用的是既有输出，本轮没有执行这两个测试脚本。
+该 source hash 绑定指定历史源码提交 `7372111bea150e32cee390a616849316d2780bfc` 的工作区字节。当前 bridge 通过历史 Git blob 的明确换行编码核对它，不要求当前 checkout 相同。这里引用既有输出，本轮没有执行这两个测试脚本；bridge 读取该观察也不构成一次新的 production matcher execution。
 
 ## Security impact
 
@@ -139,7 +144,7 @@ Implementation decision != Specification decision
 
 **Authorization decision divergence can propagate into agent communication authorization.**
 
-该主张由明确假设授权分歧的形式后果模型支持：已保存的符号轨迹到达消息接受边界。它与 Claim 2 的具体实现证据相关，但二者之间的严格映射仍需完成。
+历史后果模型由预置授权分歧驱动；当前 bridge v1.1.1 另有从已绑定决定对重构场景并执行模型的归档，两类证据分别支持各自的符号后果。记录场景的机械化证据传递已完成，但具体策略求值到符号协议角色的对应仍是分析抽象，未完成 refinement。
 
 ## Evidence
 
@@ -147,7 +152,7 @@ Implementation decision != Specification decision
 |---|---|
 | [agent_communication_authz_chat_turepass.pv](proverif/agent_communication_authz_chat_turepass.pv) | 预置规范拒绝／实现允许场景；包含材料发布、token 签发和聊天消息接受 |
 | [turetrace](evidence/turetrace) | 已保存的重建轨迹，包含 `SpecIntendedDeny`、`ProviderRelease`、`TokenIssue` 和 `ChatAccept` |
-| [AUDIT_STATUS.md](AUDIT_STATUS.md) | 将该模型定位为 authorization consequence model；其中待补结构化归档的历史状态由下述独立运行归档更新，语义映射仍未完成 |
+| [AUDIT_STATUS.md](AUDIT_STATUS.md) | 历史 authorization consequence model 定位；后续独立归档及 bridge 完成情况见本矩阵，不把历史待办等同于当前状态 |
 | [独立运行 manifest](evidence/authz-turepass-20260919T090826295518Z/manifest.json) | 记录未修改模型的独立执行、ProVerif 2.05、输入哈希与退出码 `0` |
 | [独立运行 stdout](evidence/authz-turepass-20260919T090826295518Z/agent_communication_authz_chat_turepass.stdout.txt)、[stderr](evidence/authz-turepass-20260919T090826295518Z/agent_communication_authz_chat_turepass.stderr.txt) | 完整查询结果和符号可达性 witness；stderr 为空 |
 | [独立运行 verification summary](evidence/authz-turepass-20260919T090826295518Z/verification-summary.txt)、[版本记录](evidence/authz-turepass-20260919T090826295518Z/proverif-version.txt) | 区分已声明查询、最终结果与 witness 中的事件观察 |
@@ -169,7 +174,7 @@ Implementation decision != Specification decision
 
 为避免把分析名称误写成已有模型事件，采用以下对照：
 
-| 分析层含义 | 当前模型中的实际表示 | 证据语义 |
+| 分析层含义 | 历史 turepass 模型中的实际表示 | 历史证据语义 |
 |---|---|---|
 | `SpecDecision: DENY` | `ScenarioSpecDeny(BuggyPolicy,aid_B)` 表项；`SpecIntendedDeny(aid_B,aid_A)` 事件 | 规范侧拒绝是预置场景，不是模型计算具体 rulebook 的结果 |
 | `ImplDecision: ALLOW` | `ScenarioImplAllow(BuggyPolicy,aid_B)` 表项 | 实现侧允许是 matcher 偏差的抽象，供 Provider 和 Receiver 读取 |
@@ -179,7 +184,9 @@ Implementation decision != Specification decision
 
 `SpecDecision` 和 `ImplDecision` 是上表的分析标签，不是当前文件中声明的事件名；`ScenarioSpecDeny` 和 `ScenarioImplAllow` 是 **table facts**，也不能误写为模型内计算得到的 policy events。
 
-### Implementation-to-Model Mapping（叙事补充，2026-09-20）
+### Historical Implementation-to-Model Mapping（叙事补充，2026-09-20）
+
+本小节保留当时的人工解释与论文状态，不作为当前 bridge 能力描述。本轮未修改论文；当前决定值传递机制见下文 Mapping A--F。
 
 新增说明见 [第六章](../paper/sections/06_formalization.tex) 的 `Implementation-to-Model Mapping` 小节、对照表和示意图。它连接 Claims 2--3 的证据解释，不增加独立安全贡献、实验或查询。
 
@@ -230,7 +237,47 @@ RESULT not event(ChatAccept(receiver,sender_1,tok,msg)) is false.
 - 不能把 Claim 1 的认证与保密结果直接继承为此模型的新验证结果；`turepass` 没有查询原模型的完整性质集合。
 - 历史 `turetrace` 仍缺少对应的独立运行命令、版本、完整 stdout/stderr 和输入哈希 manifest。新增归档提供另一独立运行的完整来源，不能反向作为历史文件的运行元数据。
 
-因此，**授权分歧后果建模、`ChatAccept` 可达性及其与 `TokenIssue` 的 correspondence 已有独立运行归档**；Stage 4 作为完整研究阶段仍有实现到形式模型的语义映射工作。这与 matcher 缺陷已确认的结论一致。
+因此，历史后果模型的可达性和 correspondence 有独立来源；当前记录场景的 bridge 传递进一步由以下归档支持。剩余角色对应和实现 refinement 义务不应与已经完成的有限证据传递混写。
+
+### Current Implementation-to-Model Evidence Transfer: Mapping A--F（2026-09-22）
+
+下表中的 **B111** 指 [authz-bridge-turepass-20260922T111657792091Z](evidence/authz-bridge-turepass-20260922T111657792091Z/)。这是已归档运行的整理，不是本轮重新执行。
+
+| Claim | Evidence | Established for the recorded case | Boundary |
+|---|---|---|---|
+| A — Historical production observation | [Stage 1 sanity JSON](evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json)、其调用脚本及历史源码提交 | 对 Alice 的指定 ordered rulebook，实际返回 budget `10`；反序观察为 `-1` | 生产执行证据仍来自原归档；bridge 不是新的 production execution，不包含服务流程 |
+| B — Independent finite specification evaluation | [bridge.py](decision_bridge/bridge.py) 的 `evaluate()`；[B111 decision pair](evidence/authz-bridge-turepass-20260922T111657792091Z/bridge-result.json)；[测试代码](decision_bridge/test_bridge.py)和保存日志 | 独立匹配和 specificity 计算，选择唯一最高分 `r0`（70），budget `-1`，`SpecDecision = Deny`；不 import production `match()`，不使用归档 expected/specificities 作为规范答案 | 有限输入域内的可执行 evaluator 及测试，不是 evaluator 的形式正确性证明、完整 fnmatch 或 arbitrary policy correctness |
+| C — Same-evaluation decision pair | `load_observation()`、`verify_historical_source()`、`build()`；B111 decision pair 和 manifest | 绑定相同有序规则、target identity、policy hash、源码 revision 和 observation provenance；`Spec = Deny`、`ImplObserved = Allow`、`divergence = true` | `target` 是被匹配的 initiator；`aid_A`、`BuggyPolicy` 及 policy label 是 symbolic/scenario-local，不是历史观察记录的 deployed receiver 或 policy owner；不是同一具体服务会话 |
+| D — Bridge-derived scenario reconstruction | [generate_model.py](decision_bridge/generate_model.py)、`generated_scenario_block_sha256`、[派生模型](evidence/authz-bridge-turepass-20260922T111657792091Z/agent_communication_authz_chat_bridge.pv)、保存测试 | 重新校验决定对，通过 `prefix + generated_block + suffix` 重构执行模型场景；v1.1 仅校验已有接口，v1.1.1 从已检查决定对重构区域 | 自动化场景适配与检查不是 implementation-to-model refinement；ProVerif 内仍不计算 Python matcher |
+| E — Fresh derived-model verification | [run-start](evidence/authz-bridge-turepass-20260922T111657792091Z/run-start.json)、[manifest](evidence/authz-bridge-turepass-20260922T111657792091Z/manifest.json)、[stdout](evidence/authz-bridge-turepass-20260922T111657792091Z/proverif-stdout.txt)、[summary](evidence/authz-bridge-turepass-20260922T111657792091Z/verification-summary.txt) | 新 ProVerif 2.05 执行，退出码 `0`；`ChatAccept` reachable = `true`；`ChatAccept ==> TokenIssue` = `true` | standalone `TokenIssue` reachability query = **absent**；不是 production service exploit，不能将 witness 内签发事件报告为独立查询 |
+| F — Frozen transformation integrity | template SHA、`validate_structure()`、mutation tests、[保存的 25-test 日志](evidence/authz-bridge-turepass-20260922T111657792091Z/tests-stderr.txt) | 除 provenance header、重构 scenario region 和三处批准的 comment normalization，冻结协议内容和 queries；归档 tests exit `0`、`tracked_files_unchanged = true` | artifact-level transformation integrity，不是任意两个模型的语义等价定理或 Python refinement |
+
+**有限语义。** 支持 `*`、小写 ASCII literal AID 和 literal UID 后接 `:*`；按数值 specificity 的唯一最高匹配选择预算。预算分为 Negative/Zero/Positive，仅 Positive 表示许可，无匹配取 Zero。并列最高分或域外 pattern 为 Unsupported，畸形输入为 Invalid，不悄悄解释成 Deny。这不覆盖完整 Python/fnmatch、动态策略、配额或 token 生命周期，也不改变 receiver 零预算 precheck 的已有边界。
+
+**当前决定值传递与剩余角色抽象。** Decision values for the recorded case are now mechanically transferred through an independently evaluated, provenance-bound bridge into the generated scenario region. The bridge removes the hand-entered decision labels for the recorded case by independently deriving the specification-side decision and binding the implementation-side decision to an archived matcher execution. It then reconstructs the authorization-divergence scenario region of the executed ProVerif model.
+
+This is a machine-checked evidence transfer for the recorded evaluation, not a general refinement proof between the Python implementation and the symbolic protocol model. 此处 machine-checked 指脚本进行求值、绑定、重算和结构检查，不指对这些脚本本身完成定理证明。
+
+The mapping from the concrete policy evaluation to symbolic protocol roles (`aid_B`, `aid_A`, `BuggyPolicy`) remains an analysis abstraction and is not a proved implementation-to-model refinement. Provider/Receiver 共享该决定与 `ProviderReleased` handoff 仍是协议模型抽象。`ScenarioSpecDeny` / `ScenarioImplAllow` 仍为 table facts；不是新增的 matcher execution events。
+
+**来源核对（只读）。** B111 manifest 的 11 项 artifact 哈希与当前文件及下述 evidence commit 中的 Git blob 一致；所列脚本哈希、原始 observation、source model、实际生成场景字节均已核对。policy hash 和 evaluation fingerprint 按记录的 canonical JSON 格式复核。历史源码通过指定 Git blob 和统一 CRLF 编码匹配归档工作区字节哈希，二者原始哈希并不相等。当前源码匹配仅为记录信息，不是 replay 的前提。
+
+| Provenance item | Verified value / source |
+|---|---|
+| Bridge code / clean run commit | `830ba37faae41788b10f3a9cf7bfc68426d52d26` — manifest `git_commit`，`git_status = clean` 指创建新归档前 |
+| Evidence commit | `6192c74e322692268b78c6f364eafb644da182e0` — 由 Git 历史及归档文件字节核对；不是 manifest 的运行提交字段 |
+| Historical matcher source commit | `7372111bea150e32cee390a616849316d2780bfc` |
+| Observation SHA-256 | `b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d` |
+| Policy hash | `23cfaf931100d7e47702e962a38b99bd8c837e0b15624438658b9b8f4ca5138c` |
+| Evaluation fingerprint | `40888f0bb40808888091783a8f63adb9fb9a6615a04a13efdd9d31c4a8d010a5` |
+| Bridge-result SHA-256 | `24b7591099425a109bb83b69cf0bf797166014dda9493d1a1c8db621352d3f3f` |
+| Source model / template SHA-256 | `e6ffbd5acebd3aa1f05ea7942c4f7eb23d4469357c7a01fea082de2b2e8ab121` |
+| Generated scenario block SHA-256 | `69d5b0d1752ec59c90e9ed455126222430b12b12d67c23bf407e42fea5b56f42` |
+| Generated model SHA-256 | `20113b40cc0974a5de514a72b4630aa149bc6f2b79cdca5574d6de7c795b1329` |
+
+两条实际 `RESULT` 与 summary/manifest 一致：不可达断言为 `false` 表示 `ChatAccept` 可达，对应性为 `true`。旧 turepass 与 B111 的 stdout 哈希相同；冻结语义下的输出一致本身既不能证明也不能否定新执行，新执行的来源应结合独立 run-start、命令、代码提交、派生输入哈希、退出码与 manifest，而非仅凭 stdout 内容区分。哈希绑定不是归档真实性签名，也不是独立第三方执行认证。
+
+**仍不支持：** Python matcher refinement、full implementation formal verification、complete Python semantics、complete fnmatch semantics、all-policy correctness、deployed service exploitation、concrete deployed receiver ownership、arbitrary adversarial session guarantees、full session isolation、current upstream vulnerability status，以及 turepass/bridge run 中独立 `TokenIssue` reachability query 的结论。Stage 1 的认证与保密查询也不因该 bridge 自动转移为所有后续模型的已验证性质。
 
 # Claim 4
 
@@ -279,7 +326,23 @@ Agent communication capability
 
 当前贡献因此不只是孤立代码错误，而是对 **authorization enforcement inconsistency in agentic systems** 的分层分析：密码学有效性、策略决定正确性和跨阶段授权执行需要分别论证。但这仍是 SAGA 个案及相应模型的证据，不应扩展为所有 agentic systems 都存在同类漏洞。
 
-两段已完成证据必须清楚连接而不能合并冒充：**具体 matcher 的 DENY/ALLOW 分歧已确认；在该分歧抽象下的通信后果已建模并有保存轨迹。二者之间可审计的实现到形式映射仍是剩余工作。**
+当前主证据链已经连接记录场景的决定值传递，但各层证据不能合并冒充服务执行：
+
+```text
+Implementation evidence: archived production matcher observation
+        ↓ historical source provenance binding
+Same concrete policy input
+        ├─ independent finite specification evaluator → SpecDecision = Deny
+        └─ bound implementation observation → ImplObservedDecision = Allow
+        ↓ checked same-evaluation decision pair
+Formal adapter: bridge-generated scenario region
+        ↓ reconstructed full model (frozen protocol semantics and queries)
+Formal consequence: fresh archived ProVerif 2.05 execution
+        ↓
+ChatAccept reachable; ChatAccept ==> TokenIssue
+```
+
+**记录场景的可审计、机械化证据传递已完成；具体求值到符号角色的抽象、生产消费者对应及通用 refinement 仍未证明。** 原有 Stage 1 diagnostic、gate experiments、历史 turepass 及 bridge v1/v1.1 证据保持各自含义，不反向声称早期模型已包含自动 semantics。
 
 ## Current Limitations and Next Step
 
@@ -290,10 +353,12 @@ Agent communication capability
 - Authorization divergence modeling：固定规范拒绝／实现允许场景和到达 `ChatAccept` 的保存轨迹已有。
 - Formal consequence provenance：`authz-turepass-20260919T090826295518Z` 已归档 `ChatAccept` 可达性和 `ChatAccept ==> TokenIssue` 结果、完整输出、版本及 manifest；历史 `turetrace` 单独保留。
 - Authorization gate placement controls：历史共享 gate 和三个独立 gate 场景已有归档结果。
+- Decision bridge v1.1.1：独立有限 spec 求值、历史观察来源绑定、同一求值 context 的决定对、场景区域重构和结构检查已有实现与保存的 25 项测试结果。
+- Bridge-derived consequence evidence：B111 独立归档支持两个既有查询，记录干净代码提交、生成模型和各层哈希；本轮只读核对，没有重新执行。
 
 **Remaining:**
 
-- **Explicit semantic mapping from concrete matcher execution to formal events.** 将具体规则、评分、预算解释、参与方方向与场景表项／事件逐项对应；当前通用 `BuggyPolicy` 和固定表项不提供这一映射。
+- **General refinement and deployment-role correspondence.** 记录场景的规则、评分、预算决定及场景输入传递已由 bridge 处理；剩余的是 evaluator/adapter 的形式正确性、具体求值到符号协议角色及生产执行的严格对应，不能把这两种完成程度混写。
 - **Optional service-level end-to-end reproduction.** 如后续选择扩展实现证据，再评价运行中服务的各授权边界；本文件没有执行或新增此类实验。
 
-**End-to-end implementation-to-formal mapping remains.** 这准确描述当前剩余边界，同时保留 matcher implementation-level vulnerability 已确认的结论。
+**End-to-end implementation-to-formal refinement remains unproved.** 这不否定已经完成的 recorded-evaluation evidence transfer，也不改变历史 matcher observation 已确认的结论。
