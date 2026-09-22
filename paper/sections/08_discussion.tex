@@ -46,16 +46,17 @@ the Python defect. Coverage also depends on how security-critical
 implementation decisions are connected to their formal abstractions.
 In this case study, that connection has three distinct evidentiary roles:
 historical function-level observation, checked decision transfer, and
-symbolic consequence analysis. The bridge independently evaluates finite
-specification semantics, binds an archived implementation observation to
-the same policy evaluation, and reconstructs the scenario from the checked
-pair. The resulting full model is then executed by ProVerif.
+symbolic consequence analysis. The bridge's independent evaluator computes
+the finite specification-side decision. The bridge binds the archived
+implementation observation to the same policy evaluation and reconstructs
+the scenario from the checked pair. The resulting full model is then
+executed by ProVerif.
 
 The bridge narrows the evidence gap for the recorded evaluation by removing
 hand-entered decision labels. The specification-side Deny comes from the
 independent evaluator, while the implementation-side Allow comes from the
 archived matcher execution. ProVerif analyzes consequences of the resulting
-scenario facts; it neither executes Python nor discovers the implementation
+scenario table facts; it neither executes Python nor discovers the implementation
 inconsistency. Mechanizing this transfer does not eliminate the abstraction
 between concrete deployment roles and symbolic participants or prove
 implementation refinement. Historical package D used a preset divergence;
@@ -83,7 +84,7 @@ analysis; it does not introduce a new policy logic or verified compiler.
 
 \subsection{Policy Semantics as Security-Critical State}
 
-Authorization decisions are security-critical derived state: they determine whether
+Authorization decisions constitute security-critical derived state: they determine whether
 an enforcement point may release material, issue a credential, or accept
 communication. Their meaning depends on the relationship between policy
 semantics, evaluation, and enforcement. Protecting a decision in transit or

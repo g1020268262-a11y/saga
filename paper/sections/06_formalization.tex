@@ -5,7 +5,7 @@
 
 The formal model captures the consequence of authorization divergence rather
 than reproducing the matcher implementation. We distinguish four layers:
-an archived production matcher observation, independent finite specification
+an archived function-level matcher observation, independent finite specification
 evaluation, a provenance-bound decision bridge, and symbolic protocol
 consequence analysis. For the recorded case, the bridge reconstructs the
 executed model's scenario input from a checked decision pair
@@ -70,7 +70,7 @@ by general permission returns $10$; the reversed order returns $-1$.
 The bridge loads the observation for the selected order, checks its identity
 and ordered rules, and binds its source hash to the historical Git revision
 using explicit line-ending encodings. Equality with the current checkout is
-not required. The implementation decision is an archived execution result,
+not required. The observed implementation decision is an archived execution result,
 not a prediction by the evaluator or an execution inside ProVerif.
 
 \emph{Decision-pair construction.} For this bound context, let
@@ -150,7 +150,7 @@ Independent finite evaluator\\
 $D_{\mathrm{spec}}=\mathsf{Deny}$}}
 \hfill
 \fbox{\parbox{0.40\linewidth}{\centering
-Archived production observation\\
+Archived matcher observation\\
 $D_{\mathrm{impl}}^{\mathrm{obs}}=\mathsf{Allow}$}}
 \par\smallskip
 $\searrow$\hspace{0.35\linewidth}$\swarrow$
@@ -187,10 +187,10 @@ refinement or production-service execution.}
 
 In both the historical and bridge-derived models, \texttt{ScenarioSpecDeny}
 and \texttt{ScenarioImplAllow} are initialized table facts, not Python
-matcher events or ProVerif-computed policy decisions. The facts are fixed
-symbolic inputs during ProVerif execution, but their values for the recorded
-case are reconstructed by the external bridge rather than entered as
-independent analyst labels. The historical \texttt{turepass} execution used
+matcher events or ProVerif-computed policy decisions. The facts remain fixed
+symbolic inputs during ProVerif execution. In the bridge-derived run only,
+their decision values are reconstructed externally from the checked pair.
+The historical \texttt{turepass} execution used
 a manually stated divergence scenario. These separate evidence packages
 must not be conflated. The facts share a scenario identifier and initiating identity.
 \texttt{SpecIntendedDeny}$(I,R)$ records the specification-side denial represented
@@ -256,7 +256,7 @@ their limitations are specified below.}
 
 \subsection{Verification Queries}
 
-\emph{Reachability.} The divergence model queries whether
+\emph{Reachability.} Both divergence models query whether
 \texttt{ChatAccept} can occur. The controls separately query
 \texttt{ProviderRelease}, \texttt{TokenIssue}, and \texttt{ChatAccept} for
 the fixed peer identities. A false \texttt{not event(...)} result with a
@@ -316,9 +316,9 @@ non-vacuous on the allow/allow path; in each denial scenario, acceptance is
 unreachable and the correspondences hold vacuously.
 
 These results are documented in archived summaries and raw output.
-The divergence package records its command, version,
-input hash, and zero exit status; it documents a fresh execution separately
-from the historical witness discussed in Chapter~5.\footnote{Evidence under
+The historical divergence package D records its command, version,
+input hash, and zero exit status for an independent historical run, separate
+from the earlier \texttt{turetrace} excerpt.\footnote{Evidence under
 \texttt{proofs/evidence/}: \texttt{authz-turepass-\allowbreak
 20260919T090826295518Z/} and \texttt{authz-chat-gates-\allowbreak
 20260918T023621017067Z/}.}

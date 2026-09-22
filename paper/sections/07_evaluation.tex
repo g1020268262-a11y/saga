@@ -11,9 +11,9 @@ most-specific policy semantics?
 the authorization relation required by this case study?
 \item[Q3.] Given authorization divergence, which symbolic protocol
 consequences are reachable, and where do Provider and receiver gates block them?
-\item[Q4.] Can the recorded specification/implementation decision pair be
-transferred through a checked, provenance-bound bridge without hand-entering
-the two decision labels?
+\item[Q4.] Can a checked bridge transfer the specification-side decision and
+the observed implementation decision into the model, binding their provenance
+without hand-entering decision labels?
 \end{enumerate}
 Q4 concerns evidence transfer and artifact integrity, not a new security
 theorem. Implementation observations, bridge checks, and symbolic results
@@ -178,7 +178,8 @@ correspondences and token secrecy remain true. Here, \texttt{Accept}
 denotes receipt and verification of a token by the initiating peer;
 it is not application-message acceptance.
 
-The diagnostic process never emits \texttt{PolicyAllow}. Consequently,
+The diagnostic process never emits \texttt{PolicyAllow}; its
+\texttt{PolicyDeny} event records denial without guarding execution. Consequently,
 the failed correspondence exposes an authorization obligation absent from
 the original verification; it does not independently demonstrate a
 matcher execution error. The retained authentication and secrecy results
