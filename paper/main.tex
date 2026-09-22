@@ -11,26 +11,31 @@
 \maketitle
 
 \begin{abstract}
-Agentic systems rely on policy-governed communication, where authorization
-decisions connect user policies and agent interactions. By themselves,
-authentication and confidentiality do not establish consistency among policy semantics,
-policy evaluation implementation, and enforcement actions. We investigate
-this requirement through a SAGA case study. Implementation-level analysis
-identifies an order-dependent authorization decision inconsistency in the
-studied contact policy matcher: a general permission can override a more
-specific denial. We use ProVerif to analyze protocol-level consequences under
-an explicit abstraction of this divergence and compare Provider and receiver
-authorization gates. Our evaluation combines archived matcher observations
-and symbolic verification results while distinguishing their evidentiary
-scope. In the diagnostic extension, the queried authentication correspondences
-and token secrecy remain satisfied while an added authorization correspondence
-does not hold. Separately, the consequence model admits message acceptance
-under assumed policy denial and implementation permission, while retaining
-correspondence to prior token issuance. These findings concern authorization
-enforcement without demonstrating a cryptographic compromise. The formal
-model abstracts the matcher result; it neither executes Python nor establishes
-an implementation-to-model refinement. A strict semantic mapping and
-production-service reproduction remain outside the completed evidence.
+Policy-governed agent communication requires authorization decisions to
+preserve intended policy semantics across evaluation and enforcement.
+Authentication and confidentiality alone do not establish this consistency.
+We investigate the requirement through a SAGA case study. Archived direct
+calls to the unmodified contact-policy matcher demonstrate an order-dependent
+authorization decision inconsistency: a specific-deny/general-allow rulebook
+yields an allow-side budget although documented most-specific semantics
+select denial. Separately, a diagnostic extension retains the queried
+authentication correspondences and token secrecy while an added authorization
+correspondence is false. This identifies a verification-coverage gap, not a
+formal proof of the matcher inconsistency.
+For the recorded policy input, an independent finite specification evaluator
+derives Deny, while the archived matcher observation supplies Allow. A
+provenance-bound decision bridge checks that both decisions concern the
+same concrete policy evaluation and reconstructs the authorization-divergence
+scenario used in a fresh ProVerif~2.05 execution. The derived model admits
+application-message acceptance (\texttt{ChatAccept}) and establishes that
+acceptance implies prior token issuance (\texttt{TokenIssue}). Independent
+gate controls distinguish Provider and receiver blocking stages. These
+results connect implementation observations to symbolic consequences through
+checked evidence transfer for the recorded case. They establish neither
+cryptographic compromise nor deployed-service reproduction. Mapping the
+concrete evaluation to symbolic participants remains an explicit abstraction;
+general implementation-to-model refinement and correctness for arbitrary
+policies remain unproved.
 \end{abstract}
 
 \input{sections/01_introduction}

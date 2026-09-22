@@ -1,64 +1,82 @@
 \section{Introduction}
 
-% Background: paper/PAPER_STORY.md, Section 1;
-% paper/sections/03_problem_formulation.tex, Authentication Is Not Authorization.
 As agentic systems increasingly rely on autonomous agent-to-agent communication,
-they require identity verification, secure communication, and contact policies:
-authentication answers ``who is communicating,'' whereas authorization answers
-``who should be allowed to communicate.'' Authenticating a participant and
-protecting its messages do not establish that a user's policy permits that
-participant to communicate.
+they require identity verification, secure communication, and contact policies.
+Authentication answers ``who is communicating,'' whereas authorization asks
+whether that identity is permitted to communicate. Authenticating a participant
+and protecting its messages do not establish that the receiving user's policy
+permits the interaction.
 
-% Problem: proofs/CLAIM_EVIDENCE_MATRIX.md, Claim 1;
-% paper/sections/03_problem_formulation.tex, Policy--Authorization Consistency.
-Authentication and confidentiality verification can establish credential origin
-and secrecy without establishing authorization correctness. That additional
-guarantee requires consistency among policy semantics, implementation, and
-protocol enforcement. We investigate this gap through a SAGA~\cite{syros2025saga}
-case study, asking
-whether its authorization pipeline preserves
-\emph{policy--authorization consistency}: accepted contact must be justified by
-an applicable decision under the receiving user's intended policy semantics.
+We study \emph{authorization decision consistency}: whether the authorization
+state consumed by enforcement was derived according to the intended policy
+semantics. This connects policy meaning, implementation evaluation, and the
+protocol actions that consume a decision. Through a SAGA~\cite{syros2025saga}
+case study, we investigate what evidence is needed to justify that connection.
+Chapter~3 formulates the broader policy--authorization consistency requirement:
+accepted contact must be justified by an applicable decision linked to the
+relevant participants and credential. Our evidence addresses specified parts
+of that requirement, rather than proving the complete deployed pipeline.
 
-% Observation: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1--2;
-% proofs/AUDIT_STATUS.md, Stages 1 and 3.
-In the diagnostic extension of SAGA's reference communication model, the
-existing authentication and token-secrecy queries remain satisfied, while an
-added authorization correspondence fails. This result identifies a proof
-coverage gap at token receipt. Separately, the contact policy matcher can return
-a permission-indicating budget where its documented most-specific-rule semantics
-require denial.
-Together, these observations motivate examining the chain from policy
-specification, through matcher implementation and authorization decision, to
-protocol capability, with separate evidence for each boundary.
+First, we diagnose verification coverage. In the Stage~1 diagnostic extension,
+the original communication model's three authentication correspondences and
+token secrecy remain true, while the added correspondence from token receipt,
+\texttt{Accept}, to \texttt{PolicyAllow} is false. The process never emits
+\texttt{PolicyAllow}; its \texttt{PolicyDeny} event records denial without
+guarding execution. This diagnostic exposes an authorization obligation absent
+from the original property set. It does not formally detect the implementation
+matcher inconsistency, and its authentication and secrecy results are not
+automatically inherited by later consequence models.
 
-% Approach: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--4;
-% proofs/AUDIT_STATUS.md, Stages 2--4.
-Our analysis has three steps. First, archived direct calls to the matcher show
-order-dependent decisions: a general permission can override a specific denial.
-Second, we use ProVerif to analyze the consequences. The formal model
-abstracts the mismatch using fixed scenario facts: the specification denies
-contact while the implementation allows it. It does not execute the Python
-matcher. A saved trace reaches
-token issuance (\texttt{TokenIssue}) and message acceptance
-(\texttt{ChatAccept}) under these assumptions. Third, we compare Provider and
-receiver authorization gates:
-Provider denial prevents material release, whereas receiver denial can prevent
-issuance after release, under the modeled gate and handoff assumptions.
-A strict semantic mapping from concrete matcher execution
-to formal events remains unfinished; service-level end-to-end reproduction is
-outside the completed evidence.
+Second, we compare implementation observations with specification-side
+evaluation. Archived direct function-level calls to the unmodified matcher
+show that a specific denial followed by a general permission returns budget
+$10$, whereas reversing the same rules returns $-1$. Documented most-specific
+semantics require denial in both orders. An independent finite specification
+evaluator selects the specific denial for the recorded ordered policy input;
+the archived implementation observation supplies permission. This is an
+order-dependent authorization decision inconsistency at the matcher boundary,
+not an observation of a deployed service accepting communication.
 
-% Contributions: paper/PAPER_STORY.md, Section 6;
-% proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 1--4.
-Our contributions are:
+Third, a provenance-bound decision bridge connects the recorded evaluation
+to symbolic consequence analysis. It checks the independently derived Deny
+decision and observed Allow decision against the same concrete evaluation
+context, then reconstructs the scenario region of a derived ProVerif model.
+A fresh ProVerif~2.05 execution reports \texttt{ChatAccept} reachable and
+establishes that acceptance implies prior \texttt{TokenIssue}. The bridge
+removes hand-entered decision labels for this case; ProVerif still consumes
+fixed symbolic facts and does not execute Python. This is checked evidence
+transfer, not a general refinement proof. The earlier preset-divergence model
+retains its separate historical provenance.
+
+Fourth, we compare where the independent gate controls block execution.
+Provider denial blocks material release and downstream events. Receiver denial blocks
+issuance and acceptance while release remains reachable. These results locate
+blocking stages under the modeled gate and handoff assumptions; they do not
+validate a deployed repair. Together, the analyses distinguish decision
+correctness, evidence transfer, and the consequences of consuming a decision.
+
+We make the following case-study contributions:
 \begin{itemize}
-  \item We identify an authorization enforcement gap between cryptographic
-    verification and policy enforcement in agentic systems through the SAGA
-    case study.
-  \item We demonstrate an implementation-level, order-dependent authorization
-    inconsistency in SAGA's contact policy matcher.
-  \item We formally analyze how authorization divergence can affect agent
-    communication authorization under explicit modeling assumptions, including
-    the effect of Provider and receiver gate placement.
+  \item We characterize an authorization proof-coverage gap in SAGA's
+    communication model, separating the queried authentication and secrecy
+    guarantees from the required authorization relation.
+  \item We demonstrate an order-dependent authorization decision inconsistency
+    through function-level observations of the studied contact-policy matcher,
+    contrasted with its documented most-specific semantics.
+  \item We provide a reproducible decision bridge for the recorded evaluation:
+    independent finite specification evaluation and a provenance-bound archived
+    observation form a checked pair used to reconstruct the formal scenario.
+    This mechanism is not a verified compiler or complete policy semantics.
+  \item We analyze symbolic consequences in the derived model: message
+    acceptance is reachable and implies prior issuance. Separate gate controls
+    identify the modeled release and issuance boundaries.
 \end{itemize}
+
+Mapping the concrete evaluation to symbolic protocol roles remains an explicit
+modeling abstraction. The evidence does not establish general Python-to-ProVerif
+refinement, arbitrary-policy correctness, or the same concrete service session
+across implementation and model. It demonstrates neither cryptographic
+compromise nor a deployed-service exploit.
+
+% Current narrative: Sections 6--8; proofs/CLAIM_EVIDENCE_MATRIX.md, Mapping A--F.
+% Evidence: Stage 1, bridge v1.1.1 derived execution, and independent gate archives.
