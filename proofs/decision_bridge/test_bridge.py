@@ -3,7 +3,8 @@ import unittest
 from unittest.mock import patch
 import json
 from bridge import (ROOT, ARCHIVE, read, digest, make_context, build, evaluate,
-                    generate, policy_hash, write_json, verify_historical_source, current_source_state, SOURCE, MODEL)
+                    generate, policy_hash, write_json, verify_historical_source, current_source_state, SOURCE, MODEL,
+                    export_context_metadata)
 from generate_model import (derive_model, reconstruct, split_template, normalize_comments,
                             validate_structure, COMMENT_NORMALIZATIONS)
 from run_verification import summarize
@@ -23,6 +24,79 @@ def historical(reverse=False):
 
 
 class BridgeTests(unittest.TestCase):
+    def test_context_export_preserves_archived_pair(self):
+        archive = "proofs/evidence/authz-bridge-turepass-20260922T111657792091Z/"
+        inputs = read(archive + "input.json")
+        archived = read(archive + "bridge-result.json")
+        result = build(inputs["context"], inputs["observation"])
+        self.assertEqual(result, archived)
+        before = json.dumps(result)
+        metadata = export_context_metadata(result)
+        self.assertEqual(json.dumps(result), before)
+        self.assertEqual(build(inputs["context"], inputs["observation"]), archived)
+        # Exported nested provenance must not alias the legacy pair.
+        metadata["provenance"]["observation"]["sha256"] = "0" * 64
+        self.assertEqual(json.dumps(result), before)
+
+    def test_context_metadata_from_existing_evidence(self):
+        result = build(*historical())
+        metadata = export_context_metadata(result)
+        self.assertEqual(set(metadata), {"context_id", "policy_id", "policy_version", "policy_hash",
+                                        "subject", "target", "evaluation_fingerprint", "provenance"})
+        for field in ("policy_id", "policy_version", "policy_hash", "target"):
+            self.assertEqual(metadata[field], result["context"][field])
+        self.assertEqual(metadata["subject"], result["context"]["initiator"])
+        self.assertEqual(metadata["evaluation_fingerprint"], result["evaluation_fingerprint"])
+        self.assertEqual(metadata["provenance"], {
+            "observation": result["impl_observed"]["observation"],
+            "historical_source": result["impl_observed"]["historical_source"],
+            "generator_version": result["generator_version"],
+        })
+        self.assertRegex(metadata["context_id"], r"^analysis-context-sha256:[0-9a-f]{64}$")
+        # JSON object ordering and round-trips must not change the identifier.
+        self.assertEqual(metadata, export_context_metadata(json.loads(json.dumps(result, sort_keys=True))))
+
+    def test_different_recorded_policy_hashes_have_different_contexts(self):
+        forward, reverse = (export_context_metadata(build(*historical(value))) for value in (False, True))
+        self.assertNotEqual(forward["policy_hash"], reverse["policy_hash"])
+        self.assertNotEqual(forward["context_id"], reverse["context_id"])
+
+    def test_context_export_rejects_missing_provenance(self):
+        base = build(*historical())
+        paths = [("generator_version",),
+                 ("context", "source"), ("context", "source_sha256"), ("context", "source_commit"),
+                 ("impl_observed", "observation"), ("impl_observed", "historical_source")]
+        for field in base["impl_observed"]["observation"]:
+            paths.append(("impl_observed", "observation", field))
+        for field in base["impl_observed"]["historical_source"]:
+            paths.append(("impl_observed", "historical_source", field))
+        for path in paths:
+            with self.subTest(path=path):
+                result = copy.deepcopy(base)
+                parent = result
+                for key in path[:-1]:
+                    parent = parent[key]
+                del parent[path[-1]]
+                with self.assertRaisesRegex(ValueError, "provenance"):
+                    export_context_metadata(result)
+
+    def test_context_export_rejects_tampered_pair(self):
+        for section, field, value in (("spec", "decision", "Allow"),
+                                      ("impl_observed", "decision", "Deny"),
+                                      ("context", "policy_hash", "0" * 64)):
+            with self.subTest(section=section, field=field):
+                result = build(*historical())
+                result[section][field] = value
+                with self.assertRaises(ValueError):
+                    export_context_metadata(result)
+        result = build(*historical())
+        result["divergence"] = False
+        with self.assertRaises(ValueError):
+            export_context_metadata(result)
+        for result in ({"status": "Unsupported"}, {"status": "Invalid"}, None):
+            with self.assertRaisesRegex(ValueError, "OK decision pair"):
+                export_context_metadata(result)
+
     def test_historical_replay_does_not_require_current_source_match(self):
         real_read = Path.read_bytes
         def changed_current(path):

@@ -1,4 +1,5 @@
 """Finite specification evaluator and observation-bound scenario adapter. No matcher import."""
+import copy
 import hashlib
 import json
 import re
@@ -171,6 +172,42 @@ def build(context, reference):
     return {"status": "OK", "generator_version": VERSION, "context": context,
             "evaluation_fingerprint": fingerprint(context), "spec": spec, "impl_observed": observed,
             "divergence": spec["decision"] != observed["decision"]}
+
+
+def export_context_metadata(result):
+    """Export a separate binding without changing the legacy decision pair.
+
+    context_id identifies an analysis record, never a request, session, or
+    network trace. subject/target retain the existing matched-AID meaning;
+    policy_version is the existing analysis label, not a deployment version.
+    The canonical pair hash binds both decisions and their checked provenance.
+    """
+    if not isinstance(result, dict) or result.get("status") != "OK":
+        raise ValueError("Context metadata requires an OK decision pair")
+    try:
+        context = result["context"]
+        observed = result["impl_observed"]
+        reference = observed["observation"]
+        historical = observed["historical_source"]
+        checked = build(context, reference)
+    except (KeyError, TypeError) as exc:
+        raise ValueError("Missing or malformed decision context/provenance") from exc
+    if checked != result:
+        raise ValueError("Decision pair or provenance differs from recomputed evidence")
+    return {
+        "context_id": "analysis-context-sha256:" + fingerprint(result),
+        "policy_id": context["policy_id"],
+        "policy_version": context["policy_version"],
+        "policy_hash": context["policy_hash"],
+        "subject": context["initiator"],
+        "target": context["target"],
+        "evaluation_fingerprint": result["evaluation_fingerprint"],
+        "provenance": copy.deepcopy({
+            "observation": reference,
+            "historical_source": historical,
+            "generator_version": result["generator_version"],
+        }),
+    }
 
 
 def generate(result):
