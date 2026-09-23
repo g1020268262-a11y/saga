@@ -39,7 +39,8 @@ Our distinction concerns verification scope: an authorization claim must
 include authorization-relevant decision layers or justify their connection
 to the model. The original queried authentication and secrecy results remain
 valid in our diagnostic extension. Separately, ProVerif analyzes communication
-consequences under explicit authorization-divergence assumptions. It does not
+consequences of the bridge-reconstructed divergence under explicit protocol
+assumptions. It does not
 execute the Python matcher or establish implementation correctness. The
 coverage question concerns the model-to-claim relationship, not tool soundness.
 
@@ -56,8 +57,11 @@ relationship between policies, evaluation, and their surrounding software.
 Our case study connects an observed implementation-level disagreement with a
 rule-selection contract to its modeled protocol-level consequence. This is
 not a competing policy language or a general evaluation-correctness result.
-Concrete matcher evidence and formal consequence evidence remain distinct;
-a strict semantic mapping between them is unfinished.
+An independent finite specification evaluator and a provenance-bound bridge
+now mechanize decision-value transfer for the recorded evaluation. General
+implementation-to-model refinement and symbolic role correspondence remain
+outside the evidence; the bridge is not a policy-language correctness proof
+or a verified compiler.
 
 \subsection{Authentication--Authorization Gaps}
 
@@ -81,12 +85,15 @@ permitted under the user's policy.
 Our contribution relates a confirmed local authorization inconsistency to
 formal analysis of its possible communication consequence under explicit
 assumptions. The gate controls further distinguish the modeled release and
-issuance boundaries. This connection is supported by two evidence layers,
-not an executable refinement proof. We neither claim to originate the study
-of authorization gaps nor report a production deployment exploit. The
-remaining matcher-to-model mapping limits the cross-layer conclusion without
-negating the confirmed implementation discrepancy.
+issuance boundaries. This connection combines implementation observations,
+independent finite specification evaluation, checked bridge transfer, and
+symbolic consequence analysis. It is not a Python refinement proof or
+complete matcher semantics. We neither claim to originate the study of
+authorization gaps nor report a deployed-service exploit. The remaining
+role correspondence and general refinement boundary limit the cross-layer
+conclusion without negating the implementation discrepancy or the completed
+decision transfer for the recorded case.
 
 % Positioning sources: paper/PAPER_STORY.md; paper/sections/01_introduction.tex;
 % paper/sections/03_problem_formulation.tex; paper/sections/08_discussion.tex.
-% All twelve existing references are retained; bibliography unchanged.
+% Existing references are retained; bibliography unchanged.

@@ -8,8 +8,10 @@ with the receiving user's policy. Following the fixed-policy scope of
 Chapter~3, the initiating agent has a genuine identity, and the policy is an
 existing configuration outside its control. The relevant evidence connects
 two distinct levels: a confirmed matcher-level decision mismatch and a formal
-analysis of its possible communication consequences. The latter uses an
-abstraction of the mismatch rather than an execution of the complete service.
+analysis of its possible communication consequences. This chapter explains
+the historical preset-divergence model and witness; Chapters~6 and~7 present
+the subsequent bridge-derived execution. Both use symbolic protocol
+abstractions rather than executions of the complete service.
 
 The conceptual chain is
 \[
@@ -83,7 +85,7 @@ order returns $-1$. The identity strings in this record differ from the
 Mallory illustration and are not presented as the same execution.
 
 Together, these materials establish an implementation-level authorization
-bypass: the policy enforcement implementation produces an authorization
+decision inconsistency: the policy enforcement implementation produces an authorization
 decision inconsistent with the intended semantics. The direct-call record
 does not exercise Provider requests, token issuance, or message acceptance.
 The existing rule order is a condition of the example, not an adversarial
@@ -95,9 +97,9 @@ ability to modify the receiving user's policy.
 
 \subsection{Formalizing the Authorization Divergence}
 
-The ProVerif model
-\texttt{agent\_communication\_authz\_chat\_turepass.pv}, under
-\texttt{proofs/proverif/}, asks a conditional question: given an authorization
+The historical model
+\texttt{agent\_communication\_\allowbreak authz\_chat\_\allowbreak turepass.pv}, under
+\texttt{proofs/proverif/}, archived in package D, asks a conditional question: given an authorization
 divergence, can the modeled protocol reach communication acceptance?
 It does not execute Python, calculate pattern specificity, or select a rule
 from a concrete rulebook. Instead, initialization supplies the fixed table
@@ -221,15 +223,21 @@ remain those of Chapter~3. The zero-budget discrepancy discussed in Chapter~4
 is not an additional completed path in this chapter.
 
 \paragraph{Remaining limitation.}
-The formal model abstracts the matcher result. Direct executable integration
-with Python and an auditable semantic mapping of identities, policy decisions,
-and protocol observations remain future work. The \texttt{BuggyPolicy}
-identifier does not encode the concrete rulebook.
+The historical model D abstracts the matcher result using preset facts.
+For the recorded evaluation, bridge v1.1.1 now independently derives the
+specification-side decision, binds the archived implementation observation,
+checks their common evaluation context, and reconstructs the scenario region
+used in a separate derived-model execution (package B). Chapters~6 and~7
+describe this checked evidence transfer and its results. ProVerif still does
+not execute Python. Symbolic role binding remains an abstraction; general
+implementation-to-model refinement and correspondence with deployed consumers
+remain unproved. The \texttt{BuggyPolicy} identifier is a scenario-local label,
+not an encoding of the concrete rulebook.
 
 The historical consequence trace lacks an independent run manifest for its
-original execution. The updated evidence package provides
-reproducible provenance for a fresh execution of the unchanged ProVerif
-consequence model.\footnote{New-run evidence:
+original execution. Historical package D provides
+reproducible provenance for an independent execution of the unchanged ProVerif
+consequence model.\footnote{\raggedright Historical package D:
 \texttt{proofs/\allowbreak evidence/\allowbreak authz-turepass-\allowbreak
 20260919T090826295518Z/}.}
 It records the execution timestamps, Git commit and branch, verifier version,
@@ -238,9 +246,15 @@ error, and a summary extracted from that output. This package documents the
 new run; it does not retrospectively establish the origin of the historical
 \texttt{turetrace} file.
 
-Service-level end-to-end reproduction remains outside the completed evidence.
-New provenance supplies neither an implementation-to-model mapping nor a
-production execution, while the implementation-level mismatch remains confirmed.
+Package D did not supply a decision bridge. The later package B separately
+records checked decision-value transfer, scenario reconstruction, and a fresh
+ProVerif execution with the same two queries.\footnote{\raggedright Bridge-derived package B:
+\texttt{proofs/\allowbreak evidence/\allowbreak authz-bridge-turepass-\allowbreak
+20260922T111657792091Z/}.}
+B does not retroactively establish the provenance of D or \texttt{turetrace}.
+Neither package establishes deployed-service reproduction or general
+refinement. The recorded policy evaluation and symbolic witness are not
+evidence of the same concrete service session.
 
 % Evidence boundary: proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--3;
 % paper/PAPER_STORY.md, Sections 5 and 8.
