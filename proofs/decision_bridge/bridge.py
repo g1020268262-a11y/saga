@@ -175,15 +175,19 @@ def build(context, reference):
 
 
 def export_context_metadata(result):
-    """Export a separate binding without changing the legacy decision pair.
+    """Export decision provenance metadata without changing the decision pair.
 
-    context_id identifies an analysis record, never a request, session, or
-    network trace. subject/target retain the existing matched-AID meaning;
+    context_id is a content-derived analysis record fingerprint for evidence
+    traceability. Replaying an identical record yields the same identifier;
+    it does not identify an invocation or a real authorization event, request,
+    session, execution, or network trace. The analysis-context-sha256 prefix
+    is retained only for output compatibility, not authorization semantics.
+    subject/target retain the existing matched-AID meaning;
     policy_version is the existing analysis label, not a deployment version.
-    The canonical pair hash binds both decisions and their checked provenance.
+    The canonical pair hash covers both decisions and their checked provenance.
     """
     if not isinstance(result, dict) or result.get("status") != "OK":
-        raise ValueError("Context metadata requires an OK decision pair")
+        raise ValueError("Decision provenance metadata requires an OK decision pair")
     try:
         context = result["context"]
         observed = result["impl_observed"]
@@ -191,7 +195,7 @@ def export_context_metadata(result):
         historical = observed["historical_source"]
         checked = build(context, reference)
     except (KeyError, TypeError) as exc:
-        raise ValueError("Missing or malformed decision context/provenance") from exc
+        raise ValueError("Missing or malformed analysis record/provenance") from exc
     if checked != result:
         raise ValueError("Decision pair or provenance differs from recomputed evidence")
     return {

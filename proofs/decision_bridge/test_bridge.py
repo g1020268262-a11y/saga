@@ -24,7 +24,7 @@ def historical(reverse=False):
 
 
 class BridgeTests(unittest.TestCase):
-    def test_context_export_preserves_archived_pair(self):
+    def test_provenance_export_preserves_archived_pair(self):
         archive = "proofs/evidence/authz-bridge-turepass-20260922T111657792091Z/"
         inputs = read(archive + "input.json")
         archived = read(archive + "bridge-result.json")
@@ -38,7 +38,7 @@ class BridgeTests(unittest.TestCase):
         metadata["provenance"]["observation"]["sha256"] = "0" * 64
         self.assertEqual(json.dumps(result), before)
 
-    def test_context_metadata_from_existing_evidence(self):
+    def test_provenance_metadata_from_existing_evidence(self):
         result = build(*historical())
         metadata = export_context_metadata(result)
         self.assertEqual(set(metadata), {"context_id", "policy_id", "policy_version", "policy_hash",
@@ -53,15 +53,49 @@ class BridgeTests(unittest.TestCase):
             "generator_version": result["generator_version"],
         })
         self.assertRegex(metadata["context_id"], r"^analysis-context-sha256:[0-9a-f]{64}$")
-        # JSON object ordering and round-trips must not change the identifier.
+        # Record-content identity only: JSON key ordering is not new evidence.
         self.assertEqual(metadata, export_context_metadata(json.loads(json.dumps(result, sort_keys=True))))
 
-    def test_different_recorded_policy_hashes_have_different_contexts(self):
+    def test_different_policy_hashes_have_different_record_fingerprints(self):
+        # Different evidence records, not a claim about authorization events.
         forward, reverse = (export_context_metadata(build(*historical(value))) for value in (False, True))
         self.assertNotEqual(forward["policy_hash"], reverse["policy_hash"])
         self.assertNotEqual(forward["context_id"], reverse["context_id"])
 
-    def test_context_export_rejects_missing_provenance(self):
+    def test_record_fingerprint_does_not_identify_an_execution(self):
+        """Only analysis record identity is represented, never event identity."""
+        first = build(*historical())
+        replay = build(*historical())
+        self.assertIsNot(first, replay)
+        # Separate analyses of identical evidence intentionally share a fingerprint.
+        self.assertEqual(export_context_metadata(first)["context_id"],
+                         export_context_metadata(replay)["context_id"])
+        context, reference = historical()
+        context["policy_id"] += "-analysis-label-test"
+        relabeled = build(context, reference)
+        # A test-only analysis label changes the record, without a new observation
+        # or new decisions. Neither equal nor unequal IDs identify real events.
+        self.assertEqual(first["spec"], relabeled["spec"])
+        self.assertEqual(first["impl_observed"], relabeled["impl_observed"])
+        self.assertEqual(first["divergence"], relabeled["divergence"])
+        self.assertNotEqual(export_context_metadata(first)["context_id"],
+                            export_context_metadata(relabeled)["context_id"])
+
+    def test_provenance_export_rejects_changed_evidence_reference(self):
+        base = build(*historical())
+        for section, field in (("observation", "sha256"),
+                               ("historical_source", "historical_git_blob_sha256")):
+            with self.subTest(section=section):
+                result = copy.deepcopy(base)
+                result["impl_observed"][section][field] = "0" * 64
+                with self.assertRaises(ValueError):
+                    export_context_metadata(result)
+        result = copy.deepcopy(base)
+        result["evaluation_fingerprint"] = "0" * 64
+        with self.assertRaises(ValueError):
+            export_context_metadata(result)
+
+    def test_provenance_export_rejects_missing_provenance(self):
         base = build(*historical())
         paths = [("generator_version",),
                  ("context", "source"), ("context", "source_sha256"), ("context", "source_commit"),
@@ -80,7 +114,7 @@ class BridgeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "provenance"):
                     export_context_metadata(result)
 
-    def test_context_export_rejects_tampered_pair(self):
+    def test_provenance_export_rejects_tampered_pair(self):
         for section, field, value in (("spec", "decision", "Allow"),
                                       ("impl_observed", "decision", "Deny"),
                                       ("context", "policy_hash", "0" * 64)):
