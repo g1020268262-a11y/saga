@@ -54,6 +54,16 @@ assumptions. ProVerif consumes fixed symbolic facts and does not execute
 Python. This is checked evidence transfer, not a general refinement proof.
 The earlier preset-divergence model retains its separate historical provenance.
 
+The procedure also includes consumer-side propagation validation in a
+controlled environment. Fresh observations of the production matcher inside
+the Provider and receiver consumers are linked through the real Provider
+\texttt{/access} route and receiver handshake to token issuance and storage.
+Allow/allow, deny/deny, and deny/allow specification/implementation controls
+exercise this bounded workflow with transport and registration fixtures.
+Execution stops at the conversation boundary; this experiment does not
+validate message acceptance or identify the historical symbolic witness
+with a concrete service session.
+
 As complementary experiments, we compare where independent gate controls block execution.
 Provider denial blocks material release and downstream events. Receiver denial blocks
 issuance and acceptance while release remains reachable. These results locate
@@ -72,8 +82,11 @@ We make the following case-study contributions:
     We connect specification evaluation, observation validation, provenance
     checking, and scenario reconstruction in a reproducible procedure for
     the recorded case. The decision bridge implements these analysis steps
-    for the fixed Deny/Allow consequence template; it is not a general
-    framework or a verified compiler.
+    for a fixed consequence template with a Deny/Allow input. Complementary consumer-side
+    propagation validation links fresh matcher observations to production
+    consumer execution through token issuance and storage in a controlled
+    environment, stopping before message acceptance. The procedure is not
+    a general framework or a verified compiler.
   \item \textbf{Formal consequence analysis.}
     We use ProVerif to analyze conditional consequences of the recorded
     decision divergence in the derived symbolic model: message acceptance

@@ -46,7 +46,7 @@ The distinction is particularly important in the diagnostic model, where
 missing authorization support in the model; it does not independently detect
 the Python defect. Coverage also depends on how security-critical
 implementation decisions are connected to their formal abstractions.
-In this case study, that connection has three distinct evidentiary roles:
+For formal consequence analysis, that connection has three distinct evidentiary roles:
 historical function-level observation, checked decision transfer, and
 symbolic consequence analysis. The bridge's independent evaluator computes
 the finite specification-side decision. The bridge checks the corresponding
@@ -127,6 +127,32 @@ engines contain the observed inconsistency.
 % proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2 and 4;
 % paper/sections/07_evaluation.tex, Matcher Evaluation and gate experiments.
 
+\subsection{Consumer-Side Validation Boundary}
+
+Phase~1 adds a separate execution check to the evidence-backed analysis
+procedure (Section~\ref{sec:consumer-propagation}). For the tested policies,
+fresh matcher observations are linked through the production Provider
+\texttt{/access} route and receiver handshake to token issuance and
+\texttt{active\_tokens} storage. The receiver independently calls the
+matcher; the observed workflow is connected by the released OTK and the
+issued token, not by transporting a single decision object between consumers.
+The A/A control exercises the permitted path. D/D establishes that Provider
+denial stops this workflow; because the receiver is not reached, it does not
+validate the receiver's rejection path. D/A observes issuance despite the
+specification-side denial for the tested ordered policy.
+
+These results apply to a controlled environment with registration and
+certificate-retrieval fixtures, a Flask test client, and an in-memory
+connection. The real consumer logic and MongoDB updates execute, but TLS
+handshakes and a deployed network do not. Execution is cut off at
+\texttt{receive\_conversation}; issuance/storage must not be described as
+message acceptance or downstream application execution. There is no
+deployment exploit claim. Nor does agreement with a modeled consequence
+establish Python/ProVerif refinement: the consumer run and the symbolic
+witness have separate identities, assumptions, and provenance. This
+bounded validation supplements the analysis procedure without upgrading
+historical observations or formal results into deployment evidence.
+
 \subsection{Generalization Beyond SAGA}
 
 SAGA is a case study, not a representative sample of all agentic systems.
@@ -173,8 +199,10 @@ the Python implementation and the symbolic protocol remains unproved.
 
 \paragraph{Deployment evidence.}
 Direct matcher calls provide observations at the function level, not
-executions of a deployed service. No deployed-service exploit, remote
-attack, or malicious infrastructure experiment is demonstrated. The archive
+executions of a deployed service. Phase~1 adds consumer execution only in
+the controlled environment described above, ending at issuance/storage.
+No deployed-service exploit, remote attack, or malicious infrastructure
+experiment is demonstrated. The historical matcher archive
 does not identify deployed receiver or policy ownership, or establish that
 the matcher observation and symbolic witness describe the same concrete
 service session. The symbolic witness follows prescribed peer
