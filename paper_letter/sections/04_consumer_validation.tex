@@ -1,0 +1,90 @@
+\section{Consumer-Side Propagation Validation}
+\label{sec:consumer-propagation}
+\label{sec:evaluation}
+
+\paragraph{Purpose.}
+Phase~1 tests whether fresh matcher observations propagate through the
+production consumer-side authorization workflow to token issuance and
+storage in a controlled environment. This experiment is separate from
+the symbolic message-acceptance result in Section~\ref{sec:formalization}.
+
+\paragraph{Environment.}
+The harness executes the production Provider \texttt{/access} route with
+a real isolated MongoDB instance and passes the returned one-time key
+(OTK) to the production receiver handshake. Both consumers call the
+production matcher through observers preserving inputs, return values,
+and exceptions. The receiver re-evaluates its policy; no single decision
+object is transmitted between consumers.
+
+Production signature checks, OTK consumption, key derivation, token
+encryption, and \texttt{active\_tokens} storage remain in the executed path.
+Registration state and certificate retrieval use fixtures. A Flask test
+client and an in-memory connection replace network transport and TLS;
+external registration and certificate services are not exercised.
+The sole execution cutoff is \texttt{receive\_conversation}, after the
+token has been stored and sent. The stub records this boundary without
+executing conversation logic or \texttt{local\_agent.run}.
+The archived environment uses Python~3.12.7 and MongoDB~8.0.17 on Windows.
+
+\paragraph{Experiments.}
+Each case starts with fresh cryptographic material, empty counter and
+token stores, and one available OTK. The initiator is
+\texttt{alice@\allowbreak example.com:\allowbreak agent}; the fixture receiver is
+\texttt{bob@\allowbreak example.com:\allowbreak receiver}. Provider and receiver hold identical
+ordered policies. Let $s$ denote \texttt{alice@\allowbreak example.com:*} and $w$
+denote \texttt{*}. A/A uses $[(s,10),(w,10)]$; D/D uses
+$[(w,10),(s,-1)]$; D/A uses $[(s,-1),(w,10)]$.
+The first label is the independent specification decision, and the second
+is the observed implementation decision. The harness reuses the finite
+evaluator read-only, without importing historical matcher observations.
+Each case ran once.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccc}
+\hline
+Spec./impl. & Provider HTTP & OTK released & Token sent/stored \\
+\hline
+A/A & 200 & Yes & Yes \\
+D/D & 403 & No & Not reached \\
+D/A & 200 & Yes & Yes \\
+\hline
+\end{tabular}
+\caption{Consumer propagation results; message acceptance was not executed.}
+\label{tab:consumer-propagation}
+\end{table}
+
+A/A is the positive control demonstrating the permitted path. D/D is the
+Provider-blocking control: HTTP~403 leaves state unchanged, and the
+receiver is not reached. It does not validate receiver rejection.
+D/A tests propagation of the observed decision inconsistency.
+
+\paragraph{Result and evidence.}
+In D/A, the specification selects budget $-1$, but both calls to the
+matcher return $10$. The Provider returns HTTP~200, releases its
+OTK, and initializes the counter to $9$. The response, receiver handshake,
+and initial OTK state share the same key hash; the receiver consumes that
+key. A single token is entered in \texttt{active\_tokens} and sent, with
+matching token hashes across the send record, boundary observation,
+and stored state. Initiator-side decryption agrees with the stored token
+metadata, including the recipient key and initial quota. Thus the
+observed workflow reaches OTK release, receiver processing, and token
+issuance, sending, and storage.
+
+The successful archive is:
+\begin{quote}
+\raggedright
+\path{proofs/consumer_validation/evidence/20260926T070021921746Z-d64c8064/}.
+\end{quote}
+Its \texttt{manifest.json} and \texttt{run-start.json} identify the run,
+environment, substitutions, actual source-byte hashes, and status.
+Hash-bound per-case inputs, event logs, and results link policy decisions
+to HTTP responses and state changes. The run records its dirty working
+tree rather than claiming a clean revision; these fresh observations are
+separate from the historical matcher record, formal runs, and failed
+harness archives.
+
+The endpoint is issuance/storage, not message acceptance. No application
+message, LLM call, or tool execution occurs. One execution per case is a
+bounded functional observation, not a reliability or performance study.

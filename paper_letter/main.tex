@@ -1,0 +1,38 @@
+\documentclass[11pt]{article}
+
+% Structural Letter draft; official IEICE class/typesetting remains a separate step.
+\usepackage{xurl}
+\input{macros}
+
+\title{Formal and Empirical Analysis of Authorization Decision Inconsistency in SAGA}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We analyze an authorization decision inconsistency recorded in SAGA.
+Direct matcher calls return permission when a specific denial precedes
+wildcard permission, although most-specific semantics require denial;
+reversing the rules changes the implementation result. Independent finite
+specification evaluation and a checked observation supply a fixed symbolic
+scenario. Under explicit assumptions, ProVerif reports message acceptance
+reachable and establishes its correspondence to prior token issuance.
+Separately, A/A, D/D, and D/A consumer experiments execute production
+authorization logic in a controlled environment. D/A reaches one-time-key
+release and receiver token issuance, sending, and storage. The empirical
+endpoint precedes message acceptance. These results establish neither
+a deployed-service exploit nor Python/ProVerif refinement.
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_authorization_inconsistency}
+\input{sections/03_formal_consequence_analysis}
+\input{sections/04_consumer_validation}
+\input{sections/05_scope_conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

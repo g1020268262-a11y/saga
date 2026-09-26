@@ -1,0 +1,80 @@
+\section{Authorization Decision Inconsistency}
+\label{sec:authorization-inconsistency}
+
+\paragraph{Authorization flow and policy semantics.}
+An initiating agent requests contact with a receiving agent through SAGA's
+Provider. The receiving user's ordered contact rulebook supplies patterns
+and integer budgets. Both the Provider and receiver invoke the shared
+matcher against the initiating identity. The Provider's policy check
+precedes contact-material release; the receiver re-evaluates its local
+policy before the handshake can issue a token. Material release, token
+issuance, and subsequent message acceptance are distinct boundaries.
+
+For a fixed rulebook $P_R$ and valid initiating identity $I$, the documented
+contract selects the most specific matching rule, using
+\texttt{aid\_specificity()}. This numerical score is not a general
+pattern-language containment ordering. We consider a unique highest-scoring
+match with budget $b^*$, or no match with $b^*=0$, and define
+\[
+  \mathsf{Allow}_{\mathrm{spec}}(P_R,I)
+  \Longleftrightarrow b^*>0.
+\]
+The positive-budget convention follows the Provider's \texttt{/access}
+check. It describes policy eligibility, not sufficient conditions for a
+successful handshake. Equal-score conflicts and changing policies are
+outside this case. The consumer experiments use only negative and positive
+budgets; the Provider and receiver differ at zero, which is not evaluated
+as a propagation case here.
+
+\paragraph{Root cause.}
+In the inspected matcher, \texttt{best\_pattern} is initialized to
+\texttt{None} but never updated when a matching rule changes the returned
+budget. Later comparisons therefore use the sentinel score $-1$ rather
+than the score of the best previous match. Normally scored matching
+patterns have nonnegative scores, so each passes the comparison and the
+last matching rule supplies the result. The relevant order is the rule
+list order, retained by registration, Provider storage, and Agent loading.
+The mismatch concerns the studied revision, not current upstream status.
+
+\paragraph{Recorded matcher evidence.}
+The direct-call archive records a valid rulebook in
+\path{policy-matcher-sanity.json} for identity
+\path{alice@example.com:agent}. Let $s$ denote
+\path{alice@example.com:*} with budget $-1$ and $w$ denote
+\texttt{*} with budget $10$. Their specificity scores are $70$ and $0$.
+Table~\ref{tab:matcher-evaluation} reports direct calls to the unmodified
+production matcher, rather than the separate illustrative matcher script.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrr}
+\hline
+Rule order & Expected budget & Observed budget \\
+\hline
+Specific deny, then wildcard allow & $-1$ & $10$ \\
+Wildcard allow, then specific deny & $-1$ & $-1$ \\
+\hline
+\end{tabular}
+\caption{Archived direct matcher observations for the same rule set.}
+\label{tab:matcher-evaluation}
+\end{table}
+
+An independent finite specification evaluator selects the specific denial
+for the recorded ordered input, without using the archive's expected-result
+field as its answer. Writing
+\[
+  \mathsf{Allow}_{\mathrm{impl}}(P_R,I)
+  \Longleftrightarrow \mathtt{match}(P_R,I)>0,
+\]
+the specific-deny/wildcard-allow order yields
+$\mathsf{Allow}_{\mathrm{impl}}\neq\mathsf{Allow}_{\mathrm{spec}}$.
+The reversed-order observation establishes order dependence without any
+equal-score ambiguity. These function calls establish the local decision
+inconsistency; Section~\ref{sec:consumer-propagation} separately examines
+consumer execution.
+
+The direct-call record uses Python~3.14.3. Its archive is
+\path{proofs/evidence/authz-stage1-20260916T123834944479Z/}.
+Its source revision and observation are bound separately from the fresh
+consumer run and the symbolic analysis.

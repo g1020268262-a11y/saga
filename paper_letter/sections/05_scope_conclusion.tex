@@ -1,0 +1,23 @@
+\section{Scope and Conclusion}
+\label{sec:discussion}
+\label{sec:conclusion}
+
+The evidence concerns the recorded SAGA case and tested policies, not
+arbitrary policies, current upstream vulnerability status, or prevalence
+across deployments. The finite specification evaluator is not
+theorem-proved. Formal results depend on symbolic role mapping, transport,
+and handoff assumptions; they do not establish token expiry, quota
+consumption, revocation, policy updates, session isolation, or injective
+agreement. Consumer validation uses controlled registration and transport
+fixtures and stops before message acceptance. Neither the symbolic witness
+nor the consumer experiment establishes a deployed-service exploit,
+Python/ProVerif refinement, or a verified production repair.
+
+The recorded rule-order inconsistency separates intended policy permission
+from the matcher's observed decision. Conditional symbolic analysis admits
+message acceptance with prior token issuance, while the independent
+consumer experiment observes propagation through real authorization logic
+to token issuance and storage. Authentication and credential provenance
+therefore do not substitute for decision correctness in this case.
+Future work may investigate stronger implementation-to-model correspondence
+and additional systems.

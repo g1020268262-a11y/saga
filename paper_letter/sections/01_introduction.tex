@@ -1,0 +1,50 @@
+\section{Introduction}
+\label{sec:introduction}
+
+SAGA~\cite{syros2025saga} governs communication between registered agents
+using contact policies, identity checks, and access-control tokens.
+Authentication establishes who is communicating; it does not establish
+whether the receiving user's policy permits that contact. We present a
+formal and empirical analysis of a recorded authorization decision
+inconsistency in SAGA.
+
+Direct calls to the unmodified matcher show that a specific denial followed
+by wildcard permission returns an allow-side budget, whereas reversing the
+same rules returns denial. Documented most-specific semantics require denial
+in both orders. We analyze the conditional consequences of this disagreement
+in a fixed symbolic scenario: ProVerif reports message acceptance reachable
+and establishes that acceptance implies prior token issuance. Separately,
+controlled consumer experiments execute the production Provider and receiver
+through token issuance and storage, stopping before message acceptance.
+These are distinct formal and empirical results.
+
+Our case-study contributions are:
+\begin{itemize}
+  \item \textbf{Recorded decision inconsistency analysis.}
+    We characterize the recorded disagreement through source inspection,
+    direct matcher calls, and independent finite specification evaluation.
+  \item \textbf{Consumer-side propagation validation.}
+    A/A, D/D, and D/A specification/implementation controls connect fresh
+    matcher observations to the production authorization workflow through
+    token issuance and storage in a controlled environment.
+  \item \textbf{Conditional formal consequence analysis.}
+    We analyze reachability and prior-issuance correspondence under explicit
+    symbolic assumptions, with independent gate controls distinguishing
+    modeled release and issuance boundaries.
+\end{itemize}
+
+\paragraph{Related work.}
+\label{sec:related-work}
+Agent research addresses autonomous behavior, trust, and prompt
+injection~\cite{wang2024agents,ramchurn2004trust,debenedetti2024agentdojo}.
+Our focus is policy evaluation and its consumers. Authentication and
+distributed authority have longstanding foundations~\cite{lampson1992authentication};
+SPKI, OAuth, and Macaroons address credentials and
+delegation~\cite{ellison1999spki,hardt2012oauth,birgisson2014macaroons}.
+Cassandra, SecPAL, and Margrave address policy semantics and
+analysis~\cite{becker2004cassandra,becker2007secpal,fisler2005margrave},
+while ProVerif and Tamarin support symbolic protocol
+analysis~\cite{blanchet2016proverif,meier2013tamarin}.
+This study concerns a concrete implementation disagreement and its
+conditional consequences, rather than a new policy language or general
+verification method.

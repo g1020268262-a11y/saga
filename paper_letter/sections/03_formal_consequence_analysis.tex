@@ -1,0 +1,150 @@
+\section{Formal Consequence Analysis}
+\label{sec:formalization}
+\label{sec:attack-path}
+
+\paragraph{Decision input.}
+\label{sec:implementation-mapping}
+The bridge is a provenance-checked transformation component for this case
+study. It checks the recorded ordered rules, initiating identity, and
+historical matcher provenance, and combines independent finite
+specification evaluation with the archived implementation observation:
+\[
+ (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
+       =(\mathsf{Deny},\mathsf{Allow}).
+\]
+The supported evaluator grammar covers the literal and wildcard patterns
+needed for this case; it is not complete Python or \texttt{fnmatch}
+semantics. The checked pair reconstructs only the scenario region of a
+fixed consequence template. Protocol processes and queries remain
+unchanged; symbolic role mapping remains an analysis choice.
+
+\begin{figure}[htbp]
+\centering
+\begin{tabular}{c}
+Implementation observation + specification evaluation \\
+$\downarrow$ \\
+Checked decision pair $\longrightarrow$ fixed symbolic scenario \\
+$\downarrow$ \\
+ProVerif analysis under explicit assumptions
+\end{tabular}
+\caption{Case-specific decision transfer; the arrows do not establish
+implementation refinement.}
+\label{fig:implementation-mapping}
+\end{figure}
+
+Table~\ref{tab:implementation-mapping} gives the scenario facts.
+ProVerif consumes these fixed inputs; it neither executes the matcher nor
+discovers its inconsistency.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{ll}
+\hline
+Checked decision & Symbolic table fact \\
+\hline
+Specification: Deny & \texttt{ScenarioSpecDeny(BuggyPolicy,aid\_B)} \\
+Observation: Allow & \texttt{ScenarioImplAllow(BuggyPolicy,aid\_B)} \\
+\hline
+\end{tabular}
+\caption{Decision values transferred into the fixed scenario.}
+\label{tab:implementation-mapping}
+\end{table}
+
+\paragraph{Model and assumptions.}
+The initiating peer $I$ has a genuine registered identity and an existing
+receiving-user policy outside its control. The scenario assumes the same
+fixed policy at the Provider and receiver, effective cryptographic checks,
+and no compromise of the Provider, CA, or honest private keys.
+The prescribed initiating-peer process does not represent arbitrary
+adversary-controlled application behavior.
+
+The Provider releases contact material; \texttt{PeerA} represents receiver
+$R$, which issues tokens and accepts messages; \texttt{PeerB} represents
+initiator $I$. A CA supplies certificates. Replicated processes use symbolic
+cryptography, and the private \texttt{tls\_chat} channel abstracts
+authenticated, confidential transport. The \texttt{ProviderReleased}
+table abstracts handoff to receiver processing; \texttt{ActiveToken}
+associates the participants, token, and sender's access-control public key.
+
+\texttt{SpecIntendedDeny}$(I,R)$ records scenario denial without blocking
+execution. \texttt{ProviderRelease}$(R,I)$ records release,
+\texttt{TokenIssue}$(R,I,t)$ records wire-token issuance, and
+\texttt{ChatAccept}$(R,I,t,m)$ records application-message acceptance.
+The latter is distinct from \texttt{Accept}, which denotes token receipt
+and verification in the diagnostic model.
+
+\paragraph{Queries and results.}
+The archived ProVerif~2.05 execution of the bridge-derived scenario reports
+the two results in Table~\ref{tab:claim-formalization}. A reconstructed
+witness refutes \texttt{not event(ChatAccept(...))}; acceptance is
+existentially reachable under the supplied divergence. The non-injective
+correspondence
+\[
+ \mathsf{ChatAccept}(R,I,t,m)
+ \Longrightarrow \mathsf{TokenIssue}(R,I,t)
+\]
+requires prior issuance for the same participants and token, not intended
+policy permission or a unique session. Issuance occurs in the witness;
+there is no standalone issuance-reachability query in this model.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{ll}
+\hline
+Query in the derived-model run & Result \\
+\hline
+\texttt{ChatAccept} reachability & Reachable \\
+\texttt{ChatAccept} $\Rightarrow$ \texttt{TokenIssue} & True \\
+\hline
+\end{tabular}
+\caption{Archived formal query outcomes for the fixed D/A scenario.}
+\label{tab:claim-formalization}
+\label{tab:evaluation-runs}
+\end{table}
+
+The run is archived under \texttt{proofs/evidence/}\allowbreak
+\texttt{authz-bridge-turepass-}\allowbreak\texttt{20260922T111657792091Z/}.
+Its manifest binds the observation, generated model, verifier, and outputs.
+It is separate from the historical preset-divergence run and the consumer
+experiment; agreement of outcomes does not identify a common execution.
+
+The earlier Stage~1 diagnostic retains the queried authentication
+correspondences and token secrecy, while
+$\mathsf{Accept}(R,I,t)\Rightarrow\mathsf{PolicyAllow}(R,I)$ is false.
+Because that process never emits \texttt{PolicyAllow}, this is a
+verification-coverage diagnostic, not formal detection of the matcher
+defect. Those guarantees do not automatically transfer to the consequence
+model.
+
+\paragraph{Independent gate controls.}
+The existing controls in Table~\ref{tab:gate-evaluation} isolate modeled
+blocking positions. Their labels denote Provider/receiver permissions,
+not specification/implementation decisions. They use a fixed private
+token, unlike the fresh-token divergence model, and are not verified
+repairs or refinements of it.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llccc}
+\hline
+Provider & Receiver & Release & Issue & Accept \\
+\hline
+Allow & Allow & R & R & R \\
+Deny & Allow & U & U & U \\
+Allow & Deny & R & U & U \\
+\hline
+\end{tabular}
+\caption{Independent gate controls: reachable (R) and unreachable (U).}
+\label{tab:gate-evaluation}
+\end{table}
+
+In addition to the prior-issuance correspondence, the controls establish
+\[
+ \mathsf{ChatAccept}(R,I,t,m)\Rightarrow\mathsf{ChatSend}(R,I,t,m).
+\]
+Both correspondences are vacuous when acceptance is unreachable.
+Provider denial blocks release and downstream events; receiver denial
+blocks issuance and acceptance while release remains reachable.
+The evidence remains in \texttt{proofs/evidence/}\allowbreak
+\texttt{authz-chat-gates-}\allowbreak\texttt{20260918T023621017067Z/}.
