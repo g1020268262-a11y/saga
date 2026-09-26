@@ -1,0 +1,4 @@
+Phase 1 consumer propagation validation
+Scope: token issuance only; no message acceptance.
+TLS/registration/application execution not validated. No deployment exploit claim.
+Exit code: 1

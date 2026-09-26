@@ -1,0 +1,466 @@
+{
+  "after": {
+    "active_tokens": {
+      "17a323cf67141a82685e3ca02847d2174635d39a00a0d851fc66acd3ea792d10": {
+        "communication_quota": 50,
+        "expiration_timestamp": "2026-09-26T07:59:48.506607+00:00",
+        "issue_timestamp": "2026-09-26T06:59:48.506607+00:00",
+        "nonce": "DOdnSztSh+Ga2OUn",
+        "recipient_pac": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis="
+      }
+    },
+    "counter": [
+      {
+        "aid": "alice@example.com:agent",
+        "budget": 9
+      }
+    ],
+    "provider_otk_sigs": [],
+    "provider_otks": [],
+    "provider_rules": [
+      {
+        "budget": 10,
+        "pattern": "alice@example.com:*"
+      },
+      {
+        "budget": 10,
+        "pattern": "*"
+      }
+    ],
+    "receiver_otks": [],
+    "receiver_rules": [
+      {
+        "budget": 10,
+        "pattern": "alice@example.com:*"
+      },
+      {
+        "budget": 10,
+        "pattern": "*"
+      }
+    ]
+  },
+  "assertions": [
+    {
+      "actual": "OK",
+      "expected": "OK",
+      "name": "supported_spec",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": 10,
+      "expected": 10,
+      "name": "spec_budget",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": [
+        {
+          "budget": 10,
+          "pattern": "alice@example.com:*"
+        },
+        {
+          "budget": 10,
+          "pattern": "*"
+        }
+      ],
+      "expected": [
+        {
+          "budget": 10,
+          "pattern": "alice@example.com:*"
+        },
+        {
+          "budget": 10,
+          "pattern": "*"
+        }
+      ],
+      "name": "provider_rules",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": [
+        {
+          "budget": 10,
+          "pattern": "alice@example.com:*"
+        },
+        {
+          "budget": 10,
+          "pattern": "*"
+        }
+      ],
+      "expected": [
+        {
+          "budget": 10,
+          "pattern": "alice@example.com:*"
+        },
+        {
+          "budget": 10,
+          "pattern": "*"
+        }
+      ],
+      "name": "receiver_rules",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": [],
+      "expected": [],
+      "name": "initial_counter",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": {},
+      "expected": {},
+      "name": "initial_active_tokens",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "initial_otk_count",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": [
+        "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+      ],
+      "expected": [
+        "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+      ],
+      "name": "initial_otk_binding",
+      "status": "pass",
+      "through_event": 0
+    },
+    {
+      "actual": 200,
+      "expected": 200,
+      "name": "http_status",
+      "status": "pass",
+      "through_event": 2
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "released_otk_count",
+      "status": "pass",
+      "through_event": 2
+    },
+    {
+      "actual": "bob@example.com:receiver",
+      "expected": "bob@example.com:receiver",
+      "name": "response_receiver",
+      "status": "pass",
+      "through_event": 2
+    },
+    {
+      "actual": [
+        "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+      ],
+      "expected": [
+        "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+      ],
+      "name": "released_otk_binding",
+      "status": "pass",
+      "through_event": 2
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "exactly_one_token_response",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": [
+        "token"
+      ],
+      "expected": [
+        "token"
+      ],
+      "name": "token_response_shape",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "active_token_binding",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": {
+        "communication_quota": 50,
+        "expiration_timestamp": "2026-09-26T07:59:48.506607+00:00",
+        "issue_timestamp": "2026-09-26T06:59:48.506607+00:00",
+        "nonce": "DOdnSztSh+Ga2OUn",
+        "recipient_pac": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis="
+      },
+      "expected": {
+        "communication_quota": 50,
+        "expiration_timestamp": "2026-09-26T07:59:48.506607+00:00",
+        "issue_timestamp": "2026-09-26T06:59:48.506607+00:00",
+        "nonce": "DOdnSztSh+Ga2OUn",
+        "recipient_pac": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis="
+      },
+      "name": "token_decryption_matches_storage",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis=",
+      "expected": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis=",
+      "name": "token_pac",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": 50,
+      "expected": 50,
+      "name": "token_initial_quota",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "token_valid_time",
+      "status": "pass",
+      "through_event": 7
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "cutoff_count",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "stored_before_cutoff",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "sent_before_cutoff",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [
+        "provider",
+        "receiver"
+      ],
+      "expected": [
+        "provider",
+        "receiver"
+      ],
+      "name": "matcher_consumers",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [
+        [
+          {
+            "budget": 10,
+            "pattern": "alice@example.com:*"
+          },
+          {
+            "budget": 10,
+            "pattern": "*"
+          }
+        ],
+        "alice@example.com:agent"
+      ],
+      "expected": [
+        [
+          {
+            "budget": 10,
+            "pattern": "alice@example.com:*"
+          },
+          {
+            "budget": 10,
+            "pattern": "*"
+          }
+        ],
+        "alice@example.com:agent"
+      ],
+      "name": "provider_matcher_input",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": 10,
+      "expected": 10,
+      "name": "provider_matcher_budget",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [
+        [
+          {
+            "budget": 10,
+            "pattern": "alice@example.com:*"
+          },
+          {
+            "budget": 10,
+            "pattern": "*"
+          }
+        ],
+        "alice@example.com:agent"
+      ],
+      "expected": [
+        [
+          {
+            "budget": 10,
+            "pattern": "alice@example.com:*"
+          },
+          {
+            "budget": 10,
+            "pattern": "*"
+          }
+        ],
+        "alice@example.com:agent"
+      ],
+      "name": "receiver_matcher_input",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": 10,
+      "expected": 10,
+      "name": "receiver_matcher_budget",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": 0,
+      "expected": 0,
+      "name": "local_agent_run_count",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": 0,
+      "expected": 0,
+      "name": "conversation_reads",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [],
+      "expected": [],
+      "name": "provider_otks_consumed",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [],
+      "expected": [],
+      "name": "provider_otk_sigs_consumed",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [
+        {
+          "aid": "alice@example.com:agent",
+          "budget": 9
+        }
+      ],
+      "expected": [
+        {
+          "aid": "alice@example.com:agent",
+          "budget": 9
+        }
+      ],
+      "name": "provider_counter",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": [],
+      "expected": [],
+      "name": "receiver_otks_consumed",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": 1,
+      "expected": 1,
+      "name": "active_token_count",
+      "status": "pass",
+      "through_event": 8
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "connection_closed",
+      "status": "pass",
+      "through_event": 8
+    }
+  ],
+  "before": {
+    "active_tokens": {},
+    "counter": [],
+    "provider_otk_sigs": [
+      "fc39232a694e046939f5ada665afcc8ef0f0712f36600d0ae5f308c60d370e81"
+    ],
+    "provider_otks": [
+      "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+    ],
+    "provider_rules": [
+      {
+        "budget": 10,
+        "pattern": "alice@example.com:*"
+      },
+      {
+        "budget": 10,
+        "pattern": "*"
+      }
+    ],
+    "receiver_otks": [
+      "3aa8572b6e6d7a5384bc495259986a608faf72cff6320cc64430dbfc5f2fe565"
+    ],
+    "receiver_rules": [
+      {
+        "budget": 10,
+        "pattern": "alice@example.com:*"
+      },
+      {
+        "budget": 10,
+        "pattern": "*"
+      }
+    ]
+  },
+  "case_id": "aa",
+  "execution_status": "completed",
+  "expectations_met": true,
+  "handshake": {
+    "card": {
+      "IP": "127.0.0.1",
+      "agent_cert": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJ1akNDQVd5Z0F3SUJBZ0lVYWNMTGNGazRpU2I0MVR0aUhCN3hwdzB6Q1Mwd0JRWURLMlZ3TUZBeEN6QUoKQmdOVkJBWVRBbFZUTVEwd0N3WURWUVFJREFSVVpYTjBNUTB3Q3dZRFZRUUhEQVJVWlhOME1ROHdEUVlEVlFRSwpEQVpRYUdGelpURXhFakFRQmdOVkJBTU1DWEJvWVhObE1TMWpZVEFlRncweU5qQTVNall4TkRVNU5EaGFGdzB5Ck56QTVNall4TkRVNU5EaGFNR3N4Q3pBSkJnTlZCQVlUQWxoWU1SSXdFQVlEVlFRSURBbEJibTl1ZVcxdmRYTXgKRWpBUUJnTlZCQWNNQ1VGdWIyNTViVzkxY3pFU01CQUdBMVVFQ2d3SlFXNXZibmx0YjNWek1TQXdIZ1lEVlFRRApEQmRoYkdsalpVQmxlR0Z0Y0d4bExtTnZiVHBoWjJWdWREQXFNQVVHQXl0bGNBTWhBSGtkdU5jdkdYY3dRWnBQCkNCTit1N3RrM3ZmaXVWa0lPeTc2aUdIQ1pqdE5vejB3T3pBTUJnTlZIUk1CQWY4RUFqQUFNQ3NHQTFVZEVRRUIKL3dRaE1CK0NGMkZzYVdObFFHVjRZVzF3YkdVdVkyOXRPbUZuWlc1MGh3Ui9BQUFCTUFVR0F5dGxjQU5CQUlVeQpUcjlVWXoxSXF5bGp3b2JkNGg5T0JSSW1VMDk3RU42RjFNY3ZJY0RFdFZwM2JnbWdNVVVsWGNMV09EU3VaTlFyCk9sb1E2RHZXZWcwVE9Id2h6UWc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+      "agent_sig": "1WPBu+w/zCRE6i1SpnmlJLMKjb7JSrhtKnOFEipcFs7vqT3RJp/j0YGGIHImlEjle7EOCbWtoUuYV5HzKfOqDQ==",
+      "aid": "alice@example.com:agent",
+      "device": "phase1",
+      "pac": "73JgmY9FbhB9UIMmTJ6rpcuCgwpov8f0VCVBGAaYdis=",
+      "port": 12345
+    },
+    "crt_u": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJyakNDQVdDZ0F3SUJBZ0lVRWNwdEJZMHNDR2NqMGNwbWh3R3NaSVlrbUtRd0JRWURLMlZ3TUZBeEN6QUoKQmdOVkJBWVRBbFZUTVEwd0N3WURWUVFJREFSVVpYTjBNUTB3Q3dZRFZRUUhEQVJVWlhOME1ROHdEUVlEVlFRSwpEQVpRYUdGelpURXhFakFRQmdOVkJBTU1DWEJvWVhObE1TMWpZVEFlRncweU5qQTVNall4TkRVNU5EaGFGdzB5Ck56QTVNall4TkRVNU5EaGFNR1V4Q3pBSkJnTlZCQVlUQWxoWU1SSXdFQVlEVlFRSURBbEJibTl1ZVcxdmRYTXgKRWpBUUJnTlZCQWNNQ1VGdWIyNTViVzkxY3pFU01CQUdBMVVFQ2d3SlFXNXZibmx0YjNWek1Sb3dHQVlEVlFRRApEQkZoYkdsalpVQmxlR0Z0Y0d4bExtTnZiVEFxTUFVR0F5dGxjQU1oQUJXZGZkSituSkM0THRUNVZCNzBZWnhyClNQVWtmT0E1ZWc5OUFjbHoxOUUxb3pjd05UQU1CZ05WSFJNQkFmOEVBakFBTUNVR0ExVWRFUUVCL3dRYk1CbUMKRVdGc2FXTmxRR1Y0WVcxd2JHVXVZMjl0aHdSL0FBQUJNQVVHQXl0bGNBTkJBSGMrejhkV3M5WEYxck9kKzZYdApEQ2tKcms4TkpibCszVWsyUUFrVHljMktQVEhzOXZoamYwd0N4Vkh4RTdmT2Y1ZXl5cE55MGRQaE5QSnFmam8xCnZRaz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+    "otk": "OHd1FTUcm20T1QDbgN+yGnWxiOQfahkF8/BM1+Fsm0s=",
+    "stamp": "0coQNsWYNqbW8KzbK/xMaP6XbKwuAInm5Ed0Q9OpY+XnLOtod4bMseCQdIbB19yHnJ2QBUMTWmooPNxugUfhDw=="
+  },
+  "http": {
+    "body": {
+      "IP": "127.0.0.1",
+      "agent_cert": 

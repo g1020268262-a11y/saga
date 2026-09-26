@@ -1,0 +1,70 @@
+Traceback (most recent call last):
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\fixtures.py", line 74, in isolated_mongo
+    if client.admin.command("serverStatus")["pid"] != process.pid:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\_csot.py", line 126, in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\database.py", line 946, in command
+    return self._client._retryable_read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2061, in _retryable_read
+    return self._retry_internal(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\_csot.py", line 126, in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2022, in _retry_internal
+    ).run()
+      ^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2890, in run
+    res = self._read() if self._is_read else self._write()
+          ^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 3130, in _read
+    return self._func(self._session, self._server, conn, read_pref)  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\database.py", line 934, in inner
+    return self._command(
+           ^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\database.py", line 773, in _command
+    return conn.command(
+           ^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\helpers.py", line 51, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 421, in command
+    self._raise_connection_failure(error)
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 567, in _raise_connection_failure
+    raise error
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 396, in command
+    return run_command(
+           ^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\command_runner.py", line 440, in run_command
+    docs, _, _ = _run_command(
+                 ^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\synchronous\command_runner.py", line 205, in _run_command
+    docs = reply.unpack_response(codec_options=codec_options, user_fields=user_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\pymongo\message.py", line 1134, in unpack_response
+    return bson._decode_all_selective(self.payload_document, codec_options, user_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\bson\__init__.py", line 1298, in _decode_all_selective
+    return decode_all(data, codec_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\.runtime\venv\Lib\site-packages\bson\__init__.py", line 1207, in decode_all
+    return _decode_all(data, codec_options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+bson.errors.InvalidBSON: 'utf-8' codec can't decode byte 0xb3 in position 0: invalid start byte
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\run_phase1.py", line 116, in main
+    with isolated_mongo(args.mongod) as (uri, mongo_version):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\develop\python\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Users\10202\Desktop\saga\proofs\consumer_validation\fixtures.py", line 79, in isolated_mongo
+    raise RuntimeError("Isolated mongod startup timed out")
+RuntimeError: Isolated mongod startup timed out
