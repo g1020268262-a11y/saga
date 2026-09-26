@@ -5,23 +5,25 @@ Policy-governed agent communication requires authorization decisions to remain
 consistent with intended policy semantics, their implementation evaluation,
 and the actions that consume them. Authentication and confidentiality provide
 complementary guarantees without discharging this separate obligation. Our
-SAGA case study examines the evidence connecting policy decisions to agent
-communication authorization.
+SAGA case study analyzes a recorded authorization decision inconsistency
+through evidence-backed transformation and symbolic consequence analysis.
 
 Archived function-level calls to the unmodified matcher identify an
 order-dependent authorization decision inconsistency. For the recorded
 specific-deny/general-allow rulebook, an independent finite evaluator derives
-Deny while the implementation observation supplies Allow. The decision bridge
-binds these values to the same concrete policy evaluation and reconstructs
-the executed symbolic scenario from the checked pair. Recorded decision-value
-transfer is therefore mechanized, while implementation observation and symbolic
-execution retain distinct evidentiary roles.
+Deny while the implementation observation supplies Allow. As a component of
+the analysis procedure, the decision bridge checks the corresponding recorded
+policy input and observation provenance, constructs the decision pair, and
+reconstructs the fixed symbolic scenario. This transformation makes the
+decision sources and their use in the scenario auditable while keeping
+implementation observation and symbolic execution distinct.
 
 The Stage~1 diagnostic preserves the queried authentication correspondences
 and token secrecy without establishing the added authorization correspondence.
-Separately, a fresh ProVerif~2.05 execution of the bridge-derived model reports
+Separately, the archived ProVerif~2.05 run of the bridge-derived model reports
 \texttt{ChatAccept} reachable and establishes that acceptance implies prior
-\texttt{TokenIssue}. Independent gate controls locate distinct Provider and
+\texttt{TokenIssue} under the model's explicit assumptions. Independent gate
+controls locate distinct Provider and
 receiver blocking stages. These results do not transfer Stage~1 guarantees
 to the derived model or add a standalone issuance-reachability query to it.
 
@@ -32,11 +34,10 @@ analysis without establishing cryptographic compromise or reproducing a
 deployed-service exploit. The recorded policy evaluation and symbolic witness
 are not evidence of the same concrete service session.
 
-The remaining work concerns stronger correspondence, rather than an entirely
-missing decision-transfer mechanism. Evaluator correctness is not theorem-proved;
+The analysis is scoped to the recorded case and the stated symbolic assumptions.
+Evaluator correctness is not theorem-proved;
 the supported grammar does not cover complete Python or \texttt{fnmatch}
 semantics or arbitrary policies. Symbolic role binding remains an abstraction,
 and deployment-role correspondence and general implementation refinement remain
-unproved. Future work may extend and verify the evaluator, relate symbolic
-consumers to deployed components, reproduce service behavior, model the complete
-deployment lifecycle, and examine additional agent systems.
+unproved. The contribution is an evidence-backed analysis of the recorded
+inconsistency and its conditional symbolic consequences.

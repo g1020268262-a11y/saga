@@ -3,7 +3,7 @@
 % TODO: Replace the document class when a venue is selected.
 \input{macros}
 
-\title{Authorization Decision Consistency in SAGA: Implementation Evidence and Formal Consequence Analysis}
+\title{Evidence-backed Authorization Decision Analysis for SAGA}
 \author{}
 \date{}
 
@@ -24,9 +24,10 @@ correspondence is false. This identifies a verification-coverage gap, not a
 formal proof of the matcher inconsistency.
 For the recorded policy input, an independent finite specification evaluator
 derives Deny, while the archived matcher observation supplies Allow. A
-provenance-bound decision bridge checks that both decisions concern the
-same concrete policy evaluation and reconstructs the authorization-divergence
-scenario used in a fresh ProVerif~2.05 execution. The derived model admits
+decision bridge checks the corresponding recorded policy input and observation
+provenance, constructs the decision pair, and reconstructs the fixed
+authorization-divergence scenario analyzed in the archived ProVerif~2.05 run.
+Under its explicit symbolic assumptions, the derived model admits
 application-message acceptance (\texttt{ChatAccept}) and establishes that
 acceptance implies prior token issuance (\texttt{TokenIssue}). Independent
 gate controls distinguish Provider and receiver blocking stages. These

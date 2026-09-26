@@ -27,9 +27,10 @@ defines the requirement without asserting an end-to-end access violation.
 
 \subsection{Policy--Authorization Consistency}
 
-We call the end-to-end requirement \emph{policy--authorization consistency}:
+As an ideal authorization objective motivating this study, we call the
+end-to-end requirement \emph{policy--authorization consistency}:
 every accepted access must be traceable to an applicable authorization decision.
-For every execution and every accepted-access event $e$, we require
+The ideal requirement ranges over every execution and accepted-access event $e$:
 \[
   \mathsf{AccessAccepted}(e)
   \Longrightarrow
@@ -52,6 +53,15 @@ credential used for that access. An unrelated earlier allow decision is not
 a sufficient justification. This is a general requirement whose concrete
 events and policy-state conditions must be fixed for each formal model.
 
+This requirement motivates the analysis; it is not a theorem established by
+this paper. We do not attempt to prove the complete $\mathsf{Justifies}$
+relation or the authorization correctness of SAGA as a whole. We study a
+specific class of authorization decision inconsistencies: disagreement
+between a specification-side decision and an implementation-observed decision
+for the recorded policy input and matched identity. The subsequent protocol
+analysis concerns conditional consequences of that divergence under explicit
+symbolic model assumptions, not authorization correctness in deployed executions.
+
 Let $I$ be an initiating agent, $R$ a receiving agent, and $P_R$ the contact
 rulebook selected by $R$'s user. Each rule associates an agent-identity pattern
 with a budget. We write $\mathsf{Allow}_{\mathrm{spec}}(P_R,I)$ for the decision
@@ -65,8 +75,8 @@ the Provider's access check.\footnote{\raggedright See \texttt{match()} and
 \texttt{aid\_specificity()} in
 \texttt{saga/\allowbreak common/\allowbreak contact\_policy.py}, and
 \texttt{access()} in \texttt{saga/\allowbreak provider/\allowbreak provider.py}.}
-We initially fix the rulebook throughout an execution and consider either no
-matching rule or a unique highest-scoring match. Equal-score conflicts require
+For the symbolic analysis, we fix the rulebook throughout an execution and
+consider either no matching rule or a unique highest-scoring match. Equal-score conflicts require
 an explicit convention and are outside this initial scope.
 
 We distinguish three analysis-level events.
@@ -115,7 +125,20 @@ obligations, but the static permission conditions above do not establish them.
 
 A message-level authorization claim therefore requires a model connecting
 policy evaluation, credential issuance, and the final message-acceptance event.
-Chapter~6 develops the corresponding formalization and states its assumptions.
+Chapter~6 formalizes selected consequences of decision divergence under stated
+assumptions; it does not establish the complete justification relation above.
+
+\paragraph{Research question and scope.}
+How can authorization decision inconsistencies be identified from recorded
+implementation evidence and specification-side evaluation, and their protocol
+consequences analyzed under explicit symbolic model assumptions?
+For the recorded SAGA case, we compare an independently evaluated specification
+decision with the archived implementation-observed decision, check their
+evidence provenance, and reconstruct a divergence scenario for symbolic
+consequence analysis. This separates decision comparison, evidence-to-scenario
+transformation, and verification of selected model properties. Matching the
+recorded inputs and tracking their provenance does not establish that the
+observation and symbolic witness belong to the same real execution.
 
 % Evidence: saga/common/contact_policy.py, match() documentation and default budget.
 % Evidence: saga/provider/provider.py, access() decision and OTK response.
@@ -168,16 +191,23 @@ model results separately.
 
 \subsection{Threat Model}
 
+The following threat scenario motivates the symbolic analysis. Its identity,
+policy, and trust assumptions are not observations of a deployed service run.
 We consider a normally registered initiating agent controlled by the adversary.
 It can choose its contact requests and participate in the protocol under its
 genuine identity and certificate. The receiving user's rulebook is an existing
 configuration: the adversary cannot change its contents or rule order, control
 the Provider or CA, or obtain another honest party's private keys.
 
-The Provider and receiving agent execute their implementations with the same
-fixed rulebook. Cryptographic checks are assumed effective. The authorization
-inconsistency under study is a disagreement between policy meaning and enforcement during ordinary
-protocol operation, without compromise of either enforcement point.
+For the divergence scenario, we assume a common fixed rulebook for the Provider
+and receiving agent. In the symbolic model, their enforcement points consume
+the supplied implementation-side decision; they do not execute that rulebook
+or the Python matcher. The function-level observation does not establish that
+both deployed consumers used the same policy or consumed the recorded decision.
+Cryptographic checks are assumed effective. We analyze possible consequences
+of a decision inconsistent with the intended policy, without compromise of
+either enforcement point. The prescribed initiating-peer process represents
+the modeled interaction, not arbitrary adversary-controlled application behavior.
 
 The adversary's objective is an execution in which the intended policy denies
 contact by $I$, yet the system performs one of the authorization-relevant
@@ -189,6 +219,9 @@ actions above. At the message level, the violation condition is
 This end-to-end violation is distinct from an erroneous Provider grant or
 credential issuance. Claiming it requires evidence that the intervening
 checks and protocol steps reach the receiving agent's acceptance boundary.
+The results in this paper concern reachability within the specified symbolic
+scenario. They do not demonstrate a deployed attack or a real service execution
+connecting the matcher observation to message acceptance.
 
 We study this objective under a static policy. Policy updates and revocation,
 disagreement between stored policy versions, quantitative exhaustion of

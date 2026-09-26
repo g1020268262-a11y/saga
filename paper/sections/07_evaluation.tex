@@ -3,17 +3,19 @@
 
 \subsection{Evaluation Questions}
 
-We address four questions using archived evidence:
+We evaluate evidence-backed authorization decision analysis for the recorded
+SAGA case through four questions using archived evidence:
 \begin{enumerate}
 \item[Q1.] Does the recorded matcher decision agree with the documented
 most-specific policy semantics?
 \item[Q2.] Do the original authentication and secrecy queries establish
 the authorization relation required by this case study?
-\item[Q3.] Given authorization divergence, which symbolic protocol
-consequences are reachable, and where do Provider and receiver gates block them?
-\item[Q4.] Can a checked bridge transfer the specification-side decision and
-the observed implementation decision into the model, binding their provenance
-without hand-entering decision labels?
+\item[Q3.] Which symbolic consequences are reachable in the divergence
+scenario? Separately, which stages are blocked by the preset Provider and
+receiver permissions in the independent gate-control models?
+\item[Q4.] Can the analysis procedure check and transfer the specification-side
+decision and implementation-observed decision into the fixed Deny/Allow
+scenario, tracking provenance without per-run manual transcription?
 \end{enumerate}
 Q4 concerns evidence transfer and artifact integrity, not a new security
 theorem. Implementation observations, bridge checks, and symbolic results
@@ -24,8 +26,9 @@ executions; no new experiment is performed for this paper revision.
 
 The matcher record uses Python~3.14.3 for direct function calls.
 The formal records use ProVerif~2.05 on Windows. Four evidence packages
-provide the inputs and results: Stage~1 (S), historical divergence (D),
-bridge-derived divergence (B), and independent gate controls (G).
+provide the inputs and results: Stage~1 (S), a historical baseline scenario
+with preset divergence (D), a bridge-derived decision divergence scenario (B),
+and independent gate-control analysis (G).
 \footnote{\raggedright Packages under
 \texttt{proofs/evidence/}: S = \texttt{authz-stage1-\allowbreak
 20260916T123834944479Z/}; D = \texttt{authz-turepass-\allowbreak
@@ -40,6 +43,17 @@ revisions, rather than a single integrated service experiment. D executes
 a preset divergence scenario; B executes a scenario reconstructed from a
 checked decision pair by bridge v1.1.1. B supplies separate execution
 provenance and does not retroactively upgrade D.
+
+These packages address distinct analysis tasks. S supplies the matcher
+observation and verification-coverage diagnostic. B connects the observed
+decision inconsistency to a fixed symbolic scenario through the checked
+transformation procedure. D is the historical baseline for that consequence
+structure, not a correct-implementation or repaired-system baseline. G studies
+enforcement positions using analyst-selected Provider/receiver permissions;
+its permission pairs are not specification/implementation decision pairs
+derived from matcher observations. Gate placement analysis therefore
+complements decision inconsistency analysis rather than extending its
+implementation evidence.
 
 Table~\ref{tab:evaluation-runs} reports the seven communication-model runs
 used here. Each completed with exit status zero. Counts refer to final
@@ -60,7 +74,7 @@ Package & Model / scenario & Results & Seconds \\
 \hline
 S & Original communication & 11 & 334.6 \\
 S & Authorization diagnostic & 12 & 353.7 \\
-D & Historical divergence & 2 & 598.4 \\
+D & Historical baseline divergence & 2 & 598.4 \\
 B & Bridge-derived divergence & 2 & 810.9 \\
 G & Provider allow / Receiver allow & 5 & 813.6 \\
 G & Provider deny / Receiver allow & 5 & 507.1 \\
@@ -129,17 +143,18 @@ The archive's historical expected-result field is not used as the evaluator's
 answer. This independently derived decision and the direct observation
 provide the two sides of the recorded inconsistency.
 
-\subsection{Decision-Bridge Evaluation}
+\subsection{Evidence-Backed Decision Transformation}
 
-Package B addresses Q4 by connecting the recorded evaluation to an executed
-consequence model. It binds the independently derived Deny decision and
-observed Allow decision to the same ordered rules, matched identity, and
+Package B addresses Q4 by evaluating the decision-bridge component of the
+analysis procedure for the recorded case. It checks the independently derived
+Deny decision and observed Allow decision against the recorded ordered rules, matched identity, and
 historical source provenance. Rechecking that pair reconstructs the
 \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} table facts in the
 full model. They remain fixed symbolic inputs during ProVerif execution,
-not matcher execution events. Thus, the recorded decision values are
-transferred without hand-entered labels, while their symbolic role bindings
-remain abstractions as specified in Section~\ref{sec:implementation-mapping}.
+not matcher execution events. Within the fixed Deny/Allow adapter, the
+recorded values are transferred without per-run manual transcription.
+Policy abstraction, symbolic role mapping, protocol construction, and query
+design remain analysis choices as specified in Section~\ref{sec:implementation-mapping}.
 
 The archived ProVerif~2.05 run of this derived model exits with status zero
 and reports exactly the two expected queries: \texttt{ChatAccept} is
@@ -186,8 +201,8 @@ matcher execution error. The retained authentication and secrecy results
 apply to these Stage~1 queries. They are not automatically inherited by
 the later communication models.
 
-\paragraph{Historical authorization consequence model.}
-Package D contains two final results for \texttt{turepass}.
+\paragraph{Historical baseline scenario (D).}
+Package D contains two final results for the preset \texttt{turepass} scenario.
 The query asserting that \texttt{ChatAccept} is unreachable is false,
 with a reconstructed formal reachability witness. Under preset
 \texttt{ScenarioSpecDeny} and \texttt{ScenarioImplAllow} facts, the
@@ -207,8 +222,8 @@ query and no \texttt{ChatAccept}--\texttt{ChatSend} correspondence query.
 The complete D archive supplies these two final results with independent
 execution provenance, beyond the historical \texttt{turetrace} excerpt.
 
-\paragraph{Bridge-derived consequence execution.}
-The fresh execution archived in B obtains the same two outcomes after
+\paragraph{Bridge-derived decision divergence scenario (B).}
+The separate execution archived in B obtains the same two outcomes after
 reconstructing the scenario from the checked pair. Protocol statements
 and queries are intentionally preserved, so matching outcomes are expected;
 output agreement alone does not prove bridge correctness or execution
@@ -218,8 +233,11 @@ acceptance-to-send query. The new evidence connects recorded decision values
 to the scenario used in this execution without turning the symbolic witness
 into a running-service observation.
 
-\paragraph{Authorization gate experiments.}
+\paragraph{Independent gate-control analysis (G).}
 Package G evaluates three fixed pairs of Provider and receiver permissions.
+These inputs are preset enforcement conditions, not new observations of
+matcher decision divergence. The comparison isolates modeled blocking
+positions within G; it does not test a fix to the inconsistency recorded in S.
 Each control has three reachability queries and two correspondences.
 Table~\ref{tab:gate-evaluation} translates the reachability results into
 reachable (R) or unreachable (U), avoiding ambiguity about negated-query
@@ -242,8 +260,9 @@ Allow & Deny & R & U & U \\
 \label{tab:gate-evaluation}
 \end{table}
 
-Provider denial prevents release and downstream actions. Receiver denial
-prevents issuance and acceptance, while Provider release remains reachable.
+Within these gate-control models, Provider denial prevents release and
+downstream actions. Receiver denial prevents issuance and acceptance, while
+Provider release remains reachable.
 The allow/allow control establishes a reachable permitted path in the symbolic model.
 Both acceptance-to-issuance and acceptance-to-send correspondences are
 true in all three controls. In the denial cases they hold vacuously,
@@ -266,10 +285,13 @@ from that pair. Fourth, the fresh derived-model execution reaches
 \texttt{ChatAccept} while establishing its correspondence to prior issuance;
 the independent gate controls identify distinct release and issuance boundaries.
 
-Together, these findings support the SAGA case study's authorization
-enforcement gap. The implementation observation establishes the local
-inconsistency; the bridge supplies checked evidence transfer; the formal
-results characterize modeled consequences and control positions. This is
+Together, these findings support evidence-backed analysis of the recorded
+SAGA authorization decision inconsistency. The implementation observation
+and specification-side evaluation establish the local discrepancy; the bridge
+component supplies checked evidence transfer into B. B characterizes a
+conditional symbolic consequence, while G separately characterizes modeled
+enforcement positions. Neither the reachability results nor the gate controls
+establish complete authorization correctness or a verified fix. This is
 neither a running-service reproduction, a refinement proof, nor a
 deployment-scale security evaluation. No evidence layer substitutes for
 another. No result
@@ -278,12 +300,14 @@ compromise, or arbitrary attacker control of the modeled peer processes.
 
 \subsection{Limitations}
 
-The bridge now provides an executable, provenance-bound transfer for the
-recorded policy evaluation, but does not prove refinement between Python
+The procedure provides executable decision transfer with provenance checks
+for the recorded policy input, but does not prove refinement between Python
 and the symbolic protocol model. The external evaluator covers a finite
 pattern grammar; its correctness is not theorem-proved. Neither complete
 Python or \texttt{fnmatch} semantics nor correctness for arbitrary policies
-is established. ProVerif does not execute the matcher.
+is established. ProVerif does not execute the matcher. The evaluated
+properties do not discharge Chapter~3's ideal decision-to-access justification
+relation or establish authorization correctness in real service executions.
 
 Mapping the concrete evaluation to \texttt{aid\_B}, \texttt{aid\_A}, and
 \texttt{BuggyPolicy} remains an analysis abstraction. The historical

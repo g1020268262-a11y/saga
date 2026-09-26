@@ -3,17 +3,18 @@
 
 \subsection{Modeling Approach}
 
-The formal model captures the consequence of authorization divergence rather
-than reproducing the matcher implementation. We distinguish four layers:
-an archived function-level matcher observation, independent finite specification
-evaluation, a provenance-bound decision bridge, and symbolic protocol
-consequence analysis. For the recorded case, the bridge reconstructs the
-executed model's scenario input from a checked decision pair
-(Figure~\ref{fig:implementation-mapping}). It does not establish a general
-refinement relation between Python and the symbolic protocol model.
-ProVerif neither executes Python nor discovers the implementation
-inconsistency. The analysis retains Chapter~3's fixed-policy setting and
-permission boundaries.
+The formal model analyzes conditional consequences of authorization decision
+divergence for the recorded SAGA case. An archived implementation observation
+and independent specification-side evaluation yield a checked decision pair.
+An evidence-backed decision transformation procedure reconstructs a fixed
+symbolic scenario from that pair, which ProVerif then analyzes under explicit
+protocol assumptions (Figure~\ref{fig:implementation-mapping}). The decision
+bridge is a component of this analysis procedure, not a formal model
+translation framework. It does not construct the protocol abstraction or
+establish refinement between Python and the symbolic model. ProVerif neither
+executes Python nor discovers the implementation inconsistency. This analysis
+retains Chapter~3's fixed-policy setting and studies selected consequences;
+it does not prove the ideal decision-to-access justification relation.
 
 % Sources: paper/PAPER_STORY.md; proofs/CLAIM_EVIDENCE_MATRIX.md, Claims 2--4;
 % paper/sections/03_problem_formulation.tex; paper/sections/05_attack.tex.
@@ -39,14 +40,15 @@ the historical and bridge-derived executions have separate evidence packages.
 % Models share the prefix proofs/proverif/agent_communication_authz_chat_:
 % turepass.pv; p_allow_r_allow.pv; p_deny_r_allow.pv; p_allow_r_deny.pv.
 
-\subsection{Implementation-to-Model Decision Bridge}
+\subsection{Evidence-Backed Decision Transformation Procedure}
 \label{sec:implementation-mapping}
 
-\emph{Concrete evaluation context.} Bridge v1.1.1 binds an ordered policy
+\emph{Recorded input and provenance.} Bridge v1.1.1 checks an ordered policy
 $P$, its matched initiating identity $I$, a policy hash, the historical
 matcher revision and source hash, and the archived observation's location
-and hash. These fields identify the policy evaluation being compared, not
-a protocol session. The matched identity is the initiator, not the receiver.
+and hash. These fields track the recorded inputs and evidence used in the
+comparison; they do not identify a real authorization event or protocol
+session. The matched identity is the initiator, not the receiver.
 Policy labels and rule identifiers organize the artifact; they do not
 establish deployed policy ownership.
 
@@ -73,7 +75,7 @@ using explicit line-ending encodings. Equality with the current checkout is
 not required. The observed implementation decision is an archived execution result,
 not a prediction by the evaluator or an execution inside ProVerif.
 
-\emph{Decision-pair construction.} For this bound context, let
+\emph{Decision-pair construction.} For these checked recorded inputs, let
 $D_{\mathrm{spec}}(P,I)$ be the independently computed specification decision
 and $D_{\mathrm{impl}}^{\mathrm{obs}}(P,I)$ the archived matcher result
 interpreted using Chapter~3's positive-budget convention. The evaluator
@@ -83,8 +85,10 @@ the bound observation supplies budget $10$. Thus,
  (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
        =(\mathsf{Deny},\mathsf{Allow}).
 \]
-Only decisions bound to the same concrete policy evaluation are compared.
-This observation-based relation does not define implementation outputs for
+The procedure compares the decisions only after validating the recorded
+ordered rules, matched identity, and observation provenance. This establishes
+an evidence-linked comparison, not equivalence of real executions. The
+observation-based relation does not define implementation outputs for
 arbitrary inputs.
 
 \emph{Scenario reconstruction.} Before generating the full model, the bridge
@@ -98,6 +102,18 @@ protocol processes, events, channels, token logic, and queries remain frozen.
 Only the provenance header, scenario region, and three approved comment-only
 normalizations may differ. Exact structural checks and mutation tests support
 this artifact-level checked transformation, not semantic refinement.
+
+\emph{Automation and analysis choices.} Within the supported finite input
+grammar, the procedure automates specification-side decision evaluation,
+observation validation, provenance checks, and decision-pair comparison.
+Scenario generation is restricted to the checked Deny/Allow pair and the
+fixed consequence template; other decision pairs do not generate a full
+model through this adapter. Policy abstraction, including the supported
+grammar and budget interpretation, remains an analysis choice. Symbolic role
+mapping, protocol model construction, and query design are also specified by
+the analyst rather than derived from the observation. The independent gate
+controls use analyst-selected Provider/receiver permission combinations;
+they are not additional implementation-observed decision pairs.
 
 \begin{table}[htbp]
 \centering
@@ -133,14 +149,14 @@ The matcher archive identifies neither a deployed receiver nor a deployed
 policy owner, and does not describe the same concrete service session as the
 symbolic witness. Both Provider and receiver consume the fixed allow fact;
 their handoff and behavior are not validated by the matcher observation.
-Removing hand-entered decision values therefore does not remove the
-implementation-to-model refinement boundary.
+Avoiding per-run manual transcription within this fixed adapter therefore
+does not remove the implementation-to-model refinement boundary.
 
 \begin{figure}[htbp]
 \centering
 \small
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Concrete policy evaluation}\\
+\textbf{Recorded policy input and provenance}\\
 Ordered rules, matched identity, historical source provenance}}
 \par\smallskip
 $\swarrow$\hspace{0.35\linewidth}$\searrow$
@@ -157,23 +173,25 @@ $\searrow$\hspace{0.35\linewidth}$\swarrow$
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
 \textbf{Checked decision pair}\\
-Same bound evaluation; not a concrete service session}}
+Checked inputs and provenance; not real execution identity}}
 \par\smallskip
 $\downarrow$\quad Scenario reconstruction
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{ProVerif consequence model}\\
+\textbf{Fixed symbolic scenario in the consequence model}\\
 \texttt{ScenarioSpecDeny} + \texttt{ScenarioImplAllow}\\
 Fixed table facts during symbolic execution}}
 \par\smallskip
 $\downarrow$\quad Symbolic analysis under model assumptions
 \par\smallskip
 \fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Symbolic consequences}\\
+\textbf{Conditional symbolic consequences}\\
 \texttt{ChatAccept} reachable; acceptance implies issuance}}
-\caption{Decision bridge for the recorded evaluation. Symbolic role mapping
-remains an explicit modeling abstraction; the arrows do not establish
-refinement or production-service execution.}
+\caption{Evidence-backed decision transformation for the recorded SAGA case.
+The bridge checks and transfers decision values into a fixed scenario;
+policy abstraction, role mapping, protocol construction, and query design
+remain analysis choices. The arrows do not establish refinement or
+equivalence with a real service execution.}
 \label{fig:implementation-mapping}
 \end{figure}
 
@@ -343,14 +361,19 @@ complete Python or \texttt{fnmatch} semantics, or arbitrary policy correctness.
 ProVerif establishes reachability, blocking, and correspondences only within
 the stated symbolic scenarios; it does not prove Python execution correctness
 or a production deployment result.
+In particular, provenance tracking does not prove Python matcher correctness,
+complete SAGA authorization correctness, or equivalence between the recorded
+function execution and the symbolic witness. Chapter~3's full justification
+relation remains an ideal objective rather than a verified property here.
 
 The prescribed peer processes do not represent arbitrary application behavior
 under attacker control. Private transport and shared state remain abstractions;
 token expiry, quota consumption, revocation, and policy updates are not
 covered. No cryptographic primitive failure or key compromise is established.
 The recorded correspondences are not a revalidation of every original
-authentication or secrecy property. The recorded decision values no longer
-require manual transfer, but symbolic role binding, correspondence with
+authentication or secrecy property. For the fixed Deny/Allow adapter,
+per-run decision transfer is automated, but symbolic role binding, correspondence with
 deployed consumers, general implementation-to-model refinement, and
 service-level reproduction remain outside the completed evidence. The bridge
-is not a verified compiler or a new general verification framework.
+implements an evidence-backed decision transformation procedure for this case,
+not a verified compiler or a new general verification framework.

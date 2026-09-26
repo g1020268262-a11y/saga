@@ -22,8 +22,10 @@ invalidate an authentication proof. These results have
 different scopes; the Stage~1 guarantees do not automatically transfer to
 all later models or to deployments.
 
-As formulated in Chapter~3, accepted contact needs an applicable policy
-decision linked to the same participants and credential. Prior issuance
+Under the ideal authorization objective formulated in Section~3, accepted
+contact needs an applicable policy decision linked to the same participants
+and credential. This objective motivates the study; the full justification
+relation is not established by the evaluated properties. Prior issuance
 establishes credential provenance, but not permission to issue.
 Authentication establishes the identities to which authorization decisions
 must be bound; authorization determines what those identities may do.
@@ -47,13 +49,14 @@ implementation decisions are connected to their formal abstractions.
 In this case study, that connection has three distinct evidentiary roles:
 historical function-level observation, checked decision transfer, and
 symbolic consequence analysis. The bridge's independent evaluator computes
-the finite specification-side decision. The bridge binds the archived
-implementation observation to the same policy evaluation and reconstructs
-the scenario from the checked pair. The resulting full model is then
+the finite specification-side decision. The bridge checks the corresponding
+recorded policy input and observation provenance, constructs the decision
+pair, and reconstructs the fixed scenario from that pair. The resulting model is then
 executed by ProVerif.
 
-The bridge narrows the evidence gap for the recorded evaluation by removing
-hand-entered decision labels. The specification-side Deny comes from the
+The bridge narrows the evidence gap for the recorded case by generating
+decision labels for the supported fixed Deny/Allow scenario from the checked
+pair. The specification-side Deny comes from the
 independent evaluator, while the implementation-side Allow comes from the
 archived matcher execution. ProVerif analyzes consequences of the resulting
 scenario table facts; it neither executes Python nor discovers the implementation
@@ -100,8 +103,8 @@ case, $-1$ denotes denial and $10$ denotes permission. This use of a budget
 as a contact decision is distinct from enforcing quota consumption over
 subsequent messages, which the evaluated models do not establish.
 
-Explicitly binding the concrete input, specification evaluation,
-implementation observation, and formal scenario makes the origin of an
+Tracing the recorded input, specification evaluation,
+implementation observation, and reconstructed formal scenario makes the origin of an
 authorization state inspectable. Otherwise, a consequence analysis could
 verify properties of a supplied permission without establishing that the
 permission follows the intended policy. The bridge addresses decision-value
