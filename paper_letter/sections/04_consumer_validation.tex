@@ -63,11 +63,10 @@ D/A tests propagation of the observed decision inconsistency.
 \paragraph{Result and evidence.}
 In D/A, the specification selects budget $-1$, but both calls to the
 matcher return $10$. The Provider returns HTTP~200, releases its
-OTK, and initializes the counter to $9$. The response, receiver handshake,
-and initial OTK state share the same key hash; the receiver consumes that
-key. A single token is entered in \texttt{active\_tokens} and sent, with
-matching token hashes across the send record, boundary observation,
-and stored state. Initiator-side decryption agrees with the stored token
+OTK, and initializes the counter to $9$. The receiver processes and consumes
+the released OTK. A single token is generated, entered in
+\texttt{active\_tokens}, and sent; the send record and boundary observation
+identify the stored token. Initiator-side decryption agrees with the stored token
 metadata, including the recipient key and initial quota. Thus the
 observed workflow reaches OTK release, receiver processing, and token
 issuance, sending, and storage.
@@ -77,13 +76,9 @@ The successful archive is:
 \raggedright
 \path{proofs/consumer_validation/evidence/20260926T070021921746Z-d64c8064/}.
 \end{quote}
-Its \texttt{manifest.json} and \texttt{run-start.json} identify the run,
-environment, substitutions, actual source-byte hashes, and status.
-Hash-bound per-case inputs, event logs, and results link policy decisions
-to HTTP responses and state changes. The run records its dirty working
-tree rather than claiming a clean revision; these fresh observations are
-separate from the historical matcher record, formal runs, and failed
-harness archives.
+The archive records the actual source state, including its dirty working
+tree, and links fresh matcher observations to the consumer results.
+It is separate from the historical matcher record and formal executions.
 
 The endpoint is issuance/storage, not message acceptance. No application
 message, LLM call, or tool execution occurs. One execution per case is a

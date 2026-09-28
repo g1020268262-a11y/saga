@@ -4,52 +4,16 @@
 
 \paragraph{Decision input.}
 \label{sec:implementation-mapping}
-The bridge is a provenance-checked transformation component for this case
-study. It checks the recorded ordered rules, initiating identity, and
-historical matcher provenance, and combines independent finite
-specification evaluation with the archived implementation observation:
+For the recorded input, independent finite specification evaluation and
+the matcher observation supply the decision divergence:
 \[
  (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
        =(\mathsf{Deny},\mathsf{Allow}).
 \]
-The supported evaluator grammar covers the literal and wildcard patterns
-needed for this case; it is not complete Python or \texttt{fnmatch}
-semantics. The checked pair reconstructs only the scenario region of a
-fixed consequence template. Protocol processes and queries remain
-unchanged; symbolic role mapping remains an analysis choice.
-
-\begin{figure}[htbp]
-\centering
-\begin{tabular}{c}
-Implementation observation + specification evaluation \\
-$\downarrow$ \\
-Checked decision pair $\longrightarrow$ fixed symbolic scenario \\
-$\downarrow$ \\
-ProVerif analysis under explicit assumptions
-\end{tabular}
-\caption{Case-specific decision transfer; the arrows do not establish
-implementation refinement.}
-\label{fig:implementation-mapping}
-\end{figure}
-
-Table~\ref{tab:implementation-mapping} gives the scenario facts.
-ProVerif consumes these fixed inputs; it neither executes the matcher nor
-discovers its inconsistency.
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabular}{ll}
-\hline
-Checked decision & Symbolic table fact \\
-\hline
-Specification: Deny & \texttt{ScenarioSpecDeny(BuggyPolicy,aid\_B)} \\
-Observation: Allow & \texttt{ScenarioImplAllow(BuggyPolicy,aid\_B)} \\
-\hline
-\end{tabular}
-\caption{Decision values transferred into the fixed scenario.}
-\label{tab:implementation-mapping}
-\end{table}
+The decision bridge reconstructs the fixed symbolic scenario from checked
+evidence; it is not a compiler and does not prove refinement.
+ProVerif consumes fixed specification-deny and implementation-allow facts;
+it neither executes the matcher nor discovers its inconsistency.
 
 \paragraph{Model and assumptions.}
 The initiating peer $I$ has a genuine registered identity and an existing
@@ -105,9 +69,7 @@ Query in the derived-model run & Result \\
 
 The run is archived under \texttt{proofs/evidence/}\allowbreak
 \texttt{authz-bridge-turepass-}\allowbreak\texttt{20260922T111657792091Z/}.
-Its manifest binds the observation, generated model, verifier, and outputs.
-It is separate from the historical preset-divergence run and the consumer
-experiment; agreement of outcomes does not identify a common execution.
+This formal execution and the consumer experiment are separate runs.
 
 The earlier Stage~1 diagnostic retains the queried authentication
 correspondences and token secrecy, while

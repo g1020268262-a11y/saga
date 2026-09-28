@@ -23,8 +23,7 @@ The positive-budget convention follows the Provider's \texttt{/access}
 check. It describes policy eligibility, not sufficient conditions for a
 successful handshake. Equal-score conflicts and changing policies are
 outside this case. The consumer experiments use only negative and positive
-budgets; the Provider and receiver differ at zero, which is not evaluated
-as a propagation case here.
+budgets; zero is excluded.
 
 \paragraph{Root cause.}
 In the inspected matcher, \texttt{best\_pattern} is initialized to
@@ -56,7 +55,8 @@ Specific deny, then wildcard allow & $-1$ & $10$ \\
 Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \hline
 \end{tabular}
-\caption{Archived direct matcher observations for the same rule set.}
+\caption{Archived matcher observations for deny/allow and allow/deny
+rule order. These describe rule order, not specification/implementation pairs.}
 \label{tab:matcher-evaluation}
 \end{table}
 
