@@ -2,22 +2,8 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-The evidence concerns the recorded SAGA case and tested policies, not
-arbitrary policies, current upstream vulnerability status, or prevalence
-across deployments. The finite specification evaluator is not
-theorem-proved and does not cover complete Python or \texttt{fnmatch}
-semantics. Formal results depend on symbolic role mapping, transport,
-and handoff assumptions; they do not establish token expiry, quota
-consumption, revocation, policy updates, session isolation, or injective
-agreement. Consumer validation uses controlled registration and transport
-fixtures and stops before message acceptance. Neither the symbolic witness
-nor the consumer experiment establishes complete authorization correctness,
-a deployed-service exploit, Python/ProVerif equivalence or refinement,
-or a verified production repair.
-
-The recorded rule-order inconsistency separates intended policy permission
-from the matcher's observed decision. Conditional symbolic analysis admits
-message acceptance with prior token issuance, while the independent
-consumer experiment observes propagation through real authorization logic
-to token issuance and storage. Authentication and credential provenance
-therefore do not substitute for decision correctness in this case.
+Evidence covers one recorded case and tested policies; it establishes neither
+complete authorization correctness nor Python--ProVerif refinement. Controlled
+consumer execution stops before message acceptance and is no deployment
+exploit. We report matcher order dependence, conditional symbolic acceptance
+after token issuance, and consumer propagation to token issuance/storage.

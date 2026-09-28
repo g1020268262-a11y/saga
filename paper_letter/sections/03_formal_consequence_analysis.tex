@@ -4,109 +4,37 @@
 
 \paragraph{Decision input.}
 \label{sec:implementation-mapping}
-For the recorded input, independent finite specification evaluation and
-the matcher observation supply the decision divergence:
+Independent specification evaluation and the matcher observation supply
+the fixed divergence
 \[
  (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
        =(\mathsf{Deny},\mathsf{Allow}).
 \]
 The decision bridge reconstructs the fixed symbolic scenario from checked
-evidence; it is not a compiler and does not prove refinement.
-ProVerif consumes fixed specification-deny and implementation-allow facts;
-it neither executes the matcher nor discovers its inconsistency.
+evidence. ProVerif consumes these fixed facts; it neither executes Python
+nor discovers the matcher inconsistency, and no implementation refinement
+is claimed.
 
-\paragraph{Model and assumptions.}
-The initiating peer $I$ has a genuine registered identity and an existing
-receiving-user policy outside its control. The scenario assumes the same
-fixed policy at the Provider and receiver, effective cryptographic checks,
-and no compromise of the Provider, CA, or honest private keys.
-The prescribed initiating-peer process does not represent arbitrary
-adversary-controlled application behavior.
-
-The Provider releases contact material; \texttt{PeerA} represents receiver
-$R$, which issues tokens and accepts messages; \texttt{PeerB} represents
-initiator $I$. A CA supplies certificates. Replicated processes use symbolic
-cryptography, and the private \texttt{tls\_chat} channel abstracts
-authenticated, confidential transport. The \texttt{ProviderReleased}
-table abstracts handoff to receiver processing; \texttt{ActiveToken}
-associates the participants, token, and sender's access-control public key.
-
-\texttt{SpecIntendedDeny}$(I,R)$ records scenario denial without blocking
-execution. \texttt{ProviderRelease}$(R,I)$ records release,
-\texttt{TokenIssue}$(R,I,t)$ records wire-token issuance, and
-\texttt{ChatAccept}$(R,I,t,m)$ records application-message acceptance.
-The latter is distinct from \texttt{Accept}, which denotes token receipt
-and verification in the diagnostic model.
+\paragraph{Model assumptions.}
+The initiator has a genuine registered identity and cannot change the
+receiver's fixed policy. The Provider, CA, cryptographic checks, and honest
+private keys are trusted. Symbolic processes represent material release,
+token issuance, and application-message acceptance; a private channel and
+shared tables abstract authenticated transport, handoff, and active-token
+state.
 
 \paragraph{Queries and results.}
-The archived ProVerif~2.05 execution of the bridge-derived scenario reports
-the two results in Table~\ref{tab:claim-formalization}. A reconstructed
-witness refutes \texttt{not event(ChatAccept(...))}; acceptance is
-existentially reachable under the supplied divergence. The non-injective
-correspondence
+The ProVerif~2.05 run reports \texttt{ChatAccept} reachable under the fixed
+divergence and establishes the non-injective correspondence
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-requires prior issuance for the same participants and token, not intended
-policy permission or a unique session. Issuance occurs in the witness;
-there is no standalone issuance-reachability query in this model.
+as true. The correspondence requires prior issuance for the same participants
+and token; it does not establish policy permission. Token issuance appears
+in the acceptance witness, but there is no standalone \texttt{TokenIssue}
+reachability query.
 
-\begin{table}[htbp]
-\centering
-\begin{tabular}{ll}
-\hline
-Query in the derived-model run & Result \\
-\hline
-\texttt{ChatAccept} reachability & Reachable \\
-\texttt{ChatAccept} $\Rightarrow$ \texttt{TokenIssue} & True \\
-\hline
-\end{tabular}
-\caption{Archived formal query outcomes for the fixed D/A scenario.}
-\label{tab:claim-formalization}
-\label{tab:evaluation-runs}
-\end{table}
-
-The run is archived under \texttt{proofs/evidence/}\allowbreak
-\texttt{authz-bridge-turepass-}\allowbreak\texttt{20260922T111657792091Z/}.
-This formal execution and the consumer experiment are separate runs.
-
-The earlier Stage~1 diagnostic retains the queried authentication
-correspondences and token secrecy, while
-$\mathsf{Accept}(R,I,t)\Rightarrow\mathsf{PolicyAllow}(R,I)$ is false.
-Because that process never emits \texttt{PolicyAllow}, this is a
-verification-coverage diagnostic, not formal detection of the matcher
-defect. Those guarantees do not automatically transfer to the consequence
-model.
-
-\paragraph{Independent gate controls.}
-The existing controls in Table~\ref{tab:gate-evaluation} isolate modeled
-blocking positions. Their labels denote Provider/receiver permissions,
-not specification/implementation decisions. They use a fixed private
-token, unlike the fresh-token divergence model, and are not verified
-repairs or refinements of it.
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{llccc}
-\hline
-Provider & Receiver & Release & Issue & Accept \\
-\hline
-Allow & Allow & R & R & R \\
-Deny & Allow & U & U & U \\
-Allow & Deny & R & U & U \\
-\hline
-\end{tabular}
-\caption{Independent gate controls: reachable (R) and unreachable (U).}
-\label{tab:gate-evaluation}
-\end{table}
-
-In addition to the prior-issuance correspondence, the controls establish
-\[
- \mathsf{ChatAccept}(R,I,t,m)\Rightarrow\mathsf{ChatSend}(R,I,t,m).
-\]
-Both correspondences are vacuous when acceptance is unreachable.
-Provider denial blocks release and downstream events; receiver denial
-blocks issuance and acceptance while release remains reachable.
-The evidence remains in \texttt{proofs/evidence/}\allowbreak
-\texttt{authz-chat-gates-}\allowbreak\texttt{20260918T023621017067Z/}.
+The formal execution and consumer validation are separate experiments:
+the former reaches symbolic message acceptance, while the latter stops at
+token issuance and storage.
