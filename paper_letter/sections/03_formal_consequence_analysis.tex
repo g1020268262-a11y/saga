@@ -4,24 +4,20 @@
 
 \paragraph{Decision input.}
 \label{sec:implementation-mapping}
-Independent specification evaluation and the matcher observation supply
-the fixed divergence
-\[
- (D_{\mathrm{spec}}(P,I),D_{\mathrm{impl}}^{\mathrm{obs}}(P,I))
-       =(\mathsf{Deny},\mathsf{Allow}).
-\]
+The formal model is instantiated with the recorded divergence:
+the specification denies the request, while the observed implementation
+permits it.
 The decision bridge reconstructs the fixed symbolic scenario from checked
 evidence. ProVerif consumes fixed divergence facts; it does not execute Python
 or the matcher, discover the inconsistency, or prove refinement.
 
 \paragraph{Model assumptions.}
-The initiator has a valid registered identity and cannot alter the receiver's
-fixed policy. The Provider, CA, effective cryptographic checks, and honest
-private keys are trusted. A private symbolic channel abstracts authenticated
-and confidential transport; symbolic state represents handoff, token issuance,
-and application-message acceptance.
-The initiator follows the prescribed symbolic peer process; this
-reachability result is not an arbitrary-adversary reachability claim.
+The initiator has a valid registered identity, follows the prescribed symbolic
+peer process, and cannot alter the receiver's fixed policy; reachability is
+not an arbitrary-adversary reachability claim. The Provider, CA, effective
+cryptographic checks, and honest private keys are trusted. A private symbolic
+channel abstracts authenticated, confidential transport, with symbolic state
+for handoff, token issuance, and message acceptance.
 
 \paragraph{Queries and results.}
 The run reports \texttt{ChatAccept} reachable under the fixed divergence.

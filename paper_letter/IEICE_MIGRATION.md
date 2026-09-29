@@ -1,9 +1,10 @@
 # IEICE Transactions 模板迁移与实际分页记录
 
 日期：2026-09-29。分支：`my-modification`。
-冻结正文基线：`6d58c95269313a47a6e02d625d0444ceea6122ea`。
+初次模板迁移采用的冻结正文基线：`6d58c95269313a47a6e02d625d0444ceea6122ea`。
 初次模板迁移提交：`53a1ae535fd93dd9c7280522707af5aca981f5fc`。
-以下保留初次迁移过程记录；Fundamentals 分类修正及最新复核见末尾 N 节。
+以下保留初次迁移过程记录；Fundamentals 分类修正见 N 节，
+用户随后授权的信息优先级重构及最新复核见 O 节。
 
 ## A–C. 官方来源、版本及文件
 
@@ -188,3 +189,66 @@ overfull boxes 均为 **0**。
 `git diff --check` 和暂存区 `git diff --cached --check` 均通过；
 本次提交仅包含 `paper_letter/main.tex` 和 `paper_letter/IEICE_MIGRATION.md`。
 Commit SHA 在本轮交付消息中报告。
+
+## O. 信息优先级重构及最终分页（2026-09-29）
+
+本轮基线：`f82e7dc077addfe603ccea825d19c54bf6b7f893`。
+用户授权在冻结研究范围内重构表达，突出 matcher bug、controlled production
+propagation 和 fixed-divergence formal consequence；不增加研究内容。
+
+修改正文文件：`sections/01_introduction.tex`、
+`sections/02_authorization_decision_inconsistency.tex`、
+`sections/03_formal_consequence_analysis.tex`、
+`sections/04_consumer_validation.tex`、`sections/05_scope_conclusion.tex`。
+同时更新本记录和受跟踪的 `main.pdf`，使交付 PDF 与本轮源码一致。
+`main.tex`（含 title、Summary、Keywords、field=A、作者 TODO）、`references.bib`、
+引用集合、`macros.tex`、`build.ps1`、官方 class/style、字号、页边距和行距均未改变。
+
+表达调整：
+
+- Introduction 直接呈现 production matcher 的顺序不一致，然后依次说明
+  token issuance/storage 的受控传播和独立的 symbolic consequence。
+- 删除两个 Allow 定义的 display equations，以及 `Allow_spec` / `Allow_impl` 记号；
+  改用 most-specific semantics、正负预算和两种规则顺序结果的 prose。
+- 将 specification-deny / observed-implementation-allow 的 tuple display 改为 prose。
+- 删除三种 policy 的独立 array，改用文字交代原有策略顺序、预算和每例一次执行条件。
+- 共删除 **4 个 display math blocks**；唯一剩余的展示公式为原样保留的
+  `ChatAccept(R,I,t,m) => TokenIssue(R,I,t)` non-injective correspondence。
+- Table 1 完全保留。Table 2 改为两列 `Stage | Divergent case result`，
+  六行依次为 specification deny (-1)、Provider matcher allow (10)、
+  Provider /access HTTP 200 / OTK released、receiver matcher allow (10)、
+  receiver OTK consumed、token issued and stored。
+- A/A positive control 和 D/D Provider-blocking control 在正文中合并为一句说明；
+  保留 A/A token sending/storage，以及 D/D HTTP 403、不释放 OTK、不改变状态、
+  不到达 receiver、不能检验 receiver rejection 的限制。
+- Model assumptions 压为一段；结论按 bug、production propagation、独立 symbolic
+  consequence 顺序总结，并保留单一记录案例/已测策略、无 arbitrary-policy correctness、
+  无 Python--ProVerif refinement、empirical endpoint 早于 message acceptance、无 deployed exploit。
+
+Technical claims 没有新增或加强。尤其保留 prescribed symbolic peer process、
+非 arbitrary-adversary reachability、ProVerif 不执行 Python/matcher、不发现实现不一致、
+reachability 与 correspondence 分别报告、同一参与者/token 的先前 issuance、
+不证明 intended policy permission、witness 中出现 issuance、无 standalone TokenIssue
+reachability query，以及 formal/empirical 两种实验及端点相互区分。
+没有运行或修改实验、query、模型、实现、bridge、consumer validation 或历史 evidence。
+
+使用原 `build.ps1` 完整编译并检查所有两页渲染图：
+
+| 项目 | 最终实测 |
+| --- | --- |
+| PDF 总页数 | **2** |
+| References 起始页 | **第 2 页右栏** |
+| Table 1: matcher rule-order inconsistency | **第 1 页右栏** |
+| Table 2: divergent-case production propagation | **第 2 页右栏** |
+| ChatAccept => TokenIssue 展示公式 | **第 2 页左栏** |
+| Section 5 | **第 2 页右栏** |
+| Overfull boxes | **0** |
+| LaTeX errors / undefined refs / undefined cites / duplicate labels | **均为 0** |
+
+仍保留会员身份 TODO 和官方字体斜体替代 warning；未为压页改变模板参数。
+最终 `main.pdf` SHA-256：
+`5a180ea55b99f426b59470b05ea60a8a68fb05122c7fb4ddfa4c4befb7323e43`。
+前面章节的 PDF 哈希和快照说明均属于相应历史轮次；本节记录当前交付 PDF。
+中间编译产物仍在 Git 忽略的 `build/`，不提交。
+`git diff --check` 与暂存区检查均通过；本次只提交上述五个正文文件、本记录和最终 PDF。
+Commit SHA 在本轮交付消息中报告，完成后停止。

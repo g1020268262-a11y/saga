@@ -2,9 +2,9 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-Evidence covers one recorded SAGA case and tested policies, not arbitrary
-policies. The symbolic abstraction establishes no Python--ProVerif refinement;
-controlled execution stops before message acceptance and establishes no
-deployed exploit. We report matcher order dependence, conditional symbolic
-\texttt{ChatAccept} with prior \texttt{TokenIssue}, and controlled D/A
-propagation to token issuance/storage.
+Evidence covers one recorded SAGA case and tested policies, not arbitrary-policy
+correctness or Python--ProVerif refinement. Empirical execution stops before
+message acceptance; no deployed exploit is established. The matcher
+inconsistency propagates to token issuance/storage in controlled production
+consumers; separately, symbolic \texttt{ChatAccept} is reachable under the
+fixed divergence.

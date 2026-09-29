@@ -7,14 +7,10 @@ policy maps identity patterns to integer budgets. Provider and receiver
 independently call the production matcher on the initiator. The Provider gates
 contact material; the receiver rechecks its policy before token issuance.
 
-For fixed policy $P_R$ and valid identity $I$, the documented contract selects
-the matching rule with highest \texttt{aid\_specificity()}. For its unique
-budget $b^*$, this study uses
-\[
-  \mathsf{Allow}_{\mathrm{spec}}(P_R,I)
-  \Longleftrightarrow b^*>0.
-\]
-Positive budgets allow and negative budgets deny. Equal-score conflicts,
+For a fixed policy and valid identity, the documented semantics select the
+most-specific matching rule, measured by \texttt{aid\_specificity()}.
+A positive budget permits the request; a negative budget denies it.
+Equal-score conflicts,
 changing policies, and zero budgets are outside the cases.
 
 \paragraph{Root cause and observation.}
@@ -41,16 +37,9 @@ Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \end{table}
 
 An independent finite specification evaluator selects the specific denial
-for both orders. Writing
-\[
-  \mathsf{Allow}_{\mathrm{impl}}(P_R,I)
-  \Longleftrightarrow \mathtt{match}(P_R,I)>0,
-\]
-the specific-deny/wildcard-allow order yields
-$\mathsf{Allow}_{\mathrm{impl}}\neq\mathsf{Allow}_{\mathrm{spec}}$.
-The reverse order returns the specified denial, establishing order dependence.
-Table~\ref{tab:matcher-evaluation} describes rule order; the D/A label in
-Section~\ref{sec:consumer-propagation} instead denotes specification and
-implementation decisions. These calls establish only a local decision
-inconsistency, not deployment exploitation, message acceptance, or whole-system
-failure.
+for both orders in Table~\ref{tab:matcher-evaluation}. When specific deny
+precedes wildcard allow, the specification denies with budget $-1$, but the
+production matcher returns $10$ and permits. The reverse order returns the
+specified denial, establishing order dependence. These calls establish only
+a local decision inconsistency, not deployment exploitation, message
+acceptance, or whole-system failure.

@@ -1,23 +1,27 @@
 \section{Introduction}
 \label{sec:introduction}
 
-SAGA~\cite{syros2025saga} governs communication between registered agents
-using contact policies, identity checks, and access-control tokens.
-Authentication establishes identity, not compliance with the receiver's
+SAGA~\cite{syros2025saga} uses contact policies and access-control tokens
+to authorize communication between registered agents. Authentication
+establishes identity but does not imply permission under the receiver's
 contact policy.
 
-Direct matcher calls show order dependence: specific denial followed by
-wildcard permission returns permission, whereas the reverse order returns
-denial; most-specific semantics deny both. For the fixed specification-deny/
-implementation-allow case, ProVerif reports \texttt{ChatAccept} reachable and
-its correspondence to prior \texttt{TokenIssue} true. A separate controlled
-production-consumer execution reaches token issuance/storage. The formal and
-empirical endpoints are symbolic message acceptance and token storage,
-respectively.
+We identify an order-dependent inconsistency in the production matcher.
+Under documented most-specific semantics, a specific deny should override
+a wildcard allow. Instead, the matcher returns the later wildcard allowance;
+reversing the rule order returns denial.
 
-Our contributions are (1) analysis of the recorded matcher inconsistency,
-(2) consumer-side propagation validation with A/A, D/D, and D/A controls,
-and (3) conditional formal analysis of reachability and prior issuance.
+We examine two consequences. Controlled production consumers propagate
+the inconsistent decision through the Provider and receiver to token
+issuance/storage. Separately, a symbolic model instantiated with the same
+fixed divergence reaches \texttt{ChatAccept}; ProVerif also reports its
+correspondence to prior \texttt{TokenIssue} as true. The empirical execution
+stops at token storage, before message acceptance.
+
+Our contributions are (1) root-cause analysis of the recorded matcher
+inconsistency, (2) controlled validation of its propagation to token
+issuance/storage, and (3) conditional formal analysis of symbolic message
+acceptance and prior issuance.
 
 \paragraph{Related work.}
 \label{sec:related-work}

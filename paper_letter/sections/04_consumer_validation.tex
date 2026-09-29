@@ -13,44 +13,43 @@ the receiver handler, with OTK release/consumption, token generation, and
 certificate services, and TLS transport. Execution stops only at
 \texttt{receive\_conversation}, after token sending and storage.
 
-\paragraph{Experiments.}
-Provider and receiver use identical policies. With specific pattern $s$ and
-wildcard $w$, the tested policies are
-\[
-\begin{array}{c|c}
-\mathrm{A/A} & [(s,10),(w,10)] \\
-\mathrm{D/D} & [(w,10),(s,-1)] \\
-\mathrm{D/A} & [(s,-1),(w,10)] .
-\end{array}
-\]
-Labels are specification/observed implementation decisions; each case ran
-once with fresh state and one OTK.
+\paragraph{Cases and controls.}
+Provider and receiver use identical policies. The divergent case places
+specific deny ($-1$) before wildcard allow ($10$): the specification denies,
+while the production implementation permits. The controls use specific then
+wildcard allowances ($10$ each), or wildcard allow ($10$) followed by
+specific deny ($-1$).
+Each case ran once with fresh state and one OTK. The allow/allow (A/A)
+positive control reaches token sending/storage; the deny/deny (D/D)
+Provider-blocking control returns HTTP~403, releases no OTK, leaves state
+unchanged, and never reaches the receiver, so it does not test receiver
+rejection.
 
 \begin{table}[tb]
-\caption{Consumer propagation results; message acceptance was not executed.}
+\caption{Divergent-case production propagation; message acceptance was not executed.}
 \label{tab:consumer-propagation}
 \centering
 \small
-\begin{tabular}{@{}lccc@{}}
+\begin{tabular}{@{}ll@{}}
 \hline
-Spec./impl. & \shortstack{Provider\\HTTP} & \shortstack{OTK\\released} & \shortstack{Token\\sent/stored} \\
+Stage & Divergent case result \\
 \hline
-A/A & 200 & Yes & Yes \\
-D/D & 403 & No & Not reached \\
-D/A & 200 & Yes & Yes \\
+Specification & Deny ($-1$) \\
+Provider matcher & Allow ($10$) \\
+Provider \texttt{/access} & HTTP 200; OTK released \\
+Receiver matcher & Allow ($10$) \\
+Receiver & OTK consumed \\
+Endpoint & Token issued and stored \\
 \hline
 \end{tabular}
 \end{table}
 
-A/A is the positive control. D/D is Provider-blocking: HTTP~403 leaves state
-unchanged and never reaches the receiver, so it does not test receiver
-rejection. D/A tests inconsistency propagation.
-
 \paragraph{Result and evidence.}
-In D/A, the specification selects $-1$. The Provider matcher returns $10$;
-HTTP~200 releases its OTK and initializes counter $9$. The receiver processes
-the request, returns $10$, consumes the OTK, and generates, sends, and stores
-one token in \texttt{active\_tokens}.
+Table~\ref{tab:consumer-propagation} traces the divergent decision through
+production consumers. Both matchers return $10$. The Provider's HTTP~200
+response releases its OTK and initializes counter $9$; the receiver consumes
+the OTK, generates and sends one token, and stores it in
+\texttt{active\_tokens}.
 
 The empirical endpoint is token issuance/storage, not message acceptance:
 no application message is sent. No \texttt{receive\_conversation} logic runs.
