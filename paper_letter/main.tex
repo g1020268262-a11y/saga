@@ -1,27 +1,44 @@
-\documentclass[11pt]{article}
+\documentclass[letter]{ieice}
 
-% Official IEICE class unavailable in the local workspace.
+% Official IEICE Transactions v2.3 (2024/04/01); see ieice_template/.
+\usepackage[pdftex]{graphicx,xcolor}
+\usepackage[fleqn]{amsmath}
+\usepackage{newtxtext}
+\usepackage[varg]{newtxmath}
 \input{macros}
 
+\setcounter{page}{1}
+% TODO: Transactions category (A, B, C, or D).
+\field{}
 \title{Formal and Empirical Analysis of Authorization Decision Inconsistency in SAGA}
-\author{}
-\date{}
+\authorlist{%
+ % TODO: author name, membership status, and membership number (if applicable).
+ % Empty membership intentionally remains unknown; the class prints ??.
+ % TODO: correspondence email in the optional argument of \authorentry.
+ \authorentry{TODO Author}{}{todoaff}\MembershipNumber{}
+}
+% TODO: department, institution, postal address, and country.
+\affiliate[todoaff]{TODO: affiliation and postal address.}
+% TODO: received/revised dates are to be supplied by the journal.
+% \received{YYYY}{MM}{DD}
+% \revised{YYYY}{MM}{DD}
 
 \begin{document}
 \maketitle
 
-\renewcommand{\abstractname}{Summary}
-\begin{abstract}
+\begin{summary}
 We analyze an order-dependent authorization decision inconsistency in SAGA.
 Direct matcher observations contradict documented most-specific rule semantics.
 In a fixed divergence scenario, ProVerif finds symbolic message acceptance
 reachable with prior token issuance. Controlled experiments separately trace
 production authorization logic to token issuance and storage, stopping before
 message acceptance.
-\end{abstract}
+\end{summary}
 
-\noindent\textbf{Keywords:} authorization, access control, formal verification,
+\begin{keywords}
+authorization, access control, formal verification,
 AI agents, ProVerif
+\end{keywords}
 
 \input{sections/01_introduction}
 \input{sections/02_authorization_decision_inconsistency}
@@ -29,7 +46,7 @@ AI agents, ProVerif
 \input{sections/04_consumer_validation}
 \input{sections/05_scope_conclusion}
 
-\bibliographystyle{plain}
+\bibliographystyle{ieicetr}
 \bibliography{references}
 
 \end{document}

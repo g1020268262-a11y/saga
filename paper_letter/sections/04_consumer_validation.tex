@@ -26,20 +26,20 @@ wildcard $w$, the tested policies are
 Labels are specification/observed implementation decisions; each case ran
 once with fresh state and one OTK.
 
-\begin{table}[htbp]
+\begin{table}[tb]
+\caption{Consumer propagation results; message acceptance was not executed.}
+\label{tab:consumer-propagation}
 \centering
 \small
-\begin{tabular}{lccc}
+\begin{tabular}{@{}lccc@{}}
 \hline
-Spec./impl. & Provider HTTP & OTK released & Token sent/stored \\
+Spec./impl. & \shortstack{Provider\\HTTP} & \shortstack{OTK\\released} & \shortstack{Token\\sent/stored} \\
 \hline
 A/A & 200 & Yes & Yes \\
 D/D & 403 & No & Not reached \\
 D/A & 200 & Yes & Yes \\
 \hline
 \end{tabular}
-\caption{Consumer propagation results; message acceptance was not executed.}
-\label{tab:consumer-propagation}
 \end{table}
 
 A/A is the positive control. D/D is Provider-blocking: HTTP~403 leaves state

@@ -1,0 +1,6 @@
+# Preserve upstream bytes, including upstream whitespace, without normalization.
+ieice.cls -text -whitespace
+ieicetr.bst -text -whitespace
+readme-e.1st -text -whitespace
+readme-e.tex -text -whitespace
+template.tex -text -whitespace

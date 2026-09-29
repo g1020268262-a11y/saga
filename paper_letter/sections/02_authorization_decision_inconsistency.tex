@@ -25,19 +25,19 @@ replace a more specific result. Direct production-matcher calls use a specific
 pattern with budget $-1$ and specificity $70$, and wildcard \texttt{*} with
 budget $10$ and specificity $0$.
 
-\begin{table}[htbp]
+\begin{table}[tb]
+\caption{Archived matcher observations under two rule orders.}
+\label{tab:matcher-evaluation}
 \centering
 \small
-\begin{tabular}{lrr}
+\begin{tabular}{@{}p{0.50\linewidth}rr@{}}
 \hline
-Rule order & Expected budget & Observed budget \\
+Rule order & \shortstack{Expected\\budget} & \shortstack{Observed\\budget} \\
 \hline
 Specific deny, then wildcard allow & $-1$ & $10$ \\
 Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \hline
 \end{tabular}
-\caption{Archived matcher observations under two rule orders.}
-\label{tab:matcher-evaluation}
 \end{table}
 
 An independent finite specification evaluator selects the specific denial
