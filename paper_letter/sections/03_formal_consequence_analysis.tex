@@ -20,15 +20,17 @@ fixed policy. The Provider, CA, effective cryptographic checks, and honest
 private keys are trusted. A private symbolic channel abstracts authenticated
 and confidential transport; symbolic state represents handoff, token issuance,
 and application-message acceptance.
+The initiator follows the prescribed symbolic peer process; this
+reachability result is not an arbitrary-adversary reachability claim.
 
 \paragraph{Queries and results.}
-The run reports reachable \texttt{ChatAccept} under the fixed divergence.
-This existential symbolic witness satisfies the non-injective correspondence
+The run reports \texttt{ChatAccept} reachable under the fixed divergence.
+Separately, ProVerif reports the following non-injective correspondence as true:
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-as true. It requires prior issuance for the same participants and token, not
+It requires prior issuance for the same participants and token, not
 intended policy permission. Issuance appears in the acceptance witness; no
 standalone \texttt{TokenIssue} reachability query exists.
 
