@@ -32,7 +32,7 @@ rejection.
 \small
 \begin{tabular}{@{}ll@{}}
 \hline
-Stage & Divergent case result \\
+Evidence point & Divergent case result \\
 \hline
 Specification & Deny ($-1$) \\
 Provider matcher & Allow ($10$) \\
@@ -46,10 +46,9 @@ Endpoint & Token issued and stored \\
 
 \paragraph{Result and evidence.}
 Table~\ref{tab:consumer-propagation} traces the divergent decision through
-production consumers. Both matchers return $10$. The Provider's HTTP~200
-response releases its OTK and initializes counter $9$; the receiver consumes
-the OTK, generates and sends one token, and stores it in
-\texttt{active\_tokens}.
+production consumers. Both matchers return $10$. The Provider returns
+HTTP~200 and releases its OTK; the receiver consumes the OTK, generates and
+sends one token, and stores it in \texttt{active\_tokens}.
 
 The empirical endpoint is token issuance/storage, not message acceptance:
 no application message is sent. No \texttt{receive\_conversation} logic runs.

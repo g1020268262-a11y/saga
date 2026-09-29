@@ -4,12 +4,12 @@
 
 \paragraph{Decision input.}
 \label{sec:implementation-mapping}
-The formal model is instantiated with the recorded divergence:
+The symbolic model is instantiated with the recorded divergence:
 the specification denies the request, while the observed implementation
 permits it.
-The decision bridge reconstructs the fixed symbolic scenario from checked
-evidence. ProVerif consumes fixed divergence facts; it does not execute Python
-or the matcher, discover the inconsistency, or prove refinement.
+ProVerif consumes these fixed facts; it does not execute Python or the
+production matcher, discover the inconsistency, or prove implementation
+refinement.
 
 \paragraph{Model assumptions.}
 The initiator has a valid registered identity, follows the prescribed symbolic
