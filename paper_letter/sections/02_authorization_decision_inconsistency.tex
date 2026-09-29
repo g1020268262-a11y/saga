@@ -2,31 +2,26 @@
 \label{sec:authorization-inconsistency}
 
 \paragraph{Workflow and policy semantics.}
-An initiating agent requests contact with a receiving agent through SAGA's
-Provider. The receiving user's ordered contact rulebook associates identity
-patterns with integer budgets. Both the Provider and receiver invoke the
-shared matcher against the initiating identity. The Provider checks the
-result before releasing contact material, and the receiver checks its local
-policy before issuing a token.
+An initiator requests contact through SAGA's Provider. The receiver's ordered
+policy maps identity patterns to integer budgets. Provider and receiver
+independently call the production matcher on the initiator. The Provider gates
+contact material; the receiver rechecks its policy before token issuance.
 
-For a fixed rulebook $P_R$ and valid initiating identity $I$, the documented
-contract selects the most specific matching rule, using
-\texttt{aid\_specificity()}. For the unique highest-scoring match with
-budget $b^*$, the specification decision used here is
+For fixed policy $P_R$ and valid identity $I$, the documented contract selects
+the matching rule with highest \texttt{aid\_specificity()}. For its unique
+budget $b^*$, this study uses
 \[
   \mathsf{Allow}_{\mathrm{spec}}(P_R,I)
   \Longleftrightarrow b^*>0.
 \]
-The Provider's \texttt{/access} check treats only positive budgets as
-permission. Equal-score conflicts, changing policies, and zero budgets are
-outside the evaluated cases.
+Positive budgets allow and negative budgets deny. Equal-score conflicts,
+changing policies, and zero budgets are outside the cases.
 
 \paragraph{Root cause and observation.}
-In the inspected matcher, \texttt{best\_pattern} is initialized to
-\texttt{None} but never updated when a matching rule changes the returned
-budget. Later rules are therefore compared with the initial sentinel rather
-than the best previous match, making the last matching rule determine the
-result. Direct calls to the unmodified production matcher use a specific
+In the matcher, \texttt{best\_pattern} starts as \texttt{None} but is not
+updated when a matching rule changes the budget. Later rules remain compared
+with the initial sentinel instead of the best prior match, so a later match can
+replace a more specific result. Direct production-matcher calls use a specific
 pattern with budget $-1$ and specificity $70$, and wildcard \texttt{*} with
 budget $10$ and specificity $0$.
 
@@ -56,4 +51,6 @@ $\mathsf{Allow}_{\mathrm{impl}}\neq\mathsf{Allow}_{\mathrm{spec}}$.
 The reverse order returns the specified denial, establishing order dependence.
 Table~\ref{tab:matcher-evaluation} describes rule order; the D/A label in
 Section~\ref{sec:consumer-propagation} instead denotes specification and
-implementation decisions.
+implementation decisions. These calls establish only a local decision
+inconsistency, not deployment exploitation, message acceptance, or whole-system
+failure.

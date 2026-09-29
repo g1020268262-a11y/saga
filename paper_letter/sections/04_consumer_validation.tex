@@ -3,15 +3,15 @@
 \label{sec:evaluation}
 
 \paragraph{Purpose.}
-We test matcher-decision propagation through production consumers to token
-issuance/storage; Section~\ref{sec:formalization} analyzes symbolic acceptance.
+We test whether production consumers propagate matcher decisions to token
+issuance/storage, independently of Section~\ref{sec:formalization}.
 
 \paragraph{Environment.}
-The harness runs production Provider \texttt{/access}, matcher, receiver
-handler, token generation, and \texttt{active\_\allowbreak tokens} storage
-against isolated MongoDB. Fixtures replace registration, certificate services,
-and transport. \texttt{receive\_\allowbreak conversation} stops execution
-after token sending/storage.
+The harness executes production matcher calls in Provider \texttt{/access} and
+the receiver handler, with OTK release/consumption, token generation, and
+\texttt{active\_\allowbreak tokens} storage. Fixtures replace registration,
+certificate services, and TLS transport. Execution stops only at
+\texttt{receive\_conversation}, after token sending and storage.
 
 \paragraph{Experiments.}
 Provider and receiver use identical policies. With specific pattern $s$ and
@@ -42,15 +42,16 @@ D/A & 200 & Yes & Yes \\
 \label{tab:consumer-propagation}
 \end{table}
 
-A/A is the positive control for token issuance and storage. D/D is the
-Provider-blocking control: HTTP~403 leaves state unchanged; the receiver is
-not reached. D/A tests inconsistency propagation.
+A/A is the positive control. D/D is Provider-blocking: HTTP~403 leaves state
+unchanged and never reaches the receiver, so it does not test receiver
+rejection. D/A tests inconsistency propagation.
 
 \paragraph{Result and evidence.}
-In D/A, the specification selects $-1$; both matcher calls return $10$.
-The Provider returns HTTP~200, releases its OTK, and initializes counter $9$.
-The receiver consumes the OTK and generates, sends, and stores one token in
-\texttt{active\_tokens}. Artifacts are archived for reproducibility.
+In D/A, the specification selects $-1$. The Provider matcher returns $10$;
+HTTP~200 releases its OTK and initializes counter $9$. The receiver processes
+the request, returns $10$, consumes the OTK, and generates, sends, and stores
+one token in \texttt{active\_tokens}.
 
-No application message, LLM call, or tool execution occurs; the endpoint is
-token issuance/storage.
+The empirical endpoint is token issuance/storage, not message acceptance:
+no application message is sent. No \texttt{receive\_conversation} logic runs.
+Neither \texttt{local\_agent.run}, LLM calls, nor tool execution occurs.

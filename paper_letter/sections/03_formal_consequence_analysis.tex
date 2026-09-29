@@ -11,29 +11,26 @@ the fixed divergence
        =(\mathsf{Deny},\mathsf{Allow}).
 \]
 The decision bridge reconstructs the fixed symbolic scenario from checked
-evidence. ProVerif consumes these fixed facts; it neither executes Python
-nor discovers the matcher inconsistency, and no implementation refinement
-is claimed.
+evidence. ProVerif consumes fixed divergence facts; it does not execute Python
+or the matcher, discover the inconsistency, or prove refinement.
 
 \paragraph{Model assumptions.}
-The initiator has a genuine registered identity and cannot change the
-receiver's fixed policy. The Provider, CA, cryptographic checks, and honest
-private keys are trusted. Symbolic processes represent material release,
-token issuance, and application-message acceptance; a private channel and
-shared tables abstract authenticated transport, handoff, and active-token
-state.
+The initiator has a valid registered identity and cannot alter the receiver's
+fixed policy. The Provider, CA, effective cryptographic checks, and honest
+private keys are trusted. A private symbolic channel abstracts authenticated
+and confidential transport; symbolic state represents handoff, token issuance,
+and application-message acceptance.
 
 \paragraph{Queries and results.}
-The ProVerif~2.05 run reports \texttt{ChatAccept} reachable under the fixed
-divergence and establishes the non-injective correspondence
+The run reports reachable \texttt{ChatAccept} under the fixed divergence.
+This existential symbolic witness satisfies the non-injective correspondence
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-as true. The correspondence requires prior issuance for the same participants
-and token; it does not establish policy permission. Token issuance appears
-in the acceptance witness, but there is no standalone \texttt{TokenIssue}
-reachability query.
+as true. It requires prior issuance for the same participants and token, not
+intended policy permission. Issuance appears in the acceptance witness; no
+standalone \texttt{TokenIssue} reachability query exists.
 
 The formal execution and consumer validation are separate experiments:
 the former reaches symbolic message acceptance, while the latter stops at

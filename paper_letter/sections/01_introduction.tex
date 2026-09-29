@@ -3,16 +3,17 @@
 
 SAGA~\cite{syros2025saga} governs communication between registered agents
 using contact policies, identity checks, and access-control tokens.
-Authentication establishes who is communicating; it does not establish
-whether that identity is authorized to make contact.
+Authentication establishes identity, not compliance with the receiver's
+contact policy.
 
-Direct matcher calls reveal an order-dependent disagreement with the
-documented most-specific rule semantics. We analyze its conditional
-consequence in a fixed symbolic scenario, where ProVerif reports
-\texttt{ChatAccept} reachable and its correspondence to prior
-\texttt{TokenIssue} true. Separately, controlled experiments execute the
-production authorization consumers through token issuance and storage,
-stopping before message acceptance.
+Direct matcher calls show order dependence: specific denial followed by
+wildcard permission returns permission, whereas the reverse order returns
+denial; most-specific semantics deny both. For the fixed specification-deny/
+implementation-allow case, ProVerif reports \texttt{ChatAccept} reachable and
+its correspondence to prior \texttt{TokenIssue} true. A separate controlled
+production-consumer execution reaches token issuance/storage. The formal and
+empirical endpoints are symbolic message acceptance and token storage,
+respectively.
 
 Our contributions are (1) analysis of the recorded matcher inconsistency,
 (2) consumer-side propagation validation with A/A, D/D, and D/A controls,
@@ -22,5 +23,5 @@ and (3) conditional formal analysis of reachability and prior issuance.
 \label{sec:related-work}
 Authorization-policy work studies policy semantics and
 analysis~\cite{becker2007secpal,fisler2005margrave}; ProVerif supports
-symbolic protocol analysis~\cite{blanchet2016proverif}. We connect a concrete
-matcher disagreement to a fixed symbolic consequence and production consumers.
+symbolic protocol analysis~\cite{blanchet2016proverif}. We relate a concrete
+matcher disagreement to both forms of analysis.

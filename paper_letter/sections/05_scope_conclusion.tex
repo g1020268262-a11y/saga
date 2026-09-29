@@ -2,8 +2,9 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-Evidence covers one recorded case and tested policies; it establishes neither
-complete authorization correctness nor Python--ProVerif refinement. Controlled
-consumer execution stops before message acceptance and is no deployment
-exploit. We report matcher order dependence, conditional symbolic acceptance
-after token issuance, and consumer propagation to token issuance/storage.
+Evidence covers one recorded SAGA case and tested policies, not arbitrary
+policies. The symbolic abstraction establishes no Python--ProVerif refinement;
+controlled execution stops before message acceptance and establishes no
+deployed exploit. We report matcher order dependence, conditional symbolic
+\texttt{ChatAccept} with prior \texttt{TokenIssue}, and controlled D/A
+propagation to token issuance/storage.
