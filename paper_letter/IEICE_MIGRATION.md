@@ -2,6 +2,8 @@
 
 日期：2026-09-29。分支：`my-modification`。
 冻结正文基线：`6d58c95269313a47a6e02d625d0444ceea6122ea`。
+初次模板迁移提交：`53a1ae535fd93dd9c7280522707af5aca981f5fc`。
+以下保留初次迁移过程记录；Fundamentals 分类修正及最新复核见末尾 N 节。
 
 ## A–C. 官方来源、版本及文件
 
@@ -78,7 +80,9 @@ Summary 内容、Keywords、参考文献数据库或引用集合。
 当前只有一个 `TODO Author` 排版占位，会员参数留空，单位/地址为 TODO，未虚构姓名、会员身份或 email。
 class 将未知会员状态显示为 `??`，并发出对应 warning。
 
-此外，Transactions 分类 A/B/C/D 尚未指定；接收/修订日期及出版卷期、DOI 等由期刊确定。
+Transactions category is fixed to A (Fundamentals).
+目标期刊为 IEICE Transactions on Fundamentals of Electronics, Communications and Computer Sciences。
+接收/修订日期及出版卷期、DOI 等由期刊确定。
 PDF 中的 `??`、`Exx`、`200x` 和示例 DOI 是官方 class 的默认出版占位，不代表实际出版信息。
 
 - Summary：**48 words**，按空白分词，连字符复合词作为一词；与冻结原文完全一致。
@@ -147,3 +151,40 @@ pdflatex -interaction=nonstopmode -halt-on-error -file-line-error -output-direct
 提交范围仅为本记录所列的 `paper_letter/` 文件。
 本次 commit SHA 在交付消息中给出；报告与 PDF 包含在同一个迁移提交中。
 完成本轮后停止，不继续压缩正文或修改研究内容。
+
+## N. Fundamentals 分类修正及重新编译（2026-09-29）
+
+相对初次模板迁移提交，本轮只修改 `main.tex` 和本记录。
+`main.tex` 的 `\field{}` 改为 `\field{A}`，对应注释不再将 category 标为 TODO。
+Transactions category is fixed to A (Fundamentals).
+所有作者信息继续保持 TODO；未填写 Member/Nonmember 或其他未知作者资料。
+五个正文文件、title、Summary、Keywords、表格、公式、参考文献、macros、
+官方模板及 `build.ps1` 均未修改；未运行或修改研究实验、模型和证据。
+
+使用现有 `build.ps1` 完整执行三轮 pdflatex 和一轮 BibTeX，编译通过。
+最终日志：LaTeX errors、undefined refs、undefined cites、duplicate labels、
+overfull boxes 均为 **0**。
+仍保留未知会员状态 warning 和 `OT1/qhv/m/sl` 9pt 字体替代 warning；
+另有不影响 PDF 纸张尺寸的 `Non-PDF special ignored` 提示。
+
+使用 `pdfinfo`、逐页文本、aux 标签及全部两页的渲染图重新确认：
+
+| 项目 | 本轮实测 |
+| --- | --- |
+| PDF 总页数 | **2** |
+| References 起始页 | **第 2 页右栏** |
+| Matcher table | **第 1 页右栏** |
+| Consumer table | **第 2 页右栏** |
+| Section 5: Scope and Conclusion | **第 2 页右栏** |
+| 页眉分类 | **IEICE TRANS. FUNDAMENTALS** |
+
+本轮复核 PDF 为 `build/main.pdf`，SHA-256：
+`80683abe9bb52efad21afe92fa9c6470f2834393ab75b5c5ca63fe9751761981`。
+该文件及编译中间产物位于 Git 忽略目录，不纳入本次提交。
+脚本自动复制到 `main.pdf` 后，已恢复该受跟踪 PDF 的编译前字节，
+以严格保持本次仅修改两个指定文件；因此受跟踪的 `main.pdf` 仍是初次迁移的历史快照，
+不是本轮 `field=A` 复核 PDF。上方 SHA-256 表中的 `main.pdf` 哈希仍指该历史快照。
+
+`git diff --check` 和暂存区 `git diff --cached --check` 均通过；
+本次提交仅包含 `paper_letter/main.tex` 和 `paper_letter/IEICE_MIGRATION.md`。
+Commit SHA 在本轮交付消息中报告。
