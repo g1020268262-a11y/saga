@@ -14,7 +14,8 @@ refinement.
 \paragraph{Model assumptions.}
 The initiator has a valid registered identity, follows the prescribed symbolic
 peer process, and cannot alter the receiver's fixed policy; reachability is
-not an arbitrary-adversary reachability claim. The Provider, CA, effective
+not an arbitrary-adversary reachability claim. The Provider, Certificate Authority
+(CA), effective
 cryptographic checks, and honest private keys are trusted. A private symbolic
 channel abstracts authenticated, confidential transport.
 
@@ -27,15 +28,19 @@ occurs only after checking the fixed initiator identity and an
 and sender public key.
 
 \paragraph{Queries and results.}
-The run reports \texttt{ChatAccept} reachable under the fixed divergence.
+The archived ProVerif 2.05 run\footnote{Model and results: study repository,
+proofs/evidence, authz-bridge-turepass run of 22 September 2026.}
+reports \texttt{ChatAccept} reachable under the fixed divergence.
 Separately, ProVerif reports the following non-injective correspondence as true:
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
 It requires prior \texttt{TokenIssue} for the same receiver $R$, initiator $I$,
-and encrypted token $t$ used by \texttt{ChatAccept}; it does not establish
-intended policy permission. Issuance appears in the acceptance witness; no
+and encrypted token $t$ used by \texttt{ChatAccept}.
+In this fixed-divergence model, acceptance and the issuance correspondence
+coexist with specification denial: token-origin consistency alone does not
+establish policy compliance. Issuance appears in the acceptance witness; no
 standalone \texttt{TokenIssue} reachability query exists.
 
 The separate empirical and symbolic executions are compared only at the

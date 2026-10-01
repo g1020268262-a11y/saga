@@ -11,12 +11,9 @@ Under documented most-specific semantics, a specific deny should override
 a wildcard allow. Instead, the matcher returns the later wildcard allowance;
 reversing the rule order returns denial.
 
-We examine two consequences. Controlled production consumers propagate
-the inconsistent decision through the Provider and receiver to token
-issuance/storage. Separately, a symbolic model instantiated with the same
-fixed divergence reaches \texttt{ChatAccept}; ProVerif also reports its
-correspondence to prior \texttt{TokenIssue} as true. The empirical execution
-stops at token storage, before message acceptance.
+Controlled production consumers propagate the decision to token issuance/storage,
+stopping before message acceptance. A separate symbolic model analyzes message
+acceptance under the supplied divergence.
 
 Our contributions are (1) identifying and explaining the matcher inconsistency,
 and (2) characterizing its consequences through controlled production-consumer
@@ -24,7 +21,9 @@ propagation and conditional symbolic analysis.
 
 \paragraph{Related work.}
 \label{sec:related-work}
-Authorization-policy work studies policy semantics and
-analysis~\cite{becker2007secpal,fisler2005margrave}; ProVerif supports
-symbolic protocol analysis~\cite{blanchet2016proverif}. We relate a concrete
-matcher disagreement to both forms of analysis.
+Prior work studies policy-language semantics~\cite{becker2007secpal} and
+policy verification/change impact~\cite{fisler2005margrave}.
+SAGA itself analyzes protocol properties~\cite{syros2025saga} using
+ProVerif~\cite{blanchet2016proverif}. We examine a concrete implementation's
+deviation from specified rule selection and its consumer effects; this does
+not refute SAGA's guarantees under its model assumptions.
