@@ -16,8 +16,15 @@ The initiator has a valid registered identity, follows the prescribed symbolic
 peer process, and cannot alter the receiver's fixed policy; reachability is
 not an arbitrary-adversary reachability claim. The Provider, CA, effective
 cryptographic checks, and honest private keys are trusted. A private symbolic
-channel abstracts authenticated, confidential transport, with symbolic state
-for handoff, token issuance, and message acceptance.
+channel abstracts authenticated, confidential transport.
+
+In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ occurs after inserting
+receiver $R$, initiator $I$, encrypted token $t$, and $I$'s public access-control
+key into \texttt{ActiveToken}, before sending $t$.
+For a message $m$ received on the private channel, \texttt{ChatAccept}$(R,I,t,m)$
+occurs only after checking the fixed initiator identity and an
+\texttt{ActiveToken} entry matching receiver, initiator, presented token,
+and sender public key.
 
 \paragraph{Queries and results.}
 The run reports \texttt{ChatAccept} reachable under the fixed divergence.
@@ -26,10 +33,11 @@ Separately, ProVerif reports the following non-injective correspondence as true:
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-It requires prior issuance for the same participants and token, not
+It requires prior \texttt{TokenIssue} for the same receiver $R$, initiator $I$,
+and encrypted token $t$ used by \texttt{ChatAccept}; it does not establish
 intended policy permission. Issuance appears in the acceptance witness; no
 standalone \texttt{TokenIssue} reachability query exists.
 
-The formal execution and consumer validation are separate experiments:
-the former reaches symbolic message acceptance, while the latter stops at
-token issuance and storage.
+The separate empirical and symbolic executions are compared only at the
+decision/token lifecycle level; no object-level refinement is established.
+Only the symbolic execution reaches message acceptance.

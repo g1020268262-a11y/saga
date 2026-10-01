@@ -5,21 +5,26 @@
 An initiator requests contact through SAGA's Provider. The receiver's ordered
 policy maps identity patterns to integer budgets. Provider and receiver
 independently call the production matcher on the initiator. The Provider gates
-contact material; the receiver rechecks its policy before token issuance.
+one-time key (OTK) release; the receiver rechecks its policy before token issuance.
 
-For a fixed policy and valid identity, the documented semantics select the
-most-specific matching rule, measured by \texttt{aid\_specificity()}.
+For a fixed policy and valid identity, SAGA v2, Section~IV-D.1~\cite{syros2025saga},
+specifies the most-specific matching rule; the implementation scores patterns
+with \texttt{aid\_specificity()}.
 A positive budget permits the request; a negative budget denies it.
 Equal-score conflicts,
 changing policies, and zero budgets are outside the cases.
 
 \paragraph{Root cause and observation.}
-In the matcher, \texttt{best\_pattern} starts as \texttt{None} but is not
-updated when a matching rule changes the budget. Later rules remain compared
-with the initial sentinel instead of the best prior match, so a later match can
-replace a more specific result. Direct production-matcher calls use a specific
-pattern with budget $-1$ and specificity $70$, and wildcard \texttt{*} with
-budget $10$ and specificity $0$.
+The tested production matcher is \texttt{match()} in
+\texttt{saga/common/\allowbreak contact\_policy.py}, revision \texttt{7372111}
+of the study repository.\footnote{\texttt{github.com/g1020268262-a11y/saga}}
+Its \texttt{best\_pattern} starts at \texttt{None}, whose specificity is $-1$.
+A matching rule with greater specificity updates the budget but never
+\texttt{best\_pattern}. Thus later matching rules still compare against $-1$,
+allowing even a less-specific wildcard to overwrite the budget.
+For the recorded identity \texttt{alice@example.com:agent},
+\texttt{aid\_specificity()} scores pattern \texttt{alice@example.com:*} as $70$
+and \texttt{*} as $0$; their budgets are $-1$ and $10$, respectively.
 
 \begin{table}[tb]
 \caption{Archived matcher observations under two rule orders.}
