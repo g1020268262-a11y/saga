@@ -4,45 +4,39 @@
 
 \paragraph{Decision input.}
 \label{sec:implementation-mapping}
-The symbolic model is instantiated with the recorded divergence:
-the specification denies the request, while the observed implementation
-permits it.
-ProVerif takes these fixed facts as assumptions; it does not execute Python or
-the production matcher, discover the inconsistency, or establish implementation
-refinement.
+The symbolic model fixes the recorded divergence: the specification denies and
+the observed implementation permits. ProVerif assumes these facts; it does not
+run Python or the production matcher, discover the inconsistency, or establish
+implementation refinement.
 
 \paragraph{Model assumptions.}
-The initiator has a valid registered identity, follows the prescribed symbolic
-peer process, and cannot alter the receiver's fixed policy; reachability is
-not an arbitrary-adversary reachability claim. We trust the Provider and
-Certificate Authority (CA), assume cryptographic checks are effective, and
-assume private keys remain uncompromised. A private symbolic channel abstracts
-authenticated, confidential transport.
+The valid registered initiator follows the prescribed symbolic peer process and
+cannot alter the receiver's fixed policy; reachability is not an
+arbitrary-adversary reachability claim. The Provider and Certificate Authority
+(CA) are trusted, cryptographic checks are effective, and private keys remain
+uncompromised; a private symbolic channel abstracts authenticated, confidential
+transport.
 
-In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ occurs after inserting
-receiver $R$, initiator $I$, encrypted token $t$, and $I$'s public access-control
-key into \texttt{ActiveToken}, before sending $t$.
-For a private-channel message $m$, \texttt{ChatAccept}$(R,I,t,m)$
-occurs only after checking the fixed initiator identity and an
-\texttt{ActiveToken} entry matching receiver, initiator, presented token,
-and sender public key.
+In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ occurs after
+\texttt{ActiveToken} stores receiver $R$, initiator $I$, encrypted token $t$,
+and $I$'s public access-control key, before $t$ is sent. For private-channel
+message $m$, \texttt{ChatAccept}$(R,I,t,m)$ occurs only after checking the fixed
+identity and an entry matching those four fields.
 
 \paragraph{Queries and results.}
-The study repository's archived ProVerif 2.05 run
-(\texttt{proofs/}\allowbreak\texttt{evidence}, 22 September 2026)
-reports \texttt{ChatAccept} reachable under the fixed divergence.
-Separately, ProVerif reports the following non-injective correspondence as true:
+The archived ProVerif 2.05 run (\texttt{proofs/}\allowbreak\texttt{evidence},
+22 September 2026) reports \texttt{ChatAccept} reachable under the fixed
+divergence. Separately, it reports this non-injective correspondence as true:
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
 It requires prior \texttt{TokenIssue} for the same receiver $R$, initiator $I$,
-and encrypted token $t$ used by \texttt{ChatAccept}.
-In this fixed-divergence model, acceptance and the issuance correspondence
-coexist with specification denial: token-origin consistency alone does not
-establish policy compliance. The witness includes issuance; no
-standalone \texttt{TokenIssue} reachability query exists.
+and encrypted token $t$ used by \texttt{ChatAccept}; this establishes token-origin
+consistency, not intended policy permission. Under the fixed divergence, it
+coexists with specification denial. Issuance appears in the \texttt{ChatAccept}
+witness; no standalone \texttt{TokenIssue} reachability query exists.
 
-The empirical and symbolic executions are compared only at the level of
-authorization decisions and token lifecycle events; no object-level refinement
-is established. Only the symbolic model reaches message acceptance.
+The executions are compared only at authorization decisions and token lifecycle
+events, with no object-level refinement; only the symbolic model reaches message
+acceptance.

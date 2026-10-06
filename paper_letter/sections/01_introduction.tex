@@ -21,10 +21,11 @@ propagation and conditional symbolic analysis.
 
 \paragraph{Related work.}
 \label{sec:related-work}
-Prior work studies policy-language semantics~\cite{becker2007secpal} and policy
-verification/change impact~\cite{fisler2005margrave}; SAGA itself analyzes
-protocol properties~\cite{syros2025saga} using ProVerif~\cite{blanchet2016proverif}.
-Our analysis instead concerns a concrete
-implementation deviation from the specified rule-selection semantics and
+Prior work covers distributed authorization semantics
+~\cite{becker2004cassandra,becker2007secpal}, authorization credentials
+~\cite{birgisson2014macaroons}, and policy change-impact analysis
+~\cite{fisler2005margrave}. ProVerif and Tamarin support symbolic protocol
+analysis~\cite{blanchet2016proverif,meier2013tamarin}; SAGA uses ProVerif
+~\cite{syros2025saga}. We analyze the concrete rule-selection deviation and
 downstream consumer effects, complementing SAGA's protocol-level guarantees
-under its model assumptions.
+under its assumptions.

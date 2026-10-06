@@ -4,30 +4,22 @@
 
 \paragraph{Environment.}
 At consumer-run revision \texttt{8cc5dd7}, the relevant matcher, Provider,
-receiver, and token-cryptography files are identical to upstream revision
-\texttt{7372111}. The harness invokes the production Provider \texttt{/access}
-route and receiver handler to exercise matcher evaluation, OTK release and
-consumption, token generation and sending, and
-\texttt{active\_\allowbreak tokens} storage.
-Fixtures provide signed registration material, local certificates, and
-in-memory transport; production cryptographic checks remain active. Wrappers
-record and return original matcher results; fixtures preset neither authorization
-decisions nor resulting token state. After token sending and storage, a boundary
-stub intercepts the call before the original
-\texttt{receive\_conversation} runs.
+receiver, and token-cryptography files match upstream revision \texttt{7372111}.
+The harness drives the production Provider \texttt{/access} route and receiver
+handler from matcher evaluation through \texttt{active\_\allowbreak tokens}
+storage. Signed registration material, local certificates, and in-memory
+transport are used with production cryptographic checks active. Wrappers record
+matcher results without presetting authorization or token state; a boundary stub
+stops before the original \texttt{receive\_conversation}.
 
 \paragraph{Cases and controls.}
-Provider and receiver use identical policies. The divergent case places
-specific deny ($-1$) before wildcard allow ($10$): the specification denies,
-while the production implementation permits. The controls use specific then
-wildcard allowances ($10$ each), or wildcard allow ($10$) followed by
-specific deny ($-1$).
-Each case ran once with fresh state and one OTK. A/A and D/D denote allow/allow
-and deny/deny for specification/observed implementation, not Provider/receiver
-outcomes. A/A reaches token sending and storage; D/D returns HTTP~403,
-releases no OTK, leaves state
-unchanged, and never reaches the receiver, so it does not test receiver
-rejection.
+Provider and receiver use identical policies. Divergent D/A places specific deny
+($-1$) before wildcard allow ($10$); controls are A/A (both rules allow with
+$10$) and D/D (wildcard allow $10$ before specific deny $-1$). Each ran once
+with fresh state and one OTK. The labels denote specification/observed
+implementation, not Provider/receiver outcomes. A/A reaches token sending and
+storage; D/D returns HTTP~403 with no OTK release or state change and never
+reaches the receiver, so receiver rejection remains untested.
 
 \begin{table}[tb]
 \caption{Divergent-case propagation through production consumer paths; message acceptance was not executed.}
@@ -49,10 +41,7 @@ Endpoint & Token issued and stored \\
 \end{table}
 
 \paragraph{Result and evidence.}
-Table~\ref{tab:consumer-propagation} shows both matchers returning $10$,
-followed by OTK release and consumption, then generation, transmission, and
-storage of one token in \texttt{active\_tokens}.
-
-The empirical endpoint is token issuance and storage, not message acceptance:
-no application message is sent and the original
-\texttt{receive\_conversation} is not invoked.
+Table~\ref{tab:consumer-propagation} records both matchers returning $10$, OTK
+release and consumption, and one token generated, sent, and stored in
+\texttt{active\_tokens}. The endpoint excludes message acceptance: no application
+message is sent, and the original \texttt{receive\_conversation} is not invoked.
