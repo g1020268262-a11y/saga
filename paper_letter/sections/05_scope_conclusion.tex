@@ -2,9 +2,9 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-Evidence covers one recorded SAGA case and tested policies, not arbitrary-policy
-correctness or Python--ProVerif refinement. Empirical execution stops before
-message acceptance; no deployed exploit is established. The matcher
-inconsistency propagates to token issuance/storage in controlled production
-consumers; separately, symbolic \texttt{ChatAccept} is reachable under the
-fixed divergence.
+Our evidence is limited to one recorded SAGA case and the tested policies; it
+does not establish correctness for arbitrary policies or any Python--ProVerif
+refinement. Empirical execution stops before message acceptance; no deployed
+exploit is established. The inconsistency propagates through controlled production paths to
+token issuance and storage; symbolic \texttt{ChatAccept} is separately reachable
+under the fixed divergence.

@@ -10,7 +10,7 @@
 \setcounter{page}{1}
 % Transactions category: A (Fundamentals).
 \field{A}
-\title{Formal and Empirical Analysis of Authorization Decision Inconsistency in SAGA}
+\title{Formal and Empirical Analysis of an Authorization Decision Inconsistency in SAGA}
 \authorlist{%
  % TODO: author name, membership status, and membership number (if applicable).
  % Empty membership intentionally remains unknown; the class prints ??.
@@ -28,11 +28,11 @@
 
 \begin{summary}
 We analyze an order-dependent authorization inconsistency in SAGA:
-a later wildcard allow can override a more-specific deny because the
-matcher fails to retain the best pattern. Controlled production consumers
-propagate this decision to token issuance/storage. Under the fixed divergence,
-ProVerif reports symbolic \texttt{ChatAccept} reachable with prior
-\texttt{TokenIssue}.
+a later wildcard allow can replace a more-specific deny because the matcher
+fails to retain the best pattern. In controlled executions, the implementation
+decision propagates through production consumer paths to token issuance and
+storage. Under the fixed divergence, ProVerif reports \texttt{ChatAccept}
+reachable and the prior-\texttt{TokenIssue} correspondence true.
 \end{summary}
 
 \begin{keywords}

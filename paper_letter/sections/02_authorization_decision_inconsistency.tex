@@ -8,11 +8,11 @@ independently call the production matcher on the initiator. The Provider gates
 one-time key (OTK) release; the receiver rechecks its policy before token issuance.
 
 For a fixed policy and valid identity, SAGA v2, Section~IV-D.1~\cite{syros2025saga},
-specifies the most-specific matching rule; the implementation scores patterns
-with \texttt{aid\_specificity()}.
+specifies that the most-specific matching rule is selected; the implementation
+scores patterns with \texttt{aid\_specificity()}.
 A positive budget permits the request; a negative budget denies it.
-Equal-score conflicts,
-changing policies, and zero budgets are outside the cases.
+We do not consider equal-specificity conflicts, policy changes during
+evaluation, or zero budgets.
 
 \paragraph{Root cause and observation.}
 The tested production matcher is \texttt{match()} in
@@ -24,18 +24,18 @@ Its \texttt{best\_pattern} starts at \texttt{None}, whose specificity is $-1$.
 A matching rule with greater specificity updates the budget but never
 \texttt{best\_pattern}. Thus later matching rules still compare against $-1$,
 allowing even a less-specific wildcard to overwrite the budget.
-For the recorded identity \texttt{alice@example.com:agent},
-\texttt{aid\_specificity()} scores pattern \texttt{alice@example.com:*} as $70$
+In the recorded case, \texttt{aid\_specificity()} scores
+\texttt{alice@example.com:*} as $70$
 and \texttt{*} as $0$; their budgets are $-1$ and $10$, respectively.
 
 \begin{table}[tb]
-\caption{Archived matcher observations under two rule orders.}
+\caption{Specification and production-matcher results under two rule orders.}
 \label{tab:matcher-evaluation}
 \centering
 \small
 \begin{tabular}{@{}p{0.50\linewidth}rr@{}}
 \hline
-Rule order & \shortstack{Expected\\budget} & \shortstack{Observed\\budget} \\
+Rule order & \shortstack{Spec.\\budget} & \shortstack{Matcher\\budget} \\
 \hline
 Specific deny, then wildcard allow & $-1$ & $10$ \\
 Wildcard allow, then specific deny & $-1$ & $-1$ \\
@@ -48,5 +48,5 @@ for both orders in Table~\ref{tab:matcher-evaluation}. When specific deny
 precedes wildcard allow, the specification denies with budget $-1$, but the
 production matcher returns $10$ and permits. The reverse order returns the
 specified denial, establishing order dependence. These calls establish only
-a local decision inconsistency, not deployment exploitation, message
+a local decision inconsistency, not a deployed exploit, message
 acceptance, or whole-system failure.
