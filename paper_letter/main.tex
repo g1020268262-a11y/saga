@@ -27,12 +27,13 @@
 \maketitle
 
 \begin{summary}
-We analyze SAGA's order-dependent authorization inconsistency:
+We analyze an order-dependent authorization inconsistency in SAGA:
 a later wildcard-allow rule can replace a more-specific deny because the matcher
-fails to retain the best pattern. Controlled executions trace the implementation
-decision through production consumer paths to token issuance and storage. Under
-the fixed divergence, ProVerif reports \texttt{ChatAccept} reachable; separately,
-it verifies a non-injective correspondence requiring prior \texttt{TokenIssue}.
+fails to retain the best pattern. In controlled executions, the implementation
+decision propagates through production consumer paths to token issuance and
+storage. Under the fixed divergence, ProVerif reports \texttt{ChatAccept}
+reachable; separately, it verifies a non-injective correspondence requiring
+prior \texttt{TokenIssue}.
 \end{summary}
 
 \begin{keywords}

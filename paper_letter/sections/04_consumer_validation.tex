@@ -10,9 +10,9 @@ The harness drives the production Provider \texttt{/access} route and receiver
 handler from matcher evaluation through \texttt{active\_\allowbreak tokens}
 storage. The harness supplies signed registration material, local certificates,
 and in-memory transport while retaining the production cryptographic checks.
-Matcher wrappers invoke and record the original matcher result before returning
-it; fixtures preset neither authorization decisions nor the resulting token
-state. A boundary stub
+Matcher wrappers invoke the original matcher, record its result, and return that
+result unchanged; fixtures preset neither authorization decisions nor the
+resulting token state. A boundary stub
 intercepts the call before the original \texttt{receive\_conversation} executes.
 
 \paragraph{Cases and controls.}

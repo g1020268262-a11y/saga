@@ -11,11 +11,11 @@ implementation refinement.
 
 \paragraph{Model assumptions.}
 The initiator has a valid registered identity, follows the prescribed symbolic
-peer process, and cannot alter the receiver's fixed policy. This reachability
-result is therefore not an arbitrary-adversary reachability claim. The Provider
-and Certificate Authority (CA) are trusted, cryptographic checks are effective,
-and private keys remain uncompromised; a private symbolic channel abstracts
-authenticated, confidential transport.
+peer process, and cannot alter the receiver's fixed policy. Reachability under
+these assumptions is therefore not an arbitrary-adversary reachability claim.
+The Provider and Certificate Authority (CA) are trusted, cryptographic checks
+are effective, and private keys remain uncompromised; a private symbolic channel
+abstracts authenticated, confidential transport.
 
 In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ occurs after
 an \texttt{ActiveToken} entry stores receiver $R$, initiator $I$, encrypted
