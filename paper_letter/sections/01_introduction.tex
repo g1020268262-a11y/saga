@@ -1,10 +1,12 @@
 \section{Introduction}
 \label{sec:introduction}
 
+LLM-based autonomous agents increasingly operate with tools and interact with
+other agents in multi-step pipelines~\cite{wang2024agents,debenedetti2024agentdojo}.
 SAGA~\cite{syros2025saga} uses contact policies and access-control tokens
 to authorize communication between registered agents. Authentication
 establishes identity but does not imply permission under the receiver's
-contact policy.
+contact policy~\cite{lampson1992authentication}.
 
 We identify an order-dependent inconsistency in the production matcher.
 Under the documented most-specific semantics, the specific deny should be
@@ -21,11 +23,18 @@ propagation and conditional symbolic analysis.
 
 \paragraph{Related work.}
 \label{sec:related-work}
-Prior work covers distributed authorization semantics
-~\cite{becker2004cassandra,becker2007secpal}, authorization credentials
-~\cite{birgisson2014macaroons}, and policy change-impact analysis
-~\cite{fisler2005margrave}. ProVerif and Tamarin support symbolic protocol
-analysis~\cite{blanchet2016proverif,meier2013tamarin}; SAGA uses ProVerif
-~\cite{syros2025saga}. We analyze the concrete rule-selection deviation and
-downstream consumer effects, complementing SAGA's protocol-level guarantees
-under its assumptions.
+Prior work studies distributed authorization languages and policy
+semantics~\cite{becker2004cassandra,becker2007secpal} and
+policy verification and change-impact analysis~\cite{fisler2005margrave}.
+Capability- and credential-based authorization systems such as
+SPKI~\cite{ellison1999spki} and Macaroons~\cite{birgisson2014macaroons}
+provide related mechanisms for carrying authorization decisions.
+Symbolic protocol analyzers ProVerif and Tamarin support protocol-level
+security verification~\cite{blanchet2016proverif,meier2013tamarin};
+SAGA uses ProVerif to analyze its communication protocol~\cite{syros2025saga}.
+Security evaluation for autonomous LLM agents has also received recent
+attention~\cite{debenedetti2024agentdojo}.
+We instead examine a concrete deviation between SAGA's specified rule-selection
+semantics and its implementation, and trace its downstream consumer consequences;
+this does not refute SAGA's guarantees under its model assumptions.
+

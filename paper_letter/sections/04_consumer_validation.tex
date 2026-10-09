@@ -4,13 +4,15 @@
 
 \paragraph{Environment.}
 At consumer-run revision \texttt{8cc5dd7}, the relevant matcher, Provider,
-receiver, and token-cryptography files match upstream revision \texttt{7372111}.
+receiver, and token-cryptography source files are identical to upstream
+revision \texttt{7372111}.
 The harness drives the production Provider \texttt{/access} route and receiver
 handler from matcher evaluation through \texttt{active\_\allowbreak tokens}
 storage. Signed registration material, local certificates, and in-memory
-transport are used with production cryptographic checks active. Wrappers record
-matcher results without presetting authorization or token state; a boundary stub
-stops before the original \texttt{receive\_conversation}.
+transport are used with production cryptographic checks active. Matcher wrappers
+call, record, and return the original matcher result; fixtures preset neither
+authorization decisions nor the resulting token state. A boundary stub
+intercepts the call before the original \texttt{receive\_conversation} executes.
 
 \paragraph{Cases and controls.}
 Provider and receiver use identical policies. Divergent D/A places specific deny
