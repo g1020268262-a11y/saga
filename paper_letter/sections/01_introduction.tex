@@ -1,12 +1,12 @@
 \section{Introduction}
 \label{sec:introduction}
 
-LLM-based autonomous agents increasingly operate with tools and interact with
-other agents in multi-step pipelines~\cite{wang2024agents,debenedetti2024agentdojo}.
+LLM-based autonomous agents increasingly operate with external tools and
+services~\cite{wang2024agents,debenedetti2024agentdojo}.
 SAGA~\cite{syros2025saga} uses contact policies and access-control tokens
-to authorize communication between registered agents. Authentication
-establishes identity but does not imply permission under the receiver's
-contact policy~\cite{lampson1992authentication}.
+to authorize communication between registered agents. Authentication alone
+does not establish authorization under the receiver's
+policy~\cite{ellison1999spki}.
 
 We identify an order-dependent inconsistency in the production matcher.
 Under the documented most-specific semantics, the specific deny should be
@@ -26,9 +26,8 @@ propagation and conditional symbolic analysis.
 Prior work studies distributed authorization languages and policy
 semantics~\cite{becker2004cassandra,becker2007secpal} and
 policy verification and change-impact analysis~\cite{fisler2005margrave}.
-Capability- and credential-based authorization systems such as
 SPKI~\cite{ellison1999spki} and Macaroons~\cite{birgisson2014macaroons}
-provide related mechanisms for carrying authorization decisions.
+provide related abstractions for credential- and capability-based authorization.
 Symbolic protocol analyzers ProVerif and Tamarin support protocol-level
 security verification~\cite{blanchet2016proverif,meier2013tamarin};
 SAGA uses ProVerif to analyze its communication protocol~\cite{syros2025saga}.
