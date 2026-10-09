@@ -5,21 +5,21 @@ LLM-based autonomous agents increasingly operate with external tools and
 services~\cite{wang2024agents,debenedetti2024agentdojo}.
 SAGA~\cite{syros2025saga} uses contact policies and access-control tokens
 to authorize communication between registered agents. Authentication alone
-does not establish authorization under the receiver's
-policy~\cite{ellison1999spki}.
+does not establish authorization~\cite{ellison1999spki}; in SAGA, the receiver's
+contact policy governs permission~\cite{syros2025saga}.
 
 We identify an order-dependent inconsistency in the production matcher.
-Under the documented most-specific semantics, the specific deny should be
-selected over the wildcard allow. Instead, the matcher returns the later wildcard allowance;
-reversing the rule order returns denial.
+Under the documented most-specific semantics, the specific deny rule should be
+selected over the wildcard-allow rule. Instead, the matcher returns the budget
+of the later wildcard rule; reversing the rule order returns denial.
 
 In controlled executions, the implementation decision propagates through
 production consumer paths to token issuance and storage. A separate symbolic
-model analyzes acceptance under the supplied divergence.
+model analyzes message acceptance under the same fixed divergence.
 
 Our contributions are (1) identifying and explaining the matcher inconsistency,
-and (2) characterizing its consequences through controlled production-consumer
-propagation and conditional symbolic analysis.
+and (2) characterizing its consequences through controlled executions of
+production consumer paths and conditional symbolic analysis.
 
 \paragraph{Related work.}
 \label{sec:related-work}
@@ -34,6 +34,6 @@ SAGA uses ProVerif to analyze its communication protocol~\cite{syros2025saga}.
 Security evaluation for autonomous LLM agents has also received recent
 attention~\cite{debenedetti2024agentdojo}.
 We instead examine a concrete deviation between SAGA's specified rule-selection
-semantics and its implementation, and trace its downstream consumer consequences;
-this does not refute SAGA's guarantees under its model assumptions.
+semantics and its implementation and trace its downstream consumer consequences,
+complementing SAGA's protocol-level guarantees under its model assumptions.
 

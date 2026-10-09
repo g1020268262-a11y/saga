@@ -3,25 +3,27 @@
 \label{sec:evaluation}
 
 \paragraph{Environment.}
-At consumer-run revision \texttt{8cc5dd7}, the relevant matcher, Provider,
-receiver, and token-cryptography source files are identical to upstream
-revision \texttt{7372111}.
+The consumer runs use revision \texttt{8cc5dd7}. At that revision, the relevant
+matcher, Provider, receiver, and token-related cryptographic source files are
+identical to upstream revision \texttt{7372111}.
 The harness drives the production Provider \texttt{/access} route and receiver
 handler from matcher evaluation through \texttt{active\_\allowbreak tokens}
-storage. Signed registration material, local certificates, and in-memory
-transport are used with production cryptographic checks active. Matcher wrappers
-call, record, and return the original matcher result; fixtures preset neither
-authorization decisions nor the resulting token state. A boundary stub
+storage. The harness supplies signed registration material, local certificates,
+and in-memory transport while retaining the production cryptographic checks.
+Matcher wrappers invoke and record the original matcher result before returning
+it; fixtures preset neither authorization decisions nor the resulting token
+state. A boundary stub
 intercepts the call before the original \texttt{receive\_conversation} executes.
 
 \paragraph{Cases and controls.}
-Provider and receiver use identical policies. Divergent D/A places specific deny
-($-1$) before wildcard allow ($10$); controls are A/A (both rules allow with
-$10$) and D/D (wildcard allow $10$ before specific deny $-1$). Each ran once
-with fresh state and one OTK. The labels denote specification/observed
-implementation, not Provider/receiver outcomes. A/A reaches token sending and
-storage; D/D returns HTTP~403 with no OTK release or state change and never
-reaches the receiver, so receiver rejection remains untested.
+The Provider and receiver use identical policies. The divergent D/A case places
+the specific deny rule ($-1$) before the wildcard-allow rule ($10$). The controls
+are A/A (both rules allow with $10$) and D/D (the wildcard-allow rule $10$ before
+the specific deny rule $-1$). Each case ran once with fresh state and one OTK.
+The first and second letters denote the specification and observed implementation
+decisions, respectively, rather than Provider and receiver outcomes. A/A reaches
+token sending and storage; D/D returns HTTP~403 with no OTK release or state
+change and never reaches the receiver, so receiver rejection remains untested.
 
 \begin{table}[tb]
 \caption{Divergent-case propagation through production consumer paths; message acceptance was not executed.}
@@ -43,7 +45,7 @@ Endpoint & Token issued and stored \\
 \end{table}
 
 \paragraph{Result and evidence.}
-Table~\ref{tab:consumer-propagation} records both matchers returning $10$, OTK
-release and consumption, and one token generated, sent, and stored in
+Table~\ref{tab:consumer-propagation} shows that both matchers return $10$, the
+OTK is released and consumed, and one token is generated, sent, and stored in
 \texttt{active\_tokens}. The endpoint excludes message acceptance: no application
 message is sent, and the original \texttt{receive\_conversation} is not invoked.

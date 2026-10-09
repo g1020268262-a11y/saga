@@ -5,6 +5,6 @@
 Our evidence is limited to one recorded SAGA case and the tested policies; it
 does not establish correctness for arbitrary policies or any Python--ProVerif
 refinement. Empirical execution stops before message acceptance; no deployed
-exploit is established. The inconsistency propagates through controlled production paths to
-token issuance and storage; symbolic \texttt{ChatAccept} is separately reachable
-under the fixed divergence.
+exploit is established. In controlled executions of the production consumer
+paths, the inconsistency propagates to token issuance and storage. Separately,
+\texttt{ChatAccept} is reachable in the symbolic model under the fixed divergence.
