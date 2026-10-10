@@ -48,6 +48,8 @@ A separate finite specification evaluator selects the specific denial
 for both orders in Table~\ref{tab:matcher-evaluation}. When the specific deny
 rule precedes the wildcard-allow rule, the specification denies with budget
 $-1$, but the production matcher returns $10$ and permits. The reverse order
-returns the specified denial, establishing order dependence. These calls
-establish only a local decision inconsistency, not a deployed exploit or
-end-to-end message acceptance.
+returns the specified denial, establishing order dependence. This constitutes
+an implementation-level authorization bypass in the tested case: the
+specification denies while the production matcher permits. These matcher calls
+alone do not establish downstream token state, message acceptance, or a
+deployed exploit.

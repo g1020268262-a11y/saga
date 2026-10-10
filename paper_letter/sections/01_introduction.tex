@@ -8,18 +8,29 @@ to authorize communication between registered agents. Authentication alone
 does not establish authorization~\cite{ellison1999spki}; in SAGA, the receiver's
 contact policy governs permission~\cite{syros2025saga}.
 
-We identify an order-dependent inconsistency in the production matcher.
-Under the documented most-specific semantics, the specific deny rule should be
-selected over the wildcard-allow rule. Instead, the matcher returns the budget
-of the later wildcard rule; reversing the rule order returns denial.
+An authorization coverage diagnostic of SAGA's reference communication model
+retains the existing authentication and token-secrecy results but reports an
+added authorization correspondence as false. This exposes a missing proof obligation:
+the verified properties do not establish policy authorization. The diagnostic
+neither executes the Python matcher nor identifies its defect; it motivates our
+inspection of policy evaluation and enforcement. That inspection identifies an
+order-dependent inconsistency in the production matcher.
 
-In controlled executions, the implementation decision propagates through
-production consumer paths to token issuance and storage. A separate symbolic
-model analyzes message acceptance under the same fixed divergence.
+The defect is not confined to an incorrect integer result. In controlled
+executions, specification denial becomes an implementation permission that
+passes the production Provider and receiver consumers and reaches token issuance
+and storage. In a separate consequence model, the corresponding fixed divergence
+admits \texttt{ChatAccept}, while its prior-\texttt{TokenIssue} correspondence
+remains true. Together these stages form an authorization-bypass path. The
+empirical path stops at token issuance and storage; only the symbolic model
+reaches message acceptance.
 
-Our contributions are (1) identifying and explaining the matcher inconsistency,
-and (2) characterizing its consequences through controlled executions of
-production consumer paths and conditional symbolic analysis.
+Our contributions are (1) diagnosing an authorization proof-coverage gap in
+SAGA's reference model; (2) identifying the order-dependent production matcher
+inconsistency and validating its propagation through production consumers to
+token issuance and storage; and (3) showing that, under the same fixed
+Spec-Deny/Impl-Allow divergence, symbolic \texttt{ChatAccept} is reachable while
+the prior-\texttt{TokenIssue} correspondence remains true.
 
 \paragraph{Related work.}
 \label{sec:related-work}

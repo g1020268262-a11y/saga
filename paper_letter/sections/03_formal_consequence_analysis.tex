@@ -1,13 +1,23 @@
-\section{Formal Consequence Analysis}
+\section{Formal Authorization Analysis}
 \label{sec:formalization}
 \label{sec:attack-path}
 
-\paragraph{Decision input.}
+\paragraph{Coverage diagnostic.}
+Our analysis begins with an authorization coverage diagnostic of SAGA's
+reference communication model. The archived ProVerif 2.05 extension preserves
+the original authentication and token-secrecy results, whereas an added
+correspondence requiring \texttt{Accept} to have prior \texttt{PolicyAllow} is
+false. Here \texttt{Accept} means token receipt and verification, not the later
+\texttt{ChatAccept}. The diagnostic does not connect its policy events to an
+enforcement guard; it exposes a missing authorization proof obligation and
+neither executes the matcher nor identifies the Python defect.
+
+\paragraph{Consequence model.}
 \label{sec:implementation-mapping}
-The symbolic model fixes the recorded divergence: the specification denies and
-the observed implementation permits. ProVerif assumes these facts; it does not
-run Python or the production matcher, discover the inconsistency, or establish
-implementation refinement.
+The later symbolic model fixes the recorded divergence: the specification
+denies and the observed implementation permits. ProVerif assumes these facts;
+it does not run Python or the production matcher, discover the inconsistency,
+or establish implementation refinement.
 
 \paragraph{Model assumptions.}
 The initiator has a valid registered identity, follows the prescribed symbolic
@@ -43,3 +53,12 @@ no standalone \texttt{TokenIssue} reachability query exists.
 The empirical and symbolic executions are compared only at the level of
 authorization decisions and token-lifecycle events; no object-level refinement
 is established. Only the symbolic execution reaches message acceptance.
+
+\paragraph{Authorization-bypass path.}
+Across the evidence layers, these results define an authorization-bypass path:
+the documented policy denies the initiator, the production matcher permits it,
+the decision propagates through Provider and receiver processing to token
+issuance and storage, and the corresponding fixed symbolic divergence admits
+\texttt{ChatAccept}. The implementation and symbolic endpoints remain separate
+evidence layers. We use ``authorization bypass'' for this policy-enforcement
+failure, not to claim an arbitrary-adversary or deployed exploit.

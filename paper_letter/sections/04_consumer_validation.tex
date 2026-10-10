@@ -2,6 +2,12 @@
 \label{sec:consumer-propagation}
 \label{sec:evaluation}
 
+\paragraph{Purpose.}
+This experiment validates the implementation segment of the
+authorization-bypass path. It follows the recorded Spec-Deny/Impl-Allow case
+through the production Provider and receiver consumers to token issuance and
+storage; it does not execute application-message acceptance.
+
 \paragraph{Environment.}
 The consumer runs use revision \texttt{8cc5dd7}. At that revision, the relevant
 matcher, Provider, receiver, and token-related cryptographic source files are
