@@ -36,9 +36,9 @@
 
 ### 根因与观测
 
-被测试的生产 matcher 是 `saga/common/contact_policy.py` 中的 `match()`；它与上游 SAGA 修订版 `7372111` 相比未发生变化，该修订版也是归档 matcher 观测所采用的上游基线。[^repo] 其 `best_pattern` 初始值为 `None`，对应的具体程度为 $-1$。具体程度更高的匹配规则会更新预算，却不会更新 `best_pattern`。因此，后续匹配规则仍与 $-1$ 比较，使得即使具体程度更低的通配符规则也能够覆盖预算。在记录的案例中，`aid_specificity()` 对 `alice@example.com:*` 的评分为 $70$，对 `*` 的评分为 $0$；二者的预算分别为 $-1$ 和 $10$。
+被测试的生产 matcher 是 `saga/common/contact_policy.py` 中的 `match()`。随附 artifact 记录了固定的上游源代码来源，并将归档的 matcher 观测与该源代码绑定。[^repo] 其 `best_pattern` 初始值为 `None`，对应的具体程度为 $-1$。具体程度更高的匹配规则会更新预算，却不会更新 `best_pattern`。因此，后续匹配规则仍与 $-1$ 比较，使得即使具体程度更低的通配符规则也能够覆盖预算。在记录的案例中，`aid_specificity()` 对 `alice@example.com:*` 的评分为 $70$，对 `*` 的评分为 $0$；二者的预算分别为 $-1$ 和 $10$。
 
-[^repo]: 上游实现：`github.com/gsiros/saga`；复现 artifact：`github.com/g1020268262-a11y/SAGA-Authorization-Analysis-Artifact`。
+[^repo]: 复现 artifact：`github.com/g1020268262-a11y/SAGA-Authorization-Analysis-Artifact`。
 
 **表 1　两种规则顺序下的规范结果与生产 matcher 结果。**
 
@@ -67,7 +67,7 @@
 
 ### 查询与结果
 
-随附复现 artifact 中 `proofs/evidence/authz-bridge-turepass-20260922T111657792091Z/` 下归档的 ProVerif 2.05 运行，报告在固定分歧场景下 `ChatAccept` 可达。与此分开，它报告以下非单射对应关系为真：
+随附 artifact 归档了 ProVerif 2.05 的运行、生成的模型和原始输出。该运行报告在固定分歧场景下 `ChatAccept` 可达。与此分开，它报告以下非单射对应关系为真：
 
 \[
  \mathsf{ChatAccept}(R,I,t,m)
@@ -90,7 +90,7 @@
 
 ### 环境
 
-consumer 运行使用修订版 `8cc5dd7`。在该修订版中，相关 matcher、Provider、接收方以及 token 相关密码学源文件均与上游修订版 `7372111` 相同。测试 harness 驱动生产 Provider 的 `/access` 路由和接收方处理程序，使执行从 matcher 求值一直到 `active_tokens` 存储。该 harness 提供已签名的注册材料、本地证书和内存传输，同时保留生产密码学检查。Matcher wrapper 调用原始 matcher，记录其结果，并将该结果原样返回；fixture 既不预设授权决策，也不预设由此产生的 token 状态。一个边界 stub 在原始 `receive_conversation` 执行之前拦截该调用。
+归档的 consumer 运行记录了 matcher、Provider、接收方以及 token 相关密码学代码的源文件哈希。这些相关源代码与分析中使用的固定上游基线一致。测试 harness 驱动生产 Provider 的 `/access` 路由和接收方处理程序，使执行从 matcher 求值一直到 `active_tokens` 存储。该 harness 提供已签名的注册材料、本地证书和内存传输，同时保留生产密码学检查。Matcher wrapper 调用原始 matcher，记录其结果，并将该结果原样返回；fixture 既不预设授权决策，也不预设由此产生的 token 状态。一个边界 stub 在原始 `receive_conversation` 执行之前拦截该调用。
 
 ### 案例与对照
 

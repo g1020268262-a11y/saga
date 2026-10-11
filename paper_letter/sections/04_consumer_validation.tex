@@ -9,9 +9,9 @@ through the production Provider and receiver consumers to token issuance and
 storage; it does not execute application-message acceptance.
 
 \paragraph{Environment.}
-The consumer runs use revision \texttt{8cc5dd7}. At that revision, the relevant
-matcher, Provider, receiver, and token-related cryptographic source files are
-identical to upstream revision \texttt{7372111}.
+The archived consumer run records source hashes for the matcher, Provider,
+receiver, and token-related cryptographic code. These relevant sources match
+the pinned upstream baseline used in the analysis.
 The harness drives the production Provider \texttt{/access} route and receiver
 handler from matcher evaluation through \texttt{active\_\allowbreak tokens}
 storage. The harness supplies signed registration material, local certificates,

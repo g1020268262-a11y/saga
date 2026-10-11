@@ -17,10 +17,9 @@ evaluation, or zero budgets.
 
 \paragraph{Root cause and observation.}
 The tested production matcher is \texttt{match()} in
-\texttt{saga/common/\allowbreak contact\_policy.py}, unchanged from upstream
-SAGA revision \texttt{7372111}, which is also the upstream baseline for the
-archived matcher observation.\footnote{\raggedright Upstream implementation:
-\texttt{github.com/gsiros/saga}; reproduction artifact:
+\texttt{saga/common/\allowbreak contact\_policy.py}. The accompanying artifact
+records the pinned upstream source provenance and binds the archived matcher
+observation to that source.\footnote{\raggedright Reproduction artifact:
 \texttt{github.com/g1020268262-a11y/}\linebreak
 \texttt{SAGA-Authorization-Analysis-Artifact}.}
 Its \texttt{best\_pattern} starts at \texttt{None}, whose specificity is $-1$.
@@ -40,7 +39,7 @@ and \texttt{*} as $0$; their budgets are $-1$ and $10$, respectively.
 \hline
 Rule order & \shortstack{Spec.\\budget} & \shortstack{Matcher\\budget} \\
 \hline
-Specific deny, then wildcard allow & $-1$ & $10$ \\
+Specific deny, then\newline wildcard allow & $-1$ & $10$ \\
 Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \hline
 \end{tabular}
