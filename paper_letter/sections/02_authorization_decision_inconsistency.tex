@@ -18,9 +18,11 @@ evaluation, or zero budgets.
 \paragraph{Root cause and observation.}
 The tested production matcher is \texttt{match()} in
 \texttt{saga/common/\allowbreak contact\_policy.py}, unchanged from upstream
-SAGA revision \texttt{7372111}, also the matcher-test baseline in our study
-repository.\footnote{Upstream: \texttt{github.com/gsiros/saga}; study copy and artifacts:
-\texttt{github.com/g1020268262-a11y/saga}.}
+SAGA revision \texttt{7372111}, which is also the upstream baseline for the
+archived matcher observation.\footnote{\raggedright Upstream implementation:
+\texttt{github.com/gsiros/saga}; reproduction artifact:
+\texttt{github.com/g1020268262-a11y/}\linebreak
+\texttt{SAGA-Authorization-Analysis-Artifact}.}
 Its \texttt{best\_pattern} starts at \texttt{None}, whose specificity is $-1$.
 A matching rule with greater specificity updates the budget but never
 \texttt{best\_pattern}. Thus later matching rules still compare against $-1$,

@@ -13,7 +13,7 @@
 - 本地 upstream remote 同样指向该地址。实时 `git ls-remote upstream HEAD refs/heads/main`
   返回 `7372111bea150e32cee390a616849316d2780bfc`；[上游提交页面](https://github.com/gsiros/saga/commit/7372111bea150e32cee390a616849316d2780bfc)
   也确认该提交存在，标题为 `Add Apache V2 License`。
-- Study repository 为 [g1020268262-a11y/saga](https://github.com/g1020268262-a11y/saga)。
+- 本仓库是历史 development / paper-writing repository。
   Matcher 历史观测的 `base_commit` 就是上述上游提交，不是本轮 HEAD。
 - Consumer 历史运行 HEAD 是 `8cc5dd7ae8b11acb209914d1631c0688ac68aec6`，
   并非 `7372111`。`7372111` 是它的祖先。该运行的工作区含论文修改及当时未跟踪的
@@ -113,14 +113,14 @@ D/D 在 Provider 拒绝，没有执行 receiver rejection，结论保持该限�
 |---|---|---|
 | Section 1 后果概述 | 重复摘要及 Section 3 的具体 formal 结果 | 简写受控 token 终点和独立条件模型，保留实证不达 message acceptance |
 | Section 1 Related Work | 罗列策略语义/分析和 ProVerif | 用原有四条参考文献区分策略语言/验证、SAGA 自身协议分析与本文具体实现偏差/消费者后果；不推翻原模型假设下保证 |
-| Section 2 provenance | `revision 7372111 of the study repository` | 说明该 SHA 是 upstream SAGA 和 matcher-test 基线，相关 matcher 未改；脚注同时定位 upstream 和 study copy |
-| Section 3 | 未注明版本/工件定位，形式结果意义分散 | 注明 ProVerif 2.05 和研究仓库 proofs/evidence 下 2026-09-22 authz-bridge-turepass 运行；展开 Certificate Authority；明确来源一致性不等于策略合规 |
+| Section 2 provenance | 旧的 repository provenance 说法 | 说明该 SHA 是 upstream SAGA 和 matcher-test 基线，相关 matcher 未改；脚注同时定位 upstream implementation 和 reproduction artifact |
+| Section 3 | 未注明版本/工件定位，形式结果意义分散 | 注明 ProVerif 2.05 和 accompanying artifact 下 `proofs/evidence/` 中的 2026-09-22 authz-bridge-turepass 运行；展开 Certificate Authority；明确来源一致性不等于策略合规 |
 | Section 4 Environment | 泛称 fixtures 替换服务，停止位置含混 | 区分 consumer HEAD 与 upstream 基线；列出实际路径、fixture 外部依赖及原 matcher 返回值保留；说明 cutoff 拦截原 conversation 调用 |
 | Section 4 controls/result | A/A、D/D 坐标未明确，重复逐项描述 Table 2 | 定义 specification/observed implementation 坐标；删重复结果叙述及 LLM/tool 枚举，保留实证终点和 D/D 限制 |
 | Section 5 | 既有 scope/conclusion | 不修改 |
 
 Major Concern 的修复依据是 Phase A 的版本/文件内容/执行记录匹配和 runtime patch 检查，
-而不是把 study repository 改称“production”作为文字替代。
+而不是把历史开发/论文写作仓库改称“production”作为文字替代。
 正文仅对已核实的 matcher、Provider、receiver、token crypto 来源作限定描述。
 
 Reference [3] 仅补页码 `196--205`，不新增文献。
