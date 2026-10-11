@@ -1,6 +1,5 @@
 \section{Formal Authorization Analysis}
 \label{sec:formalization}
-\label{sec:attack-path}
 
 \paragraph{Coverage diagnostic.}
 Our analysis begins with an authorization coverage diagnostic of SAGA's
@@ -36,8 +35,9 @@ initiator~$I$, presented token~$t$, and the sender public key associated
 with~$I$.
 
 \paragraph{Queries and results.}
-The archived ProVerif 2.05 run (\texttt{proofs/}\allowbreak\texttt{evidence},
-22 September 2026) reports \texttt{ChatAccept} reachable under the fixed
+The ProVerif 2.05 archive under \texttt{proofs/evidence/} is named
+\emph{authz-bridge-turepass-20260922T111657792091Z}.
+The archived run reports \texttt{ChatAccept} reachable under the fixed
 divergence. Separately, it reports this non-injective correspondence as true:
 \[
  \mathsf{ChatAccept}(R,I,t,m)
@@ -55,10 +55,11 @@ authorization decisions and token-lifecycle events; no object-level refinement
 is established. Only the symbolic execution reaches message acceptance.
 
 \paragraph{Authorization-bypass path.}
-Across the evidence layers, these results define an authorization-bypass path:
-the documented policy denies the initiator, the production matcher permits it,
-the decision propagates through Provider and receiver processing to token
-issuance and storage, and the corresponding fixed symbolic divergence admits
-\texttt{ChatAccept}. The implementation and symbolic endpoints remain separate
-evidence layers. We use ``authorization bypass'' for this policy-enforcement
-failure, not to claim an arbitrary-adversary or deployed exploit.
+Across the evidence layers, these results characterize an authorization-bypass
+path: the documented policy denies the initiator, the production matcher
+permits it, the decision propagates through Provider and receiver processing to
+token issuance and storage, and the corresponding fixed symbolic divergence
+admits \texttt{ChatAccept}. The implementation and symbolic endpoints remain
+separate evidence layers. We use ``authorization bypass'' for this
+policy-enforcement failure, not to claim an arbitrary-adversary or deployed
+exploit.

@@ -135,12 +135,12 @@ Reference [3] 仅补页码 `196--205`，不新增文献。
 - 使用未修改的 `paper_letter/build.ps1`：pdflatex、bibtex、pdflatex、pdflatex，更新 main.pdf。
 - Summary 47 words（以空白分词，连字符/斜线复合词为一词），原文未改。
 - Keywords 5 个；正文引用仍为 4 条。标题、main.tex、macros、IEICE v2.3 class/style 未改。
-- 最终 2 页：Table 1 第 1 页；Table 2、唯一 formal display、Section 5、References 均第 2 页。
+- 当前最终 PDF 为 3 页：Table 1、唯一 formal display 均在第 2 页；Table 2、Section 5、References 均在第 3 页。
 - LaTeX errors=0；undefined references=0；undefined citations=0；duplicate labels=0；
   overfull boxes=0；BibTeX warnings=0。
 - 保留会员状态空值 warning、`OT1/qhv/m/sl` 字体替代 warning 和 `Non-PDF special ignored` 提示。
   未通过填写虚假会员状态消除 warning。实际 PDF 页面为 210 × 280 mm。
-- 已渲染检查两页，表格完整、公式和参考文献正常、无跨栏溢出/遮挡或新增空白页。
+- 已渲染检查当前三页，表格完整、公式和参考文献正常、无跨栏溢出/遮挡或新增空白页。
   首次构建末条参考文献溢至第 3 页；删去与 Table 2 重复的 prose 后恢复两页。
   运行定位脚注采用可自然换行的目录/日期说明；没有调整字体、边距、行距或添加 negative vspace。
 - Table 1、Table 2 和唯一 display equation 的源码与修改前完全一致。

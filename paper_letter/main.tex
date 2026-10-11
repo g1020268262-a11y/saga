@@ -33,7 +33,8 @@ do not establish a required authorization correspondence. Implementation
 analysis then identifies an order-dependent matcher defect whose decision
 propagates through production consumers to token issuance and storage. Under the
 fixed divergence, ProVerif reports \texttt{ChatAccept} reachable; separately,
-its non-injective prior-\texttt{TokenIssue} correspondence is true.
+ProVerif verifies a non-injective correspondence requiring prior
+\texttt{TokenIssue}.
 \end{summary}
 
 \begin{keywords}
