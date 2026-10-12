@@ -34,7 +34,7 @@ checking the fixed identity and an \texttt{ActiveToken} entry matching receiver~
 initiator~$I$, presented token~$t$, and the sender public key associated
 with~$I$.
 
-\paragraph{Queries and results.}
+\paragraph{Authorization conditions and results.}
 The accompanying artifact archives the ProVerif 2.05 run, generated model,
 and raw output.
 The run reports \texttt{ChatAccept} reachable under the fixed
@@ -43,12 +43,27 @@ divergence. Separately, it reports this non-injective correspondence as true:
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-The correspondence requires a prior \texttt{TokenIssue} for the same receiver
-$R$, initiator $I$, and encrypted token $t$ used by \texttt{ChatAccept}. This
-establishes token-origin consistency, not compliance with the intended policy.
-Under the fixed divergence, the correspondence therefore coexists with
-specification denial. The \texttt{ChatAccept} witness includes token issuance;
-no standalone \texttt{TokenIssue} reachability query exists.
+Here $R$ is the receiver and token issuer, and $I$ is the initiator. The
+correspondence requires a prior \texttt{TokenIssue} for the same $R$, $I$, and
+encrypted token $t$ used by \texttt{ChatAccept}; it establishes token-origin
+consistency. A distinct ideal authorization condition for a static receiver
+policy would be
+\[
+ \mathsf{TokenIssue}(R,I,t)
+ \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
+\]
+where $P_R$ is $R$'s contact policy and \(\mathsf{Allow}_{\mathrm{spec}}\)
+denotes its intended semantics, rather than the matcher's implementation
+result. This second formula is neither an executed ProVerif query nor a proved
+theorem; it states the desired authorization condition. Token-origin
+consistency therefore does not imply policy-compliant issuance.
+
+For the recorded specific-Deny plus wildcard-Allow rules, the intended policy
+denies while the matcher permits. Under this fixed divergence,
+\texttt{ChatAccept} is reachable while the token-origin correspondence remains
+true, so correct token origin coexists with intended-policy denial. The
+\texttt{ChatAccept} witness includes token issuance; no standalone
+\texttt{TokenIssue} reachability query exists.
 
 The empirical and symbolic executions are compared only at the level of
 authorization decisions and token-lifecycle events; no object-level refinement

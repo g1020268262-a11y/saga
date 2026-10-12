@@ -3,25 +3,29 @@
 
 LLM-based autonomous agents increasingly operate with external tools and
 services~\cite{wang2024agents,debenedetti2024agentdojo}.
-SAGA~\cite{syros2025saga} uses contact policies and access-control tokens
-to authorize communication between registered agents. Authentication alone
-does not establish authorization~\cite{ellison1999spki}; in SAGA, the receiver's
-contact policy governs permission~\cite{syros2025saga}.
+Authentication establishes the identity of a communicating agent, but it does not determine whether that agent is permitted by the receiver's contact policy.
+Consequently, secure agent communication requires not only authenticated participants and protected credentials, but also authorization decisions consistent with the receiver's intended policy.
+SAGA~\cite{syros2025saga} combines authenticated identities, contact policies,
+and access-control tokens. In line with the distinction between authentication
+and authorization~\cite{ellison1999spki}, its verified authentication and
+token-secrecy properties do not establish that token issuance follows the
+receiver's intended policy.
 
-An authorization coverage diagnostic of SAGA's reference communication model
-retains the existing authentication and token-secrecy results but reports an
-added authorization correspondence as false. This exposes a missing proof obligation:
-the verified properties do not establish policy authorization. The diagnostic
-neither executes the Python matcher nor identifies its defect; it motivates our
-inspection of policy evaluation and enforcement. That inspection identifies an
-order-dependent inconsistency in the production matcher.
+As a first stage, an authorization coverage diagnostic of SAGA's reference
+communication model retains the existing authentication and token-secrecy
+results but reports an added authorization correspondence as false. This
+exposes a proof-coverage gap: the diagnostic neither executes the Python
+matcher nor identifies its defect. It instead motivates our inspection of
+policy evaluation and enforcement, which identifies an order-dependent
+inconsistency in the production matcher.
 
-The defect is not confined to an incorrect integer result. In controlled
-executions, specification denial becomes an implementation permission that
-passes the production Provider and receiver consumers and reaches token issuance
-and storage. In a separate consequence model, the corresponding fixed divergence
-admits \texttt{ChatAccept}, while its prior-\texttt{TokenIssue} correspondence
-remains true. Together, these evidence layers characterize an
+Controlled matcher executions establish the resulting Spec-Deny/Impl-Allow
+decision, and consumer validation traces it through production Provider and
+receiver paths to token issuance and storage. The Decision Bridge transfers
+this verified decision pair to a fixed ProVerif scenario; it is neither a
+generic code-to-model translator nor a refinement proof. In that scenario,
+\texttt{ChatAccept} is reachable while its prior-\texttt{TokenIssue}
+correspondence remains true. Together, these evidence layers characterize an
 authorization-bypass path. The empirical path stops at token issuance and
 storage; only the symbolic model reaches message acceptance.
 

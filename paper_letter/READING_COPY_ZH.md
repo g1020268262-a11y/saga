@@ -14,11 +14,11 @@
 
 ## 1. 引言
 
-基于 LLM 的自主 agent 正日益借助外部工具和服务开展工作 [1, 2]。SAGA [3] 使用联系策略和访问控制 token 来授权已注册 agent 之间的通信。仅有认证并不能建立授权 [4]；在 SAGA 中，接收方的联系策略决定是否许可 [3]。
+基于 LLM 的自主 agent 正日益借助外部工具和服务开展工作 [1, 2]。身份认证与接收方授权在 agent-to-agent 通信中承担不同作用。身份认证确认通信 agent 的身份，但不决定该 agent 是否得到接收方联系策略的许可。因此，安全的 agent 通信不仅需要经过认证的参与方和受保护的凭证，还需要与接收方预期策略一致的授权决策。SAGA [3] 结合了经过认证的身份、联系策略和访问控制 token。与认证和授权的区分 [4] 一致，其已验证的认证和 token 保密性性质并未建立 token 签发遵循接收方预期策略这一结论。
 
-对 SAGA 参考通信模型进行的授权覆盖诊断保留了已有的认证和 token 保密性结果，但报告新增的授权对应关系为假。这暴露出一个缺失的证明义务：已验证的性质并未建立策略授权。该诊断既不执行 Python matcher，也不识别其缺陷；它促使我们检查策略求值和执行机制。该检查识别出生产 matcher 中一个依赖规则顺序的不一致。
+作为第一阶段，我们对 SAGA 参考通信模型进行授权覆盖诊断。该诊断保留了已有的认证和 token 保密性结果，但报告新增的授权对应关系为假。这暴露出授权证明的覆盖缺口：该诊断既不执行 Python matcher，也不识别其缺陷，而是促使我们检查策略求值和执行机制。该检查识别出生产 matcher 中一个依赖规则顺序的不一致。
 
-该缺陷并不局限于错误的整数返回结果。在受控执行中，规范拒绝转化为实现许可，该许可通过生产 Provider 和接收方 consumer，并到达 token 签发和存储。在一个独立的后果模型中，相应的固定分歧场景允许 `ChatAccept` 发生，同时其要求先前发生 `TokenIssue` 的对应关系仍为真。这些证据层共同刻画了一条授权绕过路径（authorization-bypass path）。实证路径止于 token 签发和存储；只有符号模型到达消息接受。
+受控 matcher 执行确认了由此产生的 Spec-Deny/Impl-Allow 决策，consumer validation 则追踪该决策通过生产 Provider 和接收方路径传播至 token 签发和存储。Decision Bridge 将这一已验证的决策对转移到固定的 ProVerif 场景；它既不是通用的代码到模型翻译器，也不是精化证明。在该场景中，`ChatAccept` 可达，而要求先前发生 `TokenIssue` 的对应关系仍为真。这些证据层共同刻画了一条授权绕过路径（authorization-bypass path）。实证路径止于 token 签发和存储；只有符号模型到达消息接受。
 
 我们的贡献包括：（1）诊断 SAGA 参考模型中的授权证明覆盖缺口（authorization proof-coverage gap）；（2）识别依赖规则顺序的生产 matcher 不一致，并验证其通过生产 consumer 传播至 token 签发和存储；以及（3）表明在相同的固定 Spec-Deny/Impl-Allow 分歧场景下，符号事件 `ChatAccept` 可达，而要求先前发生 `TokenIssue` 的对应关系仍为真。
 
@@ -65,7 +65,7 @@
 
 在符号接收方中，`TokenIssue`$(R,I,t)$ 发生在一条 `ActiveToken` 记录存储接收方 $R$、发起方 $I$、加密 token $t$ 以及 $I$ 的公开访问控制密钥之后，但发生在发送 $t$ 之前。对于私有信道消息 $m$，`ChatAccept`$(R,I,t,m)$ 仅在以下检查之后发生：固定身份检查，以及一条同时匹配接收方 $R$、发起方 $I$、所提交 token $t$ 和与 $I$ 关联的发送方公钥的 `ActiveToken` 记录检查。
 
-### 查询与结果
+### 授权条件与结果
 
 随附 artifact 归档了 ProVerif 2.05 的运行、生成的模型和原始输出。该运行报告在固定分歧场景下 `ChatAccept` 可达。与此分开，它报告以下非单射对应关系为真：
 
@@ -74,7 +74,16 @@
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
 
-该对应关系要求：对于 `ChatAccept` 所使用的同一接收方 $R$、发起方 $I$ 和加密 token $t$，先前已经发生 `TokenIssue`。这建立的是 token 来源一致性，而不是对预期策略的遵从。在固定分歧场景下，该对应关系因此可以与规范拒绝同时成立。`ChatAccept` 见证轨迹包含 token 签发；不存在独立的 `TokenIssue` 可达性查询。
+其中，$R$ 是接收方和 token 签发方，$I$ 是通信发起方。该对应关系要求：对于 `ChatAccept` 所使用的同一 $R$、$I$ 和加密 token $t$，先前已经发生 `TokenIssue`；它建立的是 token 来源一致性。对于静态接收方策略，另一个不同的理想授权条件是：
+
+\[
+ \mathsf{TokenIssue}(R,I,t)
+ \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
+\]
+
+其中，$P_R$ 是 $R$ 的联系策略，$\mathsf{Allow}_{\mathrm{spec}}$ 表示该策略的预期语义，而不是 matcher 的实现返回结果。第二个公式既不是当前已执行的 ProVerif 查询，也不是已经证明成立的定理；它仅陈述期望的授权条件。因此，token 来源一致性并不蕴含 token 签发符合预期策略。
+
+对于已记录的“特定 Deny 加通配 Allow”规则，预期策略拒绝，而 matcher 实际许可。在这一固定分歧下，`ChatAccept` 可达，同时 token 来源对应关系仍为真，因此正确的 token 来源可以与预期策略拒绝同时存在。`ChatAccept` 见证轨迹包含 token 签发；不存在独立的 `TokenIssue` 可达性查询。
 
 实证执行与符号执行仅在授权决策和 token 生命周期事件层面进行比较；本文未建立对象层面的精化关系。只有符号执行到达消息接受。
 
