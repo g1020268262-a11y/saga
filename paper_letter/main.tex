@@ -27,14 +27,16 @@
 \maketitle
 
 \begin{summary}
-We analyze an authorization decision inconsistency in SAGA. A formal coverage
-diagnostic first shows that existing authentication and token-secrecy properties
-do not establish a required authorization correspondence. Implementation
-analysis then identifies an order-dependent matcher defect whose decision
-propagates through production consumers to token issuance and storage. Under the
-fixed divergence, ProVerif reports \texttt{ChatAccept} reachable; separately,
-ProVerif verifies a non-injective correspondence requiring prior
-\texttt{TokenIssue}.
+Authentication and token secrecy do not imply receiver-side authorization in
+agent communication. We investigate an order-dependent authorization decision
+inconsistency in SAGA's contact-policy matcher. An authorization-coverage
+diagnostic identifies a missing proof obligation, while implementation tests
+reveal a specification-deny/implementation-allow divergence. Controlled
+consumer validation traces the resulting permission through production
+Provider and receiver paths to token issuance and storage. Separately, under
+the corresponding fixed symbolic divergence, ProVerif reports
+\texttt{ChatAccept} reachable while the non-injective correspondence requiring
+prior \texttt{TokenIssue} remains true.
 \end{summary}
 
 \begin{keywords}

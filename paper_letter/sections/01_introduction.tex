@@ -6,18 +6,19 @@ services~\cite{wang2024agents,debenedetti2024agentdojo}.
 Authentication establishes the identity of a communicating agent, but it does not determine whether that agent is permitted by the receiver's contact policy.
 Consequently, secure agent communication requires not only authenticated participants and protected credentials, but also authorization decisions consistent with the receiver's intended policy.
 SAGA~\cite{syros2025saga} combines authenticated identities, contact policies,
-and access-control tokens. In line with the distinction between authentication
-and authorization~\cite{ellison1999spki}, its verified authentication and
-token-secrecy properties do not establish that token issuance follows the
-receiver's intended policy.
+and access-control tokens, with a contact-policy matcher implementing the
+receiver's decision. Its verified authentication and token-secrecy properties
+do not establish that token issuance follows the receiver's intended
+policy~\cite{ellison1999spki}.
 
 As a first stage, an authorization coverage diagnostic of SAGA's reference
 communication model retains the existing authentication and token-secrecy
-results but reports an added authorization correspondence as false. This
-exposes a proof-coverage gap: the diagnostic neither executes the Python
-matcher nor identifies its defect. It instead motivates our inspection of
-policy evaluation and enforcement, which identifies an order-dependent
-inconsistency in the production matcher.
+results but reports an added authorization correspondence as false. Its
+\texttt{PolicyAllow} event is not connected to production policy execution,
+and the diagnostic does not execute the Python matcher; it therefore identifies
+a proof-coverage gap, not the implementation defect. Code inspection and
+controlled matcher tests then reveal an order-dependent inconsistency in the
+production matcher.
 
 Controlled matcher executions establish the resulting Spec-Deny/Impl-Allow
 decision, and consumer validation traces it through production Provider and

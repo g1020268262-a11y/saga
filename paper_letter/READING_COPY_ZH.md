@@ -8,15 +8,15 @@
 
 ## 摘要
 
-我们分析 SAGA 中的一处授权决策不一致（authorization decision inconsistency）。一项形式化覆盖诊断（coverage diagnostic）首先表明，已有的认证和 token 保密性性质并未建立所需的授权对应关系（correspondence）。随后，实现分析识别出一个依赖规则顺序的 matcher 缺陷，其决策沿生产 consumer（消费方逻辑）传播至 token 签发和 token 存储。在固定分歧场景（fixed divergence）下，ProVerif 报告 `ChatAccept` 可达；与此分开，ProVerif 验证了一个要求先前发生 `TokenIssue` 的非单射对应关系（non-injective correspondence）。
+在 agent 通信中，身份认证和 token 保密性并不蕴含接收方授权。我们研究 SAGA 联系策略 matcher 中一处依赖规则顺序的授权决策不一致。授权覆盖诊断识别出缺失的证明义务，而实现测试揭示了 specification-deny/implementation-allow 分歧。受控 consumer validation 追踪由此产生的许可如何通过生产 Provider 和接收方路径传播至 token 签发和存储。与此分开，在相应的固定符号分歧下，ProVerif 报告 `ChatAccept` 可达，同时要求先前发生 `TokenIssue` 的非单射对应关系仍为真。
 
 **关键词：** 授权（authorization）、访问控制、形式化验证、AI agent、ProVerif
 
 ## 1. 引言
 
-基于 LLM 的自主 agent 正日益借助外部工具和服务开展工作 [1, 2]。身份认证与接收方授权在 agent-to-agent 通信中承担不同作用。身份认证确认通信 agent 的身份，但不决定该 agent 是否得到接收方联系策略的许可。因此，安全的 agent 通信不仅需要经过认证的参与方和受保护的凭证，还需要与接收方预期策略一致的授权决策。SAGA [3] 结合了经过认证的身份、联系策略和访问控制 token。与认证和授权的区分 [4] 一致，其已验证的认证和 token 保密性性质并未建立 token 签发遵循接收方预期策略这一结论。
+基于 LLM 的自主 agent 正日益借助外部工具和服务开展工作 [1, 2]。身份认证与接收方授权在 agent-to-agent 通信中承担不同作用。身份认证确认通信 agent 的身份，但不决定该 agent 是否得到接收方联系策略的许可。因此，安全的 agent 通信不仅需要经过认证的参与方和受保护的凭证，还需要与接收方预期策略一致的授权决策。SAGA [3] 结合了经过认证的身份、联系策略和访问控制 token，并由联系策略 matcher 实现接收方的决策。其已验证的认证和 token 保密性性质并未建立 token 签发遵循接收方预期策略这一结论 [4]。
 
-作为第一阶段，我们对 SAGA 参考通信模型进行授权覆盖诊断。该诊断保留了已有的认证和 token 保密性结果，但报告新增的授权对应关系为假。这暴露出授权证明的覆盖缺口：该诊断既不执行 Python matcher，也不识别其缺陷，而是促使我们检查策略求值和执行机制。该检查识别出生产 matcher 中一个依赖规则顺序的不一致。
+作为第一阶段，我们对 SAGA 参考通信模型进行授权覆盖诊断。该诊断保留了已有的认证和 token 保密性结果，但报告新增的授权对应关系为假。其 `PolicyAllow` 事件没有连接到生产策略执行，并且该诊断不执行 Python matcher；因此，它识别的是授权证明覆盖缺口，而不是实现缺陷。随后的代码检查和受控 matcher 测试揭示了生产 matcher 中一个依赖规则顺序的不一致。
 
 受控 matcher 执行确认了由此产生的 Spec-Deny/Impl-Allow 决策，consumer validation 则追踪该决策通过生产 Provider 和接收方路径传播至 token 签发和存储。Decision Bridge 将这一已验证的决策对转移到固定的 ProVerif 场景；它既不是通用的代码到模型翻译器，也不是精化证明。在该场景中，`ChatAccept` 可达，而要求先前发生 `TokenIssue` 的对应关系仍为真。这些证据层共同刻画了一条授权绕过路径（authorization-bypass path）。实证路径止于 token 签发和存储；只有符号模型到达消息接受。
 
