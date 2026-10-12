@@ -1,55 +1,37 @@
 \section{Introduction}
 \label{sec:introduction}
 
-LLM-based autonomous agents increasingly operate with external tools and
+LLM-based agents increasingly use external tools and
 services~\cite{wang2024agents,debenedetti2024agentdojo}.
-Authentication establishes the identity of a communicating agent, but it does not determine whether that agent is permitted by the receiver's contact policy.
-Consequently, secure agent communication requires not only authenticated participants and protected credentials, but also authorization decisions consistent with the receiver's intended policy.
+Authentication establishes identity; receiver-side authorization determines
+whether the identified agent may communicate~\cite{ellison1999spki}.
 SAGA~\cite{syros2025saga} combines authenticated identities, contact policies,
-and access-control tokens, with a contact-policy matcher implementing the
-receiver's decision. Its verified authentication and token-secrecy properties
-do not establish that token issuance follows the receiver's intended
-policy~\cite{ellison1999spki}.
+and access-control tokens. Its existing authentication and token-secrecy
+results do not establish that token issuance follows the receiver's intended
+policy.
 
-As a first stage, an authorization coverage diagnostic of SAGA's reference
-communication model retains the existing authentication and token-secrecy
-results but reports an added authorization correspondence as false. Its
-\texttt{PolicyAllow} event is not connected to production policy execution,
-and the diagnostic does not execute the Python matcher; it therefore identifies
-a proof-coverage gap, not the implementation defect. Code inspection and
-controlled matcher tests then reveal an order-dependent inconsistency in the
-production matcher.
+An authorization coverage diagnostic exposes this proof-coverage gap. It
+motivates code inspection and controlled matcher tests, which reveal an
+order-dependent decision inconsistency. We examine its consumer propagation
+and consequences in a fixed symbolic scenario.
 
-Controlled matcher executions establish the resulting Spec-Deny/Impl-Allow
-decision, and consumer validation traces it through production Provider and
-receiver paths to token issuance and storage. The Decision Bridge transfers
-this verified decision pair to a fixed ProVerif scenario; it is neither a
-generic code-to-model translator nor a refinement proof. In that scenario,
-\texttt{ChatAccept} is reachable while its prior-\texttt{TokenIssue}
-correspondence remains true. Together, these evidence layers characterize an
-authorization-bypass path. The empirical path stops at token issuance and
-storage; only the symbolic model reaches message acceptance.
-
-Our contributions are (1) diagnosing an authorization proof-coverage gap in
-SAGA's reference model; (2) identifying the order-dependent production matcher
-inconsistency and validating its propagation through production consumers to
-token issuance and storage; and (3) showing that, under the same fixed
-Spec-Deny/Impl-Allow divergence, symbolic \texttt{ChatAccept} is reachable while
-the prior-\texttt{TokenIssue} correspondence remains true.
+Our contributions are (1) an authorization proof-coverage gap in SAGA's
+reference model; (2) an order-dependent production matcher inconsistency and
+controlled consumer propagation to token issuance and storage; and (3) formal
+consequence analysis showing symbolic \texttt{ChatAccept} reachability with a
+true prior-\texttt{TokenIssue} correspondence under a fixed
+specification-deny/implementation-allow divergence.
 
 \paragraph{Related work.}
 \label{sec:related-work}
-Prior work studies distributed authorization languages and policy
+Prior work studies authorization languages and policy
 semantics~\cite{becker2004cassandra,becker2007secpal} and
 policy verification and change-impact analysis~\cite{fisler2005margrave}.
 SPKI~\cite{ellison1999spki} and Macaroons~\cite{birgisson2014macaroons}
-provide related abstractions for credential- and capability-based authorization.
-Symbolic protocol analyzers ProVerif and Tamarin support protocol-level
-security verification~\cite{blanchet2016proverif,meier2013tamarin};
-SAGA uses ProVerif to analyze its communication protocol~\cite{syros2025saga}.
-Security evaluation for autonomous LLM agents has also received recent
-attention~\cite{debenedetti2024agentdojo}.
-We instead examine a concrete deviation between SAGA's specified rule-selection
-semantics and its implementation and trace its downstream consumer consequences,
-complementing SAGA's protocol-level guarantees under its model assumptions.
+provide credential- and capability-based authorization abstractions.
+ProVerif and Tamarin support symbolic protocol
+verification~\cite{blanchet2016proverif,meier2013tamarin}.
+We complement SAGA's protocol guarantees by examining a concrete
+policy-evaluation error and its consumer consequences under SAGA's model
+assumptions.
 

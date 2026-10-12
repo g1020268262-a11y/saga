@@ -2,36 +2,33 @@
 \label{sec:authorization-inconsistency}
 
 \paragraph{Workflow and policy semantics.}
-An initiator requests contact through SAGA's Provider. The receiver's ordered
-policy maps identity patterns to integer budgets. The Provider and receiver
-independently evaluate the initiator using the production matcher. The Provider
-gates one-time key (OTK) release; the receiver rechecks its policy before token
-issuance.
+SAGA's Provider handles contact requests under the receiver's ordered policy,
+which maps identity patterns to integer budgets. The Provider and receiver
+independently call the production matcher: the Provider gates one-time key
+(OTK) release, and the receiver rechecks authorization before token issuance.
 
-For a fixed policy and valid identity, SAGA, Section~IV-D.1~\cite{syros2025saga},
-specifies that the most-specific matching rule is selected; the implementation
-scores patterns with \texttt{aid\_specificity()}.
+SAGA, Section~IV-D.1~\cite{syros2025saga}, specifies selection of the
+most-specific matching rule; \texttt{aid\_specificity()} scores the patterns.
 A positive budget permits the request; a negative budget denies it.
-We do not consider equal-specificity conflicts, policy changes during
-evaluation, or zero budgets.
+We consider fixed policies and valid identities, excluding equal-specificity
+conflicts and zero budgets.
 
 \paragraph{Root cause and observation.}
 The tested production matcher is \texttt{match()} in
-\texttt{saga/common/\allowbreak contact\_policy.py}. The accompanying artifact
-records the pinned upstream source provenance and binds the archived matcher
-observation to that source.\footnote{\raggedright Reproduction artifact:
+\texttt{saga/common/\allowbreak contact\_policy.py}. The artifact binds the
+archived matcher observation to pinned upstream source provenance.\footnote{\raggedright Reproduction artifact:
 \texttt{github.com/g1020268262-a11y/}\linebreak
 \texttt{SAGA-Authorization-Analysis-Artifact}.}
 Its \texttt{best\_pattern} starts at \texttt{None}, whose specificity is $-1$.
-A matching rule with greater specificity updates the budget but never
-\texttt{best\_pattern}. Thus later matching rules still compare against $-1$,
-allowing even a less-specific wildcard to overwrite the budget.
+A more-specific matching rule updates the budget but never
+\texttt{best\_pattern}. Later matches still compare against $-1$, allowing
+a less-specific wildcard to overwrite the budget.
 In the recorded case, \texttt{aid\_specificity()} scores
 \texttt{alice@example.com:*} as $70$
 and \texttt{*} as $0$; their budgets are $-1$ and $10$, respectively.
 
-\begin{table}[tb]
-\caption{Specification and production-matcher results under two rule orders.}
+\begin{table}[htbp]
+\caption{Specification and matcher budgets for two rule orders.}
 \label{tab:matcher-evaluation}
 \centering
 \small
@@ -45,12 +42,8 @@ Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \end{tabular}
 \end{table}
 
-A separate finite specification evaluator selects the specific denial
-for both orders in Table~\ref{tab:matcher-evaluation}. When the specific deny
-rule precedes the wildcard-allow rule, the specification denies with budget
-$-1$, but the production matcher returns $10$ and permits. The reverse order
-returns the specified denial, establishing order dependence. This constitutes
-an implementation-level authorization bypass in the tested case: the
-specification denies while the production matcher permits. These matcher calls
-alone do not establish downstream token state, message acceptance, or a
-deployed exploit.
+An independent finite specification evaluator selects the specific denial
+for both orders in Table~\ref{tab:matcher-evaluation}. Specific deny followed
+by wildcard allow yields specification budget $-1$ but matcher budget $10$;
+reversing the order restores denial. This establishes an order-dependent
+implementation-level authorization bypass in this case.

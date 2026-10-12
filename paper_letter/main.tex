@@ -27,16 +27,13 @@
 \maketitle
 
 \begin{summary}
-Authentication and token secrecy do not imply receiver-side authorization in
-agent communication. We investigate an order-dependent authorization decision
-inconsistency in SAGA's contact-policy matcher. An authorization-coverage
-diagnostic identifies a missing proof obligation, while implementation tests
-reveal a specification-deny/implementation-allow divergence. Controlled
-consumer validation traces the resulting permission through production
-Provider and receiver paths to token issuance and storage. Separately, under
-the corresponding fixed symbolic divergence, ProVerif reports
-\texttt{ChatAccept} reachable while the non-injective correspondence requiring
-prior \texttt{TokenIssue} remains true.
+Authentication and token secrecy do not ensure receiver-side authorization.
+SAGA's order-dependent matcher inconsistency yields specification-deny but
+implementation-allow. An authorization diagnostic exposes a proof-coverage
+gap. Controlled consumer validation reaches token issuance and storage;
+under the fixed symbolic divergence, ProVerif reports \texttt{ChatAccept}
+reachable while the non-injective correspondence requiring prior
+\texttt{TokenIssue} holds.
 \end{summary}
 
 \begin{keywords}

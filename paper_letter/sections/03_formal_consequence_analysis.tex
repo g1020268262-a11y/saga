@@ -2,79 +2,58 @@
 \label{sec:formalization}
 
 \paragraph{Coverage diagnostic.}
-Our analysis begins with an authorization coverage diagnostic of SAGA's
-reference communication model. The archived ProVerif 2.05 extension preserves
-the original authentication and token-secrecy results, whereas an added
-correspondence requiring \texttt{Accept} to have prior \texttt{PolicyAllow} is
-false. Here \texttt{Accept} means token receipt and verification, not the later
-\texttt{ChatAccept}. The diagnostic does not connect its policy events to an
-enforcement guard; it exposes a missing authorization proof obligation and
-neither executes the matcher nor identifies the Python defect.
+The archived ProVerif 2.05 diagnostic extends SAGA's reference model. It
+preserves the original authentication and token-secrecy results but reports
+an added correspondence requiring prior \texttt{PolicyAllow} for
+\texttt{Accept} as false. \texttt{Accept} denotes token receipt and
+verification, distinct from
+\texttt{ChatAccept}. \texttt{PolicyAllow} is not connected to policy
+enforcement; this is an authorization proof-coverage gap. The diagnostic
+neither executes the Python matcher nor identifies its defect.
 
-\paragraph{Consequence model.}
+\paragraph{Model and assumptions.}
 \label{sec:implementation-mapping}
-The later symbolic model fixes the recorded divergence: the specification
-denies and the observed implementation permits. ProVerif assumes these facts;
-it does not run Python or the production matcher, discover the inconsistency,
-or establish implementation refinement.
+The Decision Bridge transfers the checked specification-deny/implementation-allow
+decision pair into a fixed symbolic scenario. ProVerif assumes this pair; it
+does not execute Python or the production matcher or discover the defect.
+The Bridge is neither a general code-to-model translator nor a proof of
+Python-to-ProVerif refinement. The executions are compared only through
+authorization decisions and token-lifecycle events.
 
-\paragraph{Model assumptions.}
 The initiator has a valid registered identity, follows the prescribed symbolic
-peer process, and cannot alter the receiver's fixed policy. Reachability under
-these assumptions is therefore not an arbitrary-adversary reachability claim.
-The Provider and Certificate Authority (CA) are trusted, cryptographic checks
-are effective, and private keys remain uncompromised; a private symbolic channel
-abstracts authenticated, confidential transport.
+peer process, and cannot alter the receiver's fixed policy. Reachability is
+therefore not an arbitrary-adversary claim. The Provider and Certificate
+Authority (CA) are trusted, cryptographic checks are effective, and private keys
+are uncompromised. A private symbolic channel abstracts authenticated,
+confidential transport.
 
-In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ occurs after
-an \texttt{ActiveToken} entry stores receiver $R$, initiator $I$, encrypted
-token $t$, and $I$'s public access-control key, but before $t$ is sent. For
-private-channel message $m$, \texttt{ChatAccept}$(R,I,t,m)$ occurs only after
-checking the fixed identity and an \texttt{ActiveToken} entry matching receiver~$R$,
-initiator~$I$, presented token~$t$, and the sender public key associated
-with~$I$.
+In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ follows \texttt{ActiveToken}
+storage of receiver $R$, initiator $I$, encrypted token $t$, and $I$'s public
+access-control key, and precedes transmission. For private-channel message
+$m$, \texttt{ChatAccept}$(R,I,t,m)$ occurs only after checking the fixed identity
+and an \texttt{ActiveToken} entry matching $R$, $I$, $t$, and $I$'s sender public key.
 
 \paragraph{Authorization conditions and results.}
-The accompanying artifact archives the ProVerif 2.05 run, generated model,
-and raw output.
-The run reports \texttt{ChatAccept} reachable under the fixed
-divergence. Separately, it reports this non-injective correspondence as true:
+The artifact archives the ProVerif 2.05 model and raw output. The run reports
+\texttt{ChatAccept} reachable under the fixed divergence; separately, it
+verifies the non-injective token-origin correspondence:
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-Here $R$ is the receiver and token issuer, and $I$ is the initiator. The
-correspondence requires a prior \texttt{TokenIssue} for the same $R$, $I$, and
-encrypted token $t$ used by \texttt{ChatAccept}; it establishes token-origin
-consistency. A distinct ideal authorization condition for a static receiver
-policy would be
+Here $R$ is the receiver and token issuer, and $I$ is the initiator. Prior
+issuance must match $R$, $I$, and encrypted token $t$. For a static receiver
+policy, a distinct ideal authorization condition is
 \[
  \mathsf{TokenIssue}(R,I,t)
  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
 \]
 where $P_R$ is $R$'s contact policy and \(\mathsf{Allow}_{\mathrm{spec}}\)
-denotes its intended semantics, rather than the matcher's implementation
-result. This second formula is neither an executed ProVerif query nor a proved
-theorem; it states the desired authorization condition. Token-origin
-consistency therefore does not imply policy-compliant issuance.
+denotes permission under its intended semantics, rather than the matcher
+result. This second formula is a desired condition, neither an executed
+ProVerif query nor a proved theorem.
 
-For the recorded specific-Deny plus wildcard-Allow rules, the intended policy
-denies while the matcher permits. Under this fixed divergence,
-\texttt{ChatAccept} is reachable while the token-origin correspondence remains
-true, so correct token origin coexists with intended-policy denial. The
-\texttt{ChatAccept} witness includes token issuance; no standalone
-\texttt{TokenIssue} reachability query exists.
-
-The empirical and symbolic executions are compared only at the level of
-authorization decisions and token-lifecycle events; no object-level refinement
-is established. Only the symbolic execution reaches message acceptance.
-
-\paragraph{Authorization-bypass path.}
-Across the evidence layers, these results characterize an authorization-bypass
-path: the documented policy denies the initiator, the production matcher
-permits it, the decision propagates through Provider and receiver processing to
-token issuance and storage, and the corresponding fixed symbolic divergence
-admits \texttt{ChatAccept}. The implementation and symbolic endpoints remain
-separate evidence layers. We use ``authorization bypass'' for this
-policy-enforcement failure, not to claim an arbitrary-adversary or deployed
-exploit.
+For the recorded specific-deny then wildcard-allow case, the correspondence
+coexists with intended-policy denial. Token-origin consistency therefore does
+not imply policy-compliant issuance. The \texttt{ChatAccept} witness includes
+issuance; no standalone \texttt{TokenIssue} reachability query exists.

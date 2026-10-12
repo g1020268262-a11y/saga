@@ -2,19 +2,12 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-Our analysis proceeds from a formal authorization-coverage diagnostic to a
-concrete implementation defect and then to its authorization-bypass
-consequences. The diagnostic shows that the existing authentication and
-token-secrecy results do not establish the required policy-authorization
-obligation. Implementation inspection then identifies a production matcher
-violation of the documented most-specific semantics. In controlled executions,
-the resulting decision reaches token issuance and storage; under the
-corresponding fixed symbolic divergence, \texttt{ChatAccept} is reachable even
-though its prior-\texttt{TokenIssue} correspondence remains true. Token-origin
-consistency can therefore coexist with specification denial.
+The recorded SAGA inconsistency propagates to token issuance and storage in
+controlled executions. Under the corresponding fixed symbolic divergence,
+\texttt{ChatAccept} is reachable while its prior-\texttt{TokenIssue}
+correspondence holds. Token-origin consistency cannot substitute for
+receiver-side authorization consistent with the intended policy.
 
-The evidence covers one recorded SAGA case and the tested policies. It does not
-establish arbitrary-policy correctness, Python--ProVerif refinement, an
-arbitrary-attacker exploit, or a deployed exploit. Empirical execution stops
-before application-message acceptance; that endpoint belongs only to the
-symbolic model.
+The evidence covers one recorded case and the tested policies. It establishes
+neither arbitrary-policy correctness nor an arbitrary-attacker or deployed
+exploit. Only the symbolic model reaches message acceptance.
