@@ -2,21 +2,25 @@
 \label{sec:consumer-propagation}
 \label{sec:evaluation}
 
-Archived source hashes bind the matcher, Provider, receiver, and token-related
-cryptographic code to the pinned upstream baseline. The harness drives the
-production \texttt{/access} route and receiver handler using signed
-registration material, local certificates, and in-memory transport, retaining
-production cryptographic checks. Both consumers call the original matcher;
-wrappers record and return its result unchanged. Fixtures preset neither
-authorization decisions nor token state.
+The validation asks whether incorrect permission survives the production
+consumer checks and reaches token issuance and storage. The controlled
+harness drives the Provider \texttt{/access} route and receiver handshake,
+including OTK release and consumption. Archived source hashes bind the
+matcher, consumers, and token-related cryptographic code to the pinned
+upstream baseline.
 
-\paragraph{Cases and controls.}
+Signed registration material, local certificates, and in-memory transport
+provide fixtures while production cryptographic checks remain active. Both
+consumers call the original matcher; wrappers record and return its result
+unchanged. Fixtures preset neither authorization decisions nor token state.
+
+\paragraph{Control design.}
 Both consumers use identical policies. D/A places specific deny ($-1$) before
 wildcard allow ($10$); A/A makes both budgets $10$, and D/D reverses the D/A
 order. The letters denote specification and observed implementation decisions,
-respectively. Each case ran once with fresh state and one OTK. A/A reaches
-token sending and storage; D/D returns HTTP~403 without OTK release or state
-change and never reaches the receiver, so receiver rejection remains untested.
+respectively. A/A tests the permitted-token path, and D/D tests Provider-side
+rejection, providing controls with agreeing decisions. Each case ran once
+with fresh state and one OTK.
 
 \begin{table}[htbp]
 \caption{Production consumer results for the divergent D/A case.}
@@ -37,7 +41,13 @@ Endpoint & Token issued and stored \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:consumer-propagation} confirms token issuance and storage
-despite specification denial: one token is generated, sent, and stored in
-\texttt{active\_tokens}. No application message is sent: a boundary stub
-intercepts \texttt{receive\_conversation} before the original handler executes.
+In D/A, Table~\ref{tab:consumer-propagation} confirms that permission from both
+production matchers reaches token issuance and \texttt{active\_tokens}
+storage despite specification denial. One token is generated, sent, and stored.
+A/A also reaches token sending and storage; D/D returns HTTP~403 without OTK
+release or state change and never reaches the receiver, so receiver rejection
+remains untested.
+
+These observations establish controlled consumer propagation, not application
+message acceptance. No application message is sent: a boundary stub intercepts
+\texttt{receive\_conversation} before the original handler executes.

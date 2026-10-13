@@ -1,49 +1,17 @@
 \section{Formal Authorization Analysis}
 \label{sec:formalization}
 
-\paragraph{Coverage diagnostic.}
-The archived ProVerif 2.05 diagnostic extends SAGA's reference model. It
-preserves the original authentication and token-secrecy results but reports
-an added correspondence requiring prior \texttt{PolicyAllow} for
-\texttt{Accept} as false. \texttt{Accept} denotes token receipt and
-verification, distinct from
-\texttt{ChatAccept}. \texttt{PolicyAllow} is not connected to policy
-enforcement; this is an authorization proof-coverage gap. The diagnostic
-neither executes the Python matcher nor identifies its defect.
-
-\paragraph{Model and assumptions.}
-\label{sec:implementation-mapping}
-The Decision Bridge transfers the checked specification-deny/implementation-allow
-decision pair into a fixed symbolic scenario. ProVerif assumes this pair; it
-does not execute Python or the production matcher or discover the defect.
-The Bridge is neither a general code-to-model translator nor a proof of
-Python-to-ProVerif refinement. The executions are compared only through
-authorization decisions and token-lifecycle events.
-
-The initiator has a valid registered identity, follows the prescribed symbolic
-peer process, and cannot alter the receiver's fixed policy. Reachability is
-therefore not an arbitrary-adversary claim. The Provider and Certificate
-Authority (CA) are trusted, cryptographic checks are effective, and private keys
-are uncompromised. A private symbolic channel abstracts authenticated,
-confidential transport.
-
-In the symbolic receiver, \texttt{TokenIssue}$(R,I,t)$ follows \texttt{ActiveToken}
-storage of receiver $R$, initiator $I$, encrypted token $t$, and $I$'s public
-access-control key, and precedes transmission. For private-channel message
-$m$, \texttt{ChatAccept}$(R,I,t,m)$ occurs only after checking the fixed identity
-and an \texttt{ActiveToken} entry matching $R$, $I$, $t$, and $I$'s sender public key.
-
-\paragraph{Authorization conditions and results.}
-The artifact archives the ProVerif 2.05 model and raw output. The run reports
-\texttt{ChatAccept} reachable under the fixed divergence; separately, it
-verifies the non-injective token-origin correspondence:
+\paragraph{Authorization and verification coverage.}
+Formal consequence analysis distinguishes token origin from policy-compliant
+issuance. In the consequence model, the verified non-injective correspondence
+is
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
 \]
-Here $R$ is the receiver and token issuer, and $I$ is the initiator. Prior
-issuance must match $R$, $I$, and encrypted token $t$. For a static receiver
-policy, a distinct ideal authorization condition is
+where $R$ is the receiver and token issuer, and $I$ is the initiator. Prior
+issuance must match $R$, $I$, and encrypted token $t$. The distinct ideal
+authorization condition for a static receiver policy is
 \[
  \mathsf{TokenIssue}(R,I,t)
  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
@@ -53,7 +21,49 @@ denotes permission under its intended semantics, rather than the matcher
 result. This second formula is a desired condition, neither an executed
 ProVerif query nor a proved theorem.
 
-For the recorded specific-deny then wildcard-allow case, the correspondence
-coexists with intended-policy denial. Token-origin consistency therefore does
-not imply policy-compliant issuance. The \texttt{ChatAccept} witness includes
-issuance; no standalone \texttt{TokenIssue} reachability query exists.
+The archived ProVerif 2.05 diagnostic preserves SAGA's original authentication
+and token-secrecy results but reports an added prior-\texttt{PolicyAllow}
+correspondence for \texttt{Accept} as false. Here \texttt{Accept} denotes token
+receipt and verification, distinct from \texttt{ChatAccept}.
+\texttt{PolicyAllow} is not connected to actual policy enforcement. The
+failure exposes a proof-coverage gap; it neither executes the Python matcher
+nor independently identifies its defect.
+
+\paragraph{Evidence-linked scenario construction.}
+\label{sec:implementation-mapping}
+The Decision Bridge independently evaluates the recorded policy and checks
+the archived production matcher observation against the ordered rules and
+initiator identity. It verifies observation hashes and historical source
+binding before forming the checked Deny/Allow decision pair. That pair
+reconstructs only the designated scenario region of a hash-pinned ProVerif
+template, preserving its protocol semantics and queries. This makes the
+transfer of recorded decision evidence checkable and reproducible.
+
+The Bridge supports only the finite policy grammar needed for this case. It
+proves neither evaluator correctness for arbitrary policies nor
+Python-to-ProVerif refinement, and is not a general program translator.
+ProVerif takes the checked divergence as scenario input; it does not execute
+Python or the production matcher. Only authorization decisions and
+token-lifecycle events link the implementation and symbolic evidence.
+
+\paragraph{Symbolic consequences.}
+The initiator has a valid registered identity, follows the prescribed symbolic
+peer process, and cannot alter the receiver's fixed policy. The Provider and
+Certificate Authority (CA) are trusted, cryptographic checks are effective,
+and private keys are uncompromised. A private symbolic channel abstracts
+authenticated, confidential transport; reachability is not an
+arbitrary-adversary claim.
+
+\texttt{TokenIssue}$(R,I,t)$ follows \texttt{ActiveToken} storage of $R$, $I$,
+encrypted token $t$, and $I$'s public access-control key, and precedes
+transmission. For private-channel message $m$, \texttt{ChatAccept}$(R,I,t,m)$
+occurs only after checking the fixed identity and an \texttt{ActiveToken}
+entry matching $R$, $I$, $t$, and $I$'s sender public key.
+
+Under the fixed Deny/Allow divergence, the archived run reports
+\texttt{ChatAccept} reachable and, separately, the token-origin correspondence
+true. Its witness includes issuance; no standalone \texttt{TokenIssue}
+reachability query exists. Token-origin consistency thus coexists with
+intended-policy denial. Symbolic message acceptance and controlled consumer
+execution remain separate evidence layers, not a complete service-level
+end-to-end attack.

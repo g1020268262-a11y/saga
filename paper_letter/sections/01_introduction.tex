@@ -5,22 +5,42 @@ LLM-based agents increasingly use external tools and
 services~\cite{wang2024agents,debenedetti2024agentdojo}.
 Authentication establishes identity; receiver-side authorization determines
 whether the identified agent may communicate~\cite{ellison1999spki}.
-SAGA~\cite{syros2025saga} combines authenticated identities, contact policies,
-and access-control tokens. Its existing authentication and token-secrecy
-results do not establish that token issuance follows the receiver's intended
-policy.
+Authentication and token secrecy leave policy-compliant authorization as a
+separate security requirement.
 
-An authorization coverage diagnostic exposes this proof-coverage gap. It
-motivates code inspection and controlled matcher tests, which reveal an
-order-dependent decision inconsistency. We examine its consumer propagation
-and consequences in a fixed symbolic scenario.
+SAGA~\cite{syros2025saga} uses contact policies and access-control tokens to
+govern communication between registered agents. Its production matcher
+implements the receiver's policy decision. We investigate authorization
+decision consistency and its security consequences by asking:
+\emph{Can an implementation-level mismatch with the receiver's intended
+contact policy authorize a denied agent, and how far can the resulting
+permission propagate through the communication protocol?}
 
-Our contributions are (1) an authorization proof-coverage gap in SAGA's
-reference model; (2) an order-dependent production matcher inconsistency and
-controlled consumer propagation to token issuance and storage; and (3) formal
-consequence analysis showing symbolic \texttt{ChatAccept} reachability with a
-true prior-\texttt{TokenIssue} correspondence under a fixed
-specification-deny/implementation-allow divergence.
+Our evidence-linked analysis combines independent specification decision
+comparison, provenance-bound formal consequence analysis, and controlled
+consumer-path validation. Production matcher observations reveal an
+order-dependent inconsistency with the intended most-specific matching
+semantics. An authorization coverage diagnostic explains why SAGA's existing
+authentication and token-secrecy results leave this requirement unestablished;
+it does not identify the implementation defect.
+
+The recorded policy denies while the matcher permits. This permission reaches
+token issuance and storage through controlled Provider and receiver paths.
+Under the corresponding fixed symbolic divergence, \texttt{ChatAccept} is
+reachable while its prior-\texttt{TokenIssue} correspondence holds. These
+results distinguish policy-compliant authorization from authenticated
+identity and consistent token origin; implementation and symbolic endpoints
+remain separate evidence layers.
+
+Our contributions are (1) identification of an authorization decision
+inconsistency, explaining the matcher's deviation from most-specific semantics
+and confirming the recorded Deny/Allow counterexample with production
+observations; (2) evidence-linked formal consequence analysis using finite
+specification evaluation, provenance checks, and constrained scenario
+reconstruction to analyze conditional \texttt{ChatAccept} reachability and
+token-origin correspondence; and (3) controlled consumer-path validation of
+propagation to token issuance and storage through production Provider and
+receiver code with explicit fixtures and controls.
 
 \paragraph{Related work.}
 \label{sec:related-work}
@@ -31,7 +51,6 @@ SPKI~\cite{ellison1999spki} and Macaroons~\cite{birgisson2014macaroons}
 provide credential- and capability-based authorization abstractions.
 ProVerif and Tamarin support symbolic protocol
 verification~\cite{blanchet2016proverif,meier2013tamarin}.
-We complement SAGA's protocol guarantees by examining a concrete
-policy-evaluation error and its consumer consequences under SAGA's model
-assumptions.
+Our case analysis connects an observed implementation deviation from policy
+semantics to its consumer and symbolic protocol consequences.
 

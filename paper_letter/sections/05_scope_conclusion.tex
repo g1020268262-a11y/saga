@@ -2,12 +2,16 @@
 \label{sec:discussion}
 \label{sec:conclusion}
 
-The recorded SAGA inconsistency propagates to token issuance and storage in
-controlled executions. Under the corresponding fixed symbolic divergence,
-\texttt{ChatAccept} is reachable while its prior-\texttt{TokenIssue}
-correspondence holds. Token-origin consistency cannot substitute for
-receiver-side authorization consistent with the intended policy.
+For the recorded SAGA policy, order-dependent matching authorizes an agent
+denied by the intended most-specific semantics. The resulting permission
+reaches token issuance and storage through controlled production consumers;
+the corresponding fixed symbolic model permits \texttt{ChatAccept} while its
+prior-\texttt{TokenIssue} correspondence holds. Authentication and token-origin
+consistency are insufficient to establish compliance with the receiver's
+intended authorization policy.
 
-The evidence covers one recorded case and the tested policies. It establishes
-neither arbitrary-policy correctness nor an arbitrary-attacker or deployed
-exploit. Only the symbolic model reaches message acceptance.
+These findings concern the recorded case, tested policies, fixtures, and
+symbolic assumptions. They establish neither arbitrary-policy correctness nor
+Python-to-ProVerif refinement or an arbitrary-attacker or deployed exploit.
+Consumer execution stops at token issuance and storage; message acceptance
+belongs only to the symbolic model.

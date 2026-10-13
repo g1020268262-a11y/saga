@@ -1,7 +1,7 @@
 \section{Authorization Decision Inconsistency}
 \label{sec:authorization-inconsistency}
 
-\paragraph{Workflow and policy semantics.}
+\paragraph{Intended authorization semantics.}
 SAGA's Provider handles contact requests under the receiver's ordered policy,
 which maps identity patterns to integer budgets. The Provider and receiver
 independently call the production matcher: the Provider gates one-time key
@@ -42,8 +42,9 @@ Wildcard allow, then specific deny & $-1$ & $-1$ \\
 \end{tabular}
 \end{table}
 
-An independent finite specification evaluator selects the specific denial
-for both orders in Table~\ref{tab:matcher-evaluation}. Specific deny followed
-by wildcard allow yields specification budget $-1$ but matcher budget $10$;
-reversing the order restores denial. This establishes an order-dependent
-implementation-level authorization bypass in this case.
+The independent finite specification evaluator selects denial for both
+orders in Table~\ref{tab:matcher-evaluation}. Specific deny followed by
+wildcard allow changes the specified $-1$ into an observed $10$; reversing
+the order restores denial. This counterexample establishes an
+implementation-level authorization decision inconsistency for the recorded
+policy, with permission dependent on rule order.

@@ -27,13 +27,13 @@
 \maketitle
 
 \begin{summary}
-Authentication and token secrecy do not ensure receiver-side authorization.
-SAGA's order-dependent matcher inconsistency yields specification-deny but
-implementation-allow. An authorization diagnostic exposes a proof-coverage
-gap. Controlled consumer validation reaches token issuance and storage;
-under the fixed symbolic divergence, ProVerif reports \texttt{ChatAccept}
-reachable while the non-injective correspondence requiring prior
-\texttt{TokenIssue} holds.
+Authentication does not guarantee compliance with a receiver's contact policy.
+We identify an order-dependent SAGA matcher defect converting specified denial
+into permission. Controlled Provider/receiver executions confirm propagation
+to token issuance and storage. In an evidence-linked symbolic scenario,
+ProVerif reports conditional \texttt{ChatAccept} reachability while the
+prior-\texttt{TokenIssue} correspondence holds, separating token origin from
+policy compliance.
 \end{summary}
 
 \begin{keywords}
