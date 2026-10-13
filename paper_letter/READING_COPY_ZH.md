@@ -14,19 +14,17 @@
 
 ## 1. 引言
 
-基于 LLM 的 agent 正日益使用外部工具和服务 [1, 2]。身份认证确认身份；接收方授权决定已识别身份的 agent 是否可以通信 [3]。在认证与 token 保密性之外，符合策略的授权仍是一项独立安全要求。
+基于 LLM 的 agent 正日益使用外部工具和服务 [1, 2]。身份认证确认身份，而接收方授权决定已识别身份的 agent 是否可以通信 [3]。仅凭身份认证和 token 保密性，不能确定通信符合接收方预期的联系策略。
 
-SAGA [4] 使用联系策略和访问控制 token 管理已注册 agent 之间的通信。其生产 matcher 实现接收方的策略决策。我们通过以下问题研究授权决策一致性及其安全后果：实际实现与接收方预期联系策略之间的偏差是否会授权本应被拒绝的 agent，以及由此产生的许可可以沿通信协议传播到哪个阶段？
+SAGA [4] 使用联系策略和访问控制 token 管理已注册 agent 之间的通信。其策略 matcher 实现接收方的授权决策。我们研究的问题是：接收方预期策略与其实现之间的不一致，是否会允许本应被拒绝的 agent 通信，以及这一许可能够沿协议传播到哪个阶段？
 
-我们的分析结合独立的规范决策对比、对证据关联固定分歧的 ProVerif 分析以及受控 consumer 路径验证。生产 matcher 观测揭示出一处依赖规则顺序、偏离预期最具体匹配语义的不一致。授权覆盖诊断解释了 SAGA 的既有认证和 token 保密性结果为何未建立这一要求；该诊断不识别实现缺陷。
+我们识别出一处依赖规则顺序、违反 SAGA 最具体规则语义的 matcher 缺陷，导致规范拒绝而实现许可。授权覆盖诊断识别出缺失的证明义务，但并未发现该实现缺陷。对生产 Provider 和接收方代码路径的受控执行确认，许可传播至 token 签发和存储。在相应的、与证据关联的固定符号分歧下，ProVerif 报告 `ChatAccept` 可达，同时要求先前发生 `TokenIssue` 的对应关系成立。实际应用消息接受尚未得到证实。
 
-记录的策略拒绝，而 matcher 许可。这一许可通过受控 Provider 和接收方路径到达 token 签发和存储。在相应的固定符号分歧下，`ChatAccept` 可达，同时要求先前发生 `TokenIssue` 的对应关系成立。这些结果将符合策略的授权与经过认证的身份、一致的 token 来源区分开来；实现端点和符号端点仍属于不同证据层。
-
-我们的贡献包括：（1）识别授权决策不一致，解释 matcher 对最具体语义的偏差，并通过生产观测确认记录的 Deny/Allow 反例；（2）对证据关联的固定授权分歧进行形式化后果分析，使用 ProVerif 表明 `ChatAccept` 在给定条件下可达，且要求先前发生 `TokenIssue` 的对应关系为真，从而区分 token 来源与符合策略的授权；（3）受控 consumer 路径验证，在明确 fixture 和对照的条件下，通过生产 Provider 和接收方代码验证决策传播至 token 签发和存储。
+我们的贡献包括：（1）识别并解释 SAGA 中一处具体的授权决策不一致；（2）使用 ProVerif 分析其在给定条件下的符号后果；（3）通过受控生产代码执行，验证其传播至 token 签发和存储。
 
 ### 相关工作
 
-既有工作研究了授权语言与策略语义 [5, 6]，以及策略验证和变更影响分析 [7]。SPKI [3] 和 Macaroons [8] 提供基于凭证和基于能力的授权抽象。ProVerif 和 Tamarin 支持符号协议验证 [9, 10]。我们的案例分析将观测到的实现对策略语义的偏差，与其 consumer 后果和符号协议后果关联起来。
+既有工作研究了授权语言与语义 [5, 6]，以及策略验证 [7]。SPKI [3] 和 Macaroons [8] 提供相关的授权抽象。ProVerif 和 Tamarin 支持符号协议分析 [9, 10]。我们的分析将一处具体的策略实现不一致，与其 consumer 后果和符号后果关联起来。
 
 ## 2. 授权决策不一致
 
@@ -55,23 +53,16 @@ SAGA 第 IV-D.1 节 [4] 规定选择最具体的匹配规则；`aid_specificity(
 
 ### 授权性质与 ProVerif 查询
 
-接收方策略授权与 token 来源一致性是不同的要求。在固定符号模型中，ProVerif 验证了以下非单射对应关系：
-
-\[
- \mathsf{ChatAccept}(R,I,t,m)
- \Longrightarrow \mathsf{TokenIssue}(R,I,t)
-\]
-
-其中，$R$ 是接收方和 token 签发方，$I$ 是发起方。先前的签发必须匹配 $R$、$I$ 和加密 token $t$。对于静态接收方策略，另一个不同的理想授权条件是：
+Token 来源一致性并不能确定通信符合接收方的预期策略。对于静态接收方策略，期望的授权条件为：
 
 \[
  \mathsf{TokenIssue}(R,I,t)
  \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
 \]
 
-其中，$P_R$ 是 $R$ 的联系策略，$\mathsf{Allow}_{\mathrm{spec}}$ 表示按其预期语义得到的许可，而不是 matcher 的返回结果。第二个公式是期望条件，既不是已执行的 ProVerif 查询，也不是已证明的定理。
+其中，$R$ 是接收方和 token 签发方，$I$ 是发起方，$P_R$ 是接收方的联系策略。$\mathsf{Allow}_{\mathrm{spec}}$ 表示按预期策略语义得到的许可。该条件既不是已执行的 ProVerif 查询，也不是已证明的定理。
 
-归档的 ProVerif 2.05 模型在固定 Spec-Deny/Impl-Allow 场景中执行以下查询。查询保留源模型的变量名；结果行用 `(...)` 缩写事件参数。
+归档的 ProVerif 2.05 模型在固定的规范拒绝／实现许可分歧下评估两个查询。查询使用源模型的变量名；结果行缩写事件参数。
 
 **Query 1：消息接受可达性。**
 
@@ -85,7 +76,7 @@ query receiver: bitstring, sender: bitstring,
 RESULT not event(ChatAccept(...)) is false.
 ```
 
-否定事件结果为 false，表示在固定分歧和模型假设下存在到达 `ChatAccept` 的符号执行路径。
+否定事件结果为 false，确立了 `ChatAccept` 在固定符号场景中可达。
 
 **Query 2：Token 来源对应关系。**
 
@@ -101,19 +92,19 @@ RESULT event(ChatAccept(...))
   ==> event(TokenIssue(...)) is true.
 ```
 
-该对应关系为 true，要求同一接收方、发起方和 token 对应先前的签发。结合两项结果可知：尽管预期策略拒绝，具有一致 token 来源的符号消息接受仍可达。Token 来源一致性并不蕴含符合接收方预期授权策略。`ChatAccept` 见证轨迹包含签发；不存在独立的 `TokenIssue` 可达性查询。
+经验证的非单射对应关系要求先前发生同一接收方、发起方和加密 token 对应的 `TokenIssue`。两项结果共同表明：尽管预期策略拒绝，符号消息接受仍可达，同时 token 来源一致性仍成立。接受见证包含 token 签发；未执行独立的 `TokenIssue` 可达性查询。
 
-SAGA 原有的认证和 token 保密性验证未建立策略授权义务。归档的覆盖诊断报告新增的、要求 `Accept` 之前发生 `PolicyAllow` 的对应关系为假，因为 `PolicyAllow` 未连接到实际策略执行。`Accept` 表示 token 接收和验证，与 `ChatAccept` 不同。该诊断既不运行 Python matcher，也不独立识别其缺陷。
+SAGA 既有的认证和 token 保密性验证未建立这一授权义务。归档的覆盖诊断报告新增的授权对应关系为假，因为 `PolicyAllow` 未连接到策略执行。该诊断涉及的 `Accept` 表示 token 接收和验证，而不是 `ChatAccept`。它并不识别 Python matcher 缺陷。
 
 ### 场景与协议解释
 
-在将归档的 matcher 观测与独立求值的策略决策及固定源码证据核对之后，一个有限的 bridge 将经过检查的 Deny/Allow 决策对实例化到固定 ProVerif 场景。这是场景重构，而不是 Python 程序的翻译或精化。
+一个有限的 bridge 将归档的 matcher 观测与独立求值的策略决策进行比较，检查源码证据，并将经过验证的 Deny/Allow 决策对实例化到固定 ProVerif 场景。这是场景重构，而不是 Python-to-ProVerif 精化。
 
-发起方拥有有效的已注册身份，遵循规定的符号对等方进程，并且不能改变接收方的固定策略。Provider 和证书颁发机构（CA）受到信任，密码学检查有效，私钥未泄露。一条私有符号信道抽象了经过认证且保密的传输；这一可达性不是任意攻击者可达性声明。
+符号发起方拥有有效的已注册身份，遵循规定的对等方进程，并且不能改变接收方的固定策略。Provider 和证书颁发机构（CA）受到信任，私钥未泄露，一条私有符号信道抽象了经过认证且保密的传输。
 
-`TokenIssue`$(R,I,t)$ 发生在 `ActiveToken` 存储 $R$、$I$、加密 token $t$ 和 $I$ 的公开访问控制密钥之后，且在传输之前。对于私有信道消息 $m$，`ChatAccept`$(R,I,t,m)$ 仅在检查固定身份以及一条匹配 $R$、$I$、$t$ 和 $I$ 的发送方公钥的 `ActiveToken` 记录之后发生。
+在模型中，`TokenIssue`$(R,I,t)$ 发生在相应的 `ActiveToken` 条目存储之后、token 发送之前。`ChatAccept`$(R,I,t,m)$ 发生在消息接收以及对发送方身份、已存储的接收方、发起方、token 和发送方密钥绑定的检查之后。
 
-ProVerif 不执行 Python matcher。符号 `ChatAccept` 可达性并不是实际部署的 SAGA 服务中发生应用消息接受的证据；受控 consumer 执行止于 token 签发和存储。
+ProVerif 假定经过检查的授权分歧；它不执行 Python matcher。所得可达性以符号模型及其假设为条件，不构成任意攻击者或已部署攻击利用的声明。受控实现验证到达 token 签发和存储，但不执行应用消息接受。
 
 ## 4. Consumer 侧传播验证
 

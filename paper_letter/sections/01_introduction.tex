@@ -3,55 +3,46 @@
 
 LLM-based agents increasingly use external tools and
 services~\cite{wang2024agents,debenedetti2024agentdojo}.
-Authentication establishes identity; receiver-side authorization determines
-whether the identified agent may communicate~\cite{ellison1999spki}.
-Authentication and token secrecy leave policy-compliant authorization as a
-separate security requirement.
+Authentication establishes identity, whereas receiver-side
+authorization determines whether the identified agent may
+communicate~\cite{ellison1999spki}. Authentication and token
+secrecy alone do not establish compliance with the receiver's
+intended contact policy.
 
-SAGA~\cite{syros2025saga} uses contact policies and access-control tokens to
-govern communication between registered agents. Its production matcher
-implements the receiver's policy decision. We investigate authorization
-decision consistency and its security consequences by asking:
-\emph{Can an implementation-level mismatch with the receiver's intended
-contact policy authorize a denied agent, and how far can the resulting
-permission propagate through the communication protocol?}
+SAGA~\cite{syros2025saga} governs communication between
+registered agents using contact policies and access-control
+tokens. Its policy matcher implements the receiver's
+authorization decision. We investigate:
+\emph{Can a mismatch between the receiver's intended policy
+and its implementation permit a denied agent, and how far
+can that permission propagate through the protocol?}
 
-Our analysis combines independent specification decision comparison,
-ProVerif analysis of an evidence-linked fixed divergence, and controlled
-consumer-path validation. Production matcher observations reveal an
-order-dependent inconsistency with the intended most-specific matching
-semantics. An authorization coverage diagnostic explains why SAGA's existing
-authentication and token-secrecy results leave this requirement unestablished;
-it does not identify the implementation defect.
+We identify an order-dependent matcher defect that violates
+SAGA's most-specific-rule semantics, yielding specification
+denial but implementation permission. An authorization
+coverage diagnostic identifies a missing proof obligation
+without discovering the implementation defect. Controlled
+executions of production Provider and receiver code paths
+confirm propagation to token issuance and storage.
+Under the corresponding evidence-linked fixed symbolic
+divergence, ProVerif reports \texttt{ChatAccept} reachable
+while the prior-\texttt{TokenIssue} correspondence holds.
+Actual application-message acceptance is not established.
 
-The recorded policy denies while the matcher permits. This permission reaches
-token issuance and storage through controlled Provider and receiver paths.
-Under the corresponding fixed symbolic divergence, \texttt{ChatAccept} is
-reachable while its prior-\texttt{TokenIssue} correspondence holds. These
-results distinguish policy-compliant authorization from authenticated
-identity and consistent token origin; implementation and symbolic endpoints
-remain separate evidence layers.
-
-Our contributions are (1) identification of an authorization decision
-inconsistency, explaining the matcher's deviation from most-specific semantics
-and confirming the recorded Deny/Allow counterexample with production
-observations; (2) formal consequence analysis of an evidence-linked fixed
-authorization divergence, using ProVerif to show conditional
-\texttt{ChatAccept} reachability alongside a true prior-\texttt{TokenIssue}
-correspondence, distinguishing token origin from policy-compliant
-authorization; and (3) controlled consumer-path validation of
-propagation to token issuance and storage through production Provider and
-receiver code with explicit fixtures and controls.
+Our contributions are (1) identifying and explaining a
+concrete authorization decision inconsistency in SAGA;
+(2) analyzing its conditional symbolic consequences using
+ProVerif; and (3) validating its propagation to token
+issuance and storage through controlled production-code
+execution.
 
 \paragraph{Related work.}
-\label{sec:related-work}
-Prior work studies authorization languages and policy
-semantics~\cite{becker2004cassandra,becker2007secpal} and
-policy verification and change-impact analysis~\cite{fisler2005margrave}.
-SPKI~\cite{ellison1999spki} and Macaroons~\cite{birgisson2014macaroons}
-provide credential- and capability-based authorization abstractions.
-ProVerif and Tamarin support symbolic protocol
-verification~\cite{blanchet2016proverif,meier2013tamarin}.
-Our case analysis connects an observed implementation deviation from policy
-semantics to its consumer and symbolic protocol consequences.
-
+Prior work examines authorization languages and
+semantics~\cite{becker2004cassandra,becker2007secpal},
+and policy verification~\cite{fisler2005margrave}.
+SPKI~\cite{ellison1999spki} and
+Macaroons~\cite{birgisson2014macaroons} provide related
+authorization abstractions. ProVerif and Tamarin support
+symbolic protocol analysis~\cite{blanchet2016proverif,meier2013tamarin}.
+Our analysis connects a concrete policy-implementation
+inconsistency to its consumer and symbolic consequences.
