@@ -1,10 +1,10 @@
 \section{Formal Authorization Analysis}
 \label{sec:formalization}
 
-\paragraph{Authorization and verification coverage.}
-Formal consequence analysis distinguishes token origin from policy-compliant
-issuance. In the consequence model, the verified non-injective correspondence
-is
+\paragraph{Authorization properties and ProVerif queries.}
+Receiver-policy authorization and token-origin consistency are distinct
+requirements. In the fixed symbolic model, ProVerif verifies the non-injective
+correspondence
 \[
  \mathsf{ChatAccept}(R,I,t,m)
  \Longrightarrow \mathsf{TokenIssue}(R,I,t)
@@ -21,32 +21,60 @@ denotes permission under its intended semantics, rather than the matcher
 result. This second formula is a desired condition, neither an executed
 ProVerif query nor a proved theorem.
 
-The archived ProVerif 2.05 diagnostic preserves SAGA's original authentication
-and token-secrecy results but reports an added prior-\texttt{PolicyAllow}
-correspondence for \texttt{Accept} as false. Here \texttt{Accept} denotes token
-receipt and verification, distinct from \texttt{ChatAccept}.
-\texttt{PolicyAllow} is not connected to actual policy enforcement. The
-failure exposes a proof-coverage gap; it neither executes the Python matcher
-nor independently identifies its defect.
+The archived ProVerif 2.05 model executes the following queries in the fixed
+Spec-Deny/Impl-Allow scenario. Query listings retain the source variables;
+the result lines abbreviate their parameters with \texttt{(...)}.
 
-\paragraph{Evidence-linked scenario construction.}
+\noindent\begin{minipage}{\linewidth}
+\textbf{Query 1: message-acceptance reachability.}
+\begin{verbatim}
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+  event(ChatAccept(receiver,sender,tok,msg)).
+\end{verbatim}
+\begin{verbatim}
+RESULT not event(ChatAccept(...)) is false.
+\end{verbatim}
+\end{minipage}\par
+The false negated-event result reports a symbolic execution reaching
+\texttt{ChatAccept} under the fixed divergence and model assumptions.
+
+\noindent\begin{minipage}{\linewidth}
+\textbf{Query 2: token-origin correspondence.}
+\begin{verbatim}
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+  event(ChatAccept(receiver,sender,tok,msg))
+  ==> event(TokenIssue(receiver,sender,tok)).
+\end{verbatim}
+\begin{verbatim}
+RESULT event(ChatAccept(...))
+  ==> event(TokenIssue(...)) is true.
+\end{verbatim}
+\end{minipage}\par
+The true correspondence requires prior issuance for the same receiver,
+initiator, and token. Together, the results show reachable symbolic acceptance
+with consistent token origin despite intended-policy denial. Token-origin
+consistency does not imply compliance with the receiver's intended
+authorization policy. The \texttt{ChatAccept} witness includes issuance;
+no standalone \texttt{TokenIssue} reachability query exists.
+
+SAGA's original authentication and token-secrecy verification leaves the
+policy-authorization obligation unestablished. The archived coverage
+diagnostic reports an added prior-\texttt{PolicyAllow} correspondence for
+\texttt{Accept} as false because \texttt{PolicyAllow} is not connected to
+actual policy enforcement. \texttt{Accept} denotes token receipt and
+verification, distinct from \texttt{ChatAccept}. This diagnostic neither runs
+the Python matcher nor independently identifies its defect.
+
+\paragraph{Scenario and protocol interpretation.}
 \label{sec:implementation-mapping}
-The Decision Bridge independently evaluates the recorded policy and checks
-the archived production matcher observation against the ordered rules and
-initiator identity. It verifies observation hashes and historical source
-binding before forming the checked Deny/Allow decision pair. That pair
-reconstructs only the designated scenario region of a hash-pinned ProVerif
-template, preserving its protocol semantics and queries. This makes the
-transfer of recorded decision evidence checkable and reproducible.
+After checking the archived matcher observation against an independently
+evaluated policy decision and pinned source evidence, a bounded bridge
+instantiates the checked Deny/Allow decision pair in a fixed ProVerif scenario.
+This is scenario reconstruction, not translation or refinement of the Python
+program.
 
-The Bridge supports only the finite policy grammar needed for this case. It
-proves neither evaluator correctness for arbitrary policies nor
-Python-to-ProVerif refinement, and is not a general program translator.
-ProVerif takes the checked divergence as scenario input; it does not execute
-Python or the production matcher. Only authorization decisions and
-token-lifecycle events link the implementation and symbolic evidence.
-
-\paragraph{Symbolic consequences.}
 The initiator has a valid registered identity, follows the prescribed symbolic
 peer process, and cannot alter the receiver's fixed policy. The Provider and
 Certificate Authority (CA) are trusted, cryptographic checks are effective,
@@ -60,10 +88,7 @@ transmission. For private-channel message $m$, \texttt{ChatAccept}$(R,I,t,m)$
 occurs only after checking the fixed identity and an \texttt{ActiveToken}
 entry matching $R$, $I$, $t$, and $I$'s sender public key.
 
-Under the fixed Deny/Allow divergence, the archived run reports
-\texttt{ChatAccept} reachable and, separately, the token-origin correspondence
-true. Its witness includes issuance; no standalone \texttt{TokenIssue}
-reachability query exists. Token-origin consistency thus coexists with
-intended-policy denial. Symbolic message acceptance and controlled consumer
-execution remain separate evidence layers, not a complete service-level
-end-to-end attack.
+ProVerif does not execute the Python matcher. Symbolic \texttt{ChatAccept}
+reachability is not evidence of application-message acceptance in an actual
+deployed SAGA service; controlled consumer execution stops at token issuance
+and storage.

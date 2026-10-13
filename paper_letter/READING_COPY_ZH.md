@@ -18,11 +18,11 @@
 
 SAGA [4] 使用联系策略和访问控制 token 管理已注册 agent 之间的通信。其生产 matcher 实现接收方的策略决策。我们通过以下问题研究授权决策一致性及其安全后果：实际实现与接收方预期联系策略之间的偏差是否会授权本应被拒绝的 agent，以及由此产生的许可可以沿通信协议传播到哪个阶段？
 
-我们的证据关联分析结合独立的规范决策对比、与来源绑定的形式化后果分析以及受控 consumer 路径验证。生产 matcher 观测揭示出一处依赖规则顺序、偏离预期最具体匹配语义的不一致。授权覆盖诊断解释了 SAGA 的既有认证和 token 保密性结果为何未建立这一要求；该诊断不识别实现缺陷。
+我们的分析结合独立的规范决策对比、对证据关联固定分歧的 ProVerif 分析以及受控 consumer 路径验证。生产 matcher 观测揭示出一处依赖规则顺序、偏离预期最具体匹配语义的不一致。授权覆盖诊断解释了 SAGA 的既有认证和 token 保密性结果为何未建立这一要求；该诊断不识别实现缺陷。
 
 记录的策略拒绝，而 matcher 许可。这一许可通过受控 Provider 和接收方路径到达 token 签发和存储。在相应的固定符号分歧下，`ChatAccept` 可达，同时要求先前发生 `TokenIssue` 的对应关系成立。这些结果将符合策略的授权与经过认证的身份、一致的 token 来源区分开来；实现端点和符号端点仍属于不同证据层。
 
-我们的贡献包括：（1）识别授权决策不一致，解释 matcher 对最具体语义的偏差，并通过生产观测确认记录的 Deny/Allow 反例；（2）证据关联的形式化后果分析，通过有限规范求值、来源核验和受约束的场景重构，分析 `ChatAccept` 在给定条件下的可达性及 token 来源对应关系；（3）受控 consumer 路径验证，在明确 fixture 和对照的条件下，通过生产 Provider 和接收方代码验证决策传播至 token 签发和存储。
+我们的贡献包括：（1）识别授权决策不一致，解释 matcher 对最具体语义的偏差，并通过生产观测确认记录的 Deny/Allow 反例；（2）对证据关联的固定授权分歧进行形式化后果分析，使用 ProVerif 表明 `ChatAccept` 在给定条件下可达，且要求先前发生 `TokenIssue` 的对应关系为真，从而区分 token 来源与符合策略的授权；（3）受控 consumer 路径验证，在明确 fixture 和对照的条件下，通过生产 Provider 和接收方代码验证决策传播至 token 签发和存储。
 
 ### 相关工作
 
@@ -53,9 +53,9 @@ SAGA 第 IV-D.1 节 [4] 规定选择最具体的匹配规则；`aid_specificity(
 
 ## 3. 形式化授权分析
 
-### 授权与验证覆盖
+### 授权性质与 ProVerif 查询
 
-形式化后果分析区分 token 来源与符合策略的签发。在后果模型中，已验证的非单射对应关系是：
+接收方策略授权与 token 来源一致性是不同的要求。在固定符号模型中，ProVerif 验证了以下非单射对应关系：
 
 \[
  \mathsf{ChatAccept}(R,I,t,m)
@@ -71,21 +71,49 @@ SAGA 第 IV-D.1 节 [4] 规定选择最具体的匹配规则；`aid_specificity(
 
 其中，$P_R$ 是 $R$ 的联系策略，$\mathsf{Allow}_{\mathrm{spec}}$ 表示按其预期语义得到的许可，而不是 matcher 的返回结果。第二个公式是期望条件，既不是已执行的 ProVerif 查询，也不是已证明的定理。
 
-归档的 ProVerif 2.05 诊断保留了 SAGA 原有的认证和 token 保密性结果，但报告新增的、要求 `Accept` 之前发生 `PolicyAllow` 的对应关系为假。这里的 `Accept` 表示 token 接收和验证，与 `ChatAccept` 不同。`PolicyAllow` 未连接到实际策略执行。这一失败暴露出证明覆盖缺口；它既不执行 Python matcher，也不独立识别其缺陷。
+归档的 ProVerif 2.05 模型在固定 Spec-Deny/Impl-Allow 场景中执行以下查询。查询保留源模型的变量名；结果行用 `(...)` 缩写事件参数。
 
-### 证据关联的场景构造
+**Query 1：消息接受可达性。**
 
-Decision Bridge 独立求值记录的策略，并按照有序规则和发起方身份核对归档的生产 matcher 观测。它核验观测哈希及历史源码绑定，再构造经过检查的 Deny/Allow 决策对。该决策对仅重构哈希固定的 ProVerif 模板中的指定场景区域，保留其协议语义和查询。这使记录决策证据的转移能够被检查和复现。
+```proverif
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+  event(ChatAccept(receiver,sender,tok,msg)).
+```
 
-Bridge 仅支持这一案例所需的有限策略语法。它既不证明求值器对任意策略正确，也不证明 Python-to-ProVerif 精化关系，并且不是通用程序翻译器。ProVerif 将经过检查的分歧作为场景输入；它不执行 Python 或生产 matcher。实现证据与符号证据仅通过授权决策和 token 生命周期事件关联。
+```text
+RESULT not event(ChatAccept(...)) is false.
+```
 
-### 符号后果
+否定事件结果为 false，表示在固定分歧和模型假设下存在到达 `ChatAccept` 的符号执行路径。
+
+**Query 2：Token 来源对应关系。**
+
+```proverif
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+  event(ChatAccept(receiver,sender,tok,msg))
+  ==> event(TokenIssue(receiver,sender,tok)).
+```
+
+```text
+RESULT event(ChatAccept(...))
+  ==> event(TokenIssue(...)) is true.
+```
+
+该对应关系为 true，要求同一接收方、发起方和 token 对应先前的签发。结合两项结果可知：尽管预期策略拒绝，具有一致 token 来源的符号消息接受仍可达。Token 来源一致性并不蕴含符合接收方预期授权策略。`ChatAccept` 见证轨迹包含签发；不存在独立的 `TokenIssue` 可达性查询。
+
+SAGA 原有的认证和 token 保密性验证未建立策略授权义务。归档的覆盖诊断报告新增的、要求 `Accept` 之前发生 `PolicyAllow` 的对应关系为假，因为 `PolicyAllow` 未连接到实际策略执行。`Accept` 表示 token 接收和验证，与 `ChatAccept` 不同。该诊断既不运行 Python matcher，也不独立识别其缺陷。
+
+### 场景与协议解释
+
+在将归档的 matcher 观测与独立求值的策略决策及固定源码证据核对之后，一个有限的 bridge 将经过检查的 Deny/Allow 决策对实例化到固定 ProVerif 场景。这是场景重构，而不是 Python 程序的翻译或精化。
 
 发起方拥有有效的已注册身份，遵循规定的符号对等方进程，并且不能改变接收方的固定策略。Provider 和证书颁发机构（CA）受到信任，密码学检查有效，私钥未泄露。一条私有符号信道抽象了经过认证且保密的传输；这一可达性不是任意攻击者可达性声明。
 
 `TokenIssue`$(R,I,t)$ 发生在 `ActiveToken` 存储 $R$、$I$、加密 token $t$ 和 $I$ 的公开访问控制密钥之后，且在传输之前。对于私有信道消息 $m$，`ChatAccept`$(R,I,t,m)$ 仅在检查固定身份以及一条匹配 $R$、$I$、$t$ 和 $I$ 的发送方公钥的 `ActiveToken` 记录之后发生。
 
-在固定 Deny/Allow 分歧下，归档运行报告 `ChatAccept` 可达，并与此分开地报告 token 来源对应关系为真。其见证轨迹包含签发；不存在独立的 `TokenIssue` 可达性查询。因此，token 来源一致性可以与预期策略拒绝同时存在。符号消息接受与受控 consumer 执行仍属于不同证据层，并非完整的服务级端到端攻击。
+ProVerif 不执行 Python matcher。符号 `ChatAccept` 可达性并不是实际部署的 SAGA 服务中发生应用消息接受的证据；受控 consumer 执行止于 token 签发和存储。
 
 ## 4. Consumer 侧传播验证
 
@@ -95,7 +123,7 @@ Bridge 仅支持这一案例所需的有限策略语法。它既不证明求值�
 
 ### 对照设计
 
-两个 consumer 使用相同的策略。D/A 将具体拒绝（$-1$）置于通配符允许（$10$）之前；A/A 将两个预算均设为 $10$，D/D 则颠倒 D/A 的顺序。两个字母分别表示规范决策与观测到的实现决策。A/A 检验许可后的 token 路径，D/D 检验 Provider 侧拒绝，二者提供规范与实现决策一致的对照。每个案例均以全新状态和一个 OTK 运行一次。
+A/A、D/A 和 D/D 标签中的两个字母分别表示规范决策与观测到的 matcher 决策，而不是 Provider 和接收方的结果。在每个案例内，两个 consumer 使用同一策略。A/A 将两条规则的预算均设为 $10$，作为正常许可路径的对照。D/A 将具体拒绝（$-1$）置于通配符允许（$10$）之前，产生观测到的授权不一致。D/D 颠倒这一顺序，恢复拒绝并检验 Provider 侧阻断。每个案例均以全新状态和一个 OTK 运行一次；D/D 案例未到达接收方。
 
 **表 2　分歧 D/A 案例的生产 consumer 结果。**
 
@@ -108,7 +136,7 @@ Bridge 仅支持这一案例所需的有限策略语法。它既不证明求值�
 | 接收方 | 消耗 OTK |
 | 端点 | token 已签发并存储 |
 
-在 D/A 中，表 2 确认：尽管规范拒绝，两个生产 matcher 产生的许可仍到达 token 签发和 `active_tokens` 存储。一个 token 被生成、发送并存储。A/A 也到达 token 发送和存储；D/D 返回 HTTP 403，不释放 OTK、不改变状态，也从未到达接收方，因此接收方拒绝仍未测试。
+A/A 到达 token 发送和存储。在 D/A 中，表 2 确认：尽管规范拒绝，两个生产 matcher 产生的许可仍到达 token 签发和 `active_tokens` 存储。一个 token 被生成、发送并存储。D/D 返回 HTTP 403，不释放 OTK、不改变状态，仅建立 Provider 侧阻断；接收方拒绝仍未测试。
 
 这些观测建立的是受控 consumer 传播，而不是应用消息接受。没有发送应用消息：边界 stub 在原始 `receive_conversation` 处理程序执行前拦截该调用。
 

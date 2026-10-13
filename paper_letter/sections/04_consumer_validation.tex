@@ -15,12 +15,14 @@ consumers call the original matcher; wrappers record and return its result
 unchanged. Fixtures preset neither authorization decisions nor token state.
 
 \paragraph{Control design.}
-Both consumers use identical policies. D/A places specific deny ($-1$) before
-wildcard allow ($10$); A/A makes both budgets $10$, and D/D reverses the D/A
-order. The letters denote specification and observed implementation decisions,
-respectively. A/A tests the permitted-token path, and D/D tests Provider-side
-rejection, providing controls with agreeing decisions. Each case ran once
-with fresh state and one OTK.
+The labels A/A, D/A, and D/D denote the specification and observed matcher
+decisions, respectively, rather than Provider and receiver outcomes. Both
+consumers use the same policy within each case. A/A assigns budget $10$ to both
+rules and serves as a permitted-path control. D/A places a specific deny
+($-1$) before a wildcard allow ($10$), producing the observed authorization
+inconsistency. D/D reverses this order, restoring denial and testing
+Provider-side blocking. Each case ran once with fresh state and one OTK;
+the D/D case did not reach the receiver.
 
 \begin{table}[htbp]
 \caption{Production consumer results for the divergent D/A case.}
@@ -41,12 +43,12 @@ Endpoint & Token issued and stored \\
 \end{tabular}
 \end{table}
 
-In D/A, Table~\ref{tab:consumer-propagation} confirms that permission from both
+A/A reaches token sending and storage. In D/A,
+Table~\ref{tab:consumer-propagation} confirms that permission from both
 production matchers reaches token issuance and \texttt{active\_tokens}
 storage despite specification denial. One token is generated, sent, and stored.
-A/A also reaches token sending and storage; D/D returns HTTP~403 without OTK
-release or state change and never reaches the receiver, so receiver rejection
-remains untested.
+D/D returns HTTP~403 without OTK release or state change, establishing only
+Provider-side blocking; receiver rejection remains untested.
 
 These observations establish controlled consumer propagation, not application
 message acceptance. No application message is sent: a boundary stub intercepts

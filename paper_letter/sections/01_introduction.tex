@@ -16,8 +16,8 @@ decision consistency and its security consequences by asking:
 contact policy authorize a denied agent, and how far can the resulting
 permission propagate through the communication protocol?}
 
-Our evidence-linked analysis combines independent specification decision
-comparison, provenance-bound formal consequence analysis, and controlled
+Our analysis combines independent specification decision comparison,
+ProVerif analysis of an evidence-linked fixed divergence, and controlled
 consumer-path validation. Production matcher observations reveal an
 order-dependent inconsistency with the intended most-specific matching
 semantics. An authorization coverage diagnostic explains why SAGA's existing
@@ -35,10 +35,11 @@ remain separate evidence layers.
 Our contributions are (1) identification of an authorization decision
 inconsistency, explaining the matcher's deviation from most-specific semantics
 and confirming the recorded Deny/Allow counterexample with production
-observations; (2) evidence-linked formal consequence analysis using finite
-specification evaluation, provenance checks, and constrained scenario
-reconstruction to analyze conditional \texttt{ChatAccept} reachability and
-token-origin correspondence; and (3) controlled consumer-path validation of
+observations; (2) formal consequence analysis of an evidence-linked fixed
+authorization divergence, using ProVerif to show conditional
+\texttt{ChatAccept} reachability alongside a true prior-\texttt{TokenIssue}
+correspondence, distinguishing token origin from policy-compliant
+authorization; and (3) controlled consumer-path validation of
 propagation to token issuance and storage through production Provider and
 receiver code with explicit fixtures and controls.
 
