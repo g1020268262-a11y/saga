@@ -1,0 +1,16 @@
+{
+  "name": "exhausted_entry",
+  "expected_kind": "complete",
+  "expected_invariant": null,
+  "observed_violations": [],
+  "property_result": "no_violation_found",
+  "expected_outcome_observed": true,
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 0.938172,
+  "states": {
+    "generated": 10,
+    "distinct": 8,
+    "queued": 0
+  }
+}

@@ -1,0 +1,24 @@
+strict digraph DiskGraph {
+nodesep=0.35;
+subgraph cluster_graph {
+color="white";
+7925115794038727006 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Prefix\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Ready\"",style = filled]
+7925115794038727006 -> 8735801119401957868 [label="BeginConnections",color="black",fontcolor="black"];
+8735801119401957868 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+8735801119401957868 -> -3135678242228331707 [label="Enter",color="black",fontcolor="black"];
+-3135678242228331707 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-3135678242228331707 -> 5768380650548539334 [label="Check",color="black",fontcolor="black"];
+5768380650548539334 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5768380650548539334 -> -3581508511141145201 [label="Consume",color="black",fontcolor="black"];
+-3581508511141145201 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-3581508511141145201 -> 5845255115899845222 [label="InvokeBackend",color="black",fontcolor="black"];
+5845255115899845222 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5845255115899845222 -> 5845255115899845222 [label="TerminalStutter",color="black",fontcolor="black"];
+{rank = same; 7925115794038727006;}
+{rank = same; 8735801119401957868;}
+{rank = same; -3135678242228331707;}
+{rank = same; 5768380650548539334;}
+{rank = same; -3581508511141145201;}
+{rank = same; 5845255115899845222;}
+}
+}

@@ -1,0 +1,103 @@
+{
+  "upstream_commit": "7372111bea150e32cee390a616849316d2780bfc",
+  "python": "3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)]",
+  "executable": "D:\\Users\\10202\\Desktop\\saga\\proofs\\consumer_validation\\.runtime\\venv\\Scripts\\python.exe",
+  "source_sha256": {
+    "saga/agent.py": "94bebf70df4f76e55c0bb8a54c5f29b7fa688ead197ece18f8ac9dec8edae8d5",
+    "saga/config.py": "5a42594196897d607c368c2cddc469a327d1dac92fe5d5de66c4b0bceb7f4e23",
+    "saga/common/crypto.py": "dca1a5fa145afbf419b1a71af068e0b98a3ac533a929862d12e023f5c8436b7b",
+    "saga/provider/provider.py": "097fd8ed76756d61336689259f496144484f8fa72d7d040dd2df90eedc934c6e",
+    "saga/common/contact_policy.py": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97"
+  },
+  "source_unchanged": true,
+  "helper_sha256": "ccaba853112cdbd55152842cc5b291b31ec8a7822d77624c22496895b09ca1c1",
+  "probe_sha256": "460c105ebaf380590b91b4d2af405c19145c42fc996abbef2d24b69cb2a167d2",
+  "native_exception_output_empty": true,
+  "scope": "Real native methods and local credential checks; substituted byte transport, certificate discovery and counting backend; no Provider DB, live TLS, real LLM, deployment claim or formal proof. Trace barrier selects a legal schedule after native validation returns and before debit lock acquisition.",
+  "cases": {
+    "serial_control": {
+      "issued_quota": 50,
+      "requests_submitted": 51,
+      "backend_calls": 50,
+      "remaining": 0,
+      "encrypted_initial_quota": 50
+    },
+    "parallel_last_credit": [
+      {
+        "issued_quota": 50,
+        "sequential_backend_calls": 49,
+        "controlled_schedule": [
+          {
+            "thread": "connection-1",
+            "remaining_after_successful_check": 1
+          },
+          {
+            "thread": "connection-2",
+            "remaining_after_successful_check": 1
+          }
+        ],
+        "total_backend_calls": 51,
+        "remaining": 0,
+        "errors": []
+      },
+      {
+        "issued_quota": 50,
+        "sequential_backend_calls": 49,
+        "controlled_schedule": [
+          {
+            "thread": "connection-1",
+            "remaining_after_successful_check": 1
+          },
+          {
+            "thread": "connection-2",
+            "remaining_after_successful_check": 1
+          }
+        ],
+        "total_backend_calls": 51,
+        "remaining": 0,
+        "errors": []
+      },
+      {
+        "issued_quota": 50,
+        "sequential_backend_calls": 49,
+        "controlled_schedule": [
+          {
+            "thread": "connection-1",
+            "remaining_after_successful_check": 1
+          },
+          {
+            "thread": "connection-2",
+            "remaining_after_successful_check": 1
+          }
+        ],
+        "total_backend_calls": 51,
+        "remaining": 0,
+        "errors": []
+      }
+    ],
+    "oversized_initial_quota": {
+      "issuer_initial_quota": 999,
+      "initiator_local_q_max": 50,
+      "initiator_stored_quota": 999,
+      "initiator_validates_token": true
+    },
+    "local_inflation_control": {
+      "initiator_modified_quota": 999,
+      "receiver_backend_calls": 50,
+      "receiver_remaining": 0,
+      "new_ciphertext_with_valid_shared_key_accepted": false
+    },
+    "delivery_gap": {
+      "successful_local_writes": 1,
+      "initiator_remaining": 49,
+      "receiver_remaining": 50,
+      "receiver_backend_calls": 0
+    },
+    "negative_configuration": {
+      "configured_quota": -1,
+      "backend_calls": 1,
+      "remaining": 0
+    }
+  },
+  "all_assertions_passed": true
+}

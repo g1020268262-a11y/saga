@@ -1,0 +1,15 @@
+strict digraph DiskGraph {
+nodesep=0.35;
+subgraph cluster_graph {
+color="white";
+4023472174052465883 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Prefix\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Ready\"",style = filled]
+4023472174052465883 -> 7828066215622464120 [label="BeginConnections",color="black",fontcolor="black"];
+7828066215622464120 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+7828066215622464120 -> -1868916492393292433 [label="RejectEntry",color="black",fontcolor="black"];
+-1868916492393292433 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"EntryRejected\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-1868916492393292433 -> -1868916492393292433 [label="TerminalStutter",color="black",fontcolor="black"];
+{rank = same; 4023472174052465883;}
+{rank = same; 7828066215622464120;}
+{rank = same; -1868916492393292433;}
+}
+}

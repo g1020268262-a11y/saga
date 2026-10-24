@@ -1,24 +1,55 @@
 \section{Formal Authorization Analysis}
 \label{sec:formalization}
 
-\paragraph{Authorization properties and ProVerif queries.}
-Token-origin consistency does not establish compliance
-with the receiver's intended policy. For a static receiver
-policy, the desired authorization condition is
+\paragraph{Evidence-linked authorization divergence.}
+The matcher inconsistency identified in
+Section~\ref{sec:authorization-inconsistency}
+produces a concrete authorization divergence:
+the intended policy denies the initiator, while
+the implementation permits it.
+
+For a fixed receiver policy $P_R$, the intended
+authorization requirement is
 \[
  \mathsf{TokenIssue}(R,I,t)
- \Longrightarrow \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
+ \Longrightarrow
+ \mathsf{Allow}_{\mathrm{spec}}(P_R,I),
 \]
-where $R$ is the receiver and token issuer, $I$ is the
-initiator, and $P_R$ is the receiver's contact policy.
-$\mathsf{Allow}_{\mathrm{spec}}$ denotes permission under
-the intended policy semantics. This condition is neither
-an executed ProVerif query nor a proved theorem.
+where $R$ is the receiver and token issuer,
+$I$ is the initiator, and $t$ is the encrypted
+token. This expresses the desired policy
+condition; the executed queries below examine
+the consequences of the recorded divergence.
 
-The archived ProVerif 2.05 model evaluates two queries
-under a fixed specification-Deny/implementation-Allow
-divergence. Query listings use source variables; result
-lines abbreviate event parameters.
+A bounded decision bridge independently evaluates
+the recorded policy, checks the archived matcher
+observation and source evidence, and instantiates
+the verified Deny/Allow decision pair in a fixed
+ProVerif scenario. The model represents these
+decisions through \texttt{ScenarioSpecDeny}
+and \texttt{ScenarioImplAllow}. The Provider and
+receiver processes proceed according to the
+implementation-side permission, while the
+specification-side denial is recorded by
+\texttt{SpecIntendedDeny}.
+
+An earlier authorization coverage diagnostic
+identified the missing policy-authorization
+obligation in SAGA's existing authentication
+and token-secrecy verification.
+
+\paragraph{Symbolic authorization consequences.}
+The ProVerif model extends the communication
+process with token-lifecycle and message-acceptance
+events. \texttt{TokenIssue} records issuance
+after storing an \texttt{ActiveToken} entry.
+\texttt{ChatAccept} records message acceptance
+after checking the sender identity, token,
+and associated sender-key binding.
+
+The archived ProVerif 2.05 execution evaluates
+two queries under the fixed Deny/Allow divergence.
+The displayed results abbreviate event parameters.
 
 \noindent\begin{minipage}{\linewidth}
 \textbf{Query 1: Message-acceptance reachability.}
@@ -32,9 +63,33 @@ RESULT not event(ChatAccept(...)) is false.
 \end{verbatim}
 \end{minipage}\par
 
-The false negated-event result establishes that
-\texttt{ChatAccept} is reachable in the fixed symbolic
-scenario.
+ProVerif reconstructs an execution reaching\newline
+\texttt{ChatAccept}. The archived witness contains
+the following event sequence, with $R$ denoting
+the receiver and $I$ the denied initiator:
+
+\begin{center}
+\small
+\begin{tabular}{c}
+\texttt{SpecIntendedDeny}$(I,R)$\\
+$\downarrow$\\
+\texttt{ProviderRelease}$(R,I)$\\
+$\downarrow$\\
+\texttt{TokenIssue}$(R,I,t)$\\
+$\downarrow$\\
+\texttt{TokenReceive}$(R,I,t)$\\
+$\downarrow$\\
+\texttt{ChatAccept}$(R,I,t,m)$
+\end{tabular}
+\end{center}
+
+The accepting path uses an encrypted token
+matching an earlier issuance event. Thus, the
+reconstructed symbolic execution demonstrates
+that specification-level denial can coexist
+with Provider material release, token issuance,
+token reception, and message acceptance under
+the observed implementation-side permission.
 
 \noindent\begin{minipage}{\linewidth}
 \textbf{Query 2: Token-origin correspondence.}
@@ -50,53 +105,28 @@ RESULT event(ChatAccept(...))
 \end{verbatim}
 \end{minipage}\par
 
-The verified non-injective correspondence requires
-a preceding \texttt{TokenIssue} for the same receiver,
-initiator, and encrypted token. Together, the results
-show that symbolic message acceptance is reachable
-despite intended-policy denial, while token-origin
-consistency remains satisfied. The acceptance witness
-includes token issuance; no standalone
-\texttt{TokenIssue} reachability query was executed.
+The verified non-injective correspondence
+establishes that each symbolic message acceptance
+has a preceding token issuance for the same
+receiver, initiator, and encrypted token.
 
-SAGA's existing authentication and token-secrecy
-verification does not establish this authorization
-obligation. An archived coverage diagnostic reports
-an added authorization correspondence as false because
-\texttt{PolicyAllow} is not linked to policy enforcement.
-The diagnostic concerns \texttt{Accept}, which denotes
-token receipt and verification rather than
-\texttt{ChatAccept}. It does not identify the Python
-matcher defect.
+Together, the reachability witness and verified
+correspondence establish the central security
+consequence: a receiver may issue a token and
+accept a message in the fixed symbolic scenario
+despite specification-level denial, while
+token-origin consistency remains intact.
+The authorization failure arises from the
+permission decision rather than token forgery.
 
-\paragraph{Scenario and protocol interpretation.}
-\label{sec:implementation-mapping}
-
-A bounded bridge compares the archived matcher
-observation with an independently evaluated policy
-decision, checks source evidence, and instantiates
-the verified Deny/Allow decision pair in a fixed
-ProVerif scenario. This is scenario reconstruction,
-not Python-to-ProVerif refinement.
-
-The symbolic initiator has a valid registered identity,
-follows the prescribed peer process, and cannot alter
-the receiver's fixed policy. The Provider and
-Certificate Authority are trusted, private keys remain
-uncompromised, and a private symbolic channel abstracts
-authenticated and confidential transport.
-
-In the model, \texttt{TokenIssue}$(R,I,t)$ occurs after
-the corresponding \texttt{ActiveToken} entry is stored
-and before the token is sent. \texttt{ChatAccept}$(R,I,t,m)$
-occurs after message receipt and checks of the sender
-identity and the stored receiver, initiator, token,
-and sender-key binding.
-
-ProVerif assumes the checked authorization divergence;
-it does not execute the Python matcher. The resulting
-reachability is conditional on the symbolic model and
-its assumptions, not an arbitrary-attacker or deployed
-exploit. Controlled implementation validation reaches
-token issuance and storage, but does not execute
-application-message acceptance.
+The analysis assumes a registered initiator
+following the prescribed symbolic process,
+a fixed receiver policy, trusted Provider and
+Certificate Authority, uncompromised keys,
+and authenticated confidential transport.
+The ProVerif results characterize this
+evidence-linked symbolic scenario; controlled
+production-code validation in
+Section~\ref{sec:consumer-propagation}
+separately establishes propagation to token
+issuance and storage.

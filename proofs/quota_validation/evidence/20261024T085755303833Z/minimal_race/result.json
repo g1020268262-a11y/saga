@@ -1,0 +1,18 @@
+{
+  "name": "minimal_race",
+  "expected_kind": "violation",
+  "expected_invariant": "QuotaSafety",
+  "observed_violations": [
+    "QuotaSafety"
+  ],
+  "property_result": "violated",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.381514,
+  "states": {
+    "generated": 37,
+    "distinct": 29,
+    "queued": 6
+  }
+}

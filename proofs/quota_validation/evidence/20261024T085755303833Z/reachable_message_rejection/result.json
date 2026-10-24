@@ -1,0 +1,18 @@
+{
+  "name": "reachable_message_rejection",
+  "expected_kind": "witness",
+  "expected_invariant": "NoMessageRejection",
+  "observed_violations": [
+    "NoMessageRejection"
+  ],
+  "property_result": "witness_reached",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.307869,
+  "states": {
+    "generated": 26,
+    "distinct": 21,
+    "queued": 6
+  }
+}

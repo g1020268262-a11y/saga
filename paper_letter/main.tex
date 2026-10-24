@@ -1,3 +1,7 @@
+% Resolve the bundled official class when compiling this file directly.
+\makeatletter
+\def\input@path{{ieice_template/}}
+\makeatother
 \documentclass[letter]{ieice}
 
 % Official IEICE Transactions v2.3 (2024/04/01); see ieice_template/.
@@ -5,6 +9,15 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{newtxtext}
 \usepackage[varg]{newtxmath}
+% Preserve IEICE citation punctuation while enabling PDF reference links.
+\usepackage[noadjust]{cite}
+\renewcommand{\citepunct}{],\,\allowbreak[}
+\renewcommand{\citedash}{]--\allowbreak[}
+% Keep the official class's caption font and layout.
+\makeatletter
+\let\hyper@nopatch@caption\@empty
+\makeatother
+\usepackage[hidelinks,hyperfootnotes=false]{hyperref}
 \input{macros}
 
 \setcounter{page}{1}
@@ -46,7 +59,7 @@ AI agents, ProVerif
 \input{sections/04_consumer_validation}
 \input{sections/05_scope_conclusion}
 
-\bibliographystyle{ieicetr}
+\bibliographystyle{ieice_template/ieicetr}
 \bibliography{references}
 
 \end{document}

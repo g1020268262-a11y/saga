@@ -1,0 +1,78 @@
+{
+  "started_utc": "2026-10-24T08:57:55.578264+00:00",
+  "upstream_commit": "7372111bea150e32cee390a616849316d2780bfc",
+  "worktree_head": "a51c044eaaa844caff99ca99e4815a440a3f775d",
+  "source": {
+    "saga/agent.py": {
+      "sha256": "94bebf70df4f76e55c0bb8a54c5f29b7fa688ead197ece18f8ac9dec8edae8d5",
+      "pinned_git_blob": "6c06245e21a33d4f54a7da625a76c7b87aa02cac",
+      "worktree_git_blob": "6c06245e21a33d4f54a7da625a76c7b87aa02cac"
+    },
+    "saga/config.py": {
+      "sha256": "5a42594196897d607c368c2cddc469a327d1dac92fe5d5de66c4b0bceb7f4e23",
+      "pinned_git_blob": "e5d9265cb832153a7ce63f6cc1a53c4c034cdeb9",
+      "worktree_git_blob": "e5d9265cb832153a7ce63f6cc1a53c4c034cdeb9"
+    },
+    "saga/common/crypto.py": {
+      "sha256": "dca1a5fa145afbf419b1a71af068e0b98a3ac533a929862d12e023f5c8436b7b",
+      "pinned_git_blob": "fa5e53da802b38449ba1511022f3c194d528ec69",
+      "worktree_git_blob": "fa5e53da802b38449ba1511022f3c194d528ec69"
+    }
+  },
+  "python": "3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)]",
+  "python_executable": "D:\\Users\\10202\\Desktop\\saga\\proofs\\consumer_validation\\.runtime\\venv\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "toolchain_bootstrap_metadata": {
+    "created_utc": "2026-10-24T08:54:07.8136968Z",
+    "java": "D:\\Users\\10202\\Desktop\\saga\\proofs\\quota_validation\\.runtime\\temurin21\\jdk-21.0.12.1+1-jre\\bin\\java.exe",
+    "jar": "D:\\Users\\10202\\Desktop\\saga\\proofs\\quota_validation\\.runtime\\tla2tools-1.7.4.jar",
+    "java_version": [
+      "openjdk version \"21.0.12.1\" 2026-08-18 LTS",
+      "OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)",
+      "OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)"
+    ],
+    "jar_url": "https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar",
+    "jar_release": "v1.7.4",
+    "jar_sha1": "bee4a54f3ee3d4afc347c3240ec2d9e93b075104",
+    "jar_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+    "java_archive_url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jre_x64_windows_hotspot_21.0.12.1_1.zip",
+    "java_archive_sha256": "d35f31e712f0fcf6ac5a093edc90204fbff22f720ba3950bd09d331d5e621636",
+    "artifact_sources": [
+      "https://github.com/tlaplus/tlaplus/releases/tag/v1.7.4",
+      "https://api.adoptium.net/v3/assets/latest/21/hotspot?architecture=x64&image_type=jre&os=windows&vendor=eclipse"
+    ]
+  },
+  "java_version": {
+    "command": [
+      "D:\\Users\\10202\\Desktop\\saga\\proofs\\quota_validation\\.runtime\\temurin21\\jdk-21.0.12.1+1-jre\\bin\\java.exe",
+      "-version"
+    ],
+    "cwd": "D:\\Users\\10202\\Desktop\\saga\\proofs\\quota_validation",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "openjdk version \"21.0.12.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)\n",
+    "seconds": 0.248926,
+    "timed_out": false
+  },
+  "actual_jar_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "input_sha256": {
+    "bootstrap.ps1": "460bf1140573adfd3303825c3a4b0ef96fa4095b77c8cb7490a47b5a172e34ee",
+    "configs\\default_50_race.cfg": "58f99759fb516e65e41e20ebe96097ab4c245111e8ced2206ba6d77ea777693a",
+    "configs\\exhausted_entry.cfg": "9eeb7936171cf45e1d8794ff41aa88c3902fc7a770a16fb792ddcc5a42d03859",
+    "configs\\minimal_race.cfg": "e63ab33be815486abcc83bd604b3443712557c2e9c85073afc0a162382204605",
+    "configs\\original_structure.cfg": "a4ae96ef7b4047b5d8594d10c72e92881a5cbeb0680b7ae8d5bd60674978b503",
+    "configs\\reachable_admission.cfg": "f455d25b517409df0383bb2cb0a14c1552e1925d16cde835530b895d99d7aa8e",
+    "configs\\reachable_backend_overrun.cfg": "06d5e4676fa27325b86576d92ac307134e53b86b9210f25bc415828c564a45a4",
+    "configs\\reachable_message_rejection.cfg": "cd2c22121b31159c87d5f8828571b621afa0f943d81f433df9674413ebd4d97c",
+    "configs\\single_connection.cfg": "6373bf6a84c9f8d3ca885d3777166b2bf5a99c289dc9a9163328d8a541b01966",
+    "configs\\zero_quota_entry.cfg": "ff66fa7a8f5e3958c0a3e910e0153575852886921f1dc4e76ba0ebf8b045c5c3",
+    "README.md": "97b16596c9ba0e55165385993922a30470fc7f8f5d3a10de6e856eff16ac702c",
+    "run_tlc.py": "eb3a45eadd1bdf2afb9ed3aa3c5ed3cb495be526b6b260347a6a81f415d7ecef",
+    "SagaQuota.tla": "b0a473eeaabf5a32e45648a8713487504485d3e60404c2f1f9cf01528982592b",
+    "SOURCE_MAPPING.md": "fafbbc600d605be1cbb254d90756ef65eea183d19b3780a2a5f2d67686886b7d",
+    "source_model_map_20261024.md": "bf1ea57891648547cc8076c96bb1041d041a2368a7f6da71dfa8b3d810a0102d"
+  },
+  "native_replay_performed": false,
+  "repair_model_included": false,
+  "scope": "Single known token; fixed non-quota metadata; explicit sequential prefix; existing-token entrance checks; one ordinary request per racing connection; finite configurations; no network/cryptographic/implementation refinement proof."
+}

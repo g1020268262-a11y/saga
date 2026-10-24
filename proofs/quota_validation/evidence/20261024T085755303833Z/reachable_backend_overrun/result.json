@@ -1,0 +1,18 @@
+{
+  "name": "reachable_backend_overrun",
+  "expected_kind": "violation",
+  "expected_invariant": "BackendQuotaSafety",
+  "observed_violations": [
+    "BackendQuotaSafety"
+  ],
+  "property_result": "violated",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.338019,
+  "states": {
+    "generated": 49,
+    "distinct": 34,
+    "queued": 1
+  }
+}

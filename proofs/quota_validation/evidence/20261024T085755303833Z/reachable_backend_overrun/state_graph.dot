@@ -1,0 +1,97 @@
+strict digraph DiskGraph {
+nodesep=0.35;
+subgraph cluster_graph {
+color="white";
+8518191608403730605 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Prefix\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Ready\"",style = filled]
+8518191608403730605 -> 5401657574839764563 [label="BeginConnections",color="black",fontcolor="black"];
+5401657574839764563 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5401657574839764563 -> 4438123191105297006 [label="Enter",color="black",fontcolor="black"];
+4438123191105297006 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Ready\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5401657574839764563 -> -1750049347095395078 [label="Enter",color="black",fontcolor="black"];
+-1750049347095395078 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+4438123191105297006 -> 5025114480809311332 [label="Check",color="black",fontcolor="black"];
+5025114480809311332 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Checked\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+4438123191105297006 -> -8009801389940680505 [label="Enter",color="black",fontcolor="black"];
+-8009801389940680505 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Ready\" @@ c2 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-1750049347095395078 -> -8009801389940680505 [label="Enter",color="black",fontcolor="black"];
+-1750049347095395078 -> 3789184092714718870 [label="Check",color="black",fontcolor="black"];
+3789184092714718870 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5025114480809311332 -> 2662891015537773809 [label="Consume",color="black",fontcolor="black"];
+2662891015537773809 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+5025114480809311332 -> -1658218106731249971 [label="Enter",color="black",fontcolor="black"];
+-1658218106731249971 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Checked\" @@ c2 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-8009801389940680505 -> -1658218106731249971 [label="Check",color="black",fontcolor="black"];
+-8009801389940680505 -> 844675584432629325 [label="Check",color="black",fontcolor="black"];
+844675584432629325 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Ready\" @@ c2 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+3789184092714718870 -> 844675584432629325 [label="Enter",color="black",fontcolor="black"];
+3789184092714718870 -> 1290625663661884544 [label="Consume",color="black",fontcolor="black"];
+1290625663661884544 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+2662891015537773809 -> -1920197238348567044 [label="InvokeBackend",color="black",fontcolor="black"];
+-1920197238348567044 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Entry\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+2662891015537773809 -> 8502094447076982462 [label="RejectEntry",color="black",fontcolor="black"];
+8502094447076982462 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"EntryRejected\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-1658218106731249971 -> -8524077346887332264 [label="Consume",color="black",fontcolor="black"];
+-8524077346887332264 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-1658218106731249971 -> -3890635355487878697 [label="Check",color="black",fontcolor="black"];
+-3890635355487878697 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 1\n/\\ phase = \"Race\"\n/\\ accepted = 0\n/\\ pc = (c1 :> \"Checked\" @@ c2 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+844675584432629325 -> -3890635355487878697 [label="Check",color="black",fontcolor="black"];
+844675584432629325 -> 3369880065886057563 [label="Consume",color="black",fontcolor="black"];
+3369880065886057563 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Ready\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+1290625663661884544 -> -5479793324730317321 [label="RejectEntry",color="black",fontcolor="black"];
+-5479793324730317321 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"EntryRejected\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+1290625663661884544 -> 7144358505546770312 [label="InvokeBackend",color="black",fontcolor="black"];
+7144358505546770312 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Entry\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-1920197238348567044 -> -5895784271053012773 [label="RejectEntry",color="black",fontcolor="black"];
+-5895784271053012773 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"EntryRejected\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+8502094447076982462 -> -5895784271053012773 [label="InvokeBackend",color="black",fontcolor="black"];
+-8524077346887332264 -> 5195482011861184341 [label="InvokeBackend",color="black",fontcolor="black"];
+5195482011861184341 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Ready\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-8524077346887332264 -> -3509330461644538072 [label="Reject",color="black",fontcolor="black"];
+-3509330461644538072 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Rejected\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-3890635355487878697 -> -2584788890340076694 [label="Consume",color="black",fontcolor="black"];
+-2584788890340076694 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-3890635355487878697 -> 1686894221210757117 [label="Consume",color="black",fontcolor="black"];
+1686894221210757117 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Checked\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+3369880065886057563 -> -2804039408215165294 [label="Reject",color="black",fontcolor="black"];
+-2804039408215165294 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Rejected\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+3369880065886057563 -> -108568728614669360 [label="InvokeBackend",color="black",fontcolor="black"];
+-108568728614669360 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Ready\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-5479793324730317321 -> -3510249495420584206 [label="InvokeBackend",color="black",fontcolor="black"];
+-3510249495420584206 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"EntryRejected\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+7144358505546770312 -> -3510249495420584206 [label="RejectEntry",color="black",fontcolor="black"];
+-5895784271053012773 -> -5895784271053012773 [label="TerminalStutter",color="black",fontcolor="black"];
+5195482011861184341 -> -6534306742419557081 [label="Reject",color="black",fontcolor="black"];
+-6534306742419557081 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 0)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Rejected\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-3509330461644538072 -> -6534306742419557081 [label="InvokeBackend",color="black",fontcolor="black"];
+-2584788890340076694 -> 6895487496444766418 [label="InvokeBackend",color="black",fontcolor="black"];
+6895487496444766418 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Checked\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-2584788890340076694 -> -4241436430603399099 [label="Consume",color="black",fontcolor="black"];
+-4241436430603399099 [label="/\\ backendCalls = 0\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 2\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+1686894221210757117 -> -4241436430603399099 [label="Consume",color="black",fontcolor="black"];
+1686894221210757117 -> -2369316448766022211 [label="InvokeBackend",color="black",fontcolor="black"];
+-2369316448766022211 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Checked\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-2804039408215165294 -> -7430728883718261148 [label="InvokeBackend",color="black",fontcolor="black"];
+-7430728883718261148 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 0 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 1\n/\\ pc = (c1 :> \"Rejected\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-108568728614669360 -> -7430728883718261148 [label="Reject",color="black",fontcolor="black"];
+-3510249495420584206 -> -3510249495420584206 [label="TerminalStutter",color="black",fontcolor="black"];
+-6534306742419557081 -> -6534306742419557081 [label="TerminalStutter",color="black",fontcolor="black"];
+6895487496444766418 -> -8350485106760519223 [label="Consume",color="black",fontcolor="black"];
+-8350485106760519223 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 2\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Debited\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-4241436430603399099 -> -8350485106760519223 [label="InvokeBackend",color="black",fontcolor="black"];
+-4241436430603399099 -> -4450784769891671647 [label="InvokeBackend",color="black",fontcolor="black"];
+-4450784769891671647 [label="/\\ backendCalls = 1\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 2\n/\\ pc = (c1 :> \"Debited\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+-2369316448766022211 -> -4450784769891671647 [label="Consume",color="black",fontcolor="black"];
+-7430728883718261148 -> -7430728883718261148 [label="TerminalStutter",color="black",fontcolor="black"];
+-8350485106760519223 -> 7886277232226170044 [label="InvokeBackend",color="black",fontcolor="black"];
+7886277232226170044 [label="/\\ backendCalls = 2\n/\\ checkedRemaining = (c1 :> 1 @@ c2 :> 1)\n/\\ remaining = 0\n/\\ phase = \"Race\"\n/\\ accepted = 2\n/\\ pc = (c1 :> \"Done\" @@ c2 :> \"Done\")\n/\\ prefixDone = 0\n/\\ prefixPC = \"Done\""];
+{rank = same; 8518191608403730605;}
+{rank = same; 5401657574839764563;}
+{rank = same; -1750049347095395078;4438123191105297006;}
+{rank = same; -8009801389940680505;5025114480809311332;3789184092714718870;}
+{rank = same; 844675584432629325;-1658218106731249971;2662891015537773809;1290625663661884544;}
+{rank = same; 8502094447076982462;3369880065886057563;-5479793324730317321;-1920197238348567044;-3890635355487878697;-8524077346887332264;7144358505546770312;}
+{rank = same; 1686894221210757117;-3510249495420584206;-2804039408215165294;-3509330461644538072;5195482011861184341;-5895784271053012773;-108568728614669360;-2584788890340076694;}
+{rank = same; -6534306742419557081;-2369316448766022211;-4241436430603399099;6895487496444766418;-7430728883718261148;}
+{rank = same; -8350485106760519223;}
+}
+}
