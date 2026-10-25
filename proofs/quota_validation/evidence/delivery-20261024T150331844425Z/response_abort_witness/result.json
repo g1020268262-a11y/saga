@@ -1,0 +1,28 @@
+{
+  "name": "response_abort_witness",
+  "category": "reachability",
+  "expected_kind": "witness",
+  "expected_invariant": "NoResponseAbort",
+  "observed_violations": [
+    "NoResponseAbort"
+  ],
+  "property_result": "witness_reached",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.433148,
+  "states": {
+    "generated": 16,
+    "distinct": 13,
+    "queued": 2
+  },
+  "trace_states": 8,
+  "last_state": {
+    "number": 8,
+    "action_location": "AbortResponse line 224, col 5 to line 230, col 73 of module SagaQuotaDelivery",
+    "raw_state": "/\\ receiverRemaining = 1\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"ResponseAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Debited\")",
+    "senderRemaining": 2,
+    "receiverRemaining": 1,
+    "faultCount": 1
+  }
+}

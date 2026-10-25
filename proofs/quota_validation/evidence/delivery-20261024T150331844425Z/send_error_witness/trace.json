@@ -1,0 +1,38 @@
+{
+  "derivation": "Scalar extraction from raw TLC stdout; not a native replay.",
+  "source_log_sha256": "e6715bcb5d7cedaa467fc7f80774d7d5446aa9444b61a96e09216b683e911d9f",
+  "states": [
+    {
+      "number": 1,
+      "action_location": "Initial predicate",
+      "raw_state": "/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Entry\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Entry\")",
+      "senderRemaining": 2,
+      "receiverRemaining": 2,
+      "faultCount": 0
+    },
+    {
+      "number": 2,
+      "action_location": "AEnter line 74, col 5 to line 78, col 81 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Ready\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 2,
+      "receiverRemaining": 2,
+      "faultCount": 0
+    },
+    {
+      "number": 3,
+      "action_location": "BCheck line 91, col 5 to line 94, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Checked\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 2,
+      "receiverRemaining": 2,
+      "faultCount": 0
+    },
+    {
+      "number": 4,
+      "action_location": "SendErrorBeforeFrame line 236, col 5 to line 242, col 68 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"SendError\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 2,
+      "receiverRemaining": 2,
+      "faultCount": 1
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "send_error",
+  "category": "accounting_control",
+  "expected_kind": "complete",
+  "expected_invariant": null,
+  "observed_violations": [],
+  "property_result": "no_violation_found",
+  "expected_outcome_observed": true,
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 1.406685,
+  "states": {
+    "generated": 49,
+    "distinct": 36,
+    "queued": 0
+  },
+  "trace_states": 0,
+  "last_state": null
+}

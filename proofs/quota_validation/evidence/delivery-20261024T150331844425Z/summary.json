@@ -1,0 +1,255 @@
+{
+  "evidence_directory": "D:\\Users\\10202\\Desktop\\saga\\proofs\\quota_validation\\evidence\\delivery-20261024T150331844425Z",
+  "model": "SagaQuotaDelivery",
+  "syntax_ok": true,
+  "cases": [
+    {
+      "name": "normal_single",
+      "category": "normal_control",
+      "expected_kind": "complete",
+      "expected_invariant": null,
+      "observed_violations": [],
+      "property_result": "no_violation_found",
+      "expected_outcome_observed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 1.594609,
+      "states": {
+        "generated": 43,
+        "distinct": 32,
+        "queued": 0
+      },
+      "trace_states": 0,
+      "last_state": null
+    },
+    {
+      "name": "concurrent_race",
+      "category": "receiver_safety",
+      "expected_kind": "violation",
+      "expected_invariant": "ReceiverQuotaSafety",
+      "observed_violations": [
+        "ReceiverQuotaSafety"
+      ],
+      "property_result": "violated",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.563033,
+      "states": {
+        "generated": 415,
+        "distinct": 209,
+        "queued": 38
+      },
+      "trace_states": 13,
+      "last_state": {
+        "number": 13,
+        "action_location": "ADebit line 149, col 5 to line 153, col 59 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 0\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] @@\n  c2 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\" @@ c2 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> TRUE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"None\" ] @@\n  c2 :>\n      [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"] )\n/\\ faultCount = 0\n/\\ senderRemaining = 1\n/\\ apc = (c1 :> \"Debited\" @@ c2 :> \"Debited\")",
+        "senderRemaining": 1,
+        "receiverRemaining": 0,
+        "faultCount": 0
+      }
+    },
+    {
+      "name": "request_abort",
+      "category": "candidate_accounting",
+      "expected_kind": "violation",
+      "expected_invariant": "QuiescentAgreement",
+      "observed_violations": [
+        "QuiescentAgreement"
+      ],
+      "property_result": "violated",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.28014,
+      "states": {
+        "generated": 21,
+        "distinct": 17,
+        "queued": 3
+      },
+      "trace_states": 8,
+      "last_state": {
+        "number": 8,
+        "action_location": "BReceiveError line 192, col 5 to line 194, col 86 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Stopped\")",
+        "senderRemaining": 49,
+        "receiverRemaining": 50,
+        "faultCount": 1
+      }
+    },
+    {
+      "name": "request_abort_after_progress",
+      "category": "candidate_accounting",
+      "expected_kind": "violation",
+      "expected_invariant": "QuiescentAgreementAfterProgress",
+      "observed_violations": [
+        "QuiescentAgreementAfterProgress"
+      ],
+      "property_result": "violated",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.456147,
+      "states": {
+        "generated": 50,
+        "distinct": 37,
+        "queued": 3
+      },
+      "trace_states": 17,
+      "last_state": {
+        "number": 17,
+        "action_location": "BReceiveError line 192, col 5 to line 194, col 86 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 2,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 48\n/\\ apc = (c1 :> \"Stopped\")",
+        "senderRemaining": 48,
+        "receiverRemaining": 49,
+        "faultCount": 1
+      }
+    },
+    {
+      "name": "request_abort_consumption",
+      "category": "candidate_accounting",
+      "expected_kind": "violation",
+      "expected_invariant": "NoUnadmittedConsumption",
+      "observed_violations": [
+        "NoUnadmittedConsumption"
+      ],
+      "property_result": "violated",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.362229,
+      "states": {
+        "generated": 21,
+        "distinct": 17,
+        "queued": 3
+      },
+      "trace_states": 8,
+      "last_state": {
+        "number": 8,
+        "action_location": "BReceiveError line 192, col 5 to line 194, col 86 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Stopped\")",
+        "senderRemaining": 49,
+        "receiverRemaining": 50,
+        "faultCount": 1
+      }
+    },
+    {
+      "name": "response_abort",
+      "category": "accounting_control",
+      "expected_kind": "complete",
+      "expected_invariant": null,
+      "observed_violations": [],
+      "property_result": "no_violation_found",
+      "expected_outcome_observed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 1.668044,
+      "states": {
+        "generated": 91,
+        "distinct": 56,
+        "queued": 0
+      },
+      "trace_states": 0,
+      "last_state": null
+    },
+    {
+      "name": "send_error",
+      "category": "accounting_control",
+      "expected_kind": "complete",
+      "expected_invariant": null,
+      "observed_violations": [],
+      "property_result": "no_violation_found",
+      "expected_outcome_observed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 1.406685,
+      "states": {
+        "generated": 49,
+        "distinct": 36,
+        "queued": 0
+      },
+      "trace_states": 0,
+      "last_state": null
+    },
+    {
+      "name": "response_abort_witness",
+      "category": "reachability",
+      "expected_kind": "witness",
+      "expected_invariant": "NoResponseAbort",
+      "observed_violations": [
+        "NoResponseAbort"
+      ],
+      "property_result": "witness_reached",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.433148,
+      "states": {
+        "generated": 16,
+        "distinct": 13,
+        "queued": 2
+      },
+      "trace_states": 8,
+      "last_state": {
+        "number": 8,
+        "action_location": "AbortResponse line 224, col 5 to line 230, col 73 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 1\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"ResponseAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Debited\")",
+        "senderRemaining": 2,
+        "receiverRemaining": 1,
+        "faultCount": 1
+      }
+    },
+    {
+      "name": "send_error_witness",
+      "category": "reachability",
+      "expected_kind": "witness",
+      "expected_invariant": "NoSendError",
+      "observed_violations": [
+        "NoSendError"
+      ],
+      "property_result": "witness_reached",
+      "expected_outcome_observed": true,
+      "returncode": 12,
+      "timed_out": false,
+      "seconds": 1.285035,
+      "states": {
+        "generated": 5,
+        "distinct": 5,
+        "queued": 1
+      },
+      "trace_states": 4,
+      "last_state": {
+        "number": 4,
+        "action_location": "SendErrorBeforeFrame line 236, col 5 to line 242, col 68 of module SagaQuotaDelivery",
+        "raw_state": "/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"SendError\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")",
+        "senderRemaining": 2,
+        "receiverRemaining": 2,
+        "faultCount": 1
+      }
+    },
+    {
+      "name": "mixed_structure",
+      "category": "structural_only",
+      "expected_kind": "complete",
+      "expected_invariant": null,
+      "observed_violations": [],
+      "property_result": "no_violation_found",
+      "expected_outcome_observed": true,
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 1.926906,
+      "states": {
+        "generated": 8972,
+        "distinct": 3290,
+        "queued": 0
+      },
+      "trace_states": 0,
+      "last_state": null
+    }
+  ],
+  "source_unchanged_after_run": true,
+  "earlier_models_unchanged": true,
+  "all_expected_outcomes_observed": true,
+  "finished_utc": "2026-10-24T15:03:48.276698+00:00"
+}

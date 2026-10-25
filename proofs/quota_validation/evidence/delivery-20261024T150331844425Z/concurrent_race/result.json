@@ -1,0 +1,28 @@
+{
+  "name": "concurrent_race",
+  "category": "receiver_safety",
+  "expected_kind": "violation",
+  "expected_invariant": "ReceiverQuotaSafety",
+  "observed_violations": [
+    "ReceiverQuotaSafety"
+  ],
+  "property_result": "violated",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.563033,
+  "states": {
+    "generated": 415,
+    "distinct": 209,
+    "queued": 38
+  },
+  "trace_states": 13,
+  "last_state": {
+    "number": 13,
+    "action_location": "ADebit line 149, col 5 to line 153, col 59 of module SagaQuotaDelivery",
+    "raw_state": "/\\ receiverRemaining = 0\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] @@\n  c2 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\" @@ c2 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> TRUE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"None\" ] @@\n  c2 :>\n      [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"] )\n/\\ faultCount = 0\n/\\ senderRemaining = 1\n/\\ apc = (c1 :> \"Debited\" @@ c2 :> \"Debited\")",
+    "senderRemaining": 1,
+    "receiverRemaining": 0,
+    "faultCount": 0
+  }
+}

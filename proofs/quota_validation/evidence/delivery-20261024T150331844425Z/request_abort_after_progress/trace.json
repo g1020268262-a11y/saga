@@ -1,0 +1,142 @@
+{
+  "derivation": "Scalar extraction from raw TLC stdout; not a native replay.",
+  "source_log_sha256": "a893b97dcba4fd02520d6e20da143116094245a69d4addeabaced592f8a0035c",
+  "states": [
+    {
+      "number": 1,
+      "action_location": "Initial predicate",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Entry\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Entry\")",
+      "senderRemaining": 50,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 2,
+      "action_location": "AEnter line 74, col 5 to line 78, col 81 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Ready\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 50,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 3,
+      "action_location": "BCheck line 91, col 5 to line 94, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Checked\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 50,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 4,
+      "action_location": "BSendReturn line 107, col 5 to line 112, col 72 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 50,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 5,
+      "action_location": "BDebit line 117, col 5 to line 121, col 61 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 6,
+      "action_location": "AReceive line 126, col 5 to line 129, col 80 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Parsed\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 7,
+      "action_location": "ACheck line 133, col 5 to line 136, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Checked\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 50,
+      "faultCount": 0
+    },
+    {
+      "number": 8,
+      "action_location": "ADebit line 149, col 5 to line 153, col 59 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Debited\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 9,
+      "action_location": "ABackend line 157, col 5 to line 160, col 78 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Reply\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 10,
+      "action_location": "AReplyReturn line 165, col 5 to line 168, col 80 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> TRUE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 11,
+      "action_location": "BReceiveResponse line 184, col 5 to line 188, col 72 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Ready\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 12,
+      "action_location": "BCheck line 91, col 5 to line 94, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Checked\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 13,
+      "action_location": "BSendReturn line 107, col 5 to line 112, col 72 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 49,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 14,
+      "action_location": "BDebit line 117, col 5 to line 121, col 61 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 2,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 48\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 48,
+      "receiverRemaining": 49,
+      "faultCount": 0
+    },
+    {
+      "number": 15,
+      "action_location": "AbortRequest line 214, col 5 to line 219, col 73 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 2,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 48\n/\\ apc = (c1 :> \"Read\")",
+      "senderRemaining": 48,
+      "receiverRemaining": 49,
+      "faultCount": 1
+    },
+    {
+      "number": 16,
+      "action_location": "AReadError line 178, col 5 to line 180, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 2,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 48\n/\\ apc = (c1 :> \"Stopped\")",
+      "senderRemaining": 48,
+      "receiverRemaining": 49,
+      "faultCount": 1
+    },
+    {
+      "number": 17,
+      "action_location": "BReceiveError line 192, col 5 to line 194, col 86 of module SagaQuotaDelivery",
+      "raw_state": "/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 2,\n        senderDebits |-> 2,\n        admits |-> 1,\n        calls |-> 1,\n        replies |-> 1 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 48\n/\\ apc = (c1 :> \"Stopped\")",
+      "senderRemaining": 48,
+      "receiverRemaining": 49,
+      "faultCount": 1
+    }
+  ]
+}

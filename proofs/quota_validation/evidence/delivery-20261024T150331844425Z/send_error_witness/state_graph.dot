@@ -1,0 +1,18 @@
+strict digraph DiskGraph {
+nodesep=0.35;
+subgraph cluster_graph {
+color="white";
+-8449373332817974445 [label="/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Entry\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Entry\")",style = filled]
+-8449373332817974445 -> 6781411797896021698 [label="AEnter",color="black",fontcolor="black"];
+6781411797896021698 [label="/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Ready\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")"];
+6781411797896021698 -> -1714507941201695659 [label="BCheck",color="black",fontcolor="black"];
+-1714507941201695659 [label="/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Checked\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")"];
+-1714507941201695659 -> 7015896134796673628 [label="BSendReturn",color="black",fontcolor="black"];
+7015896134796673628 [label="/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")"];
+-1714507941201695659 -> -5771133420683914723 [label="SendErrorBeforeFrame",color="black",fontcolor="black"];
+-5771133420683914723 [label="/\\ receiverRemaining = 2\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"SendError\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 2\n/\\ apc = (c1 :> \"Read\")"];
+{rank = same; -8449373332817974445;}
+{rank = same; 6781411797896021698;}
+{rank = same; -1714507941201695659;}
+}
+}

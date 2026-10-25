@@ -1,0 +1,50 @@
+strict digraph DiskGraph {
+nodesep=0.35;
+subgraph cluster_graph {
+color="white";
+7487659238786011954 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Entry\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Entry\")",style = filled]
+7487659238786011954 -> -5231459148129853912 [label="AEnter",color="black",fontcolor="black"];
+-5231459148129853912 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Ready\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")"];
+-5231459148129853912 -> 8422903741234391955 [label="BCheck",color="black",fontcolor="black"];
+8422903741234391955 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 0,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Checked\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")"];
+8422903741234391955 -> -8635918528955065674 [label="BSendReturn",color="black",fontcolor="black"];
+-8635918528955065674 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")"];
+-8635918528955065674 -> -1284376386559448839 [label="BDebit",color="black",fontcolor="black"];
+-1284376386559448839 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> TRUE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")"];
+-8635918528955065674 -> 7859647465486714035 [label="AReceive",color="black",fontcolor="black"];
+7859647465486714035 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Parsed\")"];
+-8635918528955065674 -> -2129552964031586818 [label="AbortRequest",color="black",fontcolor="black"];
+-2129552964031586818 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Read\")"];
+-1284376386559448839 -> 6166275829251939840 [label="AReceive",color="black",fontcolor="black"];
+6166275829251939840 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Parsed\")"];
+-1284376386559448839 -> -6442954021720492384 [label="AbortRequest",color="black",fontcolor="black"];
+-6442954021720492384 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")"];
+7859647465486714035 -> 6166275829251939840 [label="BDebit",color="black",fontcolor="black"];
+7859647465486714035 -> 611358639015140616 [label="ACheck",color="black",fontcolor="black"];
+611358639015140616 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Checked\")"];
+-2129552964031586818 -> -6442954021720492384 [label="BDebit",color="black",fontcolor="black"];
+-2129552964031586818 -> -1057669598143181758 [label="AReadError",color="black",fontcolor="black"];
+-1057669598143181758 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Stopped\")"];
+6166275829251939840 -> -6278429754014745245 [label="ACheck",color="black",fontcolor="black"];
+-6278429754014745245 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Checked\")"];
+-6442954021720492384 -> -3087983553129959594 [label="AReadError",color="black",fontcolor="black"];
+-3087983553129959594 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Stopped\")"];
+-6442954021720492384 -> 38269642629135556 [label="BReceiveError",color="black",fontcolor="black"];
+38269642629135556 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Read\")"];
+611358639015140616 -> -6278429754014745245 [label="BDebit",color="black",fontcolor="black"];
+611358639015140616 -> 2393638146106180168 [label="ADebit",color="black",fontcolor="black"];
+2393638146106180168 [label="/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 0,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Debit\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 50\n/\\ apc = (c1 :> \"Debited\")"];
+-1057669598143181758 -> -3087983553129959594 [label="BDebit",color="black",fontcolor="black"];
+-6278429754014745245 -> -6109312334857556840 [label="ADebit",color="black",fontcolor="black"];
+-6109312334857556840 [label="/\\ receiverRemaining = 49\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 1,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Waiting\")\n/\\ link = (c1 :> [open |-> TRUE, request |-> FALSE, response |-> FALSE, fault |-> \"None\"])\n/\\ faultCount = 0\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Debited\")"];
+-3087983553129959594 -> 641026317870319664 [label="BReceiveError",color="black",fontcolor="black"];
+641026317870319664 [label="/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Stopped\")"];
+{rank = same; 7487659238786011954;}
+{rank = same; -5231459148129853912;}
+{rank = same; 8422903741234391955;}
+{rank = same; -8635918528955065674;}
+{rank = same; -2129552964031586818;-1284376386559448839;7859647465486714035;}
+{rank = same; 6166275829251939840;-1057669598143181758;-6442954021720492384;611358639015140616;}
+{rank = same; -3087983553129959594;-6278429754014745245;}
+}
+}

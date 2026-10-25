@@ -1,0 +1,28 @@
+{
+  "name": "request_abort",
+  "category": "candidate_accounting",
+  "expected_kind": "violation",
+  "expected_invariant": "QuiescentAgreement",
+  "observed_violations": [
+    "QuiescentAgreement"
+  ],
+  "property_result": "violated",
+  "expected_outcome_observed": true,
+  "returncode": 12,
+  "timed_out": false,
+  "seconds": 1.28014,
+  "states": {
+    "generated": 21,
+    "distinct": 17,
+    "queued": 3
+  },
+  "trace_states": 8,
+  "last_state": {
+    "number": 8,
+    "action_location": "BReceiveError line 192, col 5 to line 194, col 86 of module SagaQuotaDelivery",
+    "raw_state": "/\\ receiverRemaining = 50\n/\\ counts = ( c1 :>\n      [ writes |-> 1,\n        senderDebits |-> 1,\n        admits |-> 0,\n        calls |-> 0,\n        replies |-> 0 ] )\n/\\ bpc = (c1 :> \"Failed\")\n/\\ link = ( c1 :>\n      [ open |-> FALSE,\n        request |-> FALSE,\n        response |-> FALSE,\n        fault |-> \"RequestAbort\" ] )\n/\\ faultCount = 1\n/\\ senderRemaining = 49\n/\\ apc = (c1 :> \"Stopped\")",
+    "senderRemaining": 49,
+    "receiverRemaining": 50,
+    "faultCount": 1
+  }
+}

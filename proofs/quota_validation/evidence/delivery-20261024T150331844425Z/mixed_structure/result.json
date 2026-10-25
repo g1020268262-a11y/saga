@@ -1,0 +1,19 @@
+{
+  "name": "mixed_structure",
+  "category": "structural_only",
+  "expected_kind": "complete",
+  "expected_invariant": null,
+  "observed_violations": [],
+  "property_result": "no_violation_found",
+  "expected_outcome_observed": true,
+  "returncode": 0,
+  "timed_out": false,
+  "seconds": 1.926906,
+  "states": {
+    "generated": 8972,
+    "distinct": 3290,
+    "queued": 0
+  },
+  "trace_states": 0,
+  "last_state": null
+}
