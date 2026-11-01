@@ -1,0 +1,21 @@
+
+==============================================================================
+summary of summaries:
+
+analyzed: /mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033035103162Z/inputs/saga_otk_transfer.spthy
+
+  output:          /mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033035103162Z/deny_C/proof.spthy
+  processing time: 10.98s
+  
+  normal_B_completes (exists-trace): verified (12 steps)
+  normal_C_completes (exists-trace): falsified - no trace found (4 steps)
+  transfer_after_C_exhaustion_completes (exists-trace): falsified - no trace found (4 steps)
+  provider_per_sender_issuance_limit (all-traces): verified (36 steps)
+  provider_issues_each_OTK_once (all-traces): verified (44 steps)
+  receiver_consumes_each_OTK_once (all-traces): verified (52 steps)
+  accepted_request_has_matching_token_and_decryption (all-traces): verified (8 steps)
+  long_term_keys_not_disclosed (all-traces): verified (4 steps)
+  successful_use_requires_issue_to_same_sender (all-traces): verified (8 steps)
+  sender_uses_at_most_one_distinct_OTK (all-traces): verified (10 steps)
+
+==============================================================================

@@ -1,0 +1,126 @@
+===== PDF PAGE 1 =====
+IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+                                                                                                                               1621
+
+LETTER    SpecialSectiononDiscreteMathematicsandItsApplications
+SecurityAnalysison“Multi-KeywordSearchableEncryptionfor
+SmartGridEdgeComputing”
+
+
+                                      KeitaEMURA†,††a),ToshihiroOHIGASHI†††,andNobuyukiSUGIO††††,Members
+
+
+
+
+SUMMARY   Wang,Wu,Li,Du,andLuoproposedapublickeysearch-                   publicvalues.
+ableencryptionscheme(ElectricPowerSystemsResearch2022(SJRQ1          Inbothattacks,anadversaryreliessolelyonpubliclyavail-
+Journal)).Theyclaimedthatnokeywordinformationisrevealedbyeither
+aciphertextoratrapdoor.Inthisshortnote,wedemonstratethatkeyword      ablevalues,withoutrequiringanyadditionalqueriesorse-
+informationisindeedrevealedfrombothaciphertextandatrapdoor.          cretvalues.Theadversarywhodeclarestwochallengekey-
+keywords:  publickeyencryptionwithkeywordsearch,securityanalysis     wordsw∗0andw∗1candecidewhetherthechallengeciphertext
+1.  Introduction                                                     (resp.thechallengetrapdoor)isforw∗0orw∗1.
+                                                                          Notethat,althoughWangetal.claimedthatnokeyword
+Atester(typicallyacloudserver)searchesonanencrypted                  informationisrevealedfromatrapdoor,inevitablykeyword
+keywordusingatrapdoorinPublickeyencryptionwithkey-                   informationisrevealedfromatrapdoorinPEKS(socalled
+wordsearch(PEKS)[1]. Wang,Wu,Li,Du,andLuo[2]                         keywordguessingattack): Anadversarywhohasatrap-
+proposedaPEKSscheme(wecallittheWWLDLscheme)                          doorgeneratesaciphertextofakeywordthattheadversary
+andtheyclaimedthatnokeywordinformationisrevealedby                   chooses,andrunsthetestalgorithm.Inthisperspective,our
+eitheraciphertext(ciphertextprivacy)oratrapdoor(trap-                secondattackmaybeofminorimportanceduetothegen-
+doorprivacy).                                                        eralattackabove.Nevertheless,theconstructionmethodol-
+                                                                     ogymayneedtobereconsidered,asourﬁrstattack,which
+OurContribution.Inthisshortnote,wedemonstratethat                    revealskeywordinformationfromaciphertext.
+keywordinformationisindeedrevealedfrombothacipher-
+textandatrapdoor.                                                    2.  WWLDLScheme
+Ciphertextprivacy: Wepointoutthataciphertextcon-                     Here,wedescribeonlythecomponentsrelevanttoourat-
+     tains(avariantof)aBLS(Boneh-Lynn-Shacham)sig-                   tacks.Especially,althoughWangetal.consideredamulti-
+     nature[3]onakeyword      w(withtheform HWat(w)s)                keywordsearchsetting,weconsiderasinglekeywordsearch
+     andthecorrespondingveriﬁcationkey(withtheform                   setting.  Let Gand GT begroupswithprimeorder  p,
+     gs),simultaneously,andanyonecancheckwhethera                    e : G×G → GT beasymmetricpairing,andg ∈ Gbe
+     ciphertextisanencryptionofakeywordornotviathe                   agenerator. H : {0,1} → {0,1}nbeahashfunctionwhere
+     BLSsignatureveriﬁcationalgorithm.                               n∈NisaparameterfortheWatershashfunction.
+        • Here, HWatisaWatershashfunction[4]. Origi-                      Theglobalparameteris (G,GT,p,e,g,H).  Intheir
+          nally,aBLSsignatureonwisdescribedas H(w)s                  scheme,fourentitiesaredeﬁned,CS(CloudServer),ES
+          where Hisahashfunctionwhichismodeledasa                    (EdgeServer),DO(DataOwner),andDU(DataUser).We
+          randomoracle. Here, HisreplacedintotheWa-                  describethekeygenerationalgorithmforDUasfollows.Let
+          tershashfunction.Thus,wedescribethesignature               [0,n]={0,1,...,n}.
+          schemeavariantoftheBLSsignaturescheme.                        • Randomly chooseα,β  ←  Zp and compute Ω  =
+Trapdoorprivacy: Wealsopointoutthatatrapdoorcon-                          e(gα,g2)βandΛ= e(gα,g2)β−1.
+     tainsaWaterssignature[4]onakeyword        w(withthe                • Randomlychoose ui ∈ Zpfor i ∈ [0,n]andcompute
+     form(gα2HWat(w)r,gr))andthecorrespondingveriﬁca-                     Ii =gui.
+     tionkey(withtheforme(g,g2)α)canbeextractedfrom                     • Randomlychooseg2 ∈G.
+    ManuscriptreceivedAugust18,2025.                                    • Outputapublickey pkDU = (Ω,∆,{Ii}i∈[0,n],g2)anda
+    ManuscriptpublicizedFebruary4,2026.                                   secretkey skDU =(α,β).
+   †KanazawaUniversity,Kanazawa-shi,920-1192Japan.
+  ††NationalInstituteofAdvancedIndustrialScienceandTech-             Fori ∈[0,n],lethw[i]∈ {0,1}bethei-thbitofhwandhw =
+nology(AIST),Tokyo,135-0064Japan.                                    H(w). Then,theWatershashfunction HWat : {0,1}∗ → G
+ †††TokaiUniversity,Tokyo,108-8619Japan.                             isdeﬁnedas
+††††Hokkaido University of Science, Sapporo-shi, 006-8585                                nÖ
+Japan.                                                                    HWat(w)= I0       Ihw[i]i
+  a)E-mail: k-emura@se.kanazawa-u.ac.jp(Correspondingau-                                 i=1
+thor)
+    DOI:10.1587/transfun.2025DML0002                                 Weclarifythat HWatispubliclycomputablefrom pkDU. A
+
+                  Copyright©2026TheInstituteofElectronics,InformationandCommunicationEngineers
+
+===== PDF PAGE 2 =====
+                                                                            IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+1622
+
+ciphertextcontains                                                     signature,andtheunforgeabilityofthesignaturescheme
+     C2 =gsandC3 = HWat(w)s                                            doesnotcontributetohidinginformationaboutthemes-
+                                                                       sagetobesigned.Duetothesesituations,theconstruction
+where s ∈ Zpisrandomlychosenintheencryptionalgo-                       methodologyneedstobereconsidered,andwedeclineto
+rithm. Here, e(C2,HWat(w)) = e(g,C3)holds. Atrapdoor                   repairtheWWLDLschemeinthisnote.
+contains
+     Tw,1 =gα2HWat(w)randTw,2 =gr                                      5.  AttackComplexity
+
+wheres ∈Zpisrandomlychoseninthetrapdoorgeneration                      Asmentionedbefore,ourﬁrstattackismorecrucial.Thus,
+algorithmthattakes skDU =(α,β)asinput.Here,                            weclarifytheeﬃciencyoftheﬁrstattackwithrespecttothe
+     e(g,Tw,1)= e(g,gα2HWat(w)r)                                       runtime. SincetheWWLDLschemeemployssymmetric
+                                                                       pairings,weusethePBClibrary†. Weemployparameters
+                = e(g,gα2)e(g,HWat(w)r)                                givenin[5]thatisgeneratedforachieving128-bitsecurity.
+                = e(gα,g2)e(gr,HWat(w))                                Experimentswereconductedusingahigh-performancesys-
+                =(Ω/Λ)e(Tw,2,HWat(w))                                  temrunningUbuntu24.04.2LTS,equippedwithanAMD
+                                                                       RyzenTM5800X8-coreprocessor,128GiBRAM,and9TB
+holdssinceΩ/Λ= e(gα,g2)β/e(gα,g2)β−1 = e(gα,g2).                       diskspace.
+                                                                             For breaking ciphertext privacy,   A  computes
+3.  OurAttacks                                                         HWat(w∗0) = I0Îni=1Ihw[i]i   where hw = H(w∗0). Waters[4]
+                                                                       mentionedthat nistheoutputlengthofacollision-resistant
+Inthissection,wepresentourattacks. Asdeﬁnedin[2],                      hashfunction. Duetothebirthdaybound,weset n = 256
+weemployastandardindistinguishability-basedsecurity                    heretoindicate128bitsecurityandemploySHA256as H.
+model(4.4.1.Trapdoorprivacyand4.4.2.Ciphertextpri-                     Assumethattheprovability hw[i] = 0and hw[i] = 1are
+vacyin[2]).Weclarifythatanadversary      Areliessolelyon               thesame(1/2,respectively).Then,theattackcomplexityis
+publiclyavailablevalues,withoutrequiringanyadditional                  128timesadditionsoveranellipticcurveinaverageandtwo
+queriesorsecretvalues. Moreprecisely,weassumethat                      pairingcomputations.Averagedexecutiontimeover10,000
+Aobtains pkDU = (Ω,∆,{Ii}i∈[0,n],g2). Thatis,ourattack                 runsusingPBClibraryisasfollows.Therunningtimefor
+modelisweakerthanthemodelsdeﬁnedbyWangetal.                            computingHWat(w∗0)is1.325msandthatofe(C∗2,HWat(w∗0))
+Ciphertextprivacy: Adeclarestwochallengekeywords                       and e(g,C∗3)is10.888ms,respectively. Thisresultshows
+     w∗0andw∗1andsendsthesekeywordstothechallenger.                    thatourattackisreasonablypracticalwithrespecttothe
+     Thechallengerrandomlyﬂipsacoin coin ∈  {0,1}                      runtime.
+     andcomputesaciphertextofw∗coinandsendsthechal-                    6.  Conclusion
+     lengeciphertextcontaining (C∗2,C∗3)to A. Aoutputs
+     0(meaningthat coin= 0)if e(C∗2,HWat(w∗0))= e(g,C∗3)               Inthisshortnote,wedemonstratethatkeywordinformation
+     holdsand1,otherwise.                                              isindeedrevealedfrombothaciphertextandatrapdoor.We
+Trapdoorprivacy: A declares two challenge keywords                     conﬁrmattackcomplexityintermsoftheruntime.
+     w∗0 andw∗1 and sends these keywords to the chal-
+     lenger. Thechallengerrandomlyﬂipsacoin coin ∈                     Acknowledgments
+     {0,1}and computes a trapdoor ofw∗coin and sends                   ThisworkwassupportedbyJSPSKAKENHIGrantNum-
+     thechallengetrapdoorcontaining (T∗w,1,T∗w,2)to A.                 bersJP21K11897,JP25H01106,andJP25K15119.
+     Aoutputs0(meaningthat coin = 0)if e(g,T∗w,1) =
+     (Ω/Λ)e(T∗w,2,HWat(w∗0))holdsand1,otherwise.                       References
+
+4.  Discussion                                                          [1]D.Boneh,G.D.Crescenzo,R.Ostrovsky,andG.Persiano,“Publickey
+                                                                            encryptionwithkeywordsearch,”EUROCRYPT,pp.506–522,2004.
+Wangetal.claimedthattheWWLDLschemeprovidesci-                           [2]D.Wang,P.Wu,B.Li,H.Du,andM.Luo,“Multi-keywordsearch-
+phertectprivacyunderthedecisionalbilinearDiﬃe-Hellman                       ableencryptionforsmartgridedgecomputing,”ElectricPowerSys-
+                                                                            temsResearch, vol.212, p.108223, 2022.https://doi.org/10.1016/j.
+(DBDH) assumption (Theorem 2[2]).  Informally, the                          epsr.2022.108223
+DBDHproblemistodecidewhether R = e(g,g)abc ∈ GT                         [3]D.Boneh,B.Lynn,andH.Shacham,“Shortsignaturesfromtheweil
+orrandomwhen(g,ga,gb,gc,R)∈G4×GTisgiven.Here,                               pairing,”ASIACRYPT,pp.514–532,2001.
+wepointedoutthatthekeyword-relatedpartC3 = HWat(w)s                     [4]B.Waters,“Eﬃcientidentity-basedencryptionwithoutrandomora-
+isnothiddenevenif R ∈ GT israndomsince C3 ∈ G.                              cles,”EUROCRYPT,pp.114–127,2005.
+                                                                        [5]K.Emura,K.Ito,andT.Ohigashi,“Secure-channelfreesearchable
+Moreover,aciphertextdirectlycontainsavariantoftheBLS                        encryptionwithmultiplekeywords: Agenericconstruction,anin-
+   †PBC: Pairing-Based Cryptography (https://crypto.stanford.               stantiation,anditsimplementation,”JournalofComputerandSystem
+                                                                            Sciences,vol.114,pp.107–125,2020.
+edu/pbc/)

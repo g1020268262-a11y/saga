@@ -1,0 +1,128 @@
+===== PDF PAGE 1 =====
+IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+                                                                                                                               1623
+
+LETTER    SpecialSectiononDiscreteMathematicsandItsApplications
+SecurityAnalysison“Blockchain-BasedPrivacy-PreservingPublic
+KeySearchableEncryptionwithStrongTraceability”
+
+
+                                      KeitaEMURA†,††a),ToshihiroOHIGASHI†††,andNobuyukiSUGIO††††,Members
+
+
+
+
+SUMMARY   Han,Han,Meng,Lai,andWu(JournalofSystemsArchi-
+tecture2024(SJRQ1Journal))proposedapublickeysearchableencryption     2.  TrapdoorGenerationintheHHMLWScheme
+scheme.Theyclaimedthattheschemeprovideskeywordblindnesswhere
+atrapdoorgenerationcentergeneratesatrapdoorwithoutknowingthekey-     Inthissection,weintroduceapartofthetrapdoorgeneration
+word. Inthisshortnote,weshowthattheirschemedoesnotprovide
+keywordblindness.                                                    protocolbetweenauserandtheTGC,asitsuﬃcientlyillus-
+key words:  public key encryption with keyword search, security analysis,tratestheessenceofourattack.LetGandGTbegroupswith
+keywordblindness                                                     primeorder p,e :G×G→GTbeasymmetricpairing,and
+1.  Introduction                                                     g ∈ Gbeagenerator.  (pkU,skU) = (Yu,xu) ∈ G ×Zp
+                                                                     is a user’s public and secret key where Yu  = gxu and
+Inpublickeyencryptionwithkeywordsearch(PEKS)[1],a                    (pkTR,skTR) = (Yt,xt) ∈ G×Zpisthetracer’spublicand
+receivergeneratesatrapdoorforakeywordusingtheirsecret                secretkeywhereYt =gxt. Forgeneratingatrapdoorfora
+                                                                     keywordw,auserchoosesr0         $←−Zpandcomputes
+keyandsendsitasasearchquery.Insomeapplications,the
+secretkeyholderandtheuserissuingthequerymaybedif-                         D1 =gwYr0t and D2 =YuYr0t
+ferententities. Tohidethesearchedkeywords,Camenisch                  Theusersends(D1,D2)totheTGC.Here,weomittheother
+etal.[2]proposedpublickeyencryptionwithobliviouskey-                 valuesandprocedures,astheyarenotrelevanttoourattack.
+wordsearch(PEOKS),allowinguserstoobtaintrapdoors                          Weclarifythesecuritymodelofkeywordblindness,
+fromthekeyholderwithoutrevealingtheirkeywords.They                   whichisdeﬁnedbasedonastandardindistinguishability
+appliedPEOKStobuildapublickeyencrypteddatabase                       notion(Deﬁnition6in[3].Weextractonlythepartsthatare
+supportingauthorizedprivatesearches.                                 relevanttoourattack.AnadversaryAisallowedtoissuekey
+     Han,Han,Meng,Lai,andWu[3]consideredtraceabil-                   generationqueries,andcanobtain(pkU,skU) = (Yu,xu). A
+ity(byanotherentitycalledatracer)inthePEOKScontext                   declarestwochallengekeywordsw∗0andw∗1.Thechallenger
+andproposedapairing-basedscheme. Hereafter,wecall                    Cﬂipsacoinµ ∈ {0,1}and Aand Crunthetrapdoor
+ittheHHMLWscheme. Hanetal.introducedatrapdoor                        generationprotocolforw∗µ. Here, Aplaystheroleofthe
+generationcenter(TGC)thathasasecretkeyforgenerating                  TGC(andCplaystheroleofauser). Aoutputsµ′ ∈ {0,1}
+trapdoors.TheyclaimedthattheHHMLWschemeensures                       andwinsifµ =µ′. Sincekeywordblindnessaimstohide
+keywordblindness,guaranteeingthattheTGCgeneratesa                    keywordinformationfromtheTGC,assumingthatAactsas
+trapdoorwithoutknowledgeofthekeyword.                                theTGCinthetrapdoorgenerationprotocolisareasonable
+OurContribution. Inthisshortnote,weshowthattheir                     setting.
+schemedoesnotprovidekeywordblindness. Ourattackis
+eﬃcient,asitinvolvesonlyellipticcurvecomputationsand                 3.  ProposedAttack
+doesnotrequireanypairingoperations.Weemphasizethat
+ourattackfollowstheirsecuritymodel.                                  Here,wedescribeourattack.Asmentionedinthesecurity
+                                                                     model,AknowsYuanddeclares(w∗0,w∗1)(ourattackdoesnot
+                                                                     use xu).Inthetrapdoorgenerationprotocolforw∗µ,Csends
+    ManuscriptreceivedAugust4,2025.                                  (D1,D2)=(gw∗µYr∗0t ,YuYr∗0t  )toAwherer∗0isarandomvalue.
+    ManuscriptrevisedDecember23,2025.                                Acanextractthekeywordrelatedpartgw∗µbycomputing
+    ManuscriptpublicizedMarch18,2026.                                     D1/(D2/Yu)=gw∗µ
+   †KanazawaUniversity,Kanazawa-shi,920-1192Japan.
+  ††NationalInstituteofAdvancedIndustrialScienceandTech-             Acomputesgw∗0andoutputs0ifgw∗0 = D1/(D2/Yu)holds
+nology(AIST),Tokyo,135-0064Japan.                                    and1,otherwise.
+ †††TokaiUniversity,Tokyo,108-8619Japan.
+††††Hokkaido University of Science, Sapporo-shi, 006-8585
+Japan.                                                               4.  Discussion
+  a)E-mail: k-emura@se.kanazawa-u.ac.jp(Correspondingau-             WepointedoutotherissueintheHHMLWschemehere.
+thor)
+    DOI:10.1587/transfun.2025DML0003                                 TheyassumedthehardnessofthedesicionalDiﬃe-Hellman
+
+                  Copyright©2026TheInstituteofElectronics,InformationandCommunicationEngineers
+
+===== PDF PAGE 2 =====
+                                                                             IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+1624
+
+(DDH)problem. Actually,theyclaimedthattheHHMLW                          unexpectedthatthetracercanobtainkeywordinformation
+schemeprovideskeywordblindnessiftheDDHassump-                           directlyfromaciphertext,giventhatitsroleistoidentify
+tionholdson G(Theorem2in[3]). However,theDDH                            boththeuserandthekeywordfromatrapdoor.
+assumptiondoesnotholdonGsincetheyemployedasym-                                Duetothesereasons,theconstructionmethodology
+metricpairingwhichisaDDHsolver[4]. Concretely,for                       needs to be reconsidered, and we decline to revise the
+(g,ga,gb,gc), c = abholdsif e(ga,gb) = e(gc,g)holds.                    HHMLWschemeinthispaper.
+Weclarifythatourattackdoesnotemploythefunctionality
+oftheDDHsolver.Therefore,replacingthepairingwithan                      5.  AttackComplexity
+asymmetriconedoesnotcompromiseourattack.
+     Moreover,inthetracealgorithm,thetracer(whohas                      Our attack is eﬃcient since A just computesgw∗0 and
+skTR = xt)computesgω = D1/Dxt3 andYu = D2/Dxt3 where                    D1/(D2/Yu),andcompareswhethertheyarethesameor
+D3 =gr0isoriginallycontainedinthetranscript (D1,D2).                    not. Weclarifytheeﬃciencywithrespecttotheruntime.
+Here, (D1,D3) = (gwYr0t,gr0)isaciphertextoftheElGa-                     SincetheHHMLWschemeemployssymmetricpairings,we
+malencryptionunderthepublickeyYt. Here, D2 = YuYr0t                     usethePBClibrary†††.Weemployparametersgivenin[7]
+aﬀectsthesecurityoftheElGamalencryption. Simplyre-                      thatisgeneratedforachieving128-bitsecurity. Inorder
+moving D2fromthetranscriptdoesnotmakesensesince                         todeterminethecomplexityoftheattack,experimentswere
+D2isnecessaryinthetracealgorithm. Evenif D2canbe                        conductedusingahigh-performancesystemrunningUbuntu
+removed,stillkeywordinformationisleakedfrom(D1,D3)                      24.04.2LTS,equippedwithanAMDRyzenTM5800X8-core
+sincetheElGamalencryptionschemeissecureunderthe                         processor,128GiBRAM,and9TBdiskspace. Averaged
+DDHassumptionandsymmetricpairingsbreakthesecurity.                      executiontimeover10,000runsusingPBClibraryisasfol-
+Forexample,twoElGamalciphertextsareencryptionofthe                      lows. Thrunningtimeforcomputinggw∗0is3.629msand
+sameplaintextornotcanbedetected†.                                       thatof D1/(D2/Yu)is0.021ms,respectively. Thisresult
+     Wealsopointedoutthatthetracercanobtainkeyword                      showsthatourattackisreasonablypracticalwithrespectto
+informationfromaciphertextbyusingthetracer’ssecretkey                   theruntime.
+t1,t2 ∈Zpwhere(v1,v2)=(gt1,gt2)isthetracer’spublickey.
+AciphertextcontainsC0 = H(w)s,C1 =vs−s11  ,andC2 =vs12                  6.  Conclusion
+where H : {0,1} →Gisahashfunctionand s,s1 ∈Zpare
+randomvalues. Here, C0 = H(w)scanbeseenasaBLS                           Inthisshortnote,weshowthattheHHMLWschemedoes
+(Boneh-Lynn-Shacham)signature[5]onamessage        wand                  notprovidekeywordblindnessbygivingaconcreteattack
+thesigningkey s. Ifthecorrespondingveriﬁcationkeygs                     anditsimplementation.Wealsodiscussotherissuesofthe
+isobtained,thenanyonecanobtaininformationofwviathe                      HHMLWscheme.
+signatureveriﬁcationprocedure.Thetracercanobtaingsby                    Acknowledgments
+using(t1,t2)suchthat
+     C1/t11   /C1/t22    =(vs−s11   )1/t1(vs12 )1/t2                    ThisworkwassupportedbyJSPSKAKENHIGrantNum-
+                  =((gt1)s−s1)1/t1((gt2)s1)1/t2                         bersJP21K11897,JP25H01106,andJP25K15119.
+                  =gs−s1/gs1                                            References
+                  =gs
+Then,foranykeywordw′,theciphertextisanencryptionof                       [1]D.Boneh,G.D.Crescenzo,R.Ostrovsky,andG.Persiano,“Publickey
+                                                                             encryptionwithkeywordsearch,”EUROCRYPT,pp.506–522,2004.
+w′if e(C0,g)= e(H(w′),gs)holds.Thisprocedureissuﬃ-                       [2]J.Camenisch,M.Kohlweiss,A.Rial,andC.Sheedy,“Blindand
+cienttobreakindistinguishabilityofkeywords. Weclarify                        anonymousidentity-basedencryptionandauthorisedprivatesearches
+thatthisattackisoutsideoftheirsecuritymodelsincean                           onpublickeyencrypteddata,”PublicKeyCryptography,pp.196–214,
+adversaryisnotallowedtoobtainthetracer’ssecretkey                            2009.
+(Deﬁnition5in[3])        ††.Thus,wedonotclaimthatthisisan                [3]Y.Han,J.Han,W.Meng,J.Lai,andG.Wu,“Blockchain-based
+                                                                             privacy-preservingpublickeysearchableencryptionwithstrongtrace-
+attackagainsttheHHMLWscheme.Asacomment,itseems                               ability,”JournalofSystemsArchitecture,vol.155,p.103264,2024.
+   †Let(u1,v1)=(gr1,M1Yr1)and(u2,v2)=(gr2,M2Yr2)betwo                        https://doi.org/10.1016/j.sysarc.2024.103264.
+ElGamalciphertextsunderthepublickey Y. If M1 = M2,then                   [4]T.OkamotoandD.Pointcheval,“Thegap-problems: Anewclass
+e(u1/u2,Y)= e(g,v1/v2)holds.                                                 ofproblemsforthesecurityofcryptographicschemes,”PublicKey
+  ††TheyclaimedthattheHHMLWschemeprovideskeywordpri-                         Cryptography,pp.104–118,2001.
+vacy(i.e.,nokeywordinformationisrevealedfromaciphertext)                 [5]D.Boneh,B.Lynn,andH.Shacham,“Shortsignaturesfromtheweil
+iftheBoyen-Watersidentity-basedencryption(IBE)[6]isanony-                    pairing,”ASIACRYPT,pp.514–532,2001.
+mous(Theorem1in[3]). Here,       (t1,t2)isamastersecretkeyin             [6]X.BoyenandB.Waters,“Anonymoushierarchicalidentity-baseden-
+theIBEcontextandanIBEadversaryisnotallowedtoobtainthe                        cryption(withoutrandomoracles),”CRYPTO,pp.290–307,2006.
+mastersecretkeyinthesecuritymodel. Thus,ouranalysisdoes                  [7]K.Emura,K.Ito,andT.Ohigashi,“Secure-channelfreesearchable
+notcontradictthattheBoyen-WatersIBEschemeisanonymous.                        encryptionwithmultiplekeywords: Agenericconstruction,anin-
+ †††PBC: Pairing-Based Cryptography (https://crypto.stanford.                stantiation,anditsimplementation,”JournalofComputerandSystem
+                                                                             Sciences,vol.114,pp.107–125,2020.
+edu/pbc/)

@@ -1,0 +1,305 @@
+===== PDF PAGE 1 =====
+                                                                              IEICETRANS.FUNDAMENTALS,VOL.E104–A,NO.1JANUARY2021
+310
+
+LETTER
+OntheSecurityofKeyed-HomomorphicPKE:PreventingKey
+RecoveryAttacksandCiphertextValidityAttacks∗
+
+
+                                                                                                        KeitaEMURA†a),Member
+
+
+
+
+SUMMARY   In this short note, we formally show that Keyed-            fullyhomomorphicencryptionschemes. Becausedecryp-
+HomomorphicPublicKeyEncryption(KH-PKE)issecureagainstkey              tionqueriescanbesimulated,itmightbesuﬃcienttoprevent
+recoveryattacksandciphertextvalidityattacksthathavebeenintroduced     keyrecoveryattacks.However,CCA1securityseemstobe
+aschosen-ciphertextattacksforhomomorphicencryption.                   insuﬃcientowingtociphertextvalidityattacks(CVA)as
+keywords: Keyed-HomomorphicPKE,CCAsecurity,keyrecoveryattacks,
+ciphertextvalidityattacks                                             follows.
+                                                                      CiphertextValidityAttacks:AlthoughKRAisrunviathe
+1.  Introduction                                                      accessofthedecryptionoracle,CVAisrunviatheaccessofa
+                                                                      ciphertextvalidityoracle(bothbeforeandafterthechallenge
+Homomorphicencryptionallowsustooperateencrypted                       phase),wheretheoracletakesciphertextasaninputand
+data,andthisattractivefunctionalityhasbeenappliedto                   determineswhetheritwouldoutput⊥ornotondecryption.
+constructseveralsecureprotocols,especiallyafterthesem-                WeintroducetheLoftusetal.attack[3]inSect.1.4.
+inalworkbyGentry[1]. However,thefactthathomomor-                      1.3  OurContribution
+phicencryptionschemesarevulnerableagainst(adaptive)
+chosen-ciphertextattacks(CCA)∗∗issomewhatoverlooked.                  In this short note, we formally show that Keyed-
+
+1.1  CCA1AttacksagainstHomomorphicEncryption                          HomomorphicPublicKeyEncryption(KH-PKE)[10]–[14],
+                                                                      whichisaCCA2securehomomorphicencryptionbyintro-
+Theoretically,anadversarysendsahomomorphicallyeval-                   ducingadesignatedevaluation,preventskeyrecoveryattacks
+uatedchallengeciphertexttothedecryptionoracle,andcan                  andciphertextvalidityattacks.Sinceseveralhomomorphic
+immediatelybreakthesecurity. Onemaythinkthatthisis                    encryptionschemesarevulnerableagainsttheseattacksas
+justatheoreticalresultandthereisnopracticalimpact.Even                mentionedbefore,ourresultsuggeststhatKH-PKEisanat-
+thoughBleichenbacher’sCCAattack[2]hasbeenwidelyrec-                   tractiveoptionwhenthedesignatedevaluationisallowable.
+ognized,itisalsowidelyrecognizedthataweakersecurity                   1.4  RelatedWork
+levelisacceptableinreturnforobtainingahomomorphic
+property. However,severalCCAattacksagainstconcrete                    Loftusetal.[3]haveshownthattheGentryscheme(of
+homomorphicencryptionschemeshavebeenalsoshown.                        theGentry-Halevivariant[15])isnotCCA1securewhere
+Weintroducekeyrecoveryattacks(KRA)asfollows.                          asecretkey z ∈  [0,d)isrecoveredby O(logd)decryp-
+KeyRecoveryAttacks:Anadversaryrecoverssecretkeys                      tionqueries.Zhang,Plantard,andSusilo[4]haveshowna
+viatheaccessofthedecryptionoracle.Theseattackswork                    CCA1attackagainsttheDijk-Gentry-Halevi-Vaikuntanathan
+wellregardlessofwhetherornotaciphertextinputtothe                     scheme[16]thatrecoversasecretkeyby                O(λ2)decryp-
+decryptionoracleisthechallengeone,andallowstorecover                  tionqueries(whereλisasecurityparameter).Chenaland
+secretkeys.Currently,manyattackshavebeenproposed[3]–                  Tang[5]haveshownseveralkeyrecoveryattackssuchas
+[8].WeintroducetheseattacksinSect.1.4.                                theBrakerski-Vaikuntanathanscheme[17]with               nNdecryp-
+                                                                      tionqueries,whereasecretkeyisanelementof Znqand
+1.2  IsCCA1SecuritySuﬃcient?                                           N = ⌊log2(q−1)⌋ +1,theotherBrakerski-Vaikuntanathan
+                                                                      scheme[18]with             ⌈⌊log2(q − 1)⌋ + 1/⌊log2(t − 1)⌋ + 1⌉
+Canettietal.[9]haveproposedthreeIND-CCA1secure                        decryptionquerieswhere t = poly(λ) ∈ Z∗q,theGentry-
+                                                                      Sahai-Watersscheme[19]thateachdecryptionqueryrecov-
+    ManuscriptreceivedApril10,2020.                                   ers1bitofeachcoeﬃcient tiofthesecretvector⃗t ∈ Znq.
+    ManuscriptrevisedMay21,2020.                                      Theyhavealsoshownthattheseattacksworkagainstthe
+    ManuscriptpublicizedJuly8,2020.                                   Brakerski-Gentry-Vaikuntanathanscheme[20]. TheDijk-
+   †TheauthoriswiththeNationalInstituteofCommunications               Gentry-Halevi-Vaikuntanathanscheme[16]with                O(η)de-
+andInformationTechnology(NICT),Koganei-shi,184-8795Japan.∗ThisworkwassupportedbyJSTCRESTGrantNumberJP-cryptionquerieswhereηisthebit-lengthofthesecretkey
+MJCR19F6,Japan.                                                          ∗∗Throughout this study, we use CCA2 or CCA as adap-
+  a)E-mail:k-emura@nict.go.jp                                         tivechosen-ciphertextattacksandCCA1asnon-adaptivechosen-
+    DOI:10.1587/transfun.2020EAL2039                                  ciphertext(i.e.,lunchtime)attacks.
+
+                  Copyright©2021TheInstituteofElectronics,InformationandCommunicationEngineers
+
+===== PDF PAGE 2 =====
+LETTER
+                                                                                                                                 311
+
+(whichimprovestheabovementionedZhangetal.’sattack).                                     Table1  KH-PKEschemes.
+Dahab, Galbraith, andMorais[6]haveshownakeyre-                                                    Homomorphism     Assumptions
+coveryattackagainstaNTRU-basedschemeproposedby                             Emuraetal.[10],[11]     Multiplicative     DDH
+Bosetal.[21]with           d⌈log2(B)⌉,wheretheschemeiscon-                 Emuraetal.[10],[11]       Additive          DCR
+                                                                                LPJY[12]           Multiplicative     DLIN
+structedonaringZq[x]/(xd +1), disapowerof2, Bisa                                  JR[13]           Multiplicative     SXDH
+boundonthecoeﬃcientsizeoferrordistributionsuchthat                             LDMSW[14]               Full         LWE&iO
+B2< q/(36t2),and tspeciﬁesaplaintextspace R/tRwith
+R =Z[x]/(xd +1).ChenalandTang[7]haveshownakey
+recoveryattackagainstanNTRU-basedschemeproposedby                    theseKH-PKEschemessupporteitheradditiveormultiplica-
+Lopez-Altetal.[22]with        ⌊log2(B)⌋+ndecryptionqueries,          tivehomomorphicoperation,Laietal.[14]haveproposed
+andimprovedtheDahab-Galbraith-Moraisattack.Peng[8]                   Keyed-FullyHomomorphicEncryption(keyed-FHE)whose
+showedakeyrecoveryattackwithsingledecryptionquery                    securityreliesonthelearningwitherrors(LWE)assump-
+againsttheBrakerski-Fan-Vercauterenscheme(aRing-LWE                  tionandindistinguishabilityobfuscation(iO)[27]. Thus,
+variantoftheBrakerskischeme[23]proposedbyFanand                      onedeﬁnitefutureworkistoconstructakeyed-FHEscheme
+Vercauteren[24])whichisemployedinMicrosoftSEAL.                      withoutiO.WesummarizetheseschemesinTable1.
+     Loftusetal.[3]haveshownthattheSmart-Vercauteren                      ThesyntaxofKH-PKEisgivenasfollows.
+scheme[25](withamodiﬁcationbyaddingaciphertext-                      Deﬁnition1(SyntaxofKH-PKE[10],[11]):Let                         Mbea
+checkingprocedure)isIND-CCA1secure(underalattice-                    messagespaceand ⊙beabinaryoperationover M. A
+basedknowledgeassumption),butisnotIND-CVAsecure.                     KH-PKEscheme KH-PKE  =   (KeyGen,Enc,Dec,Eval)
+ThisisaCCA2-likeattackwhereanadversaryobtainsthe                     forhomomorphicoperation⊙consistsofthefollowingfour
+challengeciphertext C∗,addssomevaluesto C∗viahomo-                   algorithms:
+morphicoperations,andsendstheciphertexttotheciphertext
+validityoracle.Theyhaveshownthatthedecryptionresult                  KeyGen: Thekeygenerationalgorithmtakesasecuritypa-
+ofC∗isrecoveredbyO(Nlog2T)ciphertextvalidityqueries                       rameterλ ∈Nasinput,andoutputsapublickey pk,a
+where NisthedegreeofapolynomialandTdeﬁnesthesize                          decryptionkey skd,andahomomorphicoperationkey
+ofthecircuit.Theyinsistedthat“Suchanoraclecanoften                        skh.
+beobtainedintherealworldbytheattackerobservingthe                    Enc: Theencryptionalgorithmtakes pk,andamessage
+behaviorofapartywhoisfedciphertextsoftheattacker’s                        M ∈Masinput,andoutputsaciphertextC.
+choosing.”.Li,Galbraith,andMa[26]alsoinsistedthat“      If           Dec: Thedecryptionalgorithmtakes skdand Casinput,
+auserisstoringanencrypteddatabaseinthecloudand                            andoutputs Mor⊥.
+makingqueriestoit,thenanattackercouldsendciphertexts                 Eval: Theevaluationalgorithmtakes skh,twociphertexts
+ofitschoosinginresponse.Iftheseciphertextsareinvalid,                     C1andC2asinput,andoutputsaciphertextCor⊥.
+thentheusermightre-sendthesamequeryuntilavalidci-                         Next,weprovidethedeﬁnitionofcorrectness. Fora
+phertextisreceivedinresponse.Suchasituationprecisely                 publickeypkgeneratedbytheKeyGenalgorithm,letCpk,M
+givesaCVAoracle.”.                                                   bethesetofallciphertextsof M ∈Munder pk.
+
+2.  Keyed-HomomorphicPublicKeyEncryption                             Deﬁnition2(Correctness[10],[11]):WesaythattheKH-
+                                                                     PKEschemeforhomomorphicoperation⊙iscorrectiffor
+Emuraetal.[10],[11]haveproposedaKH-PKEnotion.                        all  (pk,skd,skh) ← KeyGen(1λ),thefollowingtwocon-
+Inadditiontoapublicanddecryptionkeypair (pk,skd),a                   ditionshold: (1)Forall M ∈ M,andall C ∈ Cpk,M,
+homomorphicoperationkeyskhisdeﬁnedandtheevaluation                   Dec(skd,C) = Mholds.(2)Forall M1,M2 ∈ M,all C1 ∈
+algorithmrequirestotake skhasinputwhileanyonecan                     Cpk,M1,andallC2 ∈Cpk,M2,Eval(skh,C1,C2) ∈Cpk,M1⊙M2
+evaluateciphertextfreelyinusualhomomorphicencryption                 holds.
+schemes. Thisdesignatedevaluationallowsustodeﬁne                          Next,weprovidethedeﬁnitionofindistinguishability
+CCAsecurityforoutsiderswhodonothave skh.                             underadaptivechosenciphertextattacks(IND-KH-CCA).
+     Emuraetal.haveshowntwoinstantiationsoftheir                     WesimplydenoteIND-KH-CCAasKH-CCA.
+genericconstruction. TheﬁrstoneisamultiplicativeKH-                  Deﬁnition3(KH-CCA):WesaythattheKH-PKEscheme
+PKEscheme,whichissecureunderthedecisionalDiﬃe-                       isKH-CCAsecureifforanyprobabilisticpolynomial-time
+Hellman(DDH)assumption,andthesecondoneisanaddi-
+tiveKH-PKEscheme,whichissecureunderthedecisional                     (PPT)adversaryA,theadvantage
+compositeresiduosity(DCR)assumption. Theseschemes                          AdvKH-CCA
+arepairing-free.  Later, Libert, Peters, Joye, andYung                         KH-PKE,A(λ) =  Pr[(pk,skd,skh)←KeyGen(1λ);
+(LPYJ)[12]haveproposedamultiplicativeKH-PKEscheme                               (M∗0,M∗1,State)←AO(ﬁnd,pk);β   $←{0,1};
+supportingthresholddecryptionandpubliclyveriﬁability.
+JutlaandRoy(JR)[13]havealsoproposedapubliclyveri-                               C∗ ←Enc(pk,M∗β);β′←AO(guess,State,C∗);
+ﬁableKH-PKEschemewithashorterciphertextsize. The                                β =β′]− 1
+LPYJandJRKH-PKEschemesarepairing-based.Though                                              2
+
+===== PDF PAGE 3 =====
+                                                                           IEICETRANS.FUNDAMENTALS,VOL.E104–A,NO.1JANUARY2021
+312
+
+isnegligibleinλ, where O consistsoforacles RevHK,                         AdvKRAKH-PKE,A(λ) = Pr[(pk,skd,skh)←KeyGen(1λ);
+Eval(skh,·,·),andDec(skd,·)deﬁnedasfollows. Let D                              skd ←ADec(skd,·)(pk)]
+bealistwhichisinitializedas∅,andissetasD ={C∗}right
+afterthechallengestage.                                             isnegligibleinλ,whereDec(skd,·)isthedecryptionoracle
+   • RevHK:Uponarequest,thehomomorphickeyreveal                     whichrespondstoaqueryCwiththeresultofDec(skd,C).
+     oraclerespondswith skh.Thisoracleisavailableonly                     Next,weshowthatiftheKH-PKEschemeisKH-CCA
+     once.                                                          secure,thenitissecureagainstkeyrecoveryattacks.† This
+   • Eval(skh,·,·):IfRevHKhasalreadybeenqueriedbe-                  issomewhattrivialsincethedecryptionoracleisavailable
+     fore,thentheevaluationoracleisnotavailable.Other-              inthedeﬁnitionofKH-CCA,andalldecryptionqueriesare
+     wise,theoraclerespondstoaquery  (C1,C2)withthe                 simulatable. Let Abeanadversarythatissuesdecryption
+     resultofC ←Eval(skh,C1,C2).Inaddition,ifC ,⊥                   queriesandrecoversthesecretkey skd. Weshowthere
+     andeither C1 ∈ Dor C2 ∈ D,thentheoracleupdates                 existsanalgorithm BthatbreakstheKH-CCAsecurityof
+     thelistbyD ←D∪{C}.                                             aKH-PKEschemebyinteractingwithA.First,Breceives
+   • Dec(skd,·):ThedecryptionoracleisnotavailableifA                 pkfromtheKH-CCAchallengeroftheKH-PKEscheme.
+     hasqueriedtoRevHKandAhasobtainedthechallenge                    Bforwardsitto A. When Asendsadecryptionquery,
+     ciphertextC∗.Otherwise,theoraclerespondstoaquery               thenBforwardsittothechallenger,obtainsthedecryption
+     CwiththeresultofDec(skd,C)ifC<Dorreturns⊥                      result,andreturnsittoA.Sincenotargetciphertextexists
+     otherwise.                                                     inkeyrecoveryattacks,Aoutputs skdatsomepoint.Then,
+     Itisparticularlyworthnotingthatanyciphertextin-                 Bchooses  (M∗0,M∗1)andsendsittothechallenger,and
+cludingthechallengeoneisallowedtobetheinputsofthe                   thechallengerreturnsthechallengeciphertext C∗.†† By
+evaluationoracle. Asarestrictiontoavoidtrivialattacks,              decryptingC∗,BbreakstheKH-CCAsecurity.Thisshows
+thechallengeciphertextandchallenge-relatedciphertexts               thatiftheKH-PKEschemeisKH-CCAsecure,thenitis
+(whicharelistedinD)arenotallowedtobeinputintothe                    KRAsecure.
+decryptionoracle.                                                   3.2  KH-PKEisSecureagainstCiphertextValidityAttacks
+IsDesignatedEvaluationSettingSuﬃcient?InKH-PKE,
+theevaluationalgorithmrequiresskh.Thisdesignatedeval-               Here,weformalizeciphertextvalidityattacksintheKH-PKE
+uationsettingisacceptableinthefollowingcase:(1)aclient              context. SincethisisaCCA2-likeattack,weadditionally
+setsupapublicanddecryptionkeypair,encryptsdata,and                  considertheevaluationoraclethatallowstheadversaryto
+sendstheciphertexttoaserver,(2)theserverrunstheeval-                checkthevalidityofchallenge-relatedciphertexts.Although
+uationalgorithmforencrypteddatatoperformhomomor-                    herewegiveanIND-typedeﬁnition,Loftusetal.[3]gave
+phicoperationstothem,andreturnstheevaluationresult(a                anonewayness-typedeﬁnition:thechallengeciphertext C∗
+ciphertext)totheclient,and(3)theclientdecryptstheci-                isassociatedwithahiddenmessage M∗and Arecovers
+phertextandobtainstheresult.Asanexampleofthisframe-                  M∗. OurIND-typedeﬁnitionimpliestheonewayness-type
+work,Shimizuetal.[28]haveproposedaprivacy-preserving                deﬁnition.
+searchmechanismforchemicalcompounddatabasesusing                    Deﬁnition5(IND-CVA):WesaythattheKH-PKEscheme
+theadditivehomomorphicencryption.                                   isIND-CVAsecureifforanyPPTadversaryA,theadvan-
+
+3.  OntheSecurityofKH-PKE                                           tage
+
+AlthoughKH-CCAsecurityformallystatesthesecurityof                      AdvIND-CVAKH-PKE,A(λ) =  Pr[(pk,skd,skh)←KeyGen(1λ);
+KH-PKE,inthissectionweformallyshowthatKH-CCAcan                            (M∗0,M∗1,State)←AValidity(skd,·),Eval(skh,·,·)(ﬁnd,pk);
+preventkeyrecoveryattacksandciphertextvalidityattacks.                      β   $←{0,1}; C∗ ←Enc(pk,M∗β);
+WeassumethatanadversaryAisanoutsiderwhodoesnot
+calltheRevHKoracle.                                                         β′←AValidity(skd,·),Eval(skh,·,·)(guess,State,C∗);
+
+3.1  KH-PKEisSecureagainstKeyRecoveryAttacks                                β =β′]− 12
+
+Here,weformalizekeyrecoveryattacksintheKH-PKE                       is negligible inλ, where the ciphertext validity oracle
+context. WeassumethatArecoverstheactual skdforthe                   Validity(skd,·)isdeﬁnedasfollows.
+sakeofsimplicity. However,wecaneasilyextenditsuch                      • Validity(skd,·):TheoracletakesasinputCandreturns
+thatArecoversanequivalentkey sk′d , skdwhereforall                        1iftheresultofDec(skd,C)isnot ⊥orreturns 0
+M ∈M,andallC ∈Cpk,M,Dec(sk′d,C) = Mholds.
+                                                                        †Ourreductionstillworksintheequivalentkeycase.Moreover,
+Deﬁnition4(KRASecurity):We say that the KH-PKE                      ourreductionworksevenifAisallowedtoaccesstheevaluation
+schemeissecureagainstkeyrecoveryattacksifforanyPPT                  oracle.
+adversaryA,theadvantage                                                ††Clearly,ourreductionworksevenifAchooses (M∗0,M∗1).
+
+===== PDF PAGE 4 =====
+LETTER
+                                                                                                                                313
+
+     otherwise.
+     Basically,theciphertextvalidityoracleisdirectlysim-            4.  Discussion
+ulatedbythedecryptionoracle,i.e.,ifthedecryptionoracle              DiﬀerencesOtherPost-CCA1Security: Loftusetal.[3]
+returnsanon-⊥value,thenthereductionreturns1,andoth-                 haveintroducedthenotionofCCA-embeddablehomomor-
+erwise,ifthedecryptionoraclereturns⊥,thenthereduction               phicencryption. FromaciphertextofaCCAsecurePKE
+returns0. BecauseDasetal.[29]haveshownthatCVAis                     scheme(e.g.,theCramer-ShoupPKEscheme[30]),anyone
+weakerthanCCA2,onemaythinkthatitisalsotrivialto                     canextractaciphertextofaCPAhomomorphicPKEscheme
+showthataKH-CCAsecureKH-PKEschemeisalsose-                          (e.g.,theElGamalPKEscheme). Unfortunately,CCAse-
+cureagainstciphertextvalidityattacks. However,weneed                curityismissingafterhomomorphicoperations. Li,Gal-
+toadditionallysimulatetheciphertextvalidityoracleeven               braith,andMa[26]havemodiﬁedtheGentry-Sahai-Waters
+whenchallenge-relatedciphertextscontainingDarequeried               scheme[19]wherethedecryptionalgorithmgeneratesa
+(rememberthatintheLoftusetal.attackthechallengeci-                  freshrandomone-timesecretkeyforeachdecryption.They
+phertextismodiﬁedviahomomorphicoperations,andthe                    insistedthattheschemeissecureagainstciphertextvalid-
+modiﬁedciphertextissenttotheciphertextvalidityoracle).              ityattacksbecausenovalidciphertextnotionisintroduced
+Ofnote,aKH-CCAadversary(thereductioninthiscontext)                  (i.e,thedecryptionalgorithmdoesnotoutput ⊥). Owing
+isnotallowedtosendaciphertextC ∈ Dtothedecryption                   totheChenal-TangkeyrecoveryattackagainsttheGentry-
+oracletoavoidatrivialattack.However,suchciphertextsare              Sahai-Watersscheme[5],somebitsoftheone-timeprivate
+generatedviatheevaluationoracle,andthusthereduction                 keyarerecoveredbydecryptionqueries,however,thisdoes
+simplyreturns1ifC ∈Disqueriedtotheciphertextvalidity                notallowtheadversarytocomputeavalidsecretkeyowing
+oracle.Weemphasizethatifachallenge-relatedciphertext                tothefreshness. Althoughthisattemptisattractive,itis
+C < Disqueried(itshowsthathomomorphicoperations                     notprovedthatthemodiﬁedGentry-Sahai-Watersschemeis
+weredonewithoutusing skh),thenitimmediatelybreaks                   IND-CCA1secure.Desmedtetal.[31]haveproposedcon-
+theKH-CCAsecurity. Thus,here,weareinterestedinthe                   trolledhomomorphicencryptionwhereatokenisrequired
+caseC ∈Donlyforhandlingchallenge-relatedqueries.                    forevaluation. Thisalsointroducesthedesignatedevalu-
+     Next,weshowthatiftheKH-PKEschemeisKH-CCA                       ationsettingbutdoesnotconsideranyCCAsecurity. Joo
+secure,thenitissecureagainstciphertextvalidityattacks.              andYun[32]proposedhomomorphicauthenticatedencryp-
+LetAbeanadversarythatissuesciphertextvalidityqueries.               tionanddeﬁneditsCCAsecurity. UnlikeKH-PKE,itis
+Aisadditionallyallowedtoaccesstheevaluationoracle.We                symmetrickeyencryption.
+showthereexistsanalgorithmBthatbreakstheKH-CCA                      IsDoubleEncryptionSuﬃcient?Emuraetal.haveshown
+securityofaKH-PKEschemebyinteractingwithA.First,                    thatasimpledoubleencryptionproducesthedesignated
+Breceives pkfromtheKH-CCAchallengeroftheKH-                         evaluationwhereaplaintextisencryptedbyaCCA1homo-
+PKEscheme. BforwardsittoA.IfAsendsaciphertext                       morphicPKEscheme,andtheciphertextisagainencrypted
+validityquery C,then Bforwardsittothechallengeras                   byaCCA2PKEscheme. Thenthedecryptionkeyofthe
+adecryptionquery,obtainsthedecryptionresult M,and                   CCA2PKEschemeisregardedas skh.Itmaybesuﬃcient
+returns1ifM ,⊥and0ifM =⊥.IfAsendsanevaluation                       topreventkeyrecoveryattacks,butisinsuﬃcienttoprevent
+query (C1,C2)toB,thenBforwardsittothechallengeras                   ciphertextvalidityattacks.LettheinnerPKEbeCCA1se-
+anevaluationquery,andreturnstheevaluationresutCtoA.                 curebutnotCVAsecure(asthemodiﬁedSmart-Vercauteren
+Inthechallengephase, Achooses  (M∗0,M∗1)andsendsit                  scheme[3]). Afterobtainingthechallengeciphertext,ifa
+toB. Bforwardsittothechallenger,obtainsthechallenge                 CVAadversarycallstheciphertextvalidityoracle,thenthe
+ciphertextC∗,andreturnsittoA.Later,Balsomanagesa                    schemeisbroken. IfaCVAsecurePKEscheme,orrather
+setD′whichisinitializedas{C∗}.IfAsendsanevaluation                  CCA1.5securePKEscheme††,isemployedastheinner
+query  (C1,C2)to B,then Bforwardsittothechallenger                  PKE,thenitmaybesuﬃcienttoprotecttheschemeagainst
+asanevaluationquery,andreturnstheevaluationresult C                 outsideradversaries.However,KH-CCAsecurityconsiders
+to A. If C , ⊥andeither C1 ∈ D′or C2 ∈ D′,then B                    thefollowingcase,whichisnotcapturedbydoubleencryp-
+updatesthelistbyD′ ←D∪{C}.IfAsendsaciphertext                       tion: anadversaryissuesdecryptionqueriesevenafterthe
+validityqueryC < D′,thenBforwardsittothechallenger                  challengephaseandlatertheadversaryobtains skhviathe
+asadecryptionquery,obtainsthedecryptionresult M,and                 RevHKoracle. Althoughthereisaroomforargumenton
+returns1if M ,⊥and0if M =⊥.IfAsendsaciphertext                      whetherornotthiscaseaﬀectssecurityinpractice,neverthe-
+validityquery C ∈ D′,then Breturns1. Aoutputsβ′at                   less,weinsistthatstrongersecurityshouldbeconsideredas
+somepoint. Then, Boutputsβ′,andbreakstheKH-CCA                      muchaspossibleaslongasthehomomorphicfunctionality
+security.ThisshowsthatiftheKH-PKEschemeisKH-CCA                     isprovided.
+secure,thenitisIND-CVAsecure.†
+                                                                       ††Dasetal.[29]deﬁnedCCA1.5wherethedecryptionoracle
+                                                                    isavailablebeforethechallengephaseandtheciphertextvalidity
+   †Clearly,ourreductionworksevenif Aisallowedtoaccess              oracleisavailableevenafterthechallengephase. Theyshowed
+                                                                    thatCCA1.5isstrongerthanCCA1butisweakerthan(replayable)
+thedecryptionoracle.                                                CCA2.
+
+===== PDF PAGE 5 =====
+                                                                                              IEICETRANS.FUNDAMENTALS,VOL.E104–A,NO.1JANUARY2021
+314
+
+
+                                                                                       [17]Z.BrakerskiandV.Vaikuntanathan,“Eﬃcientfullyhomomorphic
+References                                                                                   encryptionfrom(standard)LWE,”FOCS,pp.97–106,2011.
+                                                                                       [18]Z.BrakerskiandV.Vaikuntanathan,“Fullyhomomorphicencryption
+  [1]C.Gentry,“Fullyhomomorphicencryptionusingideallattices,”                                fromring-lweandsecurityforkeydependentmessages,”CRYPTO,
+       STOC,pp.169–178,2009.                                                                 pp.505–524,2011.
+  [2]D.Bleichenbacher, “Chosenciphertextattacksagainstprotocols                        [19]C.Gentry,A.Sahai,andB.Waters,“Homomorphicencryptionfrom
+       basedontheRSAencryptionstandardPKCS#1,”CRYPTO,pp.1–                                   learningwitherrors: Conceptually-simpler,asymptotically-faster,
+       12,1998.                                                                              attribute-based,”CRYPTO,pp.75–92,2013.
+  [3]J.Loftus,A.May,N.P.Smart,andF.Vercauteren,“OnCCA-secure                           [20]Z.Brakerski,C.Gentry,andV.Vaikuntanathan,“(Leveled)fullyho-
+       somewhathomomorphicencryption,”SelectedAreasinCryptogra-                              momorphicencryptionwithoutbootstrapping,”ITCS,pp.309–325,
+       phy,pp.55–72,2011.                                                                    2012.
+  [4]Z.Zhang, T.Plantard, andW.Susilo, “OntheCCA-1security                             [21]J.W.Bos,K.E.Lauter,J.Loftus,andM.Naehrig,“Improvedsecurity
+       ofsomewhathomomorphicencryptionovertheintegers,”ISPEC,                                foraring-basedfullyhomomorphicencryptionscheme,”IMACC,
+       pp.353–368,2012.                                                                      pp.45–64,2013.
+  [5]M.ChenalandQ.Tang,“Onkeyrecoveryattacksagainstexist-                              [22]A.López-Alt,E.Tromer,andV.Vaikuntanathan,“On-the-ﬂymul-
+       ingsomewhathomomorphicencryptionschemes,”LATINCRYPT,                                  tipartycomputationonthecloudviamultikeyfullyhomomorphic
+       pp.239–258,2014.                                                                      encryption,”STOC,pp.1219–1234,2012.
+  [6]R.Dahab, S.D.Galbraith, andE.Morais, “Adaptivekeyrecov-                           [23]Z. Brakerski, “Fully homomorphic encryption without modulus
+       eryattacksonNTRU-basedsomewhathomomorphicencryption                                   switchingfromclassicalgapsvp,”CRYPTO,pp.868–886,2012.
+       schemes,”ICITS,pp.283–296,2015.                                                 [24]J.FanandF.Vercauteren, “Somewhatpracticalfullyhomomor-
+  [7]M.ChenalandQ.Tang,“KeyrecoveryattacksagainstNTRU-based                                  phicencryption,”IACRCryptologyePrintArchive,vol.2012,p.144,
+       somewhathomomorphicencryptionschemes,” ISC,pp.397–418,                                2012.
+       2015.                                                                           [25]N.P.SmartandF.Vercauteren,“Fullyhomomorphicencryptionwith
+  [8]Z.Peng,“Dangerofusingfullyhomomorphicencryption:Alookat                                 relativelysmallkeyandciphertextsizes,”PublicKeyCryptography,
+       microsoftSEAL,”CoRR,vol.abs/1906.07127,2019.                                          pp.420–443,2010.
+  [9]R.Canetti,S.Raghuraman,S.Richelson,andV.Vaikuntanathan,                           [26]Z.Li,S.D.Galbraith,andC.Ma,“Preventingadaptivekeyrecov-
+       “Chosen-ciphertextsecurefullyhomomorphicencryption,”Public-                           eryattacksontheGSWlevelledhomomorphicencryptionscheme,”
+       KeyCryptography,pp.213–240,2017.                                                      ProvableSecurity,pp.373–383,2016.
+ [10]K.Emura,G.Hanaoka,G.Ohtake,T.Matsuda,andS.Yamada,                                 [27]B.Barak,O.Goldreich,R.Impagliazzo,S.Rudich,A.Sahai,S.P.
+       “Chosenciphertextsecurekeyed-homomorphicpublic-keyencryp-                             Vadhan,andK.Yang,“Onthe(im)possibilityofobfuscatingpro-
+       tion,”Public-KeyCryptography,pp.32–50,2013.                                           grams,”J.ACM,vol.59,no.2,p.6,2012.
+ [11]K.Emura,G.Hanaoka,K.Nuida,G.Ohtake,T.Matsuda,andS.Ya-                             [28]K. Shimizu, K. Nuida, H. Arai, S. Mitsunari, N. Attrapadung,
+       mada,“Chosenciphertextsecurekeyed-homomorphicpublic-key                               M. Hamada, K. Tsuda, T. Hirokawa, J. Sakuma, G. Hanaoka,
+       cryptosystems,”Des.CodesCryptogr.,vol.86,no.8,pp.1623–1683,                           andK.Asai,“Privacy-preservingsearchforchemicalcompound
+       2018.                                                                                 databases,”BMCBioinform.,vol.16,no.S6,2015.
+ [12]B.Libert, T.Peters, M.Joye, andM.Yung, “Non-malleability                          [29]A.Das,S.Dutta,andA.Adhikari,“Indistinguishabilityagainstcho-
+       frommalleability: Simulation-soundquasi-adaptiveNIZKproofs                            senciphertextveriﬁcationattackrevisited: Thecompletepicture,”
+       andCCA2-secureencryptionfromhomomorphicsignatures,”EU-                                ProvableSecurity,pp.104–120,2013.
+       ROCRYPT,pp.514–532,2014.                                                        [30]R.CramerandV.Shoup,“Apracticalpublickeycryptosystemprov-
+ [13]C.S.JutlaandA.Roy,“Dual-systemsimulation-soundnesswithap-                               ablysecureagainstadaptivechosenciphertextattack,”CRYPTO,
+       plicationstoUC-PAKEandmore,”ASIACRYPT,pp.630–655,2015.                                pp.13–25,1998.
+ [14]J.Lai,R.H.Deng,C.Ma,K.Sakurai,andJ.Weng,“CCA-secure                               [31]Y.Desmedt,V.Iovino,G.Persiano,andI.Visconti,“Controlled
+       keyed-fullyhomomorphicencryption,”Public-KeyCryptography,                             homomorphicencryption:Deﬁnitionandconstruction,”Workshop
+       pp.70–98,2016.                                                                        onEncryptedComputingandAppliedHomomorphicCryptography,
+ [15]C. Gentry and S. Halevi,  “Implementing Gentry’s fully-                                 pp.107–129,2017.
+       homomorphic encryption scheme,” EUROCRYPT, pp.129–148,                          [32]C.JooandA.Yun,“Homomorphicauthenticatedencryptionsecure
+       2011.                                                                                 againstchosen-ciphertextattack,”ASIACRYPT,pp.173–192,2014.
+ [16]M.vanDijk,C.Gentry,S.Halevi,andV.Vaikuntanathan,“Fully
+       homomorphicencryptionovertheintegers,”EUROCRYPT,pp.24–
+       43,2010.

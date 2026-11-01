@@ -1,0 +1,20 @@
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 51, character 17:
+Warning: identifier a rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 123, characters 10-14:
+Warning: identifier aid_B rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 123, characters 47-50:
+Warning: identifier ED_B rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 161, characters 52-56:
+Warning: identifier aid_A rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 161, characters 144-147:
+Warning: identifier ED_A rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 175, characters 7-11:
+Warning: identifier token rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 221, characters 10-14:
+Warning: identifier aid_A rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 221, characters 102-105:
+Warning: identifier ED_A rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 239, characters 10-14:
+Warning: identifier aid_B rebound.
+File "D:\Users\10202\Desktop\saga\proofs\evidence\provider-otk-20261025T023748919760Z\inputs\agent_communication_provider_otk.pv", line 239, characters 102-105:
+Warning: identifier ED_B rebound.

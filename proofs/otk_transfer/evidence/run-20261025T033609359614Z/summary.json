@@ -1,0 +1,244 @@
+{
+  "cases": {
+    "forwarding": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.131
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/forwarding/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/forwarding/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/forwarding/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 0,
+        "timeout": false,
+        "elapsed_seconds": 18.884
+      },
+      "results": {
+        "normal_B_completes": {
+          "type": "exists-trace",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "normal_C_completes": {
+          "type": "exists-trace",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "transfer_after_C_exhaustion_completes": {
+          "type": "exists-trace",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "provider_per_sender_issuance_limit": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "provider_issues_each_OTK_once": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "receiver_consumes_each_OTK_once": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "accepted_request_has_matching_token_and_decryption": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "long_term_keys_not_disclosed": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "successful_use_requires_issue_to_same_sender": {
+          "type": "all-traces",
+          "actual": "falsified",
+          "expected": "falsified",
+          "matches_expected": true
+        },
+        "sender_uses_at_most_one_distinct_OTK": {
+          "type": "all-traces",
+          "actual": "falsified",
+          "expected": "falsified",
+          "matches_expected": true
+        }
+      }
+    },
+    "no_forwarding": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "-DNO_FORWARD",
+          "--quit-on-warning",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.126
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "-DNO_FORWARD",
+          "--quit-on-warning",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/no_forwarding/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/no_forwarding/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/no_forwarding/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 0,
+        "timeout": false,
+        "elapsed_seconds": 13.986
+      },
+      "results": {
+        "normal_B_completes": {
+          "type": "exists-trace",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "normal_C_completes": {
+          "type": "exists-trace",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "transfer_after_C_exhaustion_completes": {
+          "type": "exists-trace",
+          "actual": "falsified",
+          "expected": "falsified",
+          "matches_expected": true
+        },
+        "provider_per_sender_issuance_limit": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "provider_issues_each_OTK_once": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "receiver_consumes_each_OTK_once": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "accepted_request_has_matching_token_and_decryption": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "long_term_keys_not_disclosed": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "successful_use_requires_issue_to_same_sender": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        },
+        "sender_uses_at_most_one_distinct_OTK": {
+          "type": "all-traces",
+          "actual": "verified",
+          "expected": "verified",
+          "matches_expected": true
+        }
+      }
+    },
+    "deny_C": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "-DDENY_C",
+          "--quit-on-warning",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.13
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "-DDENY_C",
+          "--quit-on-warning",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/deny_C/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/deny_C/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/deny_C/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "cwd": "/mnt/d/Users/10202/Desktop/saga",
+        "exit_code": 1,
+        "timeout": false,
+        "elapsed_seconds": 6.018
+      },
+      "results": {}
+    }
+  },
+  "problems": [
+    "deny_C: missing results: ['accepted_request_has_matching_token_and_decryption', 'long_term_keys_not_disclosed', 'normal_B_completes', 'normal_C_completes', 'provider_issues_each_OTK_once', 'provider_per_sender_issuance_limit', 'receiver_consumes_each_OTK_once', 'sender_uses_at_most_one_distinct_OTK', 'successful_use_requires_issue_to_same_sender', 'transfer_after_C_exhaustion_completes']",
+    "deny_C: proof command failed or timed out"
+  ],
+  "all_expected": false,
+  "note": "Expected falsifications are results, not proof-command failures."
+}

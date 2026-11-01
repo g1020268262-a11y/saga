@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+    "-DDENY_C",
+    "--quit-on-warning",
+    "--derivcheck-timeout=30",
+    "--prove",
+    "--output=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033815645931Z/deny_C/proof.spthy",
+    "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033815645931Z/deny_C/traces.json",
+    "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033815645931Z/deny_C/traces.dot",
+    "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033815645931Z/inputs/saga_otk_transfer.spthy",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "cwd": "/mnt/d/Users/10202/Desktop/saga",
+  "exit_code": 0,
+  "timeout": false,
+  "elapsed_seconds": 11.285
+}

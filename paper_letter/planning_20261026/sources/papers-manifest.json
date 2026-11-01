@@ -1,0 +1,59 @@
+[
+  {
+    "id": "ccs2016-oauth",
+    "title": "A Comprehensive Formal Security Analysis of OAuth 2.0",
+    "venue": "ACM CCS 2016",
+    "doi": "10.1145/2976749.2978385",
+    "requested_url": "https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-ccs-2016.pdf",
+    "status": "FAILED",
+    "error": "<urlopen error _ssl.c:993: The handshake operation timed out>"
+  },
+  {
+    "id": "ccs2017-tls13",
+    "title": "A Comprehensive Symbolic Analysis of TLS 1.3",
+    "venue": "ACM CCS 2017",
+    "doi": "10.1145/3133956.3134063",
+    "requested_url": "https://people.cispa.io/cas.cremers/downloads/papers/CHHSV2017-TLS13.pdf",
+    "final_url": "https://people.cispa.io/cas.cremers/downloads/papers/CHHSV2017-TLS13.pdf",
+    "content_type": "application/pdf",
+    "pages": 16,
+    "bytes": 702758,
+    "sha256": "a0aa5c83b7560e53a475ebb18dff4d72c9264a072d468a5ad01e89fd10fe1796",
+    "status": "PDF_VERIFIED",
+    "local_pdf": "ccs2017-tls13.pdf",
+    "local_text": "ccs2017-tls13.txt",
+    "fetched_utc": "2026-10-26T06:34:03.306679+00:00"
+  },
+  {
+    "id": "joc2021-tls13",
+    "title": "A Cryptographic Analysis of the TLS 1.3 Handshake Protocol",
+    "venue": "Journal of Cryptology 34, article 37 (2021)",
+    "doi": "10.1007/s00145-021-09384-1",
+    "requested_url": "https://link.springer.com/content/pdf/10.1007/s00145-021-09384-1.pdf",
+    "final_url": "https://link.springer.com/content/pdf/10.1007/s00145-021-09384-1.pdf?error=cookies_not_supported&code=388c7724-829e-4671-980a-62490d8cc4cb",
+    "content_type": "application/pdf",
+    "pages": 69,
+    "bytes": 1364557,
+    "sha256": "a710d1e8809a6517965f65dae3a5158e6e48ca4e3c9f8d2bd6fd261983b632a3",
+    "status": "PDF_VERIFIED",
+    "local_pdf": "joc2021-tls13.pdf",
+    "local_text": "joc2021-tls13.txt",
+    "fetched_utc": "2026-10-26T06:34:10.935634+00:00"
+  },
+  {
+    "id": "sp2019-fapi",
+    "title": "An Extensive Formal Security Analysis of the OpenID Financial-grade API",
+    "venue": "IEEE S&P 2019",
+    "doi": "10.1109/SP.2019.00067",
+    "requested_url": "https://conferences.computer.org/sp/pdfs/sp/2019/AnExtensiveFormalSecurityAnalysisoftheOpenIDFi.pdf",
+    "final_url": "https://conferences.computer.org/sp/pdfs/sp/2019/AnExtensiveFormalSecurityAnalysisoftheOpenIDFi.pdf",
+    "content_type": "application/pdf",
+    "pages": 19,
+    "bytes": 281614,
+    "sha256": "30a979aa028a2d9768888b66fed621573778d43cfce5cabaae079284fbdddfac",
+    "status": "PDF_VERIFIED",
+    "local_pdf": "sp2019-fapi.pdf",
+    "local_text": "sp2019-fapi.txt",
+    "fetched_utc": "2026-10-26T06:34:03.762947+00:00"
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "pdfs": [
+    {
+      "id": "01_spkse_2026",
+      "sha256_matches": true,
+      "pages": 3,
+      "rendered_pages": 3
+    },
+    {
+      "id": "02_multikeyword_2026",
+      "sha256_matches": true,
+      "pages": 2,
+      "rendered_pages": 2
+    },
+    {
+      "id": "03_keyword_blindness_2026",
+      "sha256_matches": true,
+      "pages": 2,
+      "rendered_pages": 2
+    },
+    {
+      "id": "04_khpke_security_notions_2021",
+      "sha256_matches": true,
+      "pages": 5,
+      "rendered_pages": 5
+    }
+  ],
+  "all_local_markdown_links_exist": true,
+  "reading_scope": "All 12 pages read and rendered pages inspected for structure; no proof or attack revalidation",
+  "existing_manuscript_or_models_edited": false
+}

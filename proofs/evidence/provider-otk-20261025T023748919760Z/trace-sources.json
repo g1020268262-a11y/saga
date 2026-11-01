@@ -1,0 +1,54 @@
+[
+  {
+    "query": "receiver-accept",
+    "event": "ReceiverAcceptsInitiator",
+    "result": "RESULT event(ReceiverAcceptsInitiator(receiver,initiator,ed,pac,otk)) ==> event(ProviderConfirmsInitiator(initiator,ed,pac)) && event(ProviderIssuesOTK(receiver,initiator,ed,pac,otk)) is false.",
+    "source_log": "verify.stdout.txt",
+    "source_log_sha256": "40c64ca8c554f17d73f386389301df77e626e2dcec8f81ba50262a00e69a520f",
+    "first_line": 4913,
+    "last_line": 5189,
+    "excerpt": "receiver-accept.trace.txt",
+    "excerpt_sha256": "4440fa1101eb009453d083ff25aaf5aacd6a0c98c9204bdaf21a22aae07534d3",
+    "trace_reconstructed": true,
+    "executed_events": [
+      "event start at {10}",
+      "event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {31} in copy a_5",
+      "event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {31} in copy a_6",
+      "event EndAuthA(ED_A,aid_A,pk(SOTK1_A)) at {59} in copy a_3",
+      "event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {42} in copy a_5",
+      "event ProviderConfirmsInitiator(aid_B,ED_B,pk(SAC_B)) at {43} in copy a_5",
+      "event EndAgentAuthA(token,ED_A,dh(pk(SAC_B),SOTK1_A)) at {65} in copy a_3",
+      "event ReceiverAcceptsInitiator(aid_A,aid_B,ED_B,pk(SAC_B),pk(SOTK1_A)) at {66} in copy a_3 (goal)"
+    ],
+    "provider_issues_otk_event_in_reconstructed_trace": false
+  },
+  {
+    "query": "initiator-complete",
+    "event": "InitiatorCompletesConnection",
+    "result": "RESULT event(InitiatorCompletesConnection(receiver,initiator,ed,pac,otk)) ==> event(ProviderConfirmsInitiator(initiator,ed,pac)) && event(ProviderIssuesOTK(receiver,initiator,ed,pac,otk)) is false.",
+    "source_log": "verify.stdout.txt",
+    "source_log_sha256": "40c64ca8c554f17d73f386389301df77e626e2dcec8f81ba50262a00e69a520f",
+    "first_line": 5743,
+    "last_line": 6193,
+    "excerpt": "initiator-complete.trace.txt",
+    "excerpt_sha256": "1a110d1d6edc3df102b7b39d5a1f38d3806dc43641cd7a8a21675dede849fbdc",
+    "trace_reconstructed": true,
+    "executed_events": [
+      "event start at {10}",
+      "event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {31} in copy a_6",
+      "event EndProviderAuthA(ED_A,aid_A,pk(SOTK1_A)) at {31} in copy a_7",
+      "event EndAuthA(ED_A,aid_A,pk(SOTK1_A)) at {59} in copy a_5",
+      "event EndAuthA(ED_A,aid_A,pk(SOTK1_A)) at {59} in copy a_4",
+      "event EndProviderAuthB(ED_B,aid_B,pk(SOTK1_B)) at {42} in copy a_7",
+      "event ProviderConfirmsInitiator(aid_B,ED_B,pk(SAC_B)) at {43} in copy a_7",
+      "event EndAuthB(ED_B,aid_B,pk(SOTK1_B)) at {79} in copy a_8",
+      "event EndAgentAuthA(token,ED_A,dh(pk(SAC_B),SOTK1_A)) at {65} in copy a_5",
+      "event ReceiverAcceptsInitiator(aid_A,aid_B,ED_B,pk(SAC_B),pk(SOTK1_A)) at {66} in copy a_5",
+      "event EndAgentAuthA(token,ED_A,dh(pk(SAC_B),SOTK1_A)) at {65} in copy a_4",
+      "event ReceiverAcceptsInitiator(aid_A,aid_B,ED_B,pk(SAC_B),pk(SOTK1_A)) at {66} in copy a_4",
+      "event EndAgentAuthB(token,ED_A,dh(pk(SOTK1_A),SAC_B)) at {91} in copy a_8",
+      "event InitiatorCompletesConnection(aid_A,aid_B,ED_B,pk(SAC_B),pk(SOTK1_A)) at {92} in copy a_8 (goal)"
+    ],
+    "provider_issues_otk_event_in_reconstructed_trace": false
+  }
+]

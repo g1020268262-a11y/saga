@@ -1,0 +1,217 @@
+theory Saga_OTK_Transfer
+begin
+
+builtins: diffie-hellman, symmetric-encryption, hashing
+
+/*
+ * Focused, finite-configuration SAGA model: receiver A and senders B/C.
+ * Both senders start with ONE Provider issuance credit; A has TWO OTKs.
+ * Registration/certificates and mutually authenticated TLS are abstracted
+ * by fixed identity/PAC bindings and private, endpoint-labelled TLS facts.
+ * These facts are NOT network Out/In facts. An outsider cannot read/forge
+ * them. Scheduling can delay deliveries. B deliberately shares an OTK
+ * with C only AFTER B has received its own authenticated access response.
+ * No long-term-key reveal, accidental OTK leak, or token-forwarding rule.
+ *
+ * Default: forwarding enabled, A permits B/C.
+ * -DNO_FORWARD: remove only B -> C forwarding.
+ * -DDENY_C: Provider and A both explicitly deny C; forwarding remains.
+ * This is NOT the full SAGA lifecycle or a Python refinement proof.
+ */
+
+restriction UniqueSetup:
+  "All #i #j. Setup() @i & Setup() @j ==> #i = #j"
+
+rule Setup:
+  [ Fr(~bsk), Fr(~csk), Fr(~otk1), Fr(~otk2) ]
+  --[ Setup(), LongTermKey('B', ~bsk), LongTermKey('C', ~csk) ]->
+  [ !Client('B', ~bsk), !Client('C', ~csk),
+    !Registered('B', 'g'^~bsk), !Registered('C', 'g'^~csk),
+    !ProviderAllows('A', 'B'), !LocalAllows('A', 'B'),
+    CPolicyInitialization('A', 'C'),
+    ProviderCredit('A', 'B'), ProviderCredit('A', 'C'),
+    ProviderUnusedOTK('A', 'g'^~otk1),
+    ProviderUnusedOTK('A', 'g'^~otk2),
+    ReceiverUnusedOTK('A', 'g'^~otk1, ~otk1),
+    ReceiverUnusedOTK('A', 'g'^~otk2, ~otk2),
+    Out(<'registered_public_keys', 'g'^~bsk, 'g'^~csk>) ]
+
+#ifdef DENY_C
+rule Initialize_C_Policy:
+  [ CPolicyInitialization(receiver, sender) ]
+  --> [ !ExplicitlyDenied(receiver, sender) ]
+#else
+rule Initialize_C_Policy:
+  [ CPolicyInitialization(receiver, sender) ]
+  --> [ !ProviderAllows(receiver, sender), !LocalAllows(receiver, sender) ]
+#endif
+
+/* Any number of authenticated access attempts, including after exhaustion. */
+rule Sender_Requests_Access:
+  [ !Client(sender, sk), Fr(~request) ]
+  --[ AccessRequested('A', sender, ~request) ]->
+  [ TLSAccessRequest(sender, 'Provider', 'A', ~request) ]
+
+/* One linear credit represents budget=1. It is never replenished. */
+rule Provider_Issues_OTK:
+  [ TLSAccessRequest(sender, 'Provider', receiver, request),
+    !Registered(sender, pac), !ProviderAllows(receiver, sender),
+    ProviderCredit(receiver, sender), ProviderUnusedOTK(receiver, otk) ]
+  --[ ProviderIssue(receiver, sender, otk),
+      ProviderQuotaExhausted(receiver, sender) ]->
+  [ !NoProviderCredit(receiver, sender),
+    TLSOTKResponse('Provider', sender, receiver, request, otk) ]
+
+rule Provider_Rejects_Exhausted_Request:
+  [ TLSAccessRequest(sender, 'Provider', receiver, request),
+    !ProviderAllows(receiver, sender), !NoProviderCredit(receiver, sender) ]
+  --[ ProviderRejectExhausted(receiver, sender) ]->
+  [ ]
+
+#ifdef DENY_C
+rule Provider_Rejects_Explicit_Deny:
+  [ TLSAccessRequest('C', 'Provider', receiver, request),
+    !ExplicitlyDenied(receiver, 'C') ]
+  --[ ProviderRejectPolicy(receiver, 'C') ]->
+  [ ]
+#endif
+
+rule Sender_Receives_OTK:
+  [ TLSOTKResponse('Provider', sender, receiver, request, otk),
+    !Client(sender, sk) ]
+  --[ OTKReceived(receiver, sender, otk) ]->
+  [ !HeldOTK(sender, receiver, otk), ForwardPermit(sender, receiver, otk) ]
+
+#ifdef NO_FORWARD
+/* Forwarding is absent in this control; all other protocol rules remain. */
+#else
+rule B_Forwards_OTK_To_C:
+  [ !HeldOTK('B', receiver, otk), ForwardPermit('B', receiver, otk) ]
+  --[ ForwardOTK(receiver, 'B', 'C', otk) ]->
+  [ ForwardDelivery('B', 'C', receiver, otk) ]
+
+rule C_Receives_Forwarded_OTK:
+  [ ForwardDelivery('B', 'C', receiver, otk), !Client('C', sk) ]
+  --[ ForwardReceived(receiver, 'B', 'C', otk) ]->
+  [ !HeldOTK('C', receiver, otk) ]
+#endif
+
+/* C sends C's own authenticated identity and PAC, even for B's OTK. */
+rule Sender_Requests_Token:
+  [ !Client(sender, sk), !HeldOTK(sender, receiver, otk), Fr(~sid) ]
+  --[ TokenRequested(receiver, sender, otk, ~sid) ]->
+  [ TLSTokenRequest(sender, receiver, ~sid, otk, 'g'^sk),
+    WaitingForToken(receiver, sender, ~sid, otk, sk) ]
+
+/* No ProviderIssue(receiver,sender,otk) guard: the source does not have it. */
+rule Receiver_Issues_Token:
+  let
+    key = h(<'access-control-shdk-exchange', pac^otk_secret>)
+    encrypted = senc(<'ACT', ~token, pac>, key)
+  in
+  [ TLSTokenRequest(sender, receiver, sid, otk, pac),
+    !Registered(sender, pac), !LocalAllows(receiver, sender),
+    ReceiverUnusedOTK(receiver, otk, otk_secret), Fr(~token) ]
+  --[ ReceiverTokenIssued(receiver, sender, otk, ~token, pac) ]->
+  [ TLSTokenResponse(receiver, sender, sid, encrypted),
+    ActiveToken(receiver, sender, otk, ~token, pac, encrypted) ]
+
+/* Matching the ciphertext requires the correct DH key and the sender PAC. */
+rule Sender_Decrypts_Token:
+  let
+    pac = 'g'^sk
+    key = h(<'access-control-shdk-exchange', otk^sk>)
+    encrypted = senc(<'ACT', token, pac>, key)
+  in
+  [ WaitingForToken(receiver, sender, sid, otk, sk),
+    TLSTokenResponse(receiver, sender, sid, encrypted) ]
+  --[ ClientDecryptedToken(receiver, sender, otk, token, pac) ]->
+  [ ReadyForApplication(receiver, sender, otk, token, pac, encrypted) ]
+
+rule Sender_Sends_Application_Request:
+  [ ReadyForApplication(receiver, sender, otk, token, pac, encrypted) ]
+  --[ ClientSendsRequest(receiver, sender, otk, token, pac) ]->
+  [ TLSApplicationRequest(sender, receiver, encrypted) ]
+
+/* Observe at most one request per token; token reuse/time/races are out of scope.
+ * No per-sender OTK-use counter is introduced at the receiver.
+ */
+rule Receiver_Accepts_Application_Request:
+  [ TLSApplicationRequest(sender, receiver, encrypted),
+    !Registered(sender, pac),
+    ActiveToken(receiver, sender, otk, token, pac, encrypted) ]
+  --[ RequestAccepted(receiver, sender, otk, token, pac) ]->
+  [ ]
+
+/* Reachability controls: success includes client decryption and application use. */
+lemma normal_B_completes:
+  exists-trace
+  "Ex k t pac #i #j #l.
+     ProviderIssue('A', 'B', k) @i
+     & ClientDecryptedToken('A', 'B', k, t, pac) @j
+     & RequestAccepted('A', 'B', k, t, pac) @l
+     & i < j & j < l"
+
+lemma normal_C_completes:
+  exists-trace
+  "Ex k t pac #i #j #l.
+     ProviderIssue('A', 'C', k) @i
+     & ClientDecryptedToken('A', 'C', k, t, pac) @j
+     & RequestAccepted('A', 'C', k, t, pac) @l
+     & i < j & j < l"
+
+lemma transfer_after_C_exhaustion_completes:
+  exists-trace
+  "Ex kc kb tc tb pac #ic #ac #deny #ib #f #r #ab.
+     ProviderIssue('A', 'C', kc) @ic
+     & RequestAccepted('A', 'C', kc, tc, pac) @ac
+     & ProviderRejectExhausted('A', 'C') @deny
+     & ProviderIssue('A', 'B', kb) @ib
+     & ForwardOTK('A', 'B', 'C', kb) @f
+     & ForwardReceived('A', 'B', 'C', kb) @r
+     & RequestAccepted('A', 'C', kb, tb, pac) @ab
+     & ic < ac & ac < deny & deny < f
+     & ib < f & f < r & r < ab & not (kc = kb)"
+
+/* The literal Provider issuance bound should HOLD even with transfer. */
+lemma provider_per_sender_issuance_limit:
+  "All a s k1 k2 #i #j.
+     ProviderIssue(a, s, k1) @i & ProviderIssue(a, s, k2) @j
+     ==> #i = #j"
+
+lemma provider_issues_each_OTK_once:
+  "All a s1 s2 k #i #j.
+     ProviderIssue(a, s1, k) @i & ProviderIssue(a, s2, k) @j
+     ==> #i = #j"
+
+lemma receiver_consumes_each_OTK_once:
+  "All a s1 s2 k t1 t2 p1 p2 #i #j.
+     ReceiverTokenIssued(a, s1, k, t1, p1) @i
+     & ReceiverTokenIssued(a, s2, k, t2, p2) @j
+     ==> #i = #j"
+
+lemma accepted_request_has_matching_token_and_decryption:
+  "All a s k t pac #i.
+     RequestAccepted(a, s, k, t, pac) @i
+     ==> (Ex #j #l.
+       ReceiverTokenIssued(a, s, k, t, pac) @j
+       & ClientDecryptedToken(a, s, k, t, pac) @l
+       & j < l & l < i)"
+
+lemma long_term_keys_not_disclosed:
+  "All s sk #i #j. LongTermKey(s, sk) @i & K(sk) @j ==> F"
+
+/* CANDIDATE stronger property, not the literal Provider issuance bound. */
+lemma successful_use_requires_issue_to_same_sender:
+  "All a s k t pac #i.
+     RequestAccepted(a, s, k, t, pac) @i
+     ==> (Ex #j. ProviderIssue(a, s, k) @j & j < i)"
+
+/* Budget=1 configuration only: count DISTINCT used OTKs, not token requests. */
+lemma sender_uses_at_most_one_distinct_OTK:
+  "All a s k1 k2 t1 t2 p1 p2 #i #j.
+     RequestAccepted(a, s, k1, t1, p1) @i
+     & RequestAccepted(a, s, k2, t2, p2) @j
+     ==> k1 = k2"
+
+end

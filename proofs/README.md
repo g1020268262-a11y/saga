@@ -1,5 +1,9 @@
 Symbolic Formal Verification of the SAGA protocol
 
+Provider confirmation and OTK issuance correspondence: [query explanation](PROVIDER_OTK_QUERY.zh-CN.md),
+[additive model](proverif/agent_communication_provider_otk.pv), and
+[reproduction script](run_provider_otk_query.py).
+
 # Authorization Audit Status
 
 The current authorization-audit record is

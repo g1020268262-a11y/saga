@@ -1,0 +1,2351 @@
+{
+  "created_utc": "2026-10-27T06:08:09.048530+00:00",
+  "papers": [
+    {
+      "id": "ieice2026-labyrinth",
+      "title": "Formal Verification of Labyrinth in Messenger: Reconsidering Security against Abusing Revoked Device",
+      "venue": "IEICE Transactions on Fundamentals E109.A(8), 1367-1381 (2026)",
+      "article_type": "PAPER",
+      "expected_pages": 15,
+      "doi": "10.1587/transfun.2025EAP1150",
+      "article_url": "https://www.jstage.jst.go.jp/article/transfun/E109.A/8/E109.A_2025EAP1150/_article/-char/en",
+      "pdf_url": "https://www.jstage.jst.go.jp/article/transfun/E109.A/8/E109.A_2025EAP1150/_pdf/-char/en",
+      "resolved_pdf_url": "https://www.jstage.jst.go.jp/article/transfun/E109.A/8/E109.A_2025EAP1150/_pdf/-char/en",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\ieice2026-labyrinth.pdf",
+      "pages": 15,
+      "sha256": "9ec60cdd2151bf6595ac14ceaefe1e8a0f1ab54b7c396f3a0894bb861c8ffa94",
+      "bytes": 2504015,
+      "bookmarks": [],
+      "heading_candidates": [
+        {
+          "pdf_page": 1,
+          "text": "1. Introduction 1.1 Background"
+        },
+        {
+          "pdf_page": 1,
+          "text": "1.1 Background Social networking services (SNS) and other communica-"
+        },
+        {
+          "pdf_page": 1,
+          "text": "1.2 Related Work and Motivating Problem There are various known security verifications of crypto-"
+        },
+        {
+          "pdf_page": 1,
+          "text": "1.2.1 Formal Methods for Security Protocols Formal methods are widely used for the security verifica-"
+        },
+        {
+          "pdf_page": 1,
+          "text": "1.2.2 Security Analysis of E2EE in SNS LINE is a messaging application used mainly in the Asian"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.2.3 Limitation on Security Requirements of Labyrinth The Labyrinth specification [9] proposes several design goals"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.3 Our Contribution In this paper, we present the first formal verification of"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.4 Our Key Technique for Formalization Labyrinth is a stateful protocol where devices can be added or"
+        },
+        {
+          "pdf_page": 3,
+          "text": "1.5 Differences from Extended Abstract [1] The additional contents of this paper (full version) compared"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2. Labyrinth In this section, we give a cryptographic description of the"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1 Cryptographic Primitives (and its Concrete Specifica- tions)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.1 Authenticated Symmetric Encryption (AES-GCM- Extended)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.2 Public Key Encryption (Labyrinth HPKE) Labyrinth uses an authenticated public key cryptosystem"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.3 Digital Signature (XEdDSA) Labyrinth uses XEdDSA [29] as a digital signature. The"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.4 Message Authentication Code (HMAC-SHA256) Labyrinth uses HMAC-SHA256 [30] as MAC. The syntax"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.5 Key Derivation Function (HMAC-SHA256) Labyrinth also uses HMAC-SHA256 [30] as the key deriva-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.6 Randomness Generation Labyrinth can use any available cryptographically strong"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.7 Oblivious Revocable Function Labyrinth uses Oblivious Revocable Function (ORF) [31]."
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2 Protocol Overview Labyrinth is a protocol for secure sharing of message history"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2.1 Entities The entities that appear in Labyrinth are as follows."
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2.2 Product Goals 1. Allowing messaging history to be accessed on new de-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "1. Allowing messaging history to be accessed on new de- vices"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2. Providing an efficiently queryable and writeable stor- age mechanism, so devices need not store their entire"
+        },
+        {
+          "pdf_page": 4,
+          "text": "3. Preventing Meta from accessing data stored in Labyrinth"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2.3 Privacy Goals † Baseline Message Secrecy: Labyrinth is intended to pro-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2.4 Epoch Epoch is a concept provided for Labyrinth key management,"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2.5 Entire Protocol Flow The entire protocol flow for the case where two devices"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3 Protocol Details For readability, public parameters are abbreviated as “...” in"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.3.1 Protocol Components Global parameter: Each Labyrinth instance has the follow-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.3.2 Protocol Phases Labyrinth protocol execution is carried out in several phases"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3. ProVerif ProVerif [11] is an automated cryptographic protocol ver-"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4. Our Formalization of Labyrinth Using ProVerif This section shows an overview of our formalization of"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.1 Main Idea As mentioned in Sect. 2.3, Labyrinth is a stateful protocol."
+        },
+        {
+          "pdf_page": 8,
+          "text": "1. Initialization 2. Initialization → Add a Device"
+        },
+        {
+          "pdf_page": 8,
+          "text": "2. Initialization → Add a Device 3. Initialization → Add a Device → Revoke a Device (★)"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3. Initialization → Add a Device → Revoke a Device (★) 4. Initialization → Add a Device → Revoke a Device →"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4. Initialization → Add a Device → Revoke a Device → Add a Device (★)"
+        },
+        {
+          "pdf_page": 8,
+          "text": "5. Initialization → Add a Device → Add a Device 6. Initialization → Add a Device → Add a Device →"
+        },
+        {
+          "pdf_page": 8,
+          "text": "6. Initialization → Add a Device → Add a Device → Revoke a Device (★, ∗)"
+        },
+        {
+          "pdf_page": 8,
+          "text": "7. Initialization → Add a Device → Add a Device → Revoke a Device → Add a Device (★, ∗)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3. Initialization → Add a Device → Revoke a Device Three sub-processes are formalized in this flow: devices that"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2 Epoch Updating (Using phase Command) An epoch update will only occur if the device expires from"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.3 Storing and Loading Messages All storing and loading of messages occur an arbitrary num-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.4 Revocation of Devices The verification in this paper aims to evaluate the security"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.5 Sharing newEpochEntropy If there are multiple devices remaining when updating an"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5. Formalization of Security Requirements 5.1 Security of Labyrinth"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1 Security of Labyrinth The formalization of the security requirements considering"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1.1 For Confidentiality The latest epoch is the second epoch, thus, each of the fol-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1.2 For Integrity Integrity is verified by expressing the following events using"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.2 Security of AES-GCM-Extended In the security verification of Labyrinth †, AEAD is formal-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.2.1 For Confidentiality We examine the case that the same plaintext is encrypted"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.2.2 For Integrity To verify the integrity of the AEAD, sub-processes for the"
+        },
+        {
+          "pdf_page": 10,
+          "text": "6. Verification Results 6.1 Verification of Labyrinth"
+        },
+        {
+          "pdf_page": 10,
+          "text": "6.1 Verification of Labyrinth The results of security verification of Labyrinth are shown"
+        },
+        {
+          "pdf_page": 10,
+          "text": "1. At the time of device revocation, if there is only one non-revoked device remaining, the confidentiality of"
+        },
+        {
+          "pdf_page": 10,
+          "text": "2. When multiple non-revoked devices appear in the account at the time of device revocation and"
+        },
+        {
+          "pdf_page": 11,
+          "text": "6.1.1 Specific Attack Procedures We describe the found attack procedure from our verification."
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Generate a messageKey corresponding to a past epoch, using the epochRootKey held by the revoked device."
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. Decrypt messages from previous epochs using the messageKey from Step 1."
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Generate a messageKey corresponding to a past epoch, using the epochRootKey held by the revoked device."
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. Encrypt the dummy message with the messageKey from Step 1."
+        },
+        {
+          "pdf_page": 11,
+          "text": "3. Make the authorized device read the message encrypted in Step 2."
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Obtain public, signing, private keys and so on from revoked devices."
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. When the authorized device obtains the public key or other information on the newEpochEntropy share, re-"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3. After successful MAC verification and signature ver- ification on the authorized device, the authorized de-"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4. Decrypt the epochEntropyEncrypted and generate the epochRootKey and messageKey of the new epoch."
+        },
+        {
+          "pdf_page": 11,
+          "text": "5. Decrypt messages with the messageKey from Step 4. (4) Integrity:"
+        },
+        {
+          "pdf_page": 11,
+          "text": "5. Encrypt a dummy message with the messageKey from Table 2 Verification results of AES-GCM-Extended."
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Obtain public, signing, private keys and so on from revoked devices."
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. Generate a new epoch entropy and use information from the previous epoch to generate a root key for the new"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3. The authorized device receives the epochEntropyEncrypted, verifies the sender (where"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4. Decrypt messages with the messageKey from Step 2. (6) Integrity:"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4. Encrypt a dummy message with the messageKey from Step 2. and authorized device decrypts it."
+        },
+        {
+          "pdf_page": 11,
+          "text": "6.2 Verification of AES-GCM-Extended The results of the security verification of AES-GCM-"
+        },
+        {
+          "pdf_page": 11,
+          "text": "6.3 Design Implication Derived from Verification Results As shown in Table 1, differences in the sharing meth-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "7. Responsible Disclosure to Meta We have reported to Meta via the Meta Bug Bounty [27] on"
+        },
+        {
+          "pdf_page": 12,
+          "text": "8. Conclusion We give the first formal verification of the Labyrinth En-"
+        },
+        {
+          "pdf_page": 14,
+          "text": "4 5 let sender (k:key ,aad: bitstring )="
+        }
+      ]
+    },
+    {
+      "id": "ieice2025-emv3ds",
+      "title": "Formal Verification of Challenge Flow in EMV 3-D Secure and Its Improvement",
+      "venue": "IEICE Transactions on Fundamentals E108.A(8), 1052-1065 (2025)",
+      "article_type": "PAPER",
+      "expected_pages": 14,
+      "doi": "10.1587/transfun.2024EAP1132",
+      "article_url": "https://www.jstage.jst.go.jp/article/transfun/E108.A/8/E108.A_2024EAP1132/_article/-char/en",
+      "pdf_url": "https://www.jstage.jst.go.jp/article/transfun/E108.A/8/E108.A_2024EAP1132/_pdf/-char/en",
+      "resolved_pdf_url": "https://www.jstage.jst.go.jp/article/transfun/E108.A/8/E108.A_2024EAP1132/_pdf/-char/en",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\ieice2025-emv3ds.pdf",
+      "pages": 14,
+      "sha256": "aa190a1dc1f2b34dc9db6d7dd4d5e9d82ce5416fe16073a736c9fc959d206143",
+      "bytes": 1348859,
+      "bookmarks": [],
+      "heading_candidates": [
+        {
+          "pdf_page": 1,
+          "text": "1. Introduction Cashless payments by credit card are now widespread and"
+        },
+        {
+          "pdf_page": 1,
+          "text": "1.1 Related Works There are various known examples of the application of for-"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.1.1 Formal Methods for Security Formalmethodshavestrengthsparticularlyintheﬁeldofse-"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.1.2 CP Transactions (EMV) EMV [13], [14] is a protocol for CP transactions. Some"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.1.3 SET (Secure Electronic Transaction) SET [19] is a communication protocol designed for CNP"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.2 Contribution Inthispaper,weshowtheﬁrstformalveriﬁcationofEMV3-"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.2.1 Diﬀerences from Extended Abstract [1] Theadditionalcontentsofthispaper(fullversion)compared"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2. EMV 3-D Secure In this section, we explain the details of EMV 3-D Secure."
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1 Authentication Flows Challenge Flow of EMV 3-D Secure has several ﬂow op-"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.2 Entities The entities in App-based are as follows. Entities except for"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.3 Messages As shown in Fig.1 and Fig.2, there are messages for 3-D"
+        },
+        {
+          "pdf_page": 3,
+          "text": "3. ProVerif ProVerif is an automated cryptographic protocol veriﬁca-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "4. Formalization of EMV 3-D Secure Using ProVerif See [34] for all ProVerif codes used for veriﬁcation."
+        },
+        {
+          "pdf_page": 4,
+          "text": "4.1 Formalization Assumptions Inthispaper,weassumethefollowingsettingsforsimplicity."
+        },
+        {
+          "pdf_page": 5,
+          "text": "4.2 Declaration of Cryptographic Primitives, etc. 4.2.1 Declaration of Channels"
+        },
+        {
+          "pdf_page": 5,
+          "text": "4.2.1 Declaration of Channels ThedeﬁnitionofcommunicationchannelsisasAppendixA"
+        },
+        {
+          "pdf_page": 5,
+          "text": "4.2.2 Declaration of Types, Functions, etc. ForCReqandCRes,thespeciﬁcationstatesthataunilateral"
+        },
+        {
+          "pdf_page": 5,
+          "text": "4.2.3 Declaration of Conﬁdential Information and Events The declaration of conﬁdential and events are as Appendix"
+        },
+        {
+          "pdf_page": 6,
+          "text": "4.3 Formalization of App-Based In this section, we use App-based (default-sdk) as an exam-"
+        },
+        {
+          "pdf_page": 6,
+          "text": "4.3.1 Main Process Deviceinformation deviceInfo,andforReferenceNumber"
+        },
+        {
+          "pdf_page": 6,
+          "text": "4.3.2 AReq/ARes The Cardholder sub-process performs as Appendix A Lines"
+        },
+        {
+          "pdf_page": 6,
+          "text": "4.3.3 CReq/CRes ARes is transferred from the ACS to the 3DS Server via"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.3.4 Diﬀerences between default-sdk and split-sdk In the case of App-based (split-sdk), we change the"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.4 Formalization of Browser-Based 4.4.1 Main Process"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.4.1 Main Process For reference numbers of each entity,"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.4.2 AReq/ARes Prior to the sending of the AReq from the 3DS Server"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.4.3 CReq/Final CRes The operation of the Cardholder upon receiving"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.5 Formalization of Security Requirements 4.5.1 Security Veriﬁcation against Man-in-the-Middle At-"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.5.1 Security Veriﬁcation against Man-in-the-Middle At- tacks"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.5.2 Security Veriﬁcation against Colluding Attacker Models with Relay Servers (3DS Server, DS)"
+        },
+        {
+          "pdf_page": 8,
+          "text": "5. Veriﬁcation Results We show the results of the veriﬁcation of the eight security"
+        },
+        {
+          "pdf_page": 8,
+          "text": "6.1 Consideration of Impact of Our Findings on Real- World Systems"
+        },
+        {
+          "pdf_page": 9,
+          "text": "7. Conclusion In this paper, we presented the ﬁrst formal veriﬁcation for"
+        },
+        {
+          "pdf_page": 10,
+          "text": "7 8 (* Symmetric Key Encryption and Decryption"
+        },
+        {
+          "pdf_page": 12,
+          "text": "2 3 let sdkEncData = aenc ( deviceInfo , p_ds ) in"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4 5 new dC: eskey ;"
+        },
+        {
+          "pdf_page": 12,
+          "text": "7 8 new sdkSignatureTimestamp : Timestamp ;"
+        },
+        {
+          "pdf_page": 12,
+          "text": "2 3 (* Base64url Encoding and Decoding *)"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6 7 ..."
+        },
+        {
+          "pdf_page": 12,
+          "text": "8 9 (* Challenge Data ( secret for attacker ) *)"
+        }
+      ]
+    },
+    {
+      "id": "usenix2024-widevine",
+      "title": "Formal Security Analysis of Widevine through the W3C EME Standard",
+      "venue": "USENIX Security 2024, 6399-6415",
+      "article_type": "conference paper",
+      "expected_pages": 18,
+      "article_url": "https://www.usenix.org/conference/usenixsecurity24/presentation/delaune",
+      "pdf_url": "https://www.usenix.org/system/files/usenixsecurity24-delaune.pdf",
+      "resolved_pdf_url": "https://www.usenix.org/system/files/usenixsecurity24-delaune.pdf",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\usenix2024-widevine.pdf",
+      "pages": 18,
+      "sha256": "55c3f2e93ae1b5faefbffa8485ec4c2c8eb7c56d89f6d4548bafd64296994c28",
+      "bytes": 621348,
+      "bookmarks": [
+        {
+          "title": "Introduction",
+          "pdf_page": 2
+        },
+        {
+          "title": "Background on DRM",
+          "pdf_page": 4
+        },
+        {
+          "title": "DRM Common Architecture",
+          "pdf_page": 4
+        },
+        {
+          "title": "DRM Common Security Model",
+          "pdf_page": 4
+        },
+        {
+          "title": "W3C EME Standard",
+          "pdf_page": 4
+        },
+        {
+          "title": "Widevine EME",
+          "pdf_page": 5
+        },
+        {
+          "title": "Experimentation Settings",
+          "pdf_page": 6
+        },
+        {
+          "title": "CDM Internals",
+          "pdf_page": 6
+        },
+        {
+          "title": "Initial State",
+          "pdf_page": 6
+        },
+        {
+          "title": "Acquire Licenses",
+          "pdf_page": 6
+        },
+        {
+          "title": "Renew Licenses",
+          "pdf_page": 7
+        },
+        {
+          "title": "Other Considerations",
+          "pdf_page": 7
+        },
+        {
+          "title": "Potential Attack",
+          "pdf_page": 7
+        },
+        {
+          "title": "EME Security Requirements",
+          "pdf_page": 8
+        },
+        {
+          "title": "EME as an Enforcement Layer",
+          "pdf_page": 9
+        },
+        {
+          "title": "EME Security Goals",
+          "pdf_page": 9
+        },
+        {
+          "title": "Threat Model",
+          "pdf_page": 10
+        },
+        {
+          "title": "Formal Verification using Tamarin",
+          "pdf_page": 10
+        },
+        {
+          "title": "Tamarin in a Nutshell",
+          "pdf_page": 10
+        },
+        {
+          "title": "Our Tamarin Models",
+          "pdf_page": 11
+        },
+        {
+          "title": "Main Assumptions and Limitations",
+          "pdf_page": 12
+        },
+        {
+          "title": "A Stateful API Manipulating Counters",
+          "pdf_page": 12
+        },
+        {
+          "title": "The Crucial Role of Time",
+          "pdf_page": 13
+        },
+        {
+          "title": "Results of the Formal Analysis",
+          "pdf_page": 13
+        },
+        {
+          "title": "Our Methodology",
+          "pdf_page": 13
+        },
+        {
+          "title": "Summary of our Results",
+          "pdf_page": 14
+        },
+        {
+          "title": "Proving the Security Goals",
+          "pdf_page": 14
+        },
+        {
+          "title": "Conclusion",
+          "pdf_page": 15
+        },
+        {
+          "title": "Widevine EME Internals",
+          "pdf_page": 18
+        },
+        {
+          "title": "Formal Security Analysis",
+          "pdf_page": 18
+        }
+      ],
+      "heading_candidates": [
+        {
+          "pdf_page": 2,
+          "text": "1 Introduction The world of entertainment is evolving rapidly. Indeed, Over-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2 Background on DRM DRM is a set of tools used to protect content from piracy. To-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1 DRM Common Architecture DRM systems are complex, and their design differs depend-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2 DRM Common Security Model In [12], Diehl presents a layered security model for DRM"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3 W3C EME Standard As mentioned in the introduction, in response to the frag-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2 Create a session MediaKeys.createSession"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3 Ask for License Request MediaKeySession.generateRequest()"
+        },
+        {
+          "pdf_page": 5,
+          "text": "4 Opaque License Request onMessage()"
+        },
+        {
+          "pdf_page": 5,
+          "text": "7 Opaque License Response MediaKeySession.update()"
+        },
+        {
+          "pdf_page": 5,
+          "text": "9 Opaque Renewal Request onMessage()"
+        },
+        {
+          "pdf_page": 5,
+          "text": "5 POST request 6 POST response"
+        },
+        {
+          "pdf_page": 5,
+          "text": "6 POST response POST request"
+        },
+        {
+          "pdf_page": 5,
+          "text": "8 Decrypt Frame HTMLMediaElement.onencrypted()"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3 Widevine EME Widevine is a closed-source proprietary DRM developed"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.1 Experimentation Settings Operating Systems and Browsers. In order to have a broad"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.2 CDM Internals We present the different stages and operations of the Widevine"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.2.1 Initial State The Widevine CDM is provisioned with a pair of RSA keys,"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.2.2 Acquire Licenses Client Request. Following a call to generateRequest, the"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.2.3 Renew Licenses Client Request. If the loaded policies allow the CDM to"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.2.4 Other Considerations Different CDM Instances. Widevine provides different"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.3 Potential Attack During our formal analysis of the Widevine EME (see Sec-"
+        },
+        {
+          "pdf_page": 8,
+          "text": "1 Ask for License Request MediaKeySession.generateRequest()"
+        },
+        {
+          "pdf_page": 8,
+          "text": "2 License Request onMessage()"
+        },
+        {
+          "pdf_page": 8,
+          "text": "5 License Response MediaKeySession.update()"
+        },
+        {
+          "pdf_page": 8,
+          "text": "7 Renewal Request onMessage()"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3 POST request 4 POST response"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4 POST response 6 Forged License Response"
+        },
+        {
+          "pdf_page": 8,
+          "text": "6 Forged License Response MediaKeySession.update()"
+        },
+        {
+          "pdf_page": 8,
+          "text": "8 Figure 2: Widevine EME Key Derivation Attack."
+        },
+        {
+          "pdf_page": 8,
+          "text": "4 EME Security Requirements Despite not affecting all implementations of the Widevine"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.1 EME as an Enforcement Layer EME deﬁnes an enforcement layer that works as follows."
+        },
+        {
+          "pdf_page": 9,
+          "text": "1. Conﬁdentiality of the decryption key, so that an attacker cannot obtain a digital copy of the content outside the"
+        },
+        {
+          "pdf_page": 9,
+          "text": "2. Integrity of the usage rights, so that an attacker cannot alter the usage rights delivered by the content provider."
+        },
+        {
+          "pdf_page": 9,
+          "text": "3. Authenticity of the usage rights, so that the CDM en- forces the rights strictly as they only were deﬁned by the"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4. Freshness of the license, so that the CDM can only use it once, regardless of its type: license-request or license-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2 EME Security Goals Recall that the essence of DRM systems is to allow con-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4.3 Threat Model It should be noted that the threat model for DRM is quite"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5 Formal Veriﬁcation using T AMARIN We analyzed the Widevine protocol using the protocol veriﬁ-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1 T AMARIN in a Nutshell The TAMARIN prover [28] is a security protocol veriﬁcation"
+        },
+        {
+          "pdf_page": 11,
+          "text": "5.2 Our T AMARIN Models As explained in the previous section, one difﬁculty was to"
+        },
+        {
+          "pdf_page": 12,
+          "text": "5.3 Main Assumptions and Limitations It is worth discussing the faithfulness of our models and"
+        },
+        {
+          "pdf_page": 12,
+          "text": "5.4 A Stateful API Manipulating Counters Although EME prescribes the ﬂow of messages between the"
+        },
+        {
+          "pdf_page": 13,
+          "text": "5.5 The Crucial Role of Time A major feature of our TAMARIN analysis is the modeling"
+        },
+        {
+          "pdf_page": 13,
+          "text": "6 Results of the Formal Analysis We describe here how we proceed to analyze the models"
+        },
+        {
+          "pdf_page": 13,
+          "text": "6.1 Our Methodology Initially, we focused on obtaining a faithful model of the"
+        },
+        {
+          "pdf_page": 14,
+          "text": "6.2 Summary of our Results Our ﬁndings are summarized in Table 1. While most of the"
+        },
+        {
+          "pdf_page": 14,
+          "text": "6.3 Proving the Security Goals Even if the proofs are done in ﬁne in an automatic way, some"
+        },
+        {
+          "pdf_page": 15,
+          "text": "7 Conclusion In this paper, we performed the ﬁrst in-depth and formal anal-"
+        },
+        {
+          "pdf_page": 18,
+          "text": "1 Initial State createSessionOpenSession InitialKeys = {DeviceRSAKeypub/priv, serviceCertiﬁcatepub}, Session ID 2 License RequestgenerateRequestPrepareKeyRequest InitialKeys, IDs = {Session ID, Request ID}, nonce, T1, request"
+        },
+        {
+          "pdf_page": 18,
+          "text": "2 License RequestgenerateRequestPrepareKeyRequest InitialKeys, IDs = {Session ID, Request ID}, nonce, T1, request 3.a DeriveKeysFromSessionKeyInitialKeys, IDs, nonce, T1, request, DerivedKeys = {MAC Client Key, MAC Server Key, Asset Key}3 License Processingupdate 3.b LoadKeys InitialKeys, IDs, T1, request, DerivedKeys, Content Key, KCB, Policies"
+        },
+        {
+          "pdf_page": 18,
+          "text": "4 Renewal RequestonMessage PrepareKeyUpdateRequest InitialKeys, IDs, T1, request, DerivedKeys, Content Key, KCB, Policies, T2, counter,nonce† 5 Renewal Processingupdate RefreshKeys InitialKeys, IDs, T1, request, DerivedKeys, Content Key, T2, Updated counter,Updated KCB†, Updated Policies"
+        }
+      ]
+    },
+    {
+      "id": "usenix2023-blesc",
+      "title": "Formal Analysis and Patching of BLE-SC Pairing",
+      "venue": "USENIX Security 2023, 37-52",
+      "article_type": "conference paper",
+      "expected_pages": 17,
+      "article_url": "https://www.usenix.org/conference/usenixsecurity23/presentation/shi-min",
+      "pdf_url": "https://www.usenix.org/system/files/usenixsecurity23-shi-min.pdf",
+      "resolved_pdf_url": "https://www.usenix.org/system/files/usenixsecurity23-shi-min.pdf",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\usenix2023-blesc.pdf",
+      "pages": 17,
+      "sha256": "addd23b9e1d8f0e62802083ff8e93642749cbcd50e5363d9399e9b1b66b2b9df",
+      "bytes": 673930,
+      "bookmarks": [
+        {
+          "title": "Introduction",
+          "pdf_page": 2
+        },
+        {
+          "title": "Bluetooth Pairing",
+          "pdf_page": 3
+        },
+        {
+          "title": "Overview of BLE-SC Pairing",
+          "pdf_page": 3
+        },
+        {
+          "title": "Pairing Feature Exchange",
+          "pdf_page": 4
+        },
+        {
+          "title": "LTK Generation",
+          "pdf_page": 4
+        },
+        {
+          "title": "Public Key Exchange",
+          "pdf_page": 4
+        },
+        {
+          "title": "Authentication Stage 1",
+          "pdf_page": 4
+        },
+        {
+          "title": "Authentication Stage 2",
+          "pdf_page": 4
+        },
+        {
+          "title": "Transport Specific Key Distribution",
+          "pdf_page": 5
+        },
+        {
+          "title": "Overview of SSP-SC Pairing",
+          "pdf_page": 5
+        },
+        {
+          "title": "Protocol Modeling",
+          "pdf_page": 5
+        },
+        {
+          "title": "Tamarin Prover",
+          "pdf_page": 5
+        },
+        {
+          "title": "Assumptions and Threat Model",
+          "pdf_page": 6
+        },
+        {
+          "title": "Comprehensive Formal Model",
+          "pdf_page": 6
+        },
+        {
+          "title": "General Model",
+          "pdf_page": 6
+        },
+        {
+          "title": "Specific Model",
+          "pdf_page": 8
+        },
+        {
+          "title": "Property Specifying",
+          "pdf_page": 8
+        },
+        {
+          "title": "Authentication",
+          "pdf_page": 8
+        },
+        {
+          "title": "MITM Protection",
+          "pdf_page": 9
+        },
+        {
+          "title": "LTK Confusion Protection",
+          "pdf_page": 9
+        },
+        {
+          "title": "Secrecy of Authenticated LTK",
+          "pdf_page": 10
+        },
+        {
+          "title": "Results",
+          "pdf_page": 10
+        },
+        {
+          "title": "Patching",
+          "pdf_page": 10
+        },
+        {
+          "title": "Countermeasure Review",
+          "pdf_page": 10
+        },
+        {
+          "title": "Countermeasures for Method Confusion Attack",
+          "pdf_page": 11
+        },
+        {
+          "title": "Countermeasures for Key Negotiation Downgrade Attack",
+          "pdf_page": 12
+        },
+        {
+          "title": "Patched BLE-SC pairing",
+          "pdf_page": 12
+        },
+        {
+          "title": "Patched NC",
+          "pdf_page": 12
+        },
+        {
+          "title": "Patched PE",
+          "pdf_page": 12
+        },
+        {
+          "title": "Analysis of Patched BLE-SC Pairing",
+          "pdf_page": 12
+        },
+        {
+          "title": "Discussion of the Patch",
+          "pdf_page": 13
+        },
+        {
+          "title": "Related Work",
+          "pdf_page": 14
+        },
+        {
+          "title": "Discussion and Conclusion",
+          "pdf_page": 14
+        },
+        {
+          "title": "Sequence Diagrams of Association Models",
+          "pdf_page": 16
+        },
+        {
+          "title": "State Machine for User Modeling",
+          "pdf_page": 17
+        },
+        {
+          "title": "Guarded First-Order Logic Formulas",
+          "pdf_page": 17
+        }
+      ],
+      "heading_candidates": [
+        {
+          "pdf_page": 2,
+          "text": "1 Introduction Bluetooth is a wireless technology standard for exchanging"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1. How to formally analyze the security of the BLE-SC pairing protocol and disclose the design ﬂaws?"
+        },
+        {
+          "pdf_page": 2,
+          "text": "2. How to ﬁx the found design ﬂaws while maintaining backward compatibility?"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2 Bluetooth Pairing We review the pairing protocols in the Bluetooth speciﬁcation"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1 Overview of BLE-SC Pairing BLE-SC pairing aims to establish keys to encrypt a link and"
+        },
+        {
+          "pdf_page": 3,
+          "text": "1. Pairing Feature Exchange (Phase 1). The devices ex- change their authentication requirements and capabilities."
+        },
+        {
+          "pdf_page": 3,
+          "text": "2. Long Term Key (LTK) Generation (Phase 2).The devices derive an LTK based on their authentication requirements"
+        },
+        {
+          "pdf_page": 3,
+          "text": "3. Transport Speciﬁc Key Distribution (Phase 3).The devices distribute speciﬁc keys in the link encrypted by the LTK."
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2 Pairing Feature Exchange This phase aims to determine the parameters used in the"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3 LTK Generation This phase aims to generate an LTK to establish an encrypted"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3.1 Public Key Exchange In this stage, the two devices run an Elliptic Curve Difﬁe-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3.2 Authentication Stage 1 In this stage, the two devices authenticate the public keys to"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.3.3 Authentication Stage 2 This stage conﬁrms that both devices have successfully com-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.4 Transport Speciﬁc Key Distribution In this phase, the link is encrypted by LT K. The initiating"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.5 Overview of SSP-SC Pairing The protocol ﬂow of SSP-SC pairing and BLE-SC pairing are"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3 Protocol Modeling We ﬁrst brieﬂy introduce Tamarin Prover, the automatic sym-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3.1 Tamarin Prover Tamarin Prover [33] is a powerful tool for symbolic modeling"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.2 Assumptions and Threat Model We make the following assumptions in our model."
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.3 Comprehensive Formal Model We give a comprehensive formal model of the BLE-SC pair-"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.3.1 General Model The scale of the general model is huge, which makes the"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3.3.2 Speciﬁc Model To verify the security of speciﬁc pairing situations, we use"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4 Property Specifying We specify trace properties desired in our model, including"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.1 Authentication The authentication property in the symbolic model is gener-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2 MITM Protection In MITM attacks, an adversary intercepts and modiﬁes mes-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.3 LTK Confusion Protection Zhang et al. [38] have described a LTK confusion attack,"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4.4 Secrecy of Authenticated LTK Although the speciﬁcation does not claim this property, the au-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5 Results We perform a full-scale study of the pairing protocol by ana-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "6 Patching We ﬁrst review existing countermeasures and then give our"
+        },
+        {
+          "pdf_page": 10,
+          "text": "6.1 Countermeasure Review We introduce the countermeasures that have been proposed to"
+        },
+        {
+          "pdf_page": 11,
+          "text": "1 DisplayYesNo-DisplayYesNo NC ! ! % % ! % % 2 DisplayYesNo-KeyboardDisplay NC % % % % % % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "2 DisplayYesNo-KeyboardDisplay NC % % % % % % % 3 KeyboardDisplay-KeyboardDisplay NC % % % % % % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3 KeyboardDisplay-KeyboardDisplay NC % % % % % % % 4 KeyboardDisplay-DisplayYesNo NC % % % % % % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4 KeyboardDisplay-DisplayYesNo NC % % % % % % % 5 DisplayOnly-KeyboardOnly PE ! ! % % ! % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "5 DisplayOnly-KeyboardOnly PE ! ! % % ! % % 6 DisplayOnly-KeyboardDisplay PE ! ! % % ! % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "6 DisplayOnly-KeyboardDisplay PE ! ! % % ! % % 7 DisplayYesNo-KeyboardOnly PE % % % % % % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "7 DisplayYesNo-KeyboardOnly PE % % % % % % % 8 KeyboardOnly-DisplayOnly PE ! ! % % ! % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "8 KeyboardOnly-DisplayOnly PE ! ! % % ! % % 9 KeyboardOnly-DisplayYesNo PE % % % % % % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "9 KeyboardOnly-DisplayYesNo PE % % % % % % % 10 KeyboardOnly-KeyboardOnly PE ! ! % % ! % %"
+        },
+        {
+          "pdf_page": 11,
+          "text": "6.1.1 Countermeasures for Method Confusion Attack Tschirschnitz et al. [36] propose countermeasures to the pro-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6.1.2 Countermeasures for Key Negotiation Downgrade Attack"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6.2 Patched BLE-SC pairing The root cause of the found three attacks is that there is no"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6.2.1 Patched NC We describe the patched NC association model and show its"
+        },
+        {
+          "pdf_page": 12,
+          "text": "1. The two devices perform the standard NC association model. Speciﬁcally, they displayed numbers VI and VR (re-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "2. The initiating device computes HI = g3(VI||req||rsp), where req and rsp are pairing request and response mes-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "3. The responding device computes HR = g3(VR||req||rsp) and displays HR with a “Yes” button and a “No” button."
+        },
+        {
+          "pdf_page": 12,
+          "text": "4. The user compares HI and HR, which are two 6-digit num- bers, then pushes the “Yes” button if HI = HR."
+        },
+        {
+          "pdf_page": 12,
+          "text": "6.2.2 Patched PE The PE association model has two pairing situations."
+        },
+        {
+          "pdf_page": 12,
+          "text": "1. The user inputs passkey and the standard PE association model is executed (refer to Figure 4, in Appendix A)."
+        },
+        {
+          "pdf_page": 12,
+          "text": "2. If the standard PE association model is success, the re- sponding device computes DR = g3(passkey||req||rsp)"
+        },
+        {
+          "pdf_page": 12,
+          "text": "3. In the meanwhile, the initiating device computes H = g3 (passkey||req||rsp) and asks the user to inputs DR."
+        },
+        {
+          "pdf_page": 12,
+          "text": "4. After inputting, the initiating device checks if H = DR. Input-Input situation. In this situation, both two devices ask"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6.3 Analysis of Patched BLE-SC Pairing We formally model our patched BLE-SC pairing protocol and"
+        },
+        {
+          "pdf_page": 13,
+          "text": "1 DisplayYesNo-DisplayYesNo Patched NC ! ! ! ! ! ! ! 2 DisplayYesNo-KeyboardDisplay Patched NC % ! % ! ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "2 DisplayYesNo-KeyboardDisplay Patched NC % ! % ! ! ! ! 3 KeyboardDisplay-DisplayYesNo Patched NC ! % ! % ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "3 KeyboardDisplay-DisplayYesNo Patched NC ! % ! % ! ! ! 4 KeyboardDisplay-KeyboardDisplay Patched NC % % % % ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "4 KeyboardDisplay-KeyboardDisplay Patched NC % % % % ! ! ! 5 DisplayOnly-KeyboardOnly Patched PE ! ! ! ! ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "5 DisplayOnly-KeyboardOnly Patched PE ! ! ! ! ! ! ! 6 DisplayOnly-KeyboardDisplay Patched PE ! ! ! ! ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "6 DisplayOnly-KeyboardDisplay Patched PE ! ! ! ! ! ! ! 7 DisplayYesNo-KeyboardOnly Patched PE % % % % ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "7 DisplayYesNo-KeyboardOnly Patched PE % % % % ! ! ! 8 KeyboardOnly-DisplayOnly Patched PE ! ! ! % ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "8 KeyboardOnly-DisplayOnly Patched PE ! ! ! % ! ! ! 9 KeyboardOnly-DisplayYesNo Patched PE % % % % ! ! !"
+        },
+        {
+          "pdf_page": 13,
+          "text": "9 KeyboardOnly-DisplayYesNo Patched PE % % % % ! ! ! 10 KeyboardOnly-KeyboardOnly Patched PE ! ! % % ! % %"
+        },
+        {
+          "pdf_page": 13,
+          "text": "6.4 Discussion of the Patch User Experience. The patched BLE-SC pairing improves the"
+        },
+        {
+          "pdf_page": 14,
+          "text": "7 Related Work We brieﬂy introduce the formal and informal works on the"
+        },
+        {
+          "pdf_page": 14,
+          "text": "8 Discussion and Conclusion Discussion on SSP-SC. Our model of the BLE-SC pairing"
+        }
+      ]
+    },
+    {
+      "id": "usenix2023-edhoc",
+      "title": "A comprehensive, formal and automated analysis of the EDHOC protocol",
+      "venue": "USENIX Security 2023, 5881-5898",
+      "article_type": "conference paper",
+      "expected_pages": 19,
+      "article_url": "https://www.usenix.org/conference/usenixsecurity23/presentation/jacomme",
+      "pdf_url": "https://www.usenix.org/system/files/usenixsecurity23-jacomme.pdf",
+      "resolved_pdf_url": "https://www.usenix.org/system/files/usenixsecurity23-jacomme.pdf",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\usenix2023-edhoc.pdf",
+      "pages": 19,
+      "sha256": "920c8fe5aaffeb620edb0f25e3add41c2433b2245e033cdd70ffd14dfa653552",
+      "bytes": 515600,
+      "bookmarks": [
+        {
+          "title": "Introduction ",
+          "pdf_page": 2
+        },
+        {
+          "title": "Presentation of the EDHOC protocol",
+          "pdf_page": 4
+        },
+        {
+          "title": "Protocol outline",
+          "pdf_page": 4
+        },
+        {
+          "title": "Claimed properties",
+          "pdf_page": 5
+        },
+        {
+          "title": "Confidentiality",
+          "pdf_page": 5
+        },
+        {
+          "title": "Authentication",
+          "pdf_page": 5
+        },
+        {
+          "title": "Identity protection",
+          "pdf_page": 6
+        },
+        {
+          "title": "Non-repudiation",
+          "pdf_page": 6
+        },
+        {
+          "title": "Models for automated verification",
+          "pdf_page": 6
+        },
+        {
+          "title": "Symbolic tools",
+          "pdf_page": 6
+        },
+        {
+          "title": "Protocol and properties modeling",
+          "pdf_page": 7
+        },
+        {
+          "title": "Protocol model",
+          "pdf_page": 7
+        },
+        {
+          "title": "Confidentiality properties",
+          "pdf_page": 8
+        },
+        {
+          "title": "Authentication properties",
+          "pdf_page": 8
+        },
+        {
+          "title": "Identity protection",
+          "pdf_page": 9
+        },
+        {
+          "title": "Non-repudiation",
+          "pdf_page": 9
+        },
+        {
+          "title": "Advanced primitive modelings",
+          "pdf_page": 9
+        },
+        {
+          "title": "Results of the analysis",
+          "pdf_page": 10
+        },
+        {
+          "title": "Methodology",
+          "pdf_page": 10
+        },
+        {
+          "title": "Summary of the automated analysis of draft 12",
+          "pdf_page": 12
+        },
+        {
+          "title": "Weaknesses in the Key Derivation",
+          "pdf_page": 12
+        },
+        {
+          "title": "Transcript collision attacks",
+          "pdf_page": 14
+        },
+        {
+          "title": "Key and IV-reuse",
+          "pdf_page": 14
+        },
+        {
+          "title": "Privacy leak",
+          "pdf_page": 14
+        },
+        {
+          "title": "Non-repudiation",
+          "pdf_page": 15
+        },
+        {
+          "title": "Analysis of the latest draft",
+          "pdf_page": 15
+        },
+        {
+          "title": "Conclusion",
+          "pdf_page": 15
+        },
+        {
+          "title": "The KEM-based version of EDHOC",
+          "pdf_page": 17
+        },
+        {
+          "title": "Detailed analysis results",
+          "pdf_page": 17
+        }
+      ],
+      "heading_candidates": [
+        {
+          "pdf_page": 2,
+          "text": "1 Introduction EDHOC (Ephemeral Diffie Hellman Over COSE) is a key"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2 Presentation of the EDHOC protocol EDHOC is a MAC-then-Sign Diffie Hellman key exchange"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1 Protocol outline The EDHOC protocol consists of 4 messages, the last one"
+        },
+        {
+          "pdf_page": 4,
+          "text": "1. I sends session setup information along with its identi- fiers and public ephemeral key share;"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2. R responds with its own identifiers, public ephemeral key share and authenticates its credentials;"
+        },
+        {
+          "pdf_page": 4,
+          "text": "3. I authenticates its credentials; 4. Optionally, R explicitly confirms computation of the"
+        },
+        {
+          "pdf_page": 4,
+          "text": "4. Optionally, R explicitly confirms computation of the session key."
+        },
+        {
+          "pdf_page": 4,
+          "text": "2 PRK2e kdf(PRK3e2m,GIY)3 kdf(PRK2e,GXR) Table 2: Derivation of intermediary keys."
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.2 Claimed properties In [21], a number of properties are claimed that we present in"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.2.1 Confidentiality We have identified four confidentiality properties. From the re-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.2.2 Authentication In addition to the Explicit Key Confirmation, which has al-"
+        },
+        {
+          "pdf_page": 6,
+          "text": "2.2.3 Identity protection EDHOC has also been designed to offer anonymity guaran-"
+        },
+        {
+          "pdf_page": 6,
+          "text": "2.2.4 Non-repudiation Depending on the method, a participant should not be able"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3 Models for automated verification 3.1 Symbolic tools"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.1 Symbolic tools For our analysis we use the SAPIC + protocol verification"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.2 Protocol and properties modeling 3.2.1 Protocol model"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.2.1 Protocol model Overview of the protocol model. Our model takes into"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3.2.2 Confidentiality properties We analyse the 4 confidentiality properties discussed in Sec-"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3.2.3 Authentication properties Similarly, we model authentication properties. For instance,"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3.2.4 Identity protection We can model identity protection as an anonymity property,"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3.2.5 Non-repudiation Non-repudiation is more tricky to specify. The goal is to"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3.3 Advanced primitive modelings As explained above, symbolic models generally idealize cryp-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4 Results of the analysis Our analysis confirms the strong design of theEDHOC proto-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4.1 Methodology We describe here how we analysed the models described"
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Using Jinja2, we generate from a single file both the DH and KEM based protocols. Moreover, for the DH version,"
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. Using SAPIC + and its basic preprocessing capabilities to enable or disable an attacker capability, we generate"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3. We finally perform the verification on the generated file using the corresponding tool."
+        },
+        {
+          "pdf_page": 11,
+          "text": "1. Run PROVERIF on all threat model combinations with a timeout of 30 minutes over both the DH and the KEM"
+        },
+        {
+          "pdf_page": 11,
+          "text": "2. Extract minimal threat models required for an attack, and maximal ones for a security proof. This allows us"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3. We finally useTAMARIN with a long timeout of 24 hours to increase the trust on all maximal, i.e., strongest, threat"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4.2 Summary of the automated analysis of draft 12"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4.3 Weaknesses in the Key Derivation In [21], the final key material consists in the keyPRK 4x3m, built"
+        },
+        {
+          "pdf_page": 14,
+          "text": "4.4 Transcript collision attacks Using TAMARIN , which has a better support for modeling"
+        },
+        {
+          "pdf_page": 14,
+          "text": "4.5 Key and IV-reuse While modeling the protocol and browsing the standard, we"
+        },
+        {
+          "pdf_page": 14,
+          "text": "4.6 Privacy leak The initiator’s identity should be protected against active at-"
+        },
+        {
+          "pdf_page": 15,
+          "text": "4.7 Non-repudiation We specified non-repudiation (soundness) as an injective prop-"
+        },
+        {
+          "pdf_page": 15,
+          "text": "4.8 Analysis of the latest draft Overall, we introduced in draft 14 a major change in the key"
+        },
+        {
+          "pdf_page": 15,
+          "text": "5 Conclusion In this paper, we illustrate how recent state-of-the-art develop-"
+        }
+      ]
+    },
+    {
+      "id": "usenix2020-wpa2",
+      "title": "A Formal Analysis of IEEE 802.11's WPA2: Countering the Kracks Caused by Cracking the Counters",
+      "venue": "USENIX Security 2020, 1-17",
+      "article_type": "conference paper",
+      "expected_pages": 18,
+      "article_url": "https://www.usenix.org/conference/usenixsecurity20/presentation/cremers",
+      "pdf_url": "https://www.usenix.org/system/files/sec20-cremers.pdf",
+      "resolved_pdf_url": "https://www.usenix.org/system/files/sec20-cremers.pdf",
+      "acquisition": "new primary-source download",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261027_v2\\sources\\usenix2020-wpa2.pdf",
+      "pages": 18,
+      "sha256": "3805941b40c53d584209fdd5cad89bc96ec967e59aeec5838b493bd5a2afd3f0",
+      "bytes": 943233,
+      "bookmarks": [
+        {
+          "title": "Introduction",
+          "pdf_page": 2
+        },
+        {
+          "title": "Background",
+          "pdf_page": 3
+        },
+        {
+          "title": "Overview of WPA2",
+          "pdf_page": 3
+        },
+        {
+          "title": "Key-Reinstallation Attacks",
+          "pdf_page": 5
+        },
+        {
+          "title": "The Tamarin Prover",
+          "pdf_page": 5
+        },
+        {
+          "title": "Formal Model of WPA2",
+          "pdf_page": 6
+        },
+        {
+          "title": "Four-Way Handshake",
+          "pdf_page": 7
+        },
+        {
+          "title": "Group-Key Handshake",
+          "pdf_page": 8
+        },
+        {
+          "title": "WNM Sleep Mode",
+          "pdf_page": 9
+        },
+        {
+          "title": "Encryption Layer / Message Queue",
+          "pdf_page": 9
+        },
+        {
+          "title": "Replay Counters",
+          "pdf_page": 10
+        },
+        {
+          "title": "Modeling Nonce Reuse",
+          "pdf_page": 11
+        },
+        {
+          "title": "Summary of Underlying Assumptions",
+          "pdf_page": 11
+        },
+        {
+          "title": "Analysis",
+          "pdf_page": 11
+        },
+        {
+          "title": "Secrecy of the Pairwise Master Key",
+          "pdf_page": 12
+        },
+        {
+          "title": "Secrecy of the Pairwise Transient Key",
+          "pdf_page": 12
+        },
+        {
+          "title": "Secrecy of Group Temporal Keys",
+          "pdf_page": 12
+        },
+        {
+          "title": "Authentication / Injective Agreement",
+          "pdf_page": 13
+        },
+        {
+          "title": "Analysis Summary",
+          "pdf_page": 13
+        },
+        {
+          "title": "Results",
+          "pdf_page": 14
+        },
+        {
+          "title": "Behavior Covered by our Formal Model",
+          "pdf_page": 14
+        },
+        {
+          "title": "Patches And Their Effectiveness",
+          "pdf_page": 14
+        },
+        {
+          "title": "Kr00k Vulnerability",
+          "pdf_page": 15
+        },
+        {
+          "title": "Related Work on WPA2 Verification",
+          "pdf_page": 15
+        },
+        {
+          "title": "Conclusion",
+          "pdf_page": 15
+        },
+        {
+          "title": "General Overview and Helper Lemmas.",
+          "pdf_page": 18
+        }
+      ],
+      "heading_candidates": [
+        {
+          "pdf_page": 2,
+          "text": "1 Introduction The vast majority of consumer internet connections take place"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2 Background 2.1 Overview of WPA2"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1 Overview of WPA2 WPA2 is a protocol used for securing communication over"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.2 Key-Reinstallation Attacks In 2017, Vanhoef and Piessens demonstrated subtle attacks on"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2.3 The Tamarin Prover The Tamarin prover [23] is an automated-reasoning tool for"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3 Formal Model of WPA2 Our goal is to model the crucial components of WPA2 in a"
+        },
+        {
+          "pdf_page": 7,
+          "text": "3.1 Four-Way Handshake In Figure 4a, we show a simpliﬁed version of the suppli-"
+        },
+        {
+          "pdf_page": 8,
+          "text": "3.2 Group-Key Handshake As already mentioned earlier, a group-key handshake is used"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3.3 WNM Sleep Mode The WNM sleep mode allows a supplicant to save energy"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3.4 Encryption Layer / Message Queue As already mentioned, messages of the ﬁrst four-way hand-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "3.5 Replay Counters The replay counter speciﬁcation in the standard can be confus-"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3.6 Modeling Nonce Reuse To model nonce reuse as explained in Section 2.2, we in-"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3.7 Summary of Underlying Assumptions The following is a summary of the assumptions made in our"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4 Analysis After discussing the core components of our formal model,"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4.1 Secrecy of the Pairwise Master Key Secrecy of the pairwise master key is one of the most funda-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4.2 Secrecy of the Pairwise Transient Key We have two different statements for the secrecy of the pair-"
+        },
+        {
+          "pdf_page": 12,
+          "text": "4.3 Secrecy of Group Temporal Keys As with the pairwise transient key, we proved the secrecy of"
+        },
+        {
+          "pdf_page": 13,
+          "text": "4.4 Authentication / Injective Agreement When it comes to authentication, we prove injective agree-"
+        },
+        {
+          "pdf_page": 13,
+          "text": "4.5 Analysis Summary Except for the two authentication lemmas and one helper"
+        },
+        {
+          "pdf_page": 14,
+          "text": "5 Results After having presented the details of how we built our formal"
+        },
+        {
+          "pdf_page": 14,
+          "text": "5.1 Behavior Covered by our Formal Model Our formal model covers all the standard traces for"
+        },
+        {
+          "pdf_page": 14,
+          "text": "5.2 Patches And Their Effectiveness Our analysis conﬁrms that two patches/countermeasures—"
+        },
+        {
+          "pdf_page": 15,
+          "text": "5.3 Kr00k Vulnerability The so-called Kr00k vulnerability [16] does not indicate a"
+        },
+        {
+          "pdf_page": 15,
+          "text": "6 Related Work on WPA2 Veriﬁcation As stated in the introduction, the WPA2 handshake has re-"
+        },
+        {
+          "pdf_page": 15,
+          "text": "7 Conclusion In this work, we have provided the ﬁrst formal security ar-"
+        }
+      ]
+    },
+    {
+      "id": "ccs2017-tls13",
+      "title": "A Comprehensive Symbolic Analysis of TLS 1.3",
+      "venue": "ACM CCS 2017",
+      "article_type": "conference paper",
+      "expected_pages": 16,
+      "doi": "10.1145/3133956.3134063",
+      "article_url": "https://doi.org/10.1145/3133956.3134063",
+      "pdf_url": "https://people.cispa.io/cas.cremers/downloads/papers/CHHSV2017-TLS13.pdf",
+      "existing": "paper_letter/planning_20261026/sources/ccs2017-tls13.pdf",
+      "acquisition": "reused existing PDF, read again for structure",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261026\\sources\\ccs2017-tls13.pdf",
+      "pages": 16,
+      "sha256": "a0aa5c83b7560e53a475ebb18dff4d72c9264a072d468a5ad01e89fd10fe1796",
+      "bytes": 702758,
+      "bookmarks": [
+        {
+          "title": "Abstract",
+          "pdf_page": 1
+        },
+        {
+          "title": "1 Introduction",
+          "pdf_page": 1
+        },
+        {
+          "title": "1.1 Contributions",
+          "pdf_page": 2
+        },
+        {
+          "title": "1.2 Related work",
+          "pdf_page": 2
+        },
+        {
+          "title": "1.3 Paper organisation",
+          "pdf_page": 2
+        },
+        {
+          "title": "2 TLS 1.3",
+          "pdf_page": 2
+        },
+        {
+          "title": "2.1 New mechanisms",
+          "pdf_page": 3
+        },
+        {
+          "title": "2.2 Stated goals and security properties",
+          "pdf_page": 4
+        },
+        {
+          "title": "3 Modelling the protocol",
+          "pdf_page": 5
+        },
+        {
+          "title": "3.1 The Tamarin prover",
+          "pdf_page": 5
+        },
+        {
+          "title": "3.2 A comprehensive model",
+          "pdf_page": 6
+        },
+        {
+          "title": "3.3 Closely modelling the specification",
+          "pdf_page": 6
+        },
+        {
+          "title": "3.4 Advanced features",
+          "pdf_page": 6
+        },
+        {
+          "title": "4 Encoding the threat model and the security properties",
+          "pdf_page": 7
+        },
+        {
+          "title": "4.1 Threat Model",
+          "pdf_page": 7
+        },
+        {
+          "title": "4.2 Security properties",
+          "pdf_page": 8
+        },
+        {
+          "title": "4.3 Parameter Negotiation",
+          "pdf_page": 10
+        },
+        {
+          "title": "5 Analysis and Results",
+          "pdf_page": 10
+        },
+        {
+          "title": "5.1 Positive results",
+          "pdf_page": 10
+        },
+        {
+          "title": "5.2 Possible mismatch between client and server view",
+          "pdf_page": 11
+        },
+        {
+          "title": "6 The relation between our model and the TLS 1.3 specification",
+          "pdf_page": 12
+        },
+        {
+          "title": "7 Conclusions",
+          "pdf_page": 12
+        },
+        {
+          "title": "Acknowledgments",
+          "pdf_page": 13
+        },
+        {
+          "title": "References",
+          "pdf_page": 13
+        }
+      ],
+      "heading_candidates": [
+        {
+          "pdf_page": 1,
+          "text": "1 INTRODUCTION The Transport Layer Security (TLS) protocol is the de facto means"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.1 Contributions Our main contributions in this work are as follows:"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.2 Related work As mentioned, there has been a great deal of work conducted in"
+        },
+        {
+          "pdf_page": 2,
+          "text": "1.3 Paper organisation The paper is organised as follows. In Section 2 we describe the"
+        },
+        {
+          "pdf_page": 2,
+          "text": "2 TLS 1.3 In this section we provide a brief description of the TLS 1.3 pro-"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1 New mechanisms The three years of effort that has gone into crafting and fine-tuning"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.1 Diffie–Hellman exchange (DHE). The default mode of TLS 1.3 allows for ephemeral Diffie–Hellman (DH) keys to be established"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.2 Pre-shared key (PSK). In the event that a PSK has been established, a client and a server can begin communicating without"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.3 PSK with DHE. By combining a PSK with DHE this mode maintains PFS whilst limiting the number of expensive public key"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2.1.4 Group renegotiation. It can be the case that the groups sent by a client are not acceptable to the server. In this case, the server"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.5 New session ticket (NST). After a successful handshake, the server can issue an NST at any time. These tickets create a"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.6 PSK binder. A PSK binder is a value that binds a PSK to the handshake where the PSK is offered by a client in a ClientHello"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.7 Session resumption and PSK. This handshake variant al- lows a client to use a key established out-of-band (OOB) to start a"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.8 Zero round trip time (0-RTT). A client can use a PSK to send application data in its first flight of messages, reducing the la-"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.9 Post-handshake client authentication. After a successful handshake, the server can send a CertificateRequest message."
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.10 Key update. After a successful handshake, either party can request an application data key update. Because the read and"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.1.11 Key derivation. A TLS 1.3 handshake will generate a set of keys on which both the client and server agree. The specification"
+        },
+        {
+          "pdf_page": 4,
+          "text": "2.2 Stated goals and security properties The TLS 1.3 handshake protocol is intended to negotiate crypto-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "1. Establishing the same session keys . Upon completion of the handshake, the client and the server should have estab-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "2. Secrecy of the session keys. Upon completion of the hand- shake, the client and server should have established a set of"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3. Peer authentication. In the unilateral case, upon comple- tion of the handshake, if a client C believes it is communicat-"
+        },
+        {
+          "pdf_page": 5,
+          "text": "4. Uniqueness of session keys. Each run of the protocol should produce distinct, independent session keys."
+        },
+        {
+          "pdf_page": 5,
+          "text": "5. Downgrade protection. An active attacker should not be able to force the client and the server to employ weak cipher"
+        },
+        {
+          "pdf_page": 5,
+          "text": "6. Perfect Forward Secrecy (PFS) . In the case of compromise of either party’s long-term key, sessions completed before"
+        },
+        {
+          "pdf_page": 5,
+          "text": "7. Key compromise impersonation (KCI) resistance. Should an attacker compromise the long-term key of party A, the"
+        },
+        {
+          "pdf_page": 5,
+          "text": "8. Protection of endpoint identities. The identity of the server cannot be revealed by a passive attacker that observes the"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3 MODELLING THE PROTOCOL 3.1 The Tamarin prover"
+        },
+        {
+          "pdf_page": 5,
+          "text": "3.1 The Tamarin prover The Tamarin prover [ 48] is a symbolic modelling and analysis"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.2 A comprehensive model Using Tamarin’s modelling framework we devised a comprehensive"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.3 Closely modelling the specification As with previous models [22], we employ the use of Tamarin rules"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3.4 Advanced features In our model we capture a number of complicated interactions and"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4 ENCODING THE THREAT MODEL AND THE SECURITY PROPERTIES"
+        },
+        {
+          "pdf_page": 7,
+          "text": "4.1 Threat Model We consider an extension of the Dolev-Yao (DY) attacker [23] as our"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.2 Security properties We encode the claimed security properties of TLS 1.3 as lemmas in"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.2.1 Establishing the same session keys. The definition of this first property is taken from [19], where it is referred to as a consis-"
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.2.2 Secrecy of the session keys. The secret_session_keys lemma is used to prove property (2) in Section 2.2."
+        },
+        {
+          "pdf_page": 8,
+          "text": "4.2.3 Peer Authentication. The specification defines this prop- erty somewhat informally, as a form of authentication whereby"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3 SessionKey(tid, actor, peer, <peer_auth_status, 'auth'>, <write_key, read_key>)@i & 4 not (Ex #r. RevLtk(peer)@r & #r < #i) &"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3 CommitNonces(tid, actor, 'client', nonces)@i & 4 CommitIdentity(tid, actor, 'client', peer, <client_auth_status, 'auth'>)@i &"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4 CommitIdentity(tid, actor, 'client', peer, <client_auth_status, 'auth'>)@i & 5 not (Ex #r. RevLtk(peer)@r & #r < #i) &"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2.4 Uniqueness of the session keys. We prove in the straight- forward way that for any two session keys generated, if they match"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2.5 Downgrade protection. The specification cites the work by Bhargavan et al. [ 11] for downgrade protection. This defini-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2.6 Forward secrecy with respect to long-term keys. The PFS property was briefly mentioned in the context of the long-term sign-"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4.2.7 Key Compromise Impersonation (KCI) resistance. Obser- vant readers will notice that the only restriction on compromising"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4.3 Parameter Negotiation The security of a TLS session critically depends on the integrity"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5 ANALYSIS AND RESULTS In this section we provide a detailed description of our analysis,"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1 Positive results We now present our results for TLS 1.3, commenting on our proof"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1.1 Proof strategies. For models as complex as TLS 1.3, prov- ing lemmas in Tamarin is a multi-stage process, and proving com-"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5.1.2 Findings. We summarise our results in Table 1. For each property discussed in Sections 2 and 4, we indicate our findings. We"
+        },
+        {
+          "pdf_page": 11,
+          "text": "5.2 Possible mismatch between client and server view"
+        },
+        {
+          "pdf_page": 12,
+          "text": "6 THE RELATION BETWEEN OUR MODEL AND THE TLS 1.3 SPECIFICATION"
+        },
+        {
+          "pdf_page": 12,
+          "text": "7 CONCLUSIONS In this work we modelled the current draft of the TLS 1.3 specifica-"
+        },
+        {
+          "pdf_page": 13,
+          "text": "1.3 Implementation with a Verifiable Protocol Model. (2016). Presented at TRON 1.0, San Diego, CA, USA, February 21."
+        }
+      ]
+    },
+    {
+      "id": "sp2019-fapi",
+      "title": "An Extensive Formal Security Analysis of the OpenID Financial-grade API",
+      "venue": "IEEE S&P 2019",
+      "article_type": "conference paper",
+      "expected_pages": 19,
+      "doi": "10.1109/SP.2019.00067",
+      "article_url": "https://doi.org/10.1109/SP.2019.00067",
+      "pdf_url": "https://conferences.computer.org/sp/pdfs/sp/2019/AnExtensiveFormalSecurityAnalysisoftheOpenIDFi.pdf",
+      "existing": "paper_letter/planning_20261026/sources/sp2019-fapi.pdf",
+      "acquisition": "reused existing PDF, read again for structure",
+      "status": "PDF_VERIFIED",
+      "local_pdf": "paper_letter\\planning_20261026\\sources\\sp2019-fapi.pdf",
+      "pages": 19,
+      "sha256": "30a979aa028a2d9768888b66fed621573778d43cfce5cabaae079284fbdddfac",
+      "bytes": 281614,
+      "bookmarks": [],
+      "heading_candidates": [
+        {
+          "pdf_page": 3,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 3,
+          "text": "2 ResponseResponse Redirect to AS /authorization_endpointRedirect to AS /authorization_endpoint"
+        },
+        {
+          "pdf_page": 3,
+          "text": "3 GET /authorization_endpoint (Authorization Request)GET /authorization_endpoint (Authorization Request) (client_id, redirect_uri, state)(client_id, redirect_uri, state)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "5 ResponseResponse Redirect to C /redirect_uri (code, state)Redirect to C /redirect_uri (code, state)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "6 GET /redirect_uri (Authorization Response)GET /redirect_uri (Authorization Response) (code, state)(code, state)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "7 POST /token_endpoint (Token Request)POST /token_endpoint (Token Request) (code, client_id, [client authentication])(code, client_id, [client authentication])"
+        },
+        {
+          "pdf_page": 3,
+          "text": "8 ResponseResponse (access token)(access token)"
+        },
+        {
+          "pdf_page": 3,
+          "text": "9 GET /resourceGET /resource (access token)(access token)"
+        },
+        {
+          "pdf_page": 6,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 6,
+          "text": "2 ResponseResponse Redirect to AS /authorization_endpointRedirect to AS /authorization_endpoint"
+        },
+        {
+          "pdf_page": 6,
+          "text": "3 GET /authorization_endpointGET /authorization_endpoint (client_id, . . . , hash(kC,AS))(client_id, ..., hash(kC,AS))"
+        },
+        {
+          "pdf_page": 6,
+          "text": "5 ResponseResponse Redirect to C /redirect_uri (code, state)Redirect to C /redirect_uri (code, state)"
+        },
+        {
+          "pdf_page": 6,
+          "text": "6 GET /redirect_uriGET /redirect_uri (code, state)(code, state)"
+        },
+        {
+          "pdf_page": 6,
+          "text": "7 POST /token_endpointPOST /token_endpoint (code, . . . ,(code, ...,"
+        },
+        {
+          "pdf_page": 6,
+          "text": "8 ResponseResponse (access token)(access token)"
+        },
+        {
+          "pdf_page": 6,
+          "text": "9 GET /resourceGET /resource (access token, TB-prov-Msg[kC,RS, sig2])(access token, TB-prov-Msg[kC,RS, sig2])"
+        },
+        {
+          "pdf_page": 9,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 9,
+          "text": "2 ResponseResponse Redirect to AS (client_id, redirect_uri, state)Redirect to AS (client_id, redirect_uri, state)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "3 GET /redirect_uriGET /redirect_uri (code, state, id token1)(code, state, id token 1)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "4 POST /token_endpointPOST /token_endpoint (code, client_id)(code, client_id)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "5 ResponseResponse (access token, id token2)(access token, id token 2)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "6 GET /resourceGET /resource (access token)(access token)"
+        },
+        {
+          "pdf_page": 9,
+          "text": "7 ResponseResponse resourceresource"
+        },
+        {
+          "pdf_page": 10,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 10,
+          "text": "2 ResponseResponse Redirect to AS /authorization_endpointRedirect to AS /authorization_endpoint"
+        },
+        {
+          "pdf_page": 10,
+          "text": "3 GET /authorization_endpointGET /authorization_endpoint (client_id, redirect_uri, state)(client_id, redirect_uri, state)"
+        },
+        {
+          "pdf_page": 10,
+          "text": "4 attacker authenticatesattacker authenticates"
+        },
+        {
+          "pdf_page": 10,
+          "text": "5 ResponseResponse Redirect to C /redirect_uri (code, state, id token)Redirect to C /redirect_uri (code, state, id token)"
+        },
+        {
+          "pdf_page": 10,
+          "text": "6 GET /redirect_uriGET /redirect_uri (code, state, id token)(code, state, id token)"
+        },
+        {
+          "pdf_page": 10,
+          "text": "7 POST /token_endpointPOST /token_endpoint (code, client_id, [client authentication])(code, client_id, [client authentication])"
+        },
+        {
+          "pdf_page": 10,
+          "text": "8 ResponseResponse (access token, id token)(access token, id token)"
+        },
+        {
+          "pdf_page": 10,
+          "text": "9 GET /resourceGET /resource access tokenaccess token"
+        },
+        {
+          "pdf_page": 11,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 11,
+          "text": "2 ResponseResponse Redirect to ASRedirect to AS"
+        },
+        {
+          "pdf_page": 11,
+          "text": "3 GET /authorization_endpointGET /authorization_endpoint (hon_client_id, hon_redirect_uri, pkce_cc)(hon_client_id, hon_redirect_uri, pkce_cc)"
+        },
+        {
+          "pdf_page": 11,
+          "text": "4 honest user authenticateshonest user authenticates"
+        },
+        {
+          "pdf_page": 11,
+          "text": "5 ResponseResponse Redirect to Client (code, state)Redirect to Client (code, state)"
+        },
+        {
+          "pdf_page": 11,
+          "text": "6 LeakageLeakage code, statecode, state"
+        },
+        {
+          "pdf_page": 11,
+          "text": "7 POST /token_endpointPOST /token_endpoint (code, pkce_cv)(code, pkce_cv)"
+        },
+        {
+          "pdf_page": 11,
+          "text": "8 ResponseResponse access tokenaccess token"
+        },
+        {
+          "pdf_page": 11,
+          "text": "9 GET /resourceGET /resource access tokenaccess token"
+        },
+        {
+          "pdf_page": 15,
+          "text": "2.0 Implementations,” in Detection of Intrusions and Malware, and Vulnerability Assessment - 12th International Conference, DIMVA 2015,"
+        },
+        {
+          "pdf_page": 16,
+          "text": "2.0 Threat Model and Security Considerations.” IETF. Jan. 2013. https: //tools.ietf.org/html/rfc6819."
+        },
+        {
+          "pdf_page": 16,
+          "text": "1 POST /startPOST /start 2 ResponseResponse"
+        },
+        {
+          "pdf_page": 16,
+          "text": "2 ResponseResponse Redirect to AS (client_id, redirect_uri, state)Redirect to AS (client_id, redirect_uri, state)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "3 LeakageLeakage (client_id, redirect_uri, state)(client_id, redirect_uri, state)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "4 GET /authorization_endpointGET /authorization_endpoint (client_id, redirect_uri, state) (Authorization Request)(client_id, redirect_uri, state) (Authorization Request)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "5 attacker authenticatesattacker authenticates"
+        },
+        {
+          "pdf_page": 16,
+          "text": "6 ResponseResponse Redirect to C (code, state)Redirect to C (code, state)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "7 CSRFCSRF Redirect to C (code, state)Redirect to C (code, state)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "8 GET /redirect_uriGET /redirect_uri (code, state)(code, state)"
+        },
+        {
+          "pdf_page": 16,
+          "text": "9 POST /tokenPOST /token (code)(code)"
+        }
+      ]
+    }
+  ],
+  "reading_scope": "Structure inspection and selected-page close reading; exact pages recorded separately; no revalidation of proofs or source experiments"
+}

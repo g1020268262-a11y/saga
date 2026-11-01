@@ -1,0 +1,1424 @@
+===== PDF PAGE 1 =====
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+1367
+PAPER
+Formal Verification of Labyrinth in Messenger: Reconsidering
+Security against Abusing Revoked Device∗∗
+Kakeru WATANABE†∗, Nonmember and Kazuki YONEYAMA†a), Member
+SUMMARY Messenger, a messaging service, is widely used in the
+United States and around the world, with 947 million monthly active users
+as of February 2025. In December 2023, a default implementation of end-to-
+end encryption in Messenger and two accompanying technical white papers
+were released. Labyrinth Encrypted Message Storage Protocol is one of
+the protocols presented in these technical white papers and is intended
+to securely share message history between devices associated with each
+Messenger account. However, there has been no rigorous discussion of
+the security of Labyrinth to date, and the security model claimed in the
+technical white paper has some ambiguity. In this paper, we give the first
+formal verification of Labyrinth. First, we verify the confidentiality and
+integrity of the stored messages as the security claim in the specification
+(i.e., only considering outside adversaries). Next, considering the case of a
+device that has been revoked from an account and abused, we exhaustively
+verify under what conditions it is possible to break the confidentiality and
+integrity of a message. As a result of the verification, we clarify the
+conditions under which the confidentiality and integrity of stored messages
+can be broken by abusing a revoked device and the specific procedures for
+doing so while satisfying all the security claims made by the specification.
+key words: formal methods, Labyrinth, Messenger, storage protocol
+1. Introduction
+1.1 Background
+Social networking services (SNS) and other communica-
+tion services are widely used, and ensuring their security
+is an important issue. Meta’s Messenger [2] is estimated
+to have 947 million monthly active users as of February
+2025, which is the fourth largest number in the world among
+messenger applications after WhatsApp [3], WeChat [4],
+and Telegram [5] and widely used internationally [6]. In
+December 2023, Meta announced the introduction of end-
+to-end encryption (E2EE) in Messenger as a standard for all
+users [7], and in conjunction with this announcement, pub-
+lished the specifications for the following two protocols: the
+core cryptographic protocol for transmitting messages be-
+tween clients [8] and the protocol for end-to-end encrypting
+stored messaging history between devices on a user’s account
+(Labyrinth Encrypted Message Storage Protocol) [9]. These
+two protocols have already begun to be used in Messenger at
+the time of this writing∗∗∗, but no rigorous proof of security
+Manuscript received August 28, 2025.
+Manuscript revised December 25, 2025.
+Manuscript publicized February 9, 2026.
+†Ibaraki University, Hitachi-shi, 316-8511 Japan.
+∗Presently with NRI SecureTechnologies, Ltd.
+∗∗This paper is the full version of the extended abstract appeared
+in [1].
+a) E-mail: kazuki.yoneyama.sec@vc.ibaraki.ac.jp
+DOI: 10.1587/transfun.2025EAP1150
+is known so far, including these technical white papers, and
+to clarify whether they truly meet the security claims made
+in the specifications and in the specific use cases envisioned
+is important.
+In the past, handwritten security proofs were used to
+show the security of cryptographic protocols, but in recent
+years, verification using formal methods has been gaining
+popularity. The main advantages of formal verification are
+the automation of verification and the prevention of human
+error. By mathematically expressing the specifications to be
+verified and the security to be satisfied, the verification work
+itself can be delegated to a computer. Another advantage
+is that the verification itself does not have to be considered
+from scratch every time a minor setting is changed. The user
+only needs to consider how to change the input since the
+verification content passed to the computer as input can be
+reused, and security verification can be left to the computer.
+With the above background, we examine the security of
+Labyrinth using formal methods in this paper.
+1.2 Related Work and Motivating Problem
+There are various known security verifications of crypto-
+graphic protocols using formal methods and security analysis
+of E2EE in SNS.
+1.2.1 Formal Methods for Security Protocols
+Formal methods are widely used for the security verifica-
+tion of real-world cryptographic protocols due to their good
+match with security fields. The major tools are ProVerif [11]
+and Tamarin Prover [12], and there are various known ex-
+amples of verification of cryptographic protocols utilizing
+these tools: TLS 1.3 [13], QUIC [14], Bluetooth [15]
+and FIDO [16], [17]. However, no formal verification of
+Labyrinth has been conducted to date.
+1.2.2 Security Analysis of E2EE in SNS
+LINE is a messaging application used mainly in the Asian
+region. The specification of E2EE in LINE messaging is
+published as a technical white paper [18], [19], and several
+security analyses have been conducted to date∗∗∗∗. Espinoza
+∗∗∗Note that E2EE has not yet been implemented in all use cases
+of Messenger, as noted in the Messenger Help Center [10].
+∗∗∗∗Note that all security analyses discussed here are for LINE
+Copyright © 2026 The Institute of Electronics, Information and Communication Engineers
+
+===== PDF PAGE 2 =====
+1368
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+et al. [20] showed a replay attack (an attack in which a man-
+in-the-middle exploits an old session’s encrypted messages)
+against E2EE of LINE. Isobe and Minematsu [21] showed a
+spoofing attack (an attack that intercepts a session and im-
+personates a user) against E2EE of LINE. Moreover, Shi and
+Yoneyama [22] gave an exhaustive formal verification using
+ProVerif to LINE encryption scheme and rediscovered the
+above attacks, as well as an attack in the Transport Encryp-
+tion Protocol (TEP) to break forward secrecy of the client’s
+data.
+iMessage is a messaging service developed by Apple,
+and E2EE was implemented from the beginning of its use.
+In February 2024, Apple released PQ3 [23], a post-quantum
+secure protocol for iMessage, and Linker et al. [24] formally
+verified PQ3 by Tamarin since its design phase.
+There are several other studies about the security of
+cryptographic protocols related to SNS, such as the security
+analysis of Zoom’s E2EE [25] and the security analysis of
+WhatsApp’s backup protocol [26]. However, no study on
+the security of Labyrinth is currently known.
+1.2.3 Limitation on Security Requirements of Labyrinth
+The Labyrinth specification [9] proposes several design goals
+in terms of Messenger as ‘a product and privacy’. In
+Labyrinth, the concept of epoch is also defined to take into
+account cases where a device is revoked from an account.
+The epoch is renewed when one device is revoked, and it
+is guaranteed that messages stored in a new epoch cannot
+be decrypted using keys and other data handled in previous
+epochs. The listed design goals do not consider the case of
+attacks using revoked devices. Hence, we consider that the
+security claimed in the specification alone is only for limited
+cases and it is significant to consider what threats can be ap-
+peared by the misuse of revoked devices and the information
+they hold†.
+1.3 Our Contribution
+In this paper, we present the first formal verification of
+Labyrinth. For security verification, we use ProVerif [11],
+a generic verification tool for cryptographic protocols, be-
+cause of its expressiveness of protocol features and security
+requirements. First, we formalize the protocol specifica-
+tion with the ProVerif language. In formalizing the proto-
+col specification, we have identified ambiguities within the
+specification regarding the methods for sharing confidential
+information, and the specific composition and usage of its
+constituent components. We address such ambiguities by
+Encryption Ver. 1.0 [18], which differs from the current specifica-
+tion [19].
+†In the specification [9, pp.36], the limitation on epoch integrity
+is discussed. Note that the attacks described there are based on the
+assumption that malicious servers do not provide the information
+necessary for protocol execution for a device, which is clearly dif-
+ferent from legitimate protocol execution and the abusability of a
+revoked device, which we verify in this paper.
+performing case-by-case verification and component ideal-
+ization. For details, please refer to Sect. 2 and Sect. 4. Next,
+we verify the confidentiality and integrity of the messages
+stored by Labyrinth and whether the claims made in the
+specification are satisfied. Moreover, according to the cases
+where the information of the revoked device becomes known
+to the attacker, we verify whether the confidentiality and in-
+tegrity of the stored messages can be satisfied in such cases.
+The verification results show that while the security (con-
+fidentiality and integrity) as claimed in the specification is
+met, the security regarding the latter cases can be breached
+by misusing a revoked device. See Sect. 6.1 for details on
+the conditions necessary to break the above security require-
+ments, etc., obtained through the verification in this study.
+We reported the attacks we discovered through Meta Bug
+Bounty [27]. The response from Meta was that these attacks
+were weaknesses that were known from the time of design
+and were accepted during the design process.
+Labyrinth also claims that it uses AES-GCM-Extended,
+Labyrinth’s own method of extending AES-GCM, as part of
+the components to make up the protocol, as an approach to
+avoid nonce reuse. Verification of Labyrinth as a protocol
+using a strict formalization of AES-GCM-Extended would
+not stop using our verification environment††, hence, we sep-
+arate the abstraction level of verification according to such
+a part. First, we verify Labyrinth with an ideal AEAD †††.
+Next, to show that AES-GCM-Extended does not differ in
+cryptographic security from an ideal AEAD, the confiden-
+tiality (observational equivalence with an ideal AEAD) and
+integrity are verified and shown as the security of AES-
+GCM-Extended as well.
+1.4 Our Key Technique for Formalization
+Labyrinth is a stateful protocol where devices can be added or
+revoked at any time without limit, as it is a protocol to ensure
+security in the storage of messages in a single account. On the
+other hand, while ProVerif has the advantage of being able
+to express cryptographic protocol specifications in a more
+natural way, it does not support stateful protocol descriptions.
+We focused on the fact that all epochs in Labyrinth are linked
+in a chain, taking over information from previous epochs,
+and formalized and verified with ProVerif based on a specific
+pattern of events that can occur when there is only one device
+connected to an account. In the formalization using ProVerif,
+the situation of epochs defined in Labyrinth is realized using
+the phase command, and the messages stored in each epoch
+are formalized as being stored in the database across epochs
+by using table. Based on these assumptions, the behavior
+of each entity is formalized as a sub-process, and in the case
+††Appendix B presents a discussion comparing the verification
+times for AES-GCM-Extended when formally specified strictly ver-
+sus when formally specified as an ideal AEAD during the verifica-
+tion of Labyrinth.
+†††Note that ideally secure AEAD here refer to symbolically se-
+cure AEAD. This assumes an encryption scheme where the outputs
+are independent for different inputs even if nonce re-use occurs.
+
+===== PDF PAGE 3 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1369
+of a revoked device being used by an attacker, it is formalized
+to take this into account to achieve security verification by
+using ProVerif.
+1.5 Differences from Extended Abstract [1]
+The additional contents of this paper (full version) compared
+to the extended abstract [1] are as follows.
+• In Sect. 2, we add explanations relating to some prim-
+itives and protocol constructions that were omitted in
+the extended abstract [1], and present a more detailed
+description of the protocol specification.
+• We describe in Sect. 4 the additional technical points
+involved in the formalization of Labyrinth, in particular
+the representation techniques for device revocation, and
+storing and loading messages.
+• We add Sect. 5 on the formalization of security require-
+ments using ProVerif and show how ProVerif’s verifi-
+cation capabilities were applied to this study.
+• We provide a detailed description of the verification
+techniques that split Labyrinth and AEAD after in
+Sect. 5, which were not discussed in depth in the ex-
+tended abstract [1].
+• We present in Sect. 6.1.1 the specific attack procedures
+not mentioned in the extended abstract [1] and specify
+our verification results in more detail.
+• We discuss the validity and necessity of our verifica-
+tion approach that separates the abstraction level of our
+verification in Appendix B.
+2. Labyrinth
+In this section, we give a cryptographic description of the
+Labyrinth protocol’s structure based on the technical white
+paper published by Meta [9]. Although the protocol in the
+white paper is described with the natural language, we orga-
+nize the protocol algorithmically as a common manner for
+the cryptographic protocols.
+2.1 Cryptographic Primitives (and its Concrete Specifica-
+tions)
+2.1.1 Authenticated Symmetric Encryption (AES-GCM-
+Extended)
+Labyrinth uses an extension of AES-GCM [28] named AES-
+GCM-Extended. The syntax used in the protocol description
+is as follows:
+ciphertext ← encrypt(key, aad, plaintext)
+plaintext ← decrypt(key, aad, ciphertext)
+where aad is additional authenticated data. The concrete
+construction of AES-GCM-Extended is given as follows: It
+takes a 32-byte key and a 28-byte nonce, and from these, it
+generates a subkey and subnonce as follows.
+subkey := hchacha20(nonce[0 : 16], key)
+subnonce := nonce[16 : 28]
+Then, subkey and subnonce are used within AES-GCM-
+256 to encrypt and decrypt the data.
+2.1.2 Public Key Encryption (Labyrinth HPKE)
+Labyrinth uses an authenticated public key cryptosystem
+named Labyrinth HPKE (Hybrid Public Key Encryption).
+The syntax used in the protocol description is as follows:
+(priv key enc, pub key enc) ← pk enc keygen()
+(priv key auth, pub key auth) ← pk auth keygen()
+ciphertext ← pk encrypt(pub key enc, pub key auth,
+priv key auth, pre shared key, aad, plaintext)
+plaintext ← pk decrypt(pub key enc, priv key enc,
+pub key auth, pre shared key, aad, ciphertext)
+It is required that plaintext cannot be decrypted if
+ciphertext is generated with priv key auth not corre-
+sponding to pub key auth in decryption. We note that no
+concrete decryption algorithm is given in the specification,
+whereas a specific encryption algorithm is given. In this
+paper, we assume that Labyrinth HPKE is ideally secure†.
+2.1.3 Digital Signature (XEdDSA)
+Labyrinth uses XEdDSA [29] as a digital signature. The
+syntax used in the protocol description is as follows:
+(priv key, pub key) ← pk sig keygen()
+signature ← pk sign(priv key, use case byte, data)
+is valid ← pk verify(pub key, signature,
+use case byte, data)
+2.1.4 Message Authentication Code (HMAC-SHA256)
+Labyrinth uses HMAC-SHA256 [30] as MAC. The syntax
+used in the protocol description is as follows††:
+mac value ← mac(key, data)
+2.1.5 Key Derivation Function (HMAC-SHA256)
+Labyrinth also uses HMAC-SHA256 [30] as the key deriva-
+tion function. The syntax used in the protocol description is
+as follows:
+†Ideally secure HPKE here refers to the fact that no partial
+information of the plaintext is leaked if correct decryption fails (i.e.
+this refers to having ideal symbolic security).
+††In the white paper, the input ofmac is defined as (data, key).
+However, in the protocol specification, private keys are inputted to
+the first argument. Hence, we describe the syntax based on the
+protocol.
+
+===== PDF PAGE 4 =====
+1370
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+(key1, key2, ...) ← kdf(ikm, salt, info)
+2.1.6 Randomness Generation
+Labyrinth can use any available cryptographically strong
+random number generator. The syntax is as follows:
+random bytes ← random(byteslength)
+2.1.7 Oblivious Revocable Function
+Labyrinth uses Oblivious Revocable Function (ORF) [31].
+ORF is a cryptographic primitive used to manage the addition
+of a new device by an existing device and the revocation of a
+part of devices. The syntax used in the protocol description
+is as follows:
+client state ← orf client init()
+server state ← orf server init()
+(new client state, evolve token)
+← orf client evolve(client state)
+new server state ← orf server evolve
+(server state, evolve token)
+In Labyrinth, no specific ORF functions are defined other
+than those listed above, and no further detailed state ma-
+nipulations are defined. In this paper, we formalize and
+verify only what is described in the Labyrinth specifica-
+tion [9]. It is required that new server state corresponds
+to new client state via evolve token. We note that
+no concrete algorithm is given in the specification. In this
+paper, we assume that the oblivious revocable function is
+ideally secure.
+2.2 Protocol Overview
+Labyrinth is a protocol for secure sharing of message history
+between multiple devices owned by the same user in Meta’s
+Messenger. Labyrinth has its own goals in terms of product
+and privacy.
+2.2.1 Entities
+The entities that appear in Labyrinth are as follows.
+Client: Each device (including virtual devices described in
+Sect. 2.3) is defined as a client. A client is associated
+with an account, has its own key and access rights to
+the epoch, and is responsible for storing and loading
+messages.
+Server: The server held by Meta manages the access rights
+of the devices associated with each account, as well as
+the DB for storing and loading messages.
+2.2.2 Product Goals
+1. Allowing messaging history to be accessed on new de-
+vices
+2. Providing an efficiently queryable and writeable stor-
+age mechanism, so devices need not store their entire
+message history.
+3. Preventing Meta from accessing data stored in
+Labyrinth
+2.2.3 Privacy Goals †
+Baseline Message Secrecy: Labyrinth is intended to pro-
+tect the content of messages from the server side and
+all that can monitor communications.
+Post-Revocation Message Secrecy: Labyrinth guarantees
+that no device removed from the account can subse-
+quently decrypt encrypted and stored messages.
+Attachment Unlinkability: Labyrinth aims to strongly
+guarantee that attachments stored separately from the
+mailbox are not linked to the mailbox or messages.
+Labyrinth in Messenger: Labyrinth is currently undergo-
+ing testing and ongoing development and has not yet
+achieved all of the above goals. However, it considers
+the secure storage and restore of messages (Baseline
+Message Secrecy) to be the most critical objective and
+believes this should not be compromised.
+2.2.4 Epoch
+Epoch is a concept provided for Labyrinth key management,
+which is updated only when a device is revoked; within an
+epoch, devices can be added an unlimited number of times,
+but revocation can occur only once. When the epoch is
+updated, the key for message encryption is updated, and it
+is no longer possible to decrypt messages in the new epoch
+from the revoked device.
+2.2.5 Entire Protocol Flow
+The entire protocol flow for the case where two devices
+exist and the device added later is revoked is illustrated in
+Fig. 1. The calculation and communication in each arrow are
+according to Sect. 2.3.2. Each device is capable of loading
+past messages and storing new messages at any time that it
+has not been revoked.
+2.3 Protocol Details
+For readability, public parameters are abbreviated as “...” in
+the algorithmic expressions that follow. For details, see the
+specification [9].
+†Note that Attachment Linkability and Labyrinth in Messenger
+are not directly related to the security verification that is the main
+focus of this study.
+
+===== PDF PAGE 5 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1371
+Fig. 1 Illustration of an example of entire protocol flow.
+2.3.1 Protocol Components
+Global parameter: Each Labyrinth instance has the follow-
+ing global values.
+• labyrinthID: a unique identifier assigned by the
+server, associated with the mailbox metastore and
+known to the devices.
+• mailboxRootSalt: a random value, global to the
+Labyrinth instance, but non-secret.
+Setup: Each Labyrinth device has the following keys.
+• deviceKeyPriv, deviceKeyPub: asymmetric
+signature key pair.
+• epochStorageKeyPriv, epochStorageKeyPub:
+asymmetric encryption key pair.
+• epochStorageAuthKeyPriv,
+epochStorageAuthKeyPub: asymmetric au-
+thentication key pair.
+Within the mailbox metastore, the server stores the fol-
+lowing per device.
+• deviceKeyPub
+• epochStorageKeyPub,
+pk sign(deviceKeyPriv, ...,
+epochStorageKeyPub)
+• epochStorageAuthKeyPub,
+pk sign(deviceKeyPriv, ...,
+epochStorageAuthKeyPub)
+Epochs: Each epoch is associated with the following.
+• epochRootKey: a secret shared among devices,
+but unknown to the server.
+• epochID: a value assigned by the Labyrinth meta-
+data server, uniquely identifying the epoch.
+• epochSequenceID: a value assigned by clients,
+used within the mailbox.
+• epochMetadata: encrypted secrets of at least one
+previous epoch.
+• epochDeviceMac[]: list of proofs of membership
+for each device.
+2.3.2 Protocol Phases
+Labyrinth protocol execution is carried out in several phases
+and Labyrinth is also a stateful protocol. Henceforth, the
+client refers to mobile devices and the server refers to Meta’s
+servers. In addition, each communication is basically as-
+sumed to take place between the client and the server.
+(1) Initialization
+It corresponds to initialization in the Labyrinth protocol,
+where the client generates the secret and registers it with the
+server. The following processes are carried out respectively.
+Client secret generation.
+(deviceKeyPriv, deviceKeyPub)
+:= pk sig keygen()
+(epochStorageKeyPriv, epochStorageKeyPub)
+:= pk enc keygen()
+epochStorageKeySig := pk sign(deviceKeyPriv,
+..., epochStorageKeyPub)
+(epochStorageAuthKeyPriv,
+epochStorageAuthKeyPub)
+:= pk auth keygen()
+epochStorageAuthKeySig :=
+pk sign(deviceKeyPriv, ...,
+epochStorageAuthKeyPub)
+orfClientState := orf client init()
+Backup salt generation on the client.
+mailboxRootSalt := random(32)
+Server initialization. The server registers a new Labyrinth
+instance, with a new labyrinthID.
+Client secret upload. The client uploads the following to
+the server:
+• deviceKeyPub
+• epochStorageKeyPub
+• epochStorageKeySig
+• epochStorageAuthKeyPub
+• epochStorageAuthKeySig
+The server stores these as a representation of the device
+associated with labyrinthID and generates:
+orfServerState := orf server init()
+This is also stored as the server’s representation of
+the device. Note that, while orfClientState and
+orfServerState are per-device, their overall com-
+bined mapping is now fixed for this Labyrinth instance.
+(2) Opening an Epoch
+This phase occurs when a new Labyrinth session is started or
+
+===== PDF PAGE 6 =====
+1372
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+when a device revocation occurs, which updates the epoch.
+Generate core epoch values. Each epoch has a root key
+from which the various values are derived.
+If a new Labyrinth session is started:
+epochRootKey := random(32)
+Else:
+newEpochEntropy := random(32)
+(epochChainingKey,
+epochDistributionPresharedKey) :=
+kdf(previousEpochRootKey, ...,
+concat(..., previousEpochSequenceID,
+..., previousEpochID))
+epochRootKey := kdf(newEpochEntropy,
+epochChainingKey, ...)
+epochSequenceID is an integer counter, beginning at
+0 and calculated as follows.
+epochSequenceID := previousEpochSequenceID + 1
+Store epoch metadata. Each epoch derives the following
+two keys to refer to its qualifications for previous
+epochs.
+epochDataStorageKey :=
+kdf(epochRootKey, ...,
+concat(..., base64 encode(
+epochSequenceID))
+epochDeviceMacKey :=
+kdf(epochRootKey, ..., base64 encode(
+epochSequenceID))
+The client encrypts and uploads the following data for
+the previous epoch to the server.
+encryptedPreviousEpochSequenceID :=
+encrypt(epochDataStorageKey, ...,
+previousEpochSequenceID)
+encryptedPreviousEpochRootKey :=
+encrypt(epochDataStorageKey, ...,
+previousEpochRootKey)
+Authentication of each device. When updating epochs,
+epoch entropy is shared from one device to another by
+the method described below. The sender device com-
+putes the following expectedMac for each destination
+device.
+expectedMac := mac(
+previousEpochDeviceMacKey,
+deviceKeyPub)
+Each device receiving epoch entropy computes the
+following previousEpochDeviceMac to indicate its
+membership for previous epochs.
+previousEpochDeviceMac := mac(
+epochDeviceMacKey, deviceKeyPub)
+The sender device compares these and only shares the
+newEpochEntropy with the device for which the equal-
+ity is established.
+Distribute new epoch entropy. In Labyrinth, the
+epochRootKey is not shared directly, but the
+epochEntropy is shared and the epoch is up-
+dated by deriving the epochRootKey from this and
+previousEpochChainingKey as described above.
+The sender device verifies the following for
+each device’s public key and then encrypts the
+newEpochEntropy.
+isValidEpochStorageKey :=
+pk verify(deviceKeyPub recipient,
+epochStorageKeySig recipient, ...,
+epochStorageKeyPub recipient)
+epochEntropyEncrypted :=
+pk encrypt(epochStorageKeyPub recipient,
+epochStorageAuthKeyPub self,
+epochStorageKeyPriv self,
+epochDistributionPreSharedKey,
+concat(..., epochSequenceID),
+newEpochEntropy)
+The receiver device verifies the sender’s
+epochStorageAuthKeyPub, decrypts the
+epochEntropyEncrypted and derives the
+newEpochRootKey.
+(3) Generating Recovery Codes
+When adding a new device to the account, Labyrinth pub-
+lishes a 40-character recovery code from already registered
+devices and restores the history of previous messages from
+the recovery codes. Recovery codes consist of the following
+40-character†.
+• 1 character as a version (currently fixed as 2).
+• 1 character as an identifier (currently unused and always
+0).
+• 34 characters of entropy.
+• 4 characters of error correction.
+Essentially as described above, the generation of a 34-
+character entropy deserves the generation of recovery codes.
+†The specification [9, pp.24] does not explicitly state where
+each of these characters is placed within the 40-character (e.g.,
+whether “version” appears at the beginning or end). This paper
+assumes they are listed sequentially from the top and formalizes the
+format accordingly.
+
+===== PDF PAGE 7 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1373
+Using entropy, it derives the vdeviceId and
+vdeviceDecryptionKey as follows.
+(vdeviceId, vdeviceDecryptionKey) :=
+kdf(entropy, ..., concat(..., identifier, ...))
+The vdeviceId is used to identify a specific virtual device
+on the server and the vdeviceDecryptionKey is used as a
+symmetric key for encrypting its data.
+(4) Generating Virtual Devices
+The Virtual Device concept is introduced to restore informa-
+tion about past epochs when new devices are added. Virtual
+Device is derived from one existing device. In generating
+the Virtual Device, the following values are generated.
+(deviceKeyPriv, deviceKeyPub) := pk sig keygen()
+(epochStorageKeyPriv, epochStorageKeyPub)
+:= pk enc keygen()
+epochStorageKeySig := pk sign(deviceKeyPriv,
+..., epochStorageKeyPub)
+Next, it generates the ORF state for this virtual device by
+evolving the current device’s ORF state.
+(vdeviceClientState, evolveToken)
+:= orf client state(clientState)
+It encrypts the secrets using the vdeviceDecryptionKey
+described above.
+encryptedDeviceKeyPriv :=
+encrypt(vdevideDecryptionKey, ...,
+deviceKeyPriv)
+encryptedEpochStorageKeyPriv :=
+encrypt(vdeviceDecryptionKey, ...,
+epochStorageKeyPriv)
+encryptedOrfClientState :=
+encrypt(vdeviceDecryptionKey, ...,
+vdeviceClientState)
+encryptedMailboxRootsalt :=
+encrypt(vdeviceDecryptionKey, ...,
+mailboxRootSalt)
+encryptedEpochRootKey :=
+encrypt(vdeviceDecryptionKey, ...,
+epochRootKey)
+encryptedEpochSequenceID :=
+encrypt(vdeviceDecryptionKey, ...,
+base64 encode(epochSequenceID))
+The membership proof for the virtual device in the epoch is
+also generated at this point, to ensure that any new epoch
+entropy will be shared with the virtual device.
+epochDeviceMac := mac(epochDeviceMacKey,
+deviceKeyPub)
+It uploads the vdeviceId, the epochStorageKeySig, the
+evolveToken, the epochDeviceMac, and the encrypted se-
+crets to the server. The server side derives the state of the
+virtual device based on the state of the original physical
+device.
+vdeviceOrfServerState :=
+orf server evolve(evolveToken,
+currentDeviceORFServerState)
+The original physical device must delete all virtual device
+values and the recovery code.
+(5) Adding a device
+This is a phase of adding a device from recovery codes.
+Client secret generation. The device initially generates its
+own secrets, similar to the initialization phase.
+(deviceKeyPriv, deviceKeyPub)
+:= pk sig keygen()
+(epochStorageKeyPriv, epochStorageKeyPub)
+:= pk enc keygen()
+epochStorageKeySig :=
+pk sign(deviceKeyPriv, ...,
+epochStorageKeyPub)
+(epochStorageAuthKeyPriv,
+epochStorageAuthKeyPub)
+:= pk auth keygen()
+epochStorageAuthKeySig :=
+pk sign(deviceKeyPriv,
+..., epochStorageAuthKeyPub)
+At this time, the secret of the virtual device can be
+retrieved by parsing the recovery code.
+Enrolling. The device being added calculates its own state,
+token and mac.
+(clientState, evolveToken) :=
+orf client evolve(vdeviceClientState)
+epochDeviceMac := epochDeviceMac(
+epochDeviceMacKey, deviceKeyPub)
+The public keys, signatures, evolveToken and
+epochDeviceMac are registered to the server. Then
+the server calculates the device’s new server-side state
+as follows.
+orfServerState := orf server evolve
+(evolveToken, vdeviceOrfServerState)
+Epoch chaining. At this point, the added device knows
+
+===== PDF PAGE 8 =====
+1374
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+the epochRootKey, thus, it can perform epoch
+chaining. This is achieved by decrypting the
+encryptedPreviousEpochSequenceID and
+encryptedPreviousEpochRootKey, which are en-
+crypted by epochDataStorageKey.
+Cleanup. As soon as a new device is registered in Labyrinth,
+the information about the recovery codes and virtual
+device is deleted.
+(6) Device Revocation
+In Labyrinth, the revocation is to ensure that subsequent
+messages cannot be decrypted even without requiring the
+revoked device to remove the key. First, the epoch is updated
+starting from one device that is not revoked. Then, the server
+must delete this device’sorfServerState.
+(7) Storing and Loading Messages
+The client derives the key used for encrypting the message
+from the current epochRootKey.
+messageKey := kdf(epochRootKey, ...,
+concat(..., epochSequenceID, ...))
+It then encrypts the message and uploads it to the server.
+encryptedMessageData :=
+encrypt(messageKey, ..., messageData)
+Loading process mirrors the storing one. Note that when
+loading, the messageKey of the corresponding epoch is re-
+quired.
+3. ProVerif
+ProVerif [11] is an automated cryptographic protocol ver-
+ification tool that works by defining the specification of a
+cryptographic protocol and the security requirements to be
+verified. ProVerif verifies cryptographic protocols by ide-
+alizing messages sent and received in the communication
+channel into symbols. Since the verification in ProVerif is
+based on the Dolev-Yao model [32] such that attackers can
+read, modify, manipulate data internally, delete, and send
+messages. The inputted cryptographic protocol is automati-
+cally translated into Horn clauses by the applied pi-calculus,
+and the security requirement is verified by whether or not an
+event violating the security requirement can be derived.
+The security requirements verified using ProVerif in this
+paper are confidentiality, integrity, and indistinguishability.
+Confidentiality: We can verify whether an attacker can ob-
+tain given information using the reachability verifica-
+tion (secrecy).
+Integrity: The correspondence assertion verification is used
+to check whether or not, between entities communicat-
+ing using the same credentials (e.g., private key) when
+an event of the receiver occurs, an event of the corre-
+sponding sender always occurs in advance (falsifiabil-
+ity).
+Indistinguishability: The observational equivalence verifi-
+cation is used to check the equivalence of two processes
+(e.g., verifying message privacy by discerning whether
+two processes are sending the same message).
+4. Our Formalization of Labyrinth Using ProVerif
+This section shows an overview of our formalization of
+Labyrinth. We use ProVerif 2.05, the latest version of
+ProVerif. See [33] for the full ProVerif code of our for-
+malization†.
+4.1 Main Idea
+As mentioned in Sect. 2.3, Labyrinth is a stateful protocol.
+On the other hand, ProVerif does not support stateful pro-
+tocol descriptions. However, we find that given that all
+epochs are formed by inheriting information from previ-
+ous epochs, events such as the addition or revocation of
+a device can be generalized and captured. From such an
+insight, we formalize Labyrinth by covering the follow-
+ing specific flows using ProVerif. In particular, we need
+to be mindful of the differences that arise in the way
+epochEntropy is shared when updating epochs and the way
+epoch information is accessed when adding devices, and we
+consider flows that encompass these differences. Note that
+the devices in Labyrinth are capable of storing messages at
+the latest epoch and reading messages at any epoch at any
+time. Our comprehensively formalized flows are shown be-
+low and an illustration of each flow and its relationship is
+shown in Fig. 2.
+1. Initialization
+2. Initialization → Add a Device
+3. Initialization → Add a Device → Revoke a Device (★)
+4. Initialization → Add a Device → Revoke a Device →
+Add a Device (★)
+5. Initialization → Add a Device → Add a Device
+6. Initialization → Add a Device → Add a Device →
+Revoke a Device (★, ∗)
+7. Initialization → Add a Device → Add a Device →
+Revoke a Device → Add a Device (★, ∗)
+In practice, it can happen that a device passes into an-
+other person’s possession after being revoked from an ac-
+count. In this case, information that could compromise
+the security of specific applications shall not remain on
+the revoked device. Therefore, we think that it should be
+taken into account whether the information about the re-
+voked device is available to the attacker in addition to the
+situations covered by the technical white paper. We per-
+form two-way verifications that capture such a situation as
+the flow marked with ★. Furthermore, the behaviour of
+updating epochs should also be considered. The specifi-
+cation did not explicitly specify whether the sharing of
+†Only the verification code samples of flow 3 shown in Sect. 4.1
+are noted in the Appendix A.1.
+
+===== PDF PAGE 9 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1375
+Fig. 2 Illustration of each verified flow (Arrows connecting each flow
+indicate the sequence of events. The practical protocol flows are all covered
+by these combinations).
+newEpochEntropy from the device originating the epoch
+updating to other devices is communicated via a server or
+directly between devices. For flows marked with ∗, we give
+a verification covering both of these. All these cases are
+covered by formalizing, in each flow, the sub-processes cor-
+responding to each device added to the account and to the
+server, and by controlling what information is given to the
+attacker inside it.
+In this section, we use the following flow to explain the
+key points of formalization:
+3. Initialization → Add a Device → Revoke a Device
+Three sub-processes are formalized in this flow: devices that
+appeared from initialization, devices added along the way
+and later revoked, and the server.
+4.2 Epoch Updating (Using phase Command)
+An epoch update will only occur if the device expires from
+Labyrinth. The formalization in this paper uses the phase
+command to chronologically manage the execution of flows
+in each device sub-process. In ProVerif, the timing of the
+start of execution of the main process is phase 0, and then
+the phases are specified in order from 1. In this example,
+the first epoch is phase 0, and the epoch after the device
+expires corresponds to phase 1. Within each device and
+server sub-process, phase 1 is specified at the appropriate
+time.
+4.3 Storing and Loading Messages
+All storing and loading of messages occur an arbitrary num-
+ber of times at arbitrary timings after the initialization phase
+has passed. In the example flow, the sub-process of the
+device that exists from the beginning of initialization is for-
+malized to store and load messages an arbitrary number of
+times in the first epoch. (The symbol ! to execute multiple
+processes in parallel is used in the sub-process.) Then, the
+sub-process of the device to be added later is formalized so
+that it can read and store the message any number of times as
+soon as the secret information of the epoch is fetched. Then,
+after the device added later expires and the epoch is updated
+by the phase to derive a new key, the message at the updated
+epoch is expressed to be stored and loaded in the same way.
+Note here that it formalizes that the message in one previous
+epoch is also read.
+Each device sub-process shall publish the message to
+the communication channel with the server when storing the
+message and shall read the message from the same commu-
+nication channel when reading it. On the other hand, the
+server sub-process is formalized with care so that each de-
+vice at each epoch can store and load messages. Messages
+at each epoch are managed by a sub-process of the server
+using the table functionality of ProVerif. A table cor-
+responding to each epoch is prepared, messages arriving at
+the server from each device are inserted into thetable, and
+messages are retrieved from the table and sent when each
+device reads the messages. By formalizing in this way, the
+message of each epoch can be taken over and retained even
+if the phase command is used, and the situation where each
+device reads the message of a past epoch can be expressed.
+Related to Sect. 5.1.2, when each device stores and loads
+a message, theevent should be placed with a clear indication
+of which device performed the processing for which epoch
+of the message.
+4.4 Revocation of Devices
+The verification in this paper aims to evaluate the security
+impact of whether or not an attacker can abuse the infor-
+mation of a revoked device. In the case of allowing abuse,
+in the sub-process of the device to be revoked, immediately
+after updating the phase, disclose the device’s private keys
+and recovery codes to a public channel to which the attacker
+has access. Given that an attacker can intervene as a man-
+in-the-middle in the device registration and epoch update
+process, it is possible to attack using information on devices
+that have been revoked by having access to recovery codes
+and other information. In the case of not allowing, the null
+process (0.) shall be executed after updating the phase in
+the sub-process of the device to be revoked.
+4.5 Sharing newEpochEntropy
+If there are multiple devices remaining when updating an
+epoch, thenewEpochEntropy created on one device must be
+shared with the other devices. However, the specification [9]
+does not explicitly specify the method of communication
+by which each device shares newEpochEntropy. In the
+verification of this paper, we verify both of the following for
+this bifurcation that occurs in the ∗ case of Sect. 4.1.
+• communicated via a server
+• directly between devices
+The former is shared through the communication channel
+with the server’s sub-process server as well as message stor-
+ing and loading. For the latter, it formalizes the communi-
+cation in a way that allows each targeted device sub-process
+
+===== PDF PAGE 10 =====
+1376
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+access to the private channel and does not allow the at-
+tacker to intervene.
+5. Formalization of Security Requirements
+5.1 Security of Labyrinth
+The formalization of the security requirements considering
+the cases in Sect. 4.1 is as follows.
+5.1.1 For Confidentiality
+The latest epoch is the second epoch, thus, each of the fol-
+lowing is verified.
+• confidentiality of messages stored in the first epoch
+• confidentiality of messages stored in the second epoch
+A secret query is used for verification. This allows the
+confidentiality of all messages to be verified by storing them
+in each device (sub-process in ProVerif) with the same name
+symbol.
+5.1.2 For Integrity
+Integrity is verified by expressing the following events using
+correspondence assertions. Here, Client1 is a device that has
+existed since Initialization, and Client2 is a device added to
+the account during the process and subsequently revoked.
+• The message that Client1 and Client2 decrypt as the
+message of the first epoch is the message that Client1
+and Client2 stored in the first epoch.
+• The message that Client1 decrypts as the message of
+the second epoch is the message that Client1 stored in
+the second epoch.
+In order to express these using correspondence assertions,
+the sub-processes of each device place events for storing
+and loading messages at each epoch as different events. By
+formalizing in this way, it is possible to verify that messages
+can only be stored and loaded by legitimate devices within
+each epoch. Similarly, in other verification patterns, the main
+focus is on which devices appear in each epoch.
+5.2 Security of AES-GCM-Extended
+In the security verification of Labyrinth †, AEAD is formal-
+ized as an ideally secure AEAD, rather than as the concrete
+scheme in the specification. We verify whether the con-
+crete scheme AES-GCM-Extended is as secure as an ideally
+secure AEAD.
+5.2.1 For Confidentiality
+We examine the case that the same plaintext is encrypted
+†More details on the formalization of AES-GCM-Extended are
+given in the Appendix A.2. See [33] as well as Labyrinth for the
+full verification code.
+with the same key, nonce, and AAD with each of the ideally
+secure AEAD and AES-GCM-Extended, and it is verified
+whether these can be distinguished. The choice command
+of ProVerif is used for verification, and the main process
+flows these two ciphertexts into the public channel to verify
+that the attacker can distinguish between them. The specific
+formalization of each algorithm is omitted here, but this is
+how confidentiality verification is performed.
+5.2.2 For Integrity
+To verify the integrity of the AEAD, sub-processes for the
+sender and the receiver of the ciphertext are defined, respec-
+tively. Then, using correspondence assertions of events, it
+is verified that the plaintext encrypted by the sender and
+the plaintext obtained by decrypting the ciphertext by the
+receiver always match. In this way, AEAD’s security verifi-
+cation, including the impersonation, is achieved.
+6. Verification Results
+6.1 Verification of Labyrinth
+The results of security verification of Labyrinth are shown
+in Table 1. While the security claimed in the Labyrinth
+specification is satisfied, the use of a revoked device will
+definitively break the confidentiality and integrity of mes-
+sages stored in previous epochs and conditionally †† break
+the confidentiality and integrity of messages stored in the
+latest epoch. The specific conditions and the corresponding
+attacks are as follows.
+1. At the time of device revocation, if there is only one
+non-revoked device remaining, the confidentiality of
+messages in previous epochs or the integrity of the re-
+maining devices in reading back messages from previ-
+ous epochs is broken.
+2. When multiple non-revoked devices appear in the
+account at the time of device revocation and
+newEpochEntropy is shared from one device to the
+others,
+a. if no adversary can intervene when
+newEpochEntropy is shared (e.g., the device
+owner transfers newEpochEntropy locally be-
+tween devices), the same security as in 1. is broken.
+b. if an adversary can intervene when sharing
+newEpochEntropy (e.g., the device owner sends
+epochEntropyEncrypted to the server and the
+server sends it to other devices), in addition to 1.
+and 2a., the confidentiality and the integrity of the
+messages in the new epoch are broken.
+††The security is only broken if there is a man-in-the-middle
+adversary when sharing the epoch entropy. This corresponds to
+that obtained by the verification of the case of ∗ in Sect. 4.1.
+
+===== PDF PAGE 11 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1377
+Table 1 Verification results of Labyrinth.
+6.1.1 Specific Attack Procedures
+We describe the found attack procedure from our verification.
+Note that what we describe here is the simplest possible
+formulation of the attack output by ProVerif, and does not
+necessarily match all of the output traces.
+For messages stored on previous epochs, the following
+attacks are found:
+(1) Confidentiality:
+1. Generate a messageKey corresponding to a past epoch,
+using the epochRootKey held by the revoked device.
+2. Decrypt messages from previous epochs using the
+messageKey from Step 1.
+(2) Integrity:
+1. Generate a messageKey corresponding to a past epoch,
+using the epochRootKey held by the revoked device.
+2. Encrypt the dummy message with the messageKey
+from Step 1.
+3. Make the authorized device read the message encrypted
+in Step 2.
+For messages stored on the latest epoch, the following
+attacks targeting the newEpochEntropy sender are found:
+(3) Confidentiality:
+1. Obtain public, signing, private keys and so on from
+revoked devices.
+2. When the authorized device obtains the public key or
+other information on the newEpochEntropy share, re-
+place it with the one from the revoked device.
+3. After successful MAC verification and signature ver-
+ification on the authorized device, the authorized de-
+vice sends an epochEntropyEncrypted towards the
+replaced device.
+4. Decrypt the epochEntropyEncrypted and generate
+the epochRootKey and messageKey of the new epoch.
+5. Decrypt messages with the messageKey from Step 4.
+(4) Integrity:
+Step 1 to 4 are the same as the attack of confidentiality.
+5. Encrypt a dummy message with the messageKey from
+Table 2 Verification results of AES-GCM-Extended.
+Step 4. and authorized device decrypts it.
+For messages saved on the latest epoch, the following
+attacks targeting the newEpochEntropy receiver are found:
+(5) Confidentiality:
+1. Obtain public, signing, private keys and so on from
+revoked devices.
+2. Generate a new epoch entropy and use information from
+the previous epoch to generate a root key for the new
+epoch.
+3. The authorized device receives the
+epochEntropyEncrypted, verifies the sender (where
+the sender’s public key and signature shall be replaced)
+and generates a newepochRootKey and messageKey.
+4. Decrypt messages with the messageKey from Step 2.
+(6) Integrity:
+Step 1 to 3 are the same as the attack of confidentiality.
+4. Encrypt a dummy message with the messageKey from
+Step 2. and authorized device decrypts it.
+6.2 Verification of AES-GCM-Extended
+The results of the security verification of AES-GCM-
+Extended are shown in Table 2. Since both confidentiality
+and integrity are verified to be satisfied, our formalization of
+AES-GCM-Extended as an ideally secure AEAD does not
+affect the results of security verification of Labyrinth.
+6.3 Design Implication Derived from Verification Results
+As shown in Table 1, differences in the sharing meth-
+ods of newEpochEntropy resulted in varying levels
+of security. Concretely, if the device owner sends
+epochEntropyEncrypted to the server and the server sends
+it to other devices, additional attacks are found. Therefore,
+this verification results implicates that the method to transfer
+
+===== PDF PAGE 12 =====
+1378
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+newEpochEntropy locally between devices is desirable.
+7. Responsible Disclosure to Meta
+We have reported to Meta via the Meta Bug Bounty [27] on
+the attack caused by the attacker’s use of the revoked device,
+which is found in this study. The timeline and flow of the
+disclosure are as follows.
+• On July 10, 2024, we sent Meta a report via the Meta
+Bug Bounty summarizing the series of attacks and stat-
+ing that the security model should be extended to take
+into account the exploit of revoked devices.
+• On October 8, 2024, after discussions of Meta Security
+with the corresponding product team, we were informed
+that the reported attack was a known vulnerability and
+was accepted during the design phase.
+• On November 11, 2024, we received permission from
+Meta to publish the results of this study.
+8. Conclusion
+We give the first formal verification of the Labyrinth En-
+crypted Message Storage Protocol. While all of the security
+claims made by Meta in its specification are satisfied, we
+showed that there are specific conditions and attack proce-
+dures to break the confidentiality and integrity of the message
+obtained by abusing a revoked device.
+Remaining problems are a security analysis of client-to-
+client message encryption (E2EE) and implementation-level
+security analysis in Messenger.
+Acknowledgments
+We would like to thank Meta Security for their consideration
+of our report. This work was supported by JST, CREST
+Grant Number JPMJCR22M1, Japan.
+References
+[1] K. Watanabe and K. Yoneyama, “Formal verification of labyrinth
+encrypted message storage protocol in messenger,” 26th World Con-
+ference on Information Security Applications, Springer, 2025.
+[2] “Messenger,” https://www.messenger.com/
+[3] “WhatsApp — Secure and Reliable Free Private Messaging and Call-
+ing,” https://www.whatsapp.com/?lang=en
+[4] “WeChat - Free messaging and calling app,” https://www.wechat.
+com/en/
+[5] “Telegram Messenger,” https://telegram.org/
+[6] “Most popular messaging apps 2025 — Statista,” https://www.
+statista.com/statistics/258749/most-popular-global-mobile-messeng
+er-apps/
+[7] “Launching Default End-to-End Encryption on Messenger — Meta,”
+https://about.fb.com/news/2023/12/default-end-to-end-encryption-o
+n-messenger/
+[8] “Messenger End-to-End Encryption Overview,” https://engineering.
+fb.com/wp-content/uploads/2023/12/MessengerEnd-to-EndEncrypti
+onOverview 12-6-2023.pdf
+[9] “The Labyrinth Encrypted Message Storage Protocol,” https://
+engineering.fb.com/wp-content/uploads/2023/12/TheLabyrinthEncr
+yptedMessageStorageProtocol 12-6-2023.pdf
+[10] “End-to-end encryption — Messenger Help Center,” https://www.
+facebook.com/help/messenger-app/1084673321594605?helpref=hc
+fnav
+[11] “ProVerif,” https://bblanche.gitlabpages.inria.fr/proverif/
+[12] “Tamarin Prover,” https://tamarin-prover.com/
+[13] K. Bhargavan, B. Blanchet, and N. Kobeissi, “Verified models and
+reference implementations for the TLS 1.3 standard candidate,” IEEE
+S&P, 2017.
+[14] H. Sakurada, K. Yoneyama, Y. Hanatani, and M. Yoshida, “Analyzing
+and fixing the QACCE security of QUIC,” SSR, pp.1–31, 2016.
+[15] M.K. Jangid, Y. Zhang, and Z. Lin, “Extrapolating formal analysis
+to uncover attacks in Bluetooth passkey entry pairing,” NDSS, 2023.
+[16] H. Feng, J. Guan, H. Li, X. Pan, and Z. Zhao, “FIDO gets verified: A
+formal analysis of the universal authentication framework protocol,”
+IEEE Trans. Dependable Secure Comput., vol.20, no.5, pp.4291–
+4310, 2022.
+[17] J. Guan, H. Li, H. Ye, and Z. Zhao, “A formal analysis of the FIDO2
+protocols,” ESORICS, pp.3–21, 2022.
+[18] “LINE Encryption Overview (Ver. 1.0),” https://scdn.line-apps.com/
+stf/linecorp/en/csr/line-encryption-whitepaper-ver1.0.pdf
+[19] “LINE Encryption Overview (Ver. 2.1),” https://scdn.line-apps.com/
+stf/linecorp/en/csr/line-encryption-whitepaper-ver2.1.pdf
+[20] A.M. Espinoza, W.J. Tolley, J.R. Crandall, M. Crete-Nishihata, and
+A. Hilts, “Alice and Bob, who the FOCI are they?: Analysis of
+end-to-end encryption in the LINE messaging application,” FOCI,
+2017.
+[21] T. Isobe and K. Minematsu, “Breaking message integrity of an end-
+to-end encryption scheme of LINE,” ESORICS, pp.249–268, 2018.
+[22] C. Shi and K. Yoneyama, “Verification of LINE encryption version
+1.0 using ProVerif,” IEICE Trans. Inf & Syst., vol.E102-D, no.8,
+pp.1439–1448, Aug. 2019.
+[23] “Blog - iMessage with PQ3: The new state of the art in quantum-
+secure messaging at scale - Apple Security Research,” https://
+security.apple.com/blog/imessage-pq3/
+[24] F. Linker, R. Sasse, and D. Basin, “A formal analysis of Apple’s
+iMessage PQ3 protocol,” USENIX Security, 2025.
+[25] T. Isobe and R. Ito, “Security analysis of end-to-end encryption for
+zoom meetings,” IEEE Access, vol.9, pp.90677–90689, 2021.
+[26] G.T. Davies, S. Faller, K. Gellert, T. Handirk, J. Hesse, M. Horv ´ath,
+and T. Jager, “Security analysis of the whatsapp end-to-end encrypted
+backup protocol,” CRYPTO, pp.330–361, 2023.
+[27] “Program overview — Meta Bug Bounty,” https://bugbounty.meta.
+com/
+[28] “Recommendation for Block Cipher Modes of Operation: Ga-
+lois/Counter Mode (GCM) for Confidentiality and Authentica-
+tion,” NIST Special Publication 800-38D, 2007. https://csrc.nist.gov/
+publications/detail/sp/800-38d/final
+[29] “The XEdDSA and VXEdDSA Signature Schemes,” 2016. https://
+signal.org/docs/specifications/xeddsa/
+[30] H. Krawczyk, M. Bellare, and R. Canetti, “HMAC: Keyed-
+hashing for message authentication,” RFC 2104, 1997. https://
+datatracker.ietf.org/doc/html/rfc2104
+[31] K. Lewi, J. Millican, A. Raghunathan, and A. Roy, “Oblivious revo-
+cable functions and encrypted indexing,” Cryptology ePrint Archive,
+Paper 2022/1044, 2022.
+[32] D. Dolev and A. Yao, “On the security of public key protocols,”
+IEEE Trans. Inf. Theory, vol.29, no.2, pp.198–208, 1983.
+[33] https://github.com/xk-watanabe/d/Verification Labyrinth
+Appendix A: Formalization Details
+A.1 Verification of Labyrinth
+Here, we explain the details of the formalization of Labyrinth
+
+===== PDF PAGE 13 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1379
+with the ProVerif code for flow 3 shown in Sect. 4.1. In the
+case of this flow, three sub-processes are contained: the
+server, the devices appeared from the start of the protocol
+(Client1), and the devices that are added along the way and
+later revoked (Client2). The part of the Client1 sub-process
+up to the addition of Client2 is as follows.
+1 let client_1 (c: channel ,c1: channel ,c2: channel )=
+2 (* Client secret generation *)
+3 let ( deviceKeyPriv : priv_key_sig , deviceKeyPub :
+pub_key_sig ) = pk_sig_keygen () in
+4 let ( epochStorageKeyPriv : priv_key_enc ,
+epochStorageKeyPub : pub_key_enc ) = pk_enc_keygen
+() in
+5 let epochStorageKeySig = pk_sign_enc ( deviceKeyPriv ,
+b_0x30 , epochStorageKeyPub ) in
+6 let ( epochStorageAuthKeyPriv : priv_key_auth ,
+epochStorageAuthKeyPub : pub_key_auth ) =
+pk_auth_keygen () in
+7 let epochStorageAuthKeySig = pk_sign_auth (
+deviceKeyPriv ,b_0x31 , epochStorageAuthKeyPub ) in
+8 let orfClientState = orf_cilent_init () in
+9 (* Backup salt generation on the client *)
+10 new mailboxRootSalt : coins ;
+11 (* client uploads to the server *)
+12 out(c1 ,( deviceKeyPub , epochStorageKeyPub ,
+epochStorageKeySig , epochStorageAuthKeyPub ,
+epochStorageAuthKeySig ));
+13 (* Opening an Epoch *)
+14 (* Generate core epoch values ( first epoch ) *)
+15 new epochRootKey : bitstring ;
+16 let epochSequenceID = nat_init (0) in
+17 (* Store epoch metadata *)
+18 let epochDataStorageKey = kdf( convertKey (
+epochRootKey ),null , concat (( epoch_data_storage_ ,
+base64_encode ( epochSequenceID )))) in
+19 let epochDeviceMacKey = kdf( convertKey ( epochRootKey )
+,null , concat (( epoch_devices_ , base64_encode (
+epochSequenceID )))) in
+20 let epochDeviceMac = mac( epochDeviceMacKey ,
+deviceKeyPub ) in
+21 let messageKey = kdf( convertKey ( epochRootKey ),null ,
+concat (( message_key_in_epoch_ , epochSequenceID ,
+cipher_version_3_thread_ , threadId ))) in
+22 (!
+23 (* Save a message (1 st epoch ) *)
+24 new message : bitstring ;
+25 new n0: nonce ;
+26 event save_message_1_c1 ( message );
+27 out(c1 ,(n0 , encrypt ( convertKey ( messageKey ),n0 ,
+concat (( message_thread_ , threadId )),message ))
+)
+28 )
+29 |
+30 (!
+31 (* Load a message (1 st epoch ) *)
+32 in(c1 , encryptedMessage : bitstring );
+33 let (n0:nonce , ciphertext : bitstring ) =
+encryptedMessage in
+34 let message ’ = decrypt ( convertKey ( messageKey ),n0
+, concat (( message_thread_ , threadId )),
+ciphertext ) in
+35 event load_message_1_c1 ( message ’)
+36 )
+For communication channels, the channel used by the at-
+tacker is c, the channel used by Client1 to communicate
+with the server is c1 and the channel used by Client2 to
+communicate with the server is c2. Client1 derives its own
+device key, epochRootKey, messageKey and etc. accord-
+ing to the protocol specification (Lines 2–21). The message
+is then encrypted by messageKey and sent to the server
+(Lines 23–27). The server receives the message and stores
+it in a table. The server also sends the encrypted message
+to Client 1, which decrypts it (Lines 31–35). The events
+placed before and after the encrypted message is sent and
+received are used to verify the integrity (non-forgeability) of
+the message (Lines 26 and 35). These processes are executed
+in parallel and are allowed to be duplicated, thus formaliz-
+ing the situation where messages are stored and loaded an
+arbitrary number of times and in an arbitrary order.
+After this, Client1 initiates Client2 to add it to the ac-
+count; after Client2 has been added and Client2 has revoked,
+the process is as follows.
+1 (
+2 phase 1;
+3 (* Client2 revokes *)
+4 (* **********2 nd Epoch ********** *)
+5 (* Renew the Epoch *)
+6 new newEpochEntropy : bitstring ;
+7 let ( epochChainingKey : bitstring ,
+epochDistributionPreSharedKey : bitstring ) =
+kdf( convertKey ( epochRootKey ),null , concat ((
+epoch_chaining_ , epochSequenceID , under_score ,
+epochID ))) in
+8 let epochRootKey ’ = kdf( convertKey (
+newEpochEntropy ),epochChainingKey ,
+epoch_root_key ) in
+9 (* Increment the epochSequenceID *)
+10 let epochSequenceID ’ = epochSequenceID + 1 in
+11 (* Store epoch metadata *)
+12 let epochDataStorageKey ’ = kdf( convertKey (
+epochRootKey ’) ,null , concat ((
+epoch_data_storage_ , base64_encode (
+epochSequenceID ’)))) in
+13 let epochDeviceMacKey ’ = kdf( convertKey (
+epochRootKey ’) ,null , concat (( epoch_devices_ ,
+base64_encode ( epochSequenceID ’)))) in
+14 (* Encrypt and Upload the data for the previous
+epoch *)
+15 new n0: nonce ;
+16 let encryptedPreviousEpochSequenceID = (n0 ,
+encrypt ( convertKey ( epochDataStorageKey ’) ,n0 ,
+epoch_data_metadata , nat_to_bitstring (
+epochSequenceID ))) in
+17 new n1: nonce ;
+18 let encryptedPreviousEpochRootKey = (n1 ,
+encrypt_key ( convertKey ( epochDataStorageKey ’)
+,n1 , epoch_data_metadata , convertKey (
+epochRootKey ))) in
+19 out(c1 ,( encryptedPreviousEpochSequenceID ,
+encryptedPreviousEpochRootKey ));
+20 (* Parallel : Save and Load *)
+21 (
+22 (* Derive a message key *)
+23 let messageKey ’ = kdf( convertKey (
+epochRootKey ’) ,null , concat ((
+message_key_in_epoch_ , epochSequenceID ’,
+cipher_version_3_thread_ , threadId ))) in
+24 (!
+25 new message_2 : bitstring ;
+26 new n2: nonce ;
+27 event save_message_2_c1 ( message_2 );
+28 out(c1 ,(n2 , encrypt ( convertKey ( messageKey
+’) ,n2 , concat (( message_thread_ ,
+threadId )),message_2 )))
+29 )
+30 |
+31 (!
+32 (* Load a message (1 st epoch ) *)
+33 in(c1 , encryptedMessage : bitstring );
+34 let (n2:nonce , ciphertext : bitstring ) =
+encryptedMessage in
+35 let message ’ = decrypt ( convertKey (
+messageKey ),n2 , concat ((
+message_thread_ , threadId )),
+ciphertext ) in
+36 event load_message_1_c1 ( message ’)
+37 )
+38 |
+39 (!
+40 (* Load a message (2 nd epoch ) *)
+41 in(c1 , encryptedMessage : bitstring );
+42 let (n2:nonce , ciphertext : bitstring ) =
+encryptedMessage in
+43 let message ’ = decrypt ( convertKey (
+messageKey ’) ,n2 , concat ((
+message_thread_ , threadId )),
+ciphertext ) in
+44 event load_message_2_c1 ( message ’)
+45 )
+46 )
+47 ).
+When Client2 expires, Client1 creates a newEpochEntropy
+(Line 6), derives the epochRootKey (Lines 7–8), then
+derives other related keys (Lines 9–13), uploads them to
+the server (Lines 14–19), etc., and then derives a new
+messageKey (Lines 22–23). The messages are then loaded
+and stored as in the case of the previous epoch, but note
+
+===== PDF PAGE 14 =====
+1380
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.8 AUGUST 2026
+that after the epoch is updated, the messages of the previous
+epochs are loaded (Lines 32–44).
+The sub-process of Client2 differs in that it starts with
+the addition of a device rather than the initialization of the
+protocol, but the general process flow is the same as for
+Client1. The verification considering the abuse of revoked
+devices makes the information on the revoked device avail-
+able to an attacker in the following way.
+1 (
+2 phase 1;
+3 (* Revocation *)
+4 out(c ,( deviceKeyPriv , epochStorageKeyPriv ,
+epochStorageAuthKeyPriv , recoveryCodes ))
+5 ).
+A.2 Verification of AES-GCM-Extended
+A.2.1 For Confidentiality
+Specific main process procedures are as follows.
+1 process
+2 (!
+3 new k: key;
+4 new plaintext : bitstring ;
+5 new aad: bitstring ;
+6 new n: nonce ; out(c,n);
+7 let m_a = encrypt (k,n,aad , plaintext ) in (* Real *)
+8 let m_b = encrypt ’(k,n,aad , plaintext ) in (* Ideal *)
+9 out(c, choice [m_a ,m_b ])
+10 )
+encrypt refers to the AES-GCM-Extended encryption al-
+gorithm and encrypt’ refers to the ideally secure AEAD
+encryption algorithm.
+A.2.2 For Integrity
+The declaration of the events and the verification query, the
+sub-processes of the sender and receiver of the message and
+specific main process procedures are as follows.
+1 event send ( bitstring ).
+2 event receive ( bitstring ).
+3 query m: bitstring ; event ( receive (m)) ==> event ( send (m)).
+4
+5 let sender (k:key ,aad: bitstring )=
+6 new plaintext : bitstring ;
+7 new n: nonce ;
+8 event send ( plaintext );
+9 out(c, encrypt (k,n,aad , plaintext )).
+10
+11 let receiver (k:key ,aad: bitstring )=
+12 in(c, ciphertext : bitstring );
+13 let plaintext ’ = decrypt (k,aad , ciphertext ) in
+14 event receive ( plaintext ’).
+15
+16 process
+17 new k: key;
+18 new aad: bitstring ;
+19 (! sender (k,aad)|! receiver (k,aad))
+In the communication between a sender and a receiver with
+the same key k and additional authentication data aad, it is
+verified that the message decrypted by the receiver is always
+the same as the plaintext encrypted by the sender.
+Appendix B: Discussion on Why Formalizing AES-
+GCM-Extended as an Ideal AEAD
+Table A·1 compares the verification times for AES-GCM-
+Extended when strictly formalized versus when formalized
+as an ideal AEAD during Labyrinth verification. Our ver-
+ification was conducted on Ubuntu 24 using Intel Core i9-
+11900K with 128 GB of RAM. When attempting to strictly
+formalize and verify AES-GCM-Extended, we were unable
+to obtain verification results for some flows in our execu-
+tion environment. When strictly formalizing AES-GCM-
+Extended, we considered that state search by ProVerif would
+be burdened by operations such as nonce splitting. There-
+fore, we adopted an approach of performing verification us-
+ing an ideal AEAD and separately verifying the security of
+AES-GCM-Extended.
+Table A·1 Comparison of verification time between when strictly formalized AES-GCM-extended
+and when formalized as an ideal AEAD.
+
+
+===== PDF PAGE 15 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF LABYRINTH IN MESSENGER: RECONSIDERING SECURITY AGAINST ABUSING REVOKED DEVICE
+1381
+Kakeru Watanabe received the B.E. and
+M.E. degrees from Ibaraki University, Ibaraki,
+Japan, in 2024 and 2026, respectively. Since
+April 2026, he has been with NRI SecureTech-
+nologies, Ltd. His research interests include ap-
+plied cryptography and formal methods. He was
+awarded the SCIS Paper Prize from 2025 Sym-
+posium on Cryptography and Information Secu-
+rity (SCIS 2025).
+Kazuki Yoneyama received the B.E.,
+M.E. and Ph.D. degrees from the University
+of Electro-Communications, Tokyo, Japan, in
+2004, 2006 and 2008, respectively. He was a
+researcher of NTT Secure Platform Laboratories
+from 2009 to 2015. He is presently engaged in re-
+search on cryptography at the Ibaraki University,
+since 2015. He is a member of the International
+Association for Cryptologic Research (IACR),
+IPSJ and JSIAM.

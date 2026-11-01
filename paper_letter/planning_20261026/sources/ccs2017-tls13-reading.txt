@@ -1,0 +1,326 @@
+===== ccs2017-tls13 PDF PAGE 2 =====
+surrounding the zero-Round-Trip-Time (0-RTT) mechanism [40],
+we do not expect substantial changes to come.
+1.1 Contributions
+Our main contributions in this work are as follows:
+(1) We develop a symbolic model of the latest specification of
+TLS 1.3 (draft 21) that considers all the possible interactions
+of the available handshake modes, including PSK-based
+resumption and 0-RTT. Its fine-grained, modular struc-
+ture greatly extends and refines the coverage of previous
+symbolic models that were successfully used to discover
+sophisticated interaction attacks, including that of Cremers
+et al. [22]. Our model effectively captures a new TLS 1.3
+protocol, incorporating the many changes that have been
+made to the protocol since the development of these previ-
+ous models. We also note that our model is highly flexible
+and can easily accommodate the removal of the 0-RTT
+mechanism, should the need arise.
+(2) We prove the majority of the specified security require-
+ments of TLS 1.3, including the secrecy of session keys,
+perfect forward secrecy (PFS) of session keys (where ap-
+plicable), peer authentication, and key compromise imper-
+sonation resistance. We also show that after a successful
+handshake the client and server agree session keys and
+that session keys are unique across handshakes.
+(3) We uncover a behaviour that may lead to security problems
+in applications that assume that TLS 1.3 provides strong
+authentication guarantees.
+(4) We provide a novel way of exhibiting the relation between
+the specification and our model: we provide an annotated
+version of the TLS 1.3 specification that clarifies which
+parts are modelled and how, and which parts were ab-
+stracted. This provides an unprecedented level of modelling
+transparency and enables a straightforward assessment of
+the faithfulness and coverage of our model. We anticipate
+that this output will be of great benefit to the academic
+community analysing TLS 1.3, as well as the TLS Work-
+ing Group as it provides a clear and easy-to-understand
+mapping between the TLS 1.3 specification and a TLS 1.3
+model.
+All our Tamarin input files, proofs, and the annotated TLS 1.3 spec-
+ification that shows the relation between the RFC and the model,
+can be downloaded from [21].
+1.2 Related work
+As mentioned, there has been a great deal of work conducted in
+the complementary analysis spheres pertinent to TLS 1.3. Of most
+interest to this work are the symbolic analyses presented in [22],
+[4] and [10].
+The work in [ 22] by Cremers et al. offered a symbolic model
+and accompanying analysis of draft 10 of the TLS 1.3 specification,
+using the Tamarin prover. Since then, there have been multiple
+changes made to the specification - 10 drafts worth of changes to be
+precise. These updates have included major revisions of the 0-RTT
+mechanism and the key derivation schedule. In draft 10, the send-
+ing of early data required a client to possess a semi-static (EC)DH
+value of the server. This particular handshake mode was removed
+and replaced by a pre-shared key (PSK) 0-RTT handshake mode–
+early data can now only be encrypted using a PSK. In fact, the PSK
+mechanism has been greatly enhanced since draft 10 with new PSK
+variants and binding values being incorporated in to the specifi-
+cation. Post-handshake authentication was officially incorporated
+from draft 11 onwards and a few drafts later, post-handshake au-
+thentication was enabled to operate with the PSK handshake mode.
+Another change to be incorporated after draft 10 was the inclu-
+sion of 0.5-RTT data - the server being able to send fully protected
+application data as part of its first flight of messages.
+All of these changes have resulted in what is effectively a very
+different TLS 1.3 protocol, particularly from a symbolic perspective.
+As a Tamarin model aims to consider the interaction of all possible
+handshake modes and variants, changes to these modes, as well
+as the inclusion of new post-handshake combinations, results in a
+very different different set of traces to be considered when proving
+security properties. Hence, this work presents a substantially differ-
+ent model to [22], and follows a far more fine-grained and flexible
+approach to modelling TLS 1.3.
+The work in [4] is an analysis of TLS 1.3 by the Cryptographic
+protocol Evaluation towards Long-Lived Outstanding Security (CEL-
+LOS) Consortium using the ProVerif tool. Announced on the TLS
+WG mailing list at the start of 2016, it showed the initial (EC)DHE
+handshake of draft 11 to be secure in the symbolic setting. In com-
+parison to our work, this analysis covers only one handshake mode
+of a draft that is now somewhat outdated.
+The ProVerif models of draft 18 presented by Bhargavan et al.
+in [10] include most TLS 1.3 modes, and cover rich threat models
+by considering downgrade attacks (both with weak crypto and
+downgrade to TLS 1.2). However, unlike our work, they do not con-
+sider all modes, as they do not consider the post-handshake client
+authentication mode. While they cover relative strong authentica-
+tion guarantees (which led to the discovery of an unknown key
+share attack), their analysis did not uncover the potential mismatch
+between client and server view that we describe in Section 5.2.
+1.3 Paper organisation
+The paper is organised as follows. In Section 2 we describe the
+TLS 1.3 protocol and the security properties claimed in the spec-
+ification. Section 3 describes our Tamarin model and provides a
+few Tamarin prover fundamentals. In Section 4, we describe our en-
+coding of the security guarantees, followed by Section 5 where we
+describe our results. Section 6 covers the relationship between our
+model and the specification document, discussing how we provide a
+website that describes our model side-by-side with the specification,
+giving us unprecedented modelling transparency. We conclude in
+Section 7.
+2 TLS 1.3
+In this section we provide a brief description of the TLS 1.3 pro-
+tocol as is necessary for understanding our symbolic model, and
+we outline the claimed security properties and guarantees of the
+protocol.
+
+===== ccs2017-tls13 PDF PAGE 11 =====
+uniqueness
+one_s_per_tid
+*s in {ALL STATES}
+S1_vs_S1_PSK_DHE
+S1_PSK_vs_S1_PSK_DHE
+S1_PSK_vs_S1
+C1_vs_C1_PSK_DHE
+C1_PSK_vs_C1
+C1_PSK_vs_C1_PSK_DHE
+s_vs_s_cert
+*s in {C3,S3}
+s_vs_s_PSK
+*s in {C2a,S2a,C2d,S2d}
+DH_chal
+dh_chal_dual
+DH_injectivity
+dh_exp_invariant(i)
+one_dh_per_x
+rev_dh_ordering(i)
+rev_dh_before_hs
+invariants
+tid_invariant(i)
+one_start_per_tid(i)
+cert_req_origin(t)
+nst_source(t)
+secret_helpers
+ku_extract(i)
+ku_expand(i)
+ku_hs
+ku_ltk
+ku_fresh_psk
+hsms_derive
+posths_rms_weak(i)
+posths_rms(i)
+matching_transcripts_posths
+matching_rms_posths
+matching_rms_actors
+sig_origin
+invariant_post_hs
+matching_sessions(i)
+auth_psk
+matching_hsms
+post_master_secret
+invariant_post_hs(i)
+handshake_secret(i)
+handshake_secret_pfs(i)
+auth_helpers
+matching_nonces
+consistent_nonces
+invariant_nonces
+matching_rms_nonces
+Properties
+secret_session_keys
+secret_session_keys_pfs
+unique_session_keys
+session_key_agreement
+entity_authentication(i)
+transcript_agreement
+mut_entity_authentication(i)
+mut_transcript_agreement
+injective_mut_entity_auth
+Figure 7: Lemma Map. Bold lemma names with a purple background indicate where manual interaction via the Tamarin visual
+interface was required. The remaining lemmas were automatically proven by Tamarin, without manual interaction. An arrow
+from one category to another implies that the proof of the latter depends on the former. The Properties box contains the main
+TLS 1.3 properties.
+Property proven Lemma(s)
+(1) Same session keys session_key_agreement
+(2) Secret session keys secret_session_keys
+(3) Peer authentication∗ entity_authentication
+mutual_entity_authentication
+(4) Unique session keys unique_session_keys
+(6) Perfect forward secrecy secret_session_keys_pfs
+(7) Key compromise
+impersonation
+entity_authentication
+mutual_entity_authentication
+Table 1: TLS 1.3 Tamarin results
+5.2 Possible mismatch between client and
+server view
+During the development of our model, and in particular the analysis
+of the post-handshake client authentication, we encountered a
+possible behaviour that suggested that TLS 1.3 fails to meet certain
+strong authentication guarantees.
+While there are many definitions of authentication, the common
+thread among strong authentication guarantees is that both parties
+share a common view of the session, i.e. that they agree on ex-
+changed data, keys, etc. During our analysis of the post-handshake
+client authentication, it became apparent that the client does not
+receive any explicit confirmation that the server has successfully
+received the client’s response. Due to the asynchronous nature of
+the post-handshake client authentication, the client may keep re-
+ceiving data from the server, and will not be able to determine if the
+server has received its authentication message. As a consequence,
+the client cannot be sure whether the server sent the data under
+the assumption that the client is authenticated.
+We formally modelled this property by adding a variable to
+the client and the server that records the current status of the
+connection, and in particular, if the connection is unilaterally or
+mutually authenticated. We discovered that even when the server
+asks for a post-handshake client authentication, and the client
+responds, the client cannot be sure that the server considers the
+channel to be mutually authenticated.
+In concurrent work by Bhargavan et al. [10], a similar issue was
+uncovered for the 0.5-round trip time (RTT) case. A discussion with
+the TLS 1.3 working group revealed that an equivalent problem also
+exists within the main handshake. During the main handshake, the
+
+===== ccs2017-tls13 PDF PAGE 12 =====
+server can request a client certificate, and may decide to reject the
+certificate (for example because it violates certain domain-specific
+policies), but still continue with the connection as if the certificate
+were accepted. Therefore, the client cannot be sure (after what ap-
+pears to be a main handshake with mutual authentication) that the
+server considers the client to be authenticated. Thus, this phenom-
+enon leaves the client in the dark about whether or not the server
+considers it to be authenticated, even though the server asked for a
+certificate and the client supplied it.
+To see why this may become a problem at the application level,
+consider the following application. Imagine a client and a server
+that implement TLS 1.3, where the server has the following policy:
+any data received over a mutually authenticated connection are
+stored in a secure database; all data received over connections where
+the client is not authenticated are stored in an insecure log. The
+client connects, the server requests a certificate, which the client
+duly provides, but the server rejects and continues regardless. Since
+the server rejected the certificate, it continues to store incoming
+messages in the insecure log. However, the client may assume it has
+been authenticated, and start sending sensitive data, which ends
+up in the insecure log.
+The TLS working group has decided not to fix this behaviour
+for TLS 1.3, and has not introduced any mechanism that informs
+the client of the server’s view of the client’s authentication status.
+If a client wants to be sure that the server considers it to be au-
+thenticated, this needs to be dealt with at the application layer. We
+anticipate that some client applications will incorrectly assume that
+sending a client certificate and obtaining further server messages
+indeed guarantees that the server considers the connection to be
+mutually authenticated. As we have shown, this is not the case in
+general, and may lead to serious security issues despite there being
+no direct violation of the specified TLS 1.3 security requirements.
+6 THE RELATION BETWEEN OUR MODEL
+AND THE TLS 1.3 SPECIFICATION
+While there have been many academic analyses of various drafts
+of TLS 1.3 [4, 10, 22, 24, 25, 28, 30, 33, 35, 38], they all (explicitly or
+implicitly) consider only part of the specification. Most analyses,
+even those that claim to be “complete” do not consider all possible
+modes, and many manual cryptographic analyses consider modes
+only in isolation (and not their interaction). This is caused by the
+inherent complexity of analysing TLS 1.3 and is not a problem in
+itself; rather, it justifies the need for multiple approaches.
+However, we are of the opinion that readers, regardless of whether
+or not they are experts in the field, should be able to easily deduce
+the exact coverage of a given analysis. To ensure this, we provide
+an unprecedented level of transparency concerning the relation-
+ship between our model and the RFC (the draft specification) by
+creating a website [21] that contains an annotated version of the
+RFC. Consider the following excerpt:
+In the above excerpt, the left-hand side is a direct copy from the
+RFC, and the right-hand side contains our annotations. For example,
+they show how the concrete data structures of TLS 1.3 are mapped
+into abstract term structures. Additionally, we annotate the prose,
+describing the possible behaviours so as to indicate which Tamarin
+rules model them. The annotations also show exactly which details
+we do not model (and often list the reasons why).
+We used these annotations ourselves during the development
+of our model to keep track of the parts of the specification that
+we had already modelled, and how we modelled them, which also
+simplified the task of keeping track of updates to the specification,
+something which proved incredibly useful given the rapid pace at
+which the draft specification would undergo changes.
+Our annotated RFC has a number of desirable features:
+• Readers can check which parts we abstracted, and how,
+without having to reinvent the mapping between the Tamarin
+model and the RFC themselves. In other words, one can
+read through our website to see what is covered, and how
+it is covered, without having to understand Tamarin’s for-
+malism.
+• If the specification is updated or changed, we can immedi-
+ately track where the model should be changed.
+We encourage other analyses of TLS 1.3 to follow a similar trans-
+parent approach, which would help the community to better un-
+derstand which details from the specification might still need to
+be covered. We envision this will enable a faster convergence of
+confidence in all the details of the standard.
+7 CONCLUSIONS
+In this work we modelled the current draft of the TLS 1.3 specifica-
+tion within the symbolic analysis framework of the Tamarin prover,
+and used the tool to verify the majority of the security guarantees
+that TLS 1.3 claims to offer its users.
+We focus on ruling out complex interaction attacks by consid-
+ering an unbounded number of concurrent connections, and all of
+the TLS 1.3 handshake modes. We cover both unilateral and mutual
+authentication, as well as session key secrecy in all of the TLS 1.3
+handshake modes with respect to a Dolev-Yao attacker. We also
+capture more advanced security properties such as perfect forward
+secrecy and key compromise impersonation. Our Tamarin model
+covers substantially more interactions than previous analyses due
+to its modularity.
+Besides verifying that draft 21 of the TLS 1.3 specification meets
+the claimed security properties in most of the handshake modes and
+variants, we also discover an unexpected authentication behaviour
+which may have serious security implications for implementations
+of TLS 1.3. This unexpected behaviour, at a high level, implies
+that TLS 1.3 provides no direct means for a client to determine its
+authentication status from the perspective of a given server. As a
+server may treat authenticated data differently to unauthenticated
+data, the client may end up in position in which its sensitive data
+gets processed as non-sensitive data by the server.
+During the course of our analysis we also developed a line-by-
+line modelling aide that accurately captured which parts of the
+specification we were able to model, and which parts were ab-
+stracted. This artifact allows us to easily assess the faithfulness and
+coverage of our model, and also makes our model highly amenable
+to all kinds of extensions, especially with respect to the security
+properties and threat model. We expect that this artifact may serve
+as a comprehensive informational aide to academic researchers and
+well as the TLS Working Group.

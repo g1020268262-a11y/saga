@@ -1,0 +1,1846 @@
+theory Saga_OTK_Transfer
+
+begin
+
+// Function signature and definition of the equational theory E
+
+builtins: diffie-hellman
+functions: fst/1, h/1, pair/2, sdec/2, senc/2, snd/1
+equations:
+    fst(<x.1, x.2>) = x.1,
+    sdec(senc(x.1, x.2), x.2) = x.1,
+    snd(<x.1, x.2>) = x.2
+
+restriction UniqueSetup:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  // safety formula
+
+  /*
+  expanded formula:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  */
+
+rule (modulo E) Setup:
+   [ Fr( ~bsk ), Fr( ~csk ), Fr( ~otk1 ), Fr( ~otk2 ) ]
+  --[ Setup( ), LongTermKey( 'B', ~bsk ), LongTermKey( 'C', ~csk ) ]->
+   [
+   !Client( 'B', ~bsk ), !Client( 'C', ~csk ), !Registered( 'B', 'g'^~bsk ),
+   !Registered( 'C', 'g'^~csk ), !ProviderAllows( 'A', 'B' ),
+   !LocalAllows( 'A', 'B' ), CPolicyInitialization( 'A', 'C' ),
+   ProviderCredit( 'A', 'B' ), ProviderCredit( 'A', 'C' ),
+   ProviderUnusedOTK( 'A', 'g'^~otk1 ), ProviderUnusedOTK( 'A', 'g'^~otk2 ),
+   ReceiverUnusedOTK( 'A', 'g'^~otk1, ~otk1 ),
+   ReceiverUnusedOTK( 'A', 'g'^~otk2, ~otk2 ),
+   Out( <'registered_public_keys', 'g'^~bsk, 'g'^~csk> )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Initialize_C_Policy:
+   [ CPolicyInitialization( receiver, sender ) ]
+  -->
+   [ !ProviderAllows( receiver, sender ), !LocalAllows( receiver, sender ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Sender_Requests_Access:
+   [ !Client( sender, sk ), Fr( ~request ) ]
+  --[ AccessRequested( 'A', sender, ~request ) ]->
+   [ TLSAccessRequest( sender, 'Provider', 'A', ~request ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Issues_OTK:
+   [
+   TLSAccessRequest( sender, 'Provider', receiver, request ),
+   !Registered( sender, pac ), !ProviderAllows( receiver, sender ),
+   ProviderCredit( receiver, sender ), ProviderUnusedOTK( receiver, otk )
+   ]
+  --[
+  ProviderIssue( receiver, sender, otk ),
+  ProviderQuotaExhausted( receiver, sender )
+  ]->
+   [
+   !NoProviderCredit( receiver, sender ),
+   TLSOTKResponse( 'Provider', sender, receiver, request, otk )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Rejects_Exhausted_Request:
+   [
+   TLSAccessRequest( sender, 'Provider', receiver, request ),
+   !ProviderAllows( receiver, sender ),
+   !NoProviderCredit( receiver, sender )
+   ]
+  --[ ProviderRejectExhausted( receiver, sender ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Sender_Receives_OTK:
+   [
+   TLSOTKResponse( 'Provider', sender, receiver, request, otk ),
+   !Client( sender, sk )
+   ]
+  --[ OTKReceived( receiver, sender, otk ) ]->
+   [
+   !HeldOTK( sender, receiver, otk ), ForwardPermit( sender, receiver, otk )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Sender_Requests_Token:
+   [ !Client( sender, sk ), !HeldOTK( sender, receiver, otk ), Fr( ~sid ) ]
+  --[ TokenRequested( receiver, sender, otk, ~sid ) ]->
+   [
+   TLSTokenRequest( sender, receiver, ~sid, otk, 'g'^sk ),
+   WaitingForToken( receiver, sender, ~sid, otk, sk )
+   ]
+
+  /*
+  rule (modulo AC) Sender_Requests_Token:
+     [ !Client( sender, sk ), !HeldOTK( sender, receiver, otk ), Fr( ~sid ) ]
+    --[ TokenRequested( receiver, sender, otk, ~sid ) ]->
+     [
+     TLSTokenRequest( sender, receiver, ~sid, otk, z ),
+     WaitingForToken( receiver, sender, ~sid, otk, sk )
+     ]
+    variants (modulo AC)
+    1. sk    = sk.7
+       z     = 'g'^sk.7
+    
+    2. sk    = one
+       z     = 'g'
+  */
+
+rule (modulo E) Receiver_Issues_Token:
+   [
+   TLSTokenRequest( sender, receiver, sid, otk, pac ),
+   !Registered( sender, pac ), !LocalAllows( receiver, sender ),
+   ReceiverUnusedOTK( receiver, otk, otk_secret ), Fr( ~token )
+   ]
+  --[ ReceiverTokenIssued( receiver, sender, otk, ~token, pac ) ]->
+   [
+   TLSTokenResponse( receiver, sender, sid,
+                     senc(<'ACT', ~token, pac>,
+                          h(<'access-control-shdk-exchange', pac^otk_secret>))
+   ),
+   ActiveToken( receiver, sender, otk, ~token, pac,
+                senc(<'ACT', ~token, pac>,
+                     h(<'access-control-shdk-exchange', pac^otk_secret>))
+   )
+   ]
+
+  /*
+  rule (modulo AC) Receiver_Issues_Token:
+     [
+     TLSTokenRequest( sender, receiver, sid, otk, pac ),
+     !Registered( sender, pac ), !LocalAllows( receiver, sender ),
+     ReceiverUnusedOTK( receiver, otk, otk_secret ), Fr( ~token )
+     ]
+    --[ ReceiverTokenIssued( receiver, sender, otk, ~token, pac ) ]->
+     [
+     TLSTokenResponse( receiver, sender, sid,
+                       senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', z>))
+     ),
+     ActiveToken( receiver, sender, otk, ~token, pac,
+                  senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', z>))
+     )
+     ]
+    variants (modulo AC)
+     1. otk_secret
+              = otk_secret.13
+        pac   = pac.14
+        z     = pac.14^otk_secret.13
+    
+     2. otk_secret
+              = otk_secret.19
+        pac   = z.26^inv(otk_secret.19)
+        z     = z.26
+    
+     3. otk_secret
+              = otk_secret.21
+        pac   = x.37^x.38
+        z     = x.37^(otk_secret.21*x.38)
+    
+     4. otk_secret
+              = otk_secret.22
+        pac   = x.39^inv((otk_secret.22*x.40))
+        z     = x.39^inv(x.40)
+    
+     5. otk_secret
+              = otk_secret.22
+        pac   = x.39^(x.40*inv(otk_secret.22))
+        z     = x.39^x.40
+    
+     6. otk_secret
+              = otk_secret.23
+        pac   = x.40^(x.41*inv((otk_secret.23*x.42)))
+        z     = x.40^(x.41*inv(x.42))
+    
+     7. otk_secret
+              = inv(x.14)
+        pac   = x.15^inv(x.16)
+        z     = x.15^inv((x.14*x.16))
+    
+     8. otk_secret
+              = inv(x.14)
+        pac   = x.15^(x.14*x.16)
+        z     = x.15^x.16
+    
+     9. otk_secret
+              = inv(x.15)
+        pac   = z.13^x.15
+        z     = z.13
+    
+    10. otk_secret
+              = inv(x.15)
+        pac   = x.16^(x.17*inv(x.18))
+        z     = x.16^(x.17*inv((x.15*x.18)))
+    
+    11. otk_secret
+              = inv((x.14*x.15))
+        pac   = x.16^x.15
+        z     = x.16^inv(x.14)
+    
+    12. otk_secret
+              = inv((x.15*x.16))
+        pac   = x.17^(x.15*x.18)
+        z     = x.17^(x.18*inv(x.16))
+    
+    13. otk_secret
+              = inv((x.15*x.16))
+        pac   = x.17^(x.15*inv(x.18))
+        z     = x.17^inv((x.16*x.18))
+    
+    14. otk_secret
+              = inv((x.16*x.17))
+        pac   = x.18^(x.16*x.19*inv(x.20))
+        z     = x.18^(x.19*inv((x.17*x.20)))
+    
+    15. otk_secret
+              = one
+        pac   = pac.12
+        z     = pac.12
+    
+    16. otk_secret
+              = (x.14*x.15)
+        pac   = x.16^inv(x.14)
+        z     = x.16^x.15
+    
+    17. otk_secret
+              = (x.14*inv(x.15))
+        pac   = x.16^x.15
+        z     = x.16^x.14
+    
+    18. otk_secret
+              = (x.15*x.16)
+        pac   = x.17^inv((x.15*x.18))
+        z     = x.17^(x.16*inv(x.18))
+    
+    19. otk_secret
+              = (x.15*x.16)
+        pac   = x.17^(x.18*inv(x.15))
+        z     = x.17^(x.16*x.18)
+    
+    20. otk_secret
+              = (x.15*x.16*inv(x.17))
+        pac   = x.18^(x.17*inv(x.15))
+        z     = x.18^x.16
+    
+    21. otk_secret
+              = (x.15*inv(x.16))
+        pac   = x.17^inv(x.18)
+        z     = x.17^(x.15*inv((x.16*x.18)))
+    
+    22. otk_secret
+              = (x.15*inv(x.16))
+        pac   = x.17^inv((x.15*x.18))
+        z     = x.17^inv((x.16*x.18))
+    
+    23. otk_secret
+              = (x.15*inv(x.16))
+        pac   = x.17^(x.16*x.18)
+        z     = x.17^(x.15*x.18)
+    
+    24. otk_secret
+              = (x.15*inv(x.16))
+        pac   = x.17^(x.16*x.18*inv(x.15))
+        z     = x.17^x.18
+    
+    25. otk_secret
+              = (x.15*inv(x.16))
+        pac   = x.17^(x.16*inv((x.15*x.18)))
+        z     = x.17^inv(x.18)
+    
+    26. otk_secret
+              = (x.15*inv((x.16*x.17)))
+        pac   = x.18^x.17
+        z     = x.18^(x.15*inv(x.16))
+    
+    27. otk_secret
+              = (x.15*inv((x.16*x.17)))
+        pac   = x.18^(x.17*inv(x.15))
+        z     = x.18^inv(x.16)
+    
+    28. otk_secret
+              = (x.16*x.17)
+        pac   = x.18^(x.19*inv((x.16*x.20)))
+        z     = x.18^(x.17*x.19*inv(x.20))
+    
+    29. otk_secret
+              = (x.16*x.17*inv(x.18))
+        pac   = x.19^inv((x.17*x.20))
+        z     = x.19^(x.16*inv((x.18*x.20)))
+    
+    30. otk_secret
+              = (x.16*x.17*inv(x.18))
+        pac   = x.19^(x.18*x.20*inv(x.16))
+        z     = x.19^(x.17*x.20)
+    
+    31. otk_secret
+              = (x.16*x.17*inv(x.18))
+        pac   = x.19^(x.18*inv((x.16*x.20)))
+        z     = x.19^(x.17*inv(x.20))
+    
+    32. otk_secret
+              = (x.16*x.17*inv((x.18*x.19)))
+        pac   = x.20^(x.19*inv(x.17))
+        z     = x.20^(x.16*inv(x.18))
+    
+    33. otk_secret
+              = (x.16*inv(x.17))
+        pac   = z.14^(x.17*inv(x.16))
+        z     = z.14
+    
+    34. otk_secret
+              = (x.16*inv(x.17))
+        pac   = x.18^(x.17*x.19*inv((x.16*x.20)))
+        z     = x.18^(x.19*inv(x.20))
+    
+    35. otk_secret
+              = (x.16*inv(x.17))
+        pac   = x.18^(x.19*inv(x.20))
+        z     = x.18^(x.16*x.19*inv((x.17*x.20)))
+    
+    36. otk_secret
+              = (x.16*inv(x.17))
+        pac   = x.18^(x.19*inv((x.16*x.20)))
+        z     = x.18^(x.19*inv((x.17*x.20)))
+    
+    37. otk_secret
+              = (x.16*inv((x.17*x.18)))
+        pac   = x.19^(x.17*x.20)
+        z     = x.19^(x.16*x.20*inv(x.18))
+    
+    38. otk_secret
+              = (x.16*inv((x.17*x.18)))
+        pac   = x.19^(x.17*x.20*inv(x.16))
+        z     = x.19^(x.20*inv(x.18))
+    
+    39. otk_secret
+              = (x.16*inv((x.17*x.18)))
+        pac   = x.19^(x.17*inv(x.20))
+        z     = x.19^(x.16*inv((x.18*x.20)))
+    
+    40. otk_secret
+              = (x.16*inv((x.17*x.18)))
+        pac   = x.19^(x.17*inv((x.16*x.20)))
+        z     = x.19^inv((x.18*x.20))
+    
+    41. otk_secret
+              = (x.17*x.18*inv(x.19))
+        pac   = x.20^(x.19*x.21*inv((x.17*x.22)))
+        z     = x.20^(x.18*x.21*inv(x.22))
+    
+    42. otk_secret
+              = (x.17*x.18*inv(x.19))
+        pac   = x.20^(x.21*inv((x.17*x.22)))
+        z     = x.20^(x.18*x.21*inv((x.19*x.22)))
+    
+    43. otk_secret
+              = (x.17*x.18*inv((x.19*x.20)))
+        pac   = x.21^(x.19*x.22*inv(x.17))
+        z     = x.21^(x.18*x.22*inv(x.20))
+    
+    44. otk_secret
+              = (x.17*x.18*inv((x.19*x.20)))
+        pac   = x.21^(x.19*inv((x.17*x.22)))
+        z     = x.21^(x.18*inv((x.20*x.22)))
+    
+    45. otk_secret
+              = (x.17*inv((x.18*x.19)))
+        pac   = x.20^(x.18*x.21*inv(x.22))
+        z     = x.20^(x.17*x.21*inv((x.19*x.22)))
+    
+    46. otk_secret
+              = (x.17*inv((x.18*x.19)))
+        pac   = x.20^(x.18*x.21*inv((x.17*x.22)))
+        z     = x.20^(x.21*inv((x.19*x.22)))
+    
+    47. otk_secret
+              = (x.18*x.19*inv((x.20*x.21)))
+        pac   = x.22^(x.20*x.23*inv((x.18*x.24)))
+        z     = x.22^(x.19*x.23*inv((x.21*x.24)))
+    
+    48. pac   = DH_neutral
+        z     = DH_neutral
+  */
+
+rule (modulo E) Sender_Decrypts_Token:
+   [
+   WaitingForToken( receiver, sender, sid, otk, sk ),
+   TLSTokenResponse( receiver, sender, sid,
+                     senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+  --[ ClientDecryptedToken( receiver, sender, otk, token, 'g'^sk ) ]->
+   [
+   ReadyForApplication( receiver, sender, otk, token, 'g'^sk,
+                        senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+
+  /*
+  rule (modulo AC) Sender_Decrypts_Token:
+     [
+     WaitingForToken( receiver, sender, sid, otk, sk ),
+     TLSTokenResponse( receiver, sender, sid,
+                       senc(<'ACT', token, z>, h(<'access-control-shdk-exchange', z.1>))
+     )
+     ]
+    --[ ClientDecryptedToken( receiver, sender, otk, token, z ) ]->
+     [
+     ReadyForApplication( receiver, sender, otk, token, z,
+                          senc(<'ACT', token, z>, h(<'access-control-shdk-exchange', z.1>))
+     )
+     ]
+    variants (modulo AC)
+     1. otk   = otk.12
+        sk    = one
+        z     = 'g'
+        z.1   = otk.12
+    
+     2. otk   = otk.16
+        sk    = sk.20
+        z     = 'g'^sk.20
+        z.1   = otk.16^sk.20
+    
+     3. otk   = DH_neutral
+        sk    = sk.12
+        z     = 'g'^sk.12
+        z.1   = DH_neutral
+    
+     4. otk   = x.14^(x.15*x.16)
+        sk    = inv(x.15)
+        z     = 'g'^inv(x.15)
+        z.1   = x.14^x.16
+    
+     5. otk   = z.14^x.17
+        sk    = inv(x.17)
+        z     = 'g'^inv(x.17)
+        z.1   = z.14
+    
+     6. otk   = x.15^(x.16*x.17*inv(x.18))
+        sk    = (x.18*inv(x.17))
+        z     = 'g'^(x.18*inv(x.17))
+        z.1   = x.15^x.16
+    
+     7. otk   = x.15^(x.16*inv((x.17*x.18)))
+        sk    = (x.18*inv(x.16))
+        z     = 'g'^(x.18*inv(x.16))
+        z.1   = x.15^inv(x.17)
+    
+     8. otk   = z.15^(x.18*inv(x.19))
+        sk    = (x.19*inv(x.18))
+        z     = 'g'^(x.19*inv(x.18))
+        z.1   = z.15
+    
+     9. otk   = x.16^(x.17*x.18*inv((x.19*x.20)))
+        sk    = (x.20*inv(x.18))
+        z     = 'g'^(x.20*inv(x.18))
+        z.1   = x.16^(x.17*inv(x.19))
+    
+    10. otk   = x.17^x.18
+        sk    = inv((x.18*x.22))
+        z     = 'g'^inv((x.18*x.22))
+        z.1   = x.17^inv(x.22)
+    
+    11. otk   = x.17^x.18
+        sk    = (x.22*inv(x.18))
+        z     = 'g'^(x.22*inv(x.18))
+        z.1   = x.17^x.22
+    
+    12. otk   = x.17^inv(x.18)
+        sk    = inv(x.22)
+        z     = 'g'^inv(x.22)
+        z.1   = x.17^inv((x.18*x.22))
+    
+    13. otk   = x.17^inv(x.18)
+        sk    = (x.18*x.22)
+        z     = 'g'^(x.18*x.22)
+        z.1   = x.17^x.22
+    
+    14. otk   = x.18^x.19
+        sk    = (x.23*inv((x.19*x.24)))
+        z     = 'g'^(x.23*inv((x.19*x.24)))
+        z.1   = x.18^(x.23*inv(x.24))
+    
+    15. otk   = x.18^inv(x.19)
+        sk    = (x.23*inv(x.24))
+        z     = 'g'^(x.23*inv(x.24))
+        z.1   = x.18^(x.23*inv((x.19*x.24)))
+    
+    16. otk   = x.18^inv((x.19*x.20))
+        sk    = (x.19*x.24)
+        z     = 'g'^(x.19*x.24)
+        z.1   = x.18^(x.24*inv(x.20))
+    
+    17. otk   = x.18^inv((x.19*x.20))
+        sk    = (x.19*inv(x.24))
+        z     = 'g'^(x.19*inv(x.24))
+        z.1   = x.18^inv((x.20*x.24))
+    
+    18. otk   = x.18^(x.19*x.20)
+        sk    = inv((x.19*x.24))
+        z     = 'g'^inv((x.19*x.24))
+        z.1   = x.18^(x.20*inv(x.24))
+    
+    19. otk   = x.18^(x.19*x.20)
+        sk    = (x.24*inv(x.19))
+        z     = 'g'^(x.24*inv(x.19))
+        z.1   = x.18^(x.20*x.24)
+    
+    20. otk   = x.18^(x.19*inv(x.20))
+        sk    = inv(x.24)
+        z     = 'g'^inv(x.24)
+        z.1   = x.18^(x.19*inv((x.20*x.24)))
+    
+    21. otk   = x.18^(x.19*inv(x.20))
+        sk    = inv((x.19*x.24))
+        z     = 'g'^inv((x.19*x.24))
+        z.1   = x.18^inv((x.20*x.24))
+    
+    22. otk   = x.18^(x.19*inv(x.20))
+        sk    = (x.20*x.24)
+        z     = 'g'^(x.20*x.24)
+        z.1   = x.18^(x.19*x.24)
+    
+    23. otk   = x.18^(x.19*inv(x.20))
+        sk    = (x.20*x.24*inv(x.19))
+        z     = 'g'^(x.20*x.24*inv(x.19))
+        z.1   = x.18^x.24
+    
+    24. otk   = x.18^(x.19*inv(x.20))
+        sk    = (x.20*inv((x.19*x.24)))
+        z     = 'g'^(x.20*inv((x.19*x.24)))
+        z.1   = x.18^inv(x.24)
+    
+    25. otk   = x.19^inv((x.20*x.21))
+        sk    = (x.20*x.25*inv(x.26))
+        z     = 'g'^(x.20*x.25*inv(x.26))
+        z.1   = x.19^(x.25*inv((x.21*x.26)))
+    
+    26. otk   = x.19^(x.20*x.21)
+        sk    = (x.25*inv((x.20*x.26)))
+        z     = 'g'^(x.25*inv((x.20*x.26)))
+        z.1   = x.19^(x.21*x.25*inv(x.26))
+    
+    27. otk   = x.19^(x.20*x.21*inv(x.22))
+        sk    = inv((x.21*x.26))
+        z     = 'g'^inv((x.21*x.26))
+        z.1   = x.19^(x.20*inv((x.22*x.26)))
+    
+    28. otk   = x.19^(x.20*x.21*inv(x.22))
+        sk    = (x.22*x.26*inv(x.20))
+        z     = 'g'^(x.22*x.26*inv(x.20))
+        z.1   = x.19^(x.21*x.26)
+    
+    29. otk   = x.19^(x.20*x.21*inv(x.22))
+        sk    = (x.22*inv((x.20*x.26)))
+        z     = 'g'^(x.22*inv((x.20*x.26)))
+        z.1   = x.19^(x.21*inv(x.26))
+    
+    30. otk   = x.19^(x.20*inv(x.21))
+        sk    = (x.21*x.25*inv((x.20*x.26)))
+        z     = 'g'^(x.21*x.25*inv((x.20*x.26)))
+        z.1   = x.19^(x.25*inv(x.26))
+    
+    31. otk   = x.19^(x.20*inv(x.21))
+        sk    = (x.25*inv(x.26))
+        z     = 'g'^(x.25*inv(x.26))
+        z.1   = x.19^(x.20*x.25*inv((x.21*x.26)))
+    
+    32. otk   = x.19^(x.20*inv(x.21))
+        sk    = (x.25*inv((x.20*x.26)))
+        z     = 'g'^(x.25*inv((x.20*x.26)))
+        z.1   = x.19^(x.25*inv((x.21*x.26)))
+    
+    33. otk   = x.19^(x.20*inv((x.21*x.22)))
+        sk    = (x.21*x.26)
+        z     = 'g'^(x.21*x.26)
+        z.1   = x.19^(x.20*x.26*inv(x.22))
+    
+    34. otk   = x.19^(x.20*inv((x.21*x.22)))
+        sk    = (x.21*x.26*inv(x.20))
+        z     = 'g'^(x.21*x.26*inv(x.20))
+        z.1   = x.19^(x.26*inv(x.22))
+    
+    35. otk   = x.19^(x.20*inv((x.21*x.22)))
+        sk    = (x.21*inv(x.26))
+        z     = 'g'^(x.21*inv(x.26))
+        z.1   = x.19^(x.20*inv((x.22*x.26)))
+    
+    36. otk   = x.19^(x.20*inv((x.21*x.22)))
+        sk    = (x.21*inv((x.20*x.26)))
+        z     = 'g'^(x.21*inv((x.20*x.26)))
+        z.1   = x.19^inv((x.22*x.26))
+    
+    37. otk   = x.20^(x.21*x.22*inv(x.23))
+        sk    = (x.23*x.27*inv((x.21*x.28)))
+        z     = 'g'^(x.23*x.27*inv((x.21*x.28)))
+        z.1   = x.20^(x.22*x.27*inv(x.28))
+    
+    38. otk   = x.20^(x.21*x.22*inv(x.23))
+        sk    = (x.27*inv((x.21*x.28)))
+        z     = 'g'^(x.27*inv((x.21*x.28)))
+        z.1   = x.20^(x.22*x.27*inv((x.23*x.28)))
+    
+    39. otk   = x.20^(x.21*x.22*inv((x.23*x.24)))
+        sk    = (x.23*x.28*inv(x.21))
+        z     = 'g'^(x.23*x.28*inv(x.21))
+        z.1   = x.20^(x.22*x.28*inv(x.24))
+    
+    40. otk   = x.20^(x.21*x.22*inv((x.23*x.24)))
+        sk    = (x.23*inv((x.21*x.28)))
+        z     = 'g'^(x.23*inv((x.21*x.28)))
+        z.1   = x.20^(x.22*inv((x.24*x.28)))
+    
+    41. otk   = x.20^(x.21*inv((x.22*x.23)))
+        sk    = (x.22*x.27*inv(x.28))
+        z     = 'g'^(x.22*x.27*inv(x.28))
+        z.1   = x.20^(x.21*x.27*inv((x.23*x.28)))
+    
+    42. otk   = x.20^(x.21*inv((x.22*x.23)))
+        sk    = (x.22*x.27*inv((x.21*x.28)))
+        z     = 'g'^(x.22*x.27*inv((x.21*x.28)))
+        z.1   = x.20^(x.27*inv((x.23*x.28)))
+    
+    43. otk   = x.21^(x.22*x.23*inv((x.24*x.25)))
+        sk    = (x.24*x.29*inv((x.22*x.30)))
+        z     = 'g'^(x.24*x.29*inv((x.22*x.30)))
+        z.1   = x.21^(x.23*x.29*inv((x.25*x.30)))
+    
+    44. otk   = z.22^inv(sk.17)
+        sk    = sk.17
+        z     = 'g'^sk.17
+        z.1   = z.22
+    
+    45. otk   = x.31^x.32
+        sk    = sk.19
+        z     = 'g'^sk.19
+        z.1   = x.31^(sk.19*x.32)
+    
+    46. otk   = x.31^inv((sk.19*x.32))
+        sk    = sk.19
+        z     = 'g'^sk.19
+        z.1   = x.31^inv(x.32)
+    
+    47. otk   = x.31^(x.32*inv(sk.19))
+        sk    = sk.19
+        z     = 'g'^sk.19
+        z.1   = x.31^x.32
+    
+    48. otk   = x.32^(x.33*inv((sk.20*x.34)))
+        sk    = sk.20
+        z     = 'g'^sk.20
+        z.1   = x.32^(x.33*inv(x.34))
+  */
+
+rule (modulo E) Sender_Sends_Application_Request:
+   [ ReadyForApplication( receiver, sender, otk, token, pac, encrypted ) ]
+  --[ ClientSendsRequest( receiver, sender, otk, token, pac ) ]->
+   [ TLSApplicationRequest( sender, receiver, encrypted ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Receiver_Accepts_Application_Request:
+   [
+   TLSApplicationRequest( sender, receiver, encrypted ),
+   !Registered( sender, pac ),
+   ActiveToken( receiver, sender, otk, token, pac, encrypted )
+   ]
+  --[ RequestAccepted( receiver, sender, otk, token, pac ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+lemma normal_B_completes:
+  exists-trace
+  "∃ k t pac #i #j #l.
+    ((((ProviderIssue( 'A', 'B', k ) @ #i) ∧
+       (ClientDecryptedToken( 'A', 'B', k, t, pac ) @ #j)) ∧
+      (RequestAccepted( 'A', 'B', k, t, pac ) @ #l)) ∧
+     (#i < #j)) ∧
+    (#j < #l)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ k t pac #i #j #l.
+  (ProviderIssue( 'A', 'B', k ) @ #i) ∧
+  (ClientDecryptedToken( 'A', 'B', k, t, pac ) @ #j) ∧
+  (RequestAccepted( 'A', 'B', k, t, pac ) @ #l)
+ ∧
+  (#i < #j) ∧ (#j < #l)"
+*/
+simplify
+solve( TLSAccessRequest( 'B', 'Provider', 'A', request ) ▶₀ #i )
+  case Sender_Requests_Access
+  solve( !Registered( 'B', pac ) ▶₁ #i )
+    case Setup
+    solve( !ProviderAllows( 'A', 'B' ) ▶₂ #i )
+      case Setup
+      solve( ProviderCredit( 'A', 'B' ) ▶₃ #i )
+        case Setup
+        solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+          case Setup_case_1
+          solve( WaitingForToken( 'A', 'B', sid, 'g'^~otk1, sk ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( TLSTokenResponse( 'A', 'B', ~sid,
+                                     senc(<'ACT', t, 'g'^~bsk>,
+                                          h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk1)>))
+                   ) ▶₁ #j )
+              case Receiver_Issues_Token
+              solve( TLSApplicationRequest( 'B', 'A', encrypted ) ▶₀ #l )
+                case Sender_Sends_Application_Request
+                solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #l )
+                  case Setup
+                  solve( ActiveToken( 'A', 'B', 'g'^~otk1, ~token, 'g'^~bsk,
+                                      senc(<'ACT', ~token, 'g'^~bsk>,
+                                           h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk1)>))
+                         ) ▶₂ #l )
+                    case Receiver_Issues_Token
+                    SOLVED // trace found
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma normal_C_completes:
+  exists-trace
+  "∃ k t pac #i #j #l.
+    ((((ProviderIssue( 'A', 'C', k ) @ #i) ∧
+       (ClientDecryptedToken( 'A', 'C', k, t, pac ) @ #j)) ∧
+      (RequestAccepted( 'A', 'C', k, t, pac ) @ #l)) ∧
+     (#i < #j)) ∧
+    (#j < #l)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ k t pac #i #j #l.
+  (ProviderIssue( 'A', 'C', k ) @ #i) ∧
+  (ClientDecryptedToken( 'A', 'C', k, t, pac ) @ #j) ∧
+  (RequestAccepted( 'A', 'C', k, t, pac ) @ #l)
+ ∧
+  (#i < #j) ∧ (#j < #l)"
+*/
+simplify
+solve( TLSAccessRequest( 'C', 'Provider', 'A', request ) ▶₀ #i )
+  case Sender_Requests_Access
+  solve( !Registered( 'C', pac ) ▶₁ #i )
+    case Setup
+    solve( !ProviderAllows( 'A', 'C' ) ▶₂ #i )
+      case Initialize_C_Policy
+      solve( ProviderCredit( 'A', 'C' ) ▶₃ #i )
+        case Setup
+        solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+          case Setup_case_1
+          solve( WaitingForToken( 'A', 'C', sid, 'g'^~otk1, sk ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( TLSTokenResponse( 'A', 'C', ~sid,
+                                     senc(<'ACT', t, 'g'^~csk>,
+                                          h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+                   ) ▶₁ #j )
+              case Receiver_Issues_Token
+              solve( TLSApplicationRequest( 'C', 'A', encrypted ) ▶₀ #l )
+                case Sender_Sends_Application_Request
+                solve( !Registered( 'C', 'g'^~csk ) ▶₁ #l )
+                  case Setup
+                  solve( ActiveToken( 'A', 'C', 'g'^~otk1, ~token, 'g'^~csk,
+                                      senc(<'ACT', ~token, 'g'^~csk>,
+                                           h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+                         ) ▶₂ #l )
+                    case Receiver_Issues_Token
+                    SOLVED // trace found
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma transfer_after_C_exhaustion_completes:
+  exists-trace
+  "∃ kc kb tc tb pac #ic #ac #deny #ib #f #r #ab.
+    (((((((((((((ProviderIssue( 'A', 'C', kc ) @ #ic) ∧
+                (RequestAccepted( 'A', 'C', kc, tc, pac ) @ #ac)) ∧
+               (ProviderRejectExhausted( 'A', 'C' ) @ #deny)) ∧
+              (ProviderIssue( 'A', 'B', kb ) @ #ib)) ∧
+             (ForwardOTK( 'A', 'B', 'C', kb ) @ #f)) ∧
+            (ForwardReceived( 'A', 'B', 'C', kb ) @ #r)) ∧
+           (RequestAccepted( 'A', 'C', kb, tb, pac ) @ #ab)) ∧
+          (#ic < #ac)) ∧
+         (#ac < #deny)) ∧
+        (#deny < #f)) ∧
+       (#ib < #f)) ∧
+      (#f < #r)) ∧
+     (#r < #ab)) ∧
+    (¬(kc = kb))"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ kc kb tc tb pac #ic #ac #deny #ib #f #r #ab.
+  (ProviderIssue( 'A', 'C', kc ) @ #ic) ∧
+  (RequestAccepted( 'A', 'C', kc, tc, pac ) @ #ac) ∧
+  (ProviderRejectExhausted( 'A', 'C' ) @ #deny) ∧
+  (ProviderIssue( 'A', 'B', kb ) @ #ib) ∧
+  (ForwardOTK( 'A', 'B', 'C', kb ) @ #f) ∧
+  (ForwardReceived( 'A', 'B', 'C', kb ) @ #r) ∧
+  (RequestAccepted( 'A', 'C', kb, tb, pac ) @ #ab)
+ ∧
+  (#ic < #ac) ∧
+  (#ac < #deny) ∧
+  (#deny < #f) ∧
+  (#ib < #f) ∧
+  (#f < #r) ∧
+  (#r < #ab) ∧
+  (¬(kc = kb))"
+*/
+simplify
+solve( TLSAccessRequest( 'C', 'Provider', 'A', request ) ▶₀ #ic )
+  case Sender_Requests_Access
+  solve( !Registered( 'C', pac.2 ) ▶₁ #ic )
+    case Setup
+    solve( !ProviderAllows( 'A', 'C' ) ▶₂ #ic )
+      case Initialize_C_Policy
+      solve( ProviderCredit( 'A', 'C' ) ▶₃ #ic )
+        case Setup
+        solve( ProviderUnusedOTK( 'A', kc ) ▶₄ #ic )
+          case Setup_case_1
+          solve( TLSApplicationRequest( 'C', 'A', encrypted.1 ) ▶₀ #ac )
+            case Sender_Sends_Application_Request
+            solve( !Registered( 'C', pac ) ▶₁ #ac )
+              case Setup
+              solve( ActiveToken( 'A', 'C', 'g'^~otk1, tc, 'g'^~csk,
+                                  senc(<'ACT', ~token, 'g'^~csk>,
+                                       h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+                     ) ▶₂ #ac )
+                case Receiver_Issues_Token
+                solve( TLSAccessRequest( 'C', 'Provider', 'A', request ) ▶₀ #deny )
+                  case Sender_Requests_Access
+                  solve( !ProviderAllows( 'A', 'C' ) ▶₁ #deny )
+                    case Initialize_C_Policy
+                    solve( !NoProviderCredit( 'A', 'C' ) ▶₂ #deny )
+                      case Provider_Issues_OTK
+                      solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #ib )
+                        case Sender_Requests_Access
+                        solve( !Registered( 'B', pac ) ▶₁ #ib )
+                          case Setup
+                          solve( !ProviderAllows( 'A', 'B' ) ▶₂ #ib )
+                            case Setup
+                            solve( ProviderCredit( 'A', 'B' ) ▶₃ #ib )
+                              case Setup
+                              solve( ProviderUnusedOTK( 'A', kb ) ▶₄ #ib )
+                                case Setup
+                                by solve( TLSApplicationRequest( 'C', 'A', encrypted ) ▶₀ #ab )
+                              qed
+                            qed
+                          qed
+                        qed
+                      qed
+                    qed
+                  qed
+                qed
+              qed
+            qed
+          qed
+        next
+          case Setup_case_2
+          solve( TLSApplicationRequest( 'C', 'A', encrypted.1 ) ▶₀ #ac )
+            case Sender_Sends_Application_Request
+            solve( !Registered( 'C', pac ) ▶₁ #ac )
+              case Setup
+              solve( ActiveToken( 'A', 'C', 'g'^~otk2, tc, 'g'^~csk,
+                                  senc(<'ACT', ~token, 'g'^~csk>,
+                                       h(<'access-control-shdk-exchange', 'g'^(~csk*~otk2)>))
+                     ) ▶₂ #ac )
+                case Receiver_Issues_Token
+                solve( TLSAccessRequest( 'C', 'Provider', 'A', request ) ▶₀ #deny )
+                  case Sender_Requests_Access
+                  solve( !ProviderAllows( 'A', 'C' ) ▶₁ #deny )
+                    case Initialize_C_Policy
+                    solve( !NoProviderCredit( 'A', 'C' ) ▶₂ #deny )
+                      case Provider_Issues_OTK
+                      solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #ib )
+                        case Sender_Requests_Access
+                        solve( !Registered( 'B', pac ) ▶₁ #ib )
+                          case Setup
+                          solve( !ProviderAllows( 'A', 'B' ) ▶₂ #ib )
+                            case Setup
+                            solve( ProviderCredit( 'A', 'B' ) ▶₃ #ib )
+                              case Setup
+                              solve( ProviderUnusedOTK( 'A', kb ) ▶₄ #ib )
+                                case Setup
+                                by solve( TLSApplicationRequest( 'C', 'A', encrypted ) ▶₀ #ab )
+                              qed
+                            qed
+                          qed
+                        qed
+                      qed
+                    qed
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma provider_per_sender_issuance_limit:
+  all-traces
+  "∀ a s k1 k2 #i #j.
+    ((ProviderIssue( a, s, k1 ) @ #i) ∧ (ProviderIssue( a, s, k2 ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k1 k2 #i #j.
+  (ProviderIssue( a, s, k1 ) @ #i) ∧ (ProviderIssue( a, s, k2 ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+simplify
+solve( (#i < #j)  ∥ (#j < #i) )
+  case case_1
+  solve( TLSAccessRequest( s, 'Provider', a, request ) ▶₀ #i )
+    case Sender_Requests_Access_case_1
+    solve( !Registered( 'B', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ProviderCredit( 'A', 'B' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k1 ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Access_case_2
+    solve( !Registered( 'C', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ProviderCredit( 'A', 'C' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k1 ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( 'C', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( 'C', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+next
+  case case_2
+  solve( TLSAccessRequest( s, 'Provider', a, request ) ▶₀ #i )
+    case Sender_Requests_Access_case_1
+    solve( !Registered( 'B', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ProviderCredit( 'A', 'B' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k1 ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( 'B', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Access_case_2
+    solve( !Registered( 'C', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ProviderCredit( 'A', 'C' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k1 ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( 'C', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( 'C', 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma provider_issues_each_OTK_once:
+  all-traces
+  "∀ a s1 s2 k #i #j.
+    ((ProviderIssue( a, s1, k ) @ #i) ∧ (ProviderIssue( a, s2, k ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s1 s2 k #i #j.
+  (ProviderIssue( a, s1, k ) @ #i) ∧ (ProviderIssue( a, s2, k ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+simplify
+solve( (#i < #j)  ∥ (#j < #i) )
+  case case_1
+  solve( TLSAccessRequest( s1, 'Provider', a, request ) ▶₀ #i )
+    case Sender_Requests_Access_case_1
+    solve( !Registered( 'B', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ProviderCredit( 'A', 'B' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk1 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk2 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Access_case_2
+    solve( !Registered( 'C', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ProviderCredit( 'A', 'C' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk1 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk2 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+next
+  case case_2
+  solve( TLSAccessRequest( s1, 'Provider', a, request ) ▶₀ #i )
+    case Sender_Requests_Access_case_1
+    solve( !Registered( 'B', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ProviderCredit( 'A', 'B' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk1 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk2 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Access_case_2
+    solve( !Registered( 'C', pac ) ▶₁ #i )
+      case Setup
+      solve( !ProviderAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ProviderCredit( 'A', 'C' ) ▶₃ #i )
+          case Setup
+          solve( ProviderUnusedOTK( 'A', k ) ▶₄ #i )
+            case Setup_case_1
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk1 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          next
+            case Setup_case_2
+            solve( TLSAccessRequest( s2, 'Provider', 'A', request.1 ) ▶₀ #j )
+              case Sender_Requests_Access_case_1
+              solve( !Registered( 'B', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'B' ) ▶₂ #j )
+                  case Setup
+                  solve( ProviderCredit( 'A', 'B' ) ▶₃ #j )
+                    case Setup
+                    by solve( ProviderUnusedOTK( 'A', 'g'^~otk2 ) ▶₄ #j )
+                  qed
+                qed
+              qed
+            next
+              case Sender_Requests_Access_case_2
+              solve( !Registered( 'C', pac ) ▶₁ #j )
+                case Setup
+                solve( !ProviderAllows( 'A', 'C' ) ▶₂ #j )
+                  case Initialize_C_Policy
+                  solve( ProviderCredit( 'A', 'C' ) ▶₃ #j )
+                    case Setup
+                    by contradiction /* cyclic */
+                  qed
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma receiver_consumes_each_OTK_once:
+  all-traces
+  "∀ a s1 s2 k t1 t2 p1 p2 #i #j.
+    ((ReceiverTokenIssued( a, s1, k, t1, p1 ) @ #i) ∧
+     (ReceiverTokenIssued( a, s2, k, t2, p2 ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s1 s2 k t1 t2 p1 p2 #i #j.
+  (ReceiverTokenIssued( a, s1, k, t1, p1 ) @ #i) ∧
+  (ReceiverTokenIssued( a, s2, k, t2, p2 ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+simplify
+solve( (#i < #j)  ∥ (#j < #i) )
+  case case_1
+  solve( TLSTokenRequest( s1, a, sid, k, p1 ) ▶₀ #i )
+    case Sender_Requests_Token_case_1
+    solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk1, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'B' ) ▶₂ #j )
+                case Setup
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_2
+    solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk2, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'B' ) ▶₂ #j )
+                case Setup
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_3
+    solve( !Registered( 'C', 'g'^~csk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk1, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'C', 'g'^~csk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'C' ) ▶₂ #j )
+                case Initialize_C_Policy
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_4
+    solve( !Registered( 'C', 'g'^~csk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk2, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'C', 'g'^~csk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'C' ) ▶₂ #j )
+                case Initialize_C_Policy
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+next
+  case case_2
+  solve( TLSTokenRequest( s1, a, sid, k, p1 ) ▶₀ #i )
+    case Sender_Requests_Token_case_1
+    solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk1, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'B' ) ▶₂ #j )
+                case Setup
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_2
+    solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'B' ) ▶₂ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk2, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'B', 'g'^~bsk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'B' ) ▶₂ #j )
+                case Setup
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_3
+    solve( !Registered( 'C', 'g'^~csk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk1, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'C', 'g'^~csk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'C' ) ▶₂ #j )
+                case Initialize_C_Policy
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk1, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  next
+    case Sender_Requests_Token_case_4
+    solve( !Registered( 'C', 'g'^~csk ) ▶₁ #i )
+      case Setup
+      solve( !LocalAllows( 'A', 'C' ) ▶₂ #i )
+        case Initialize_C_Policy
+        solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #i )
+          case Setup
+          solve( TLSTokenRequest( s2, 'A', sid.1, 'g'^~otk2, p2 ) ▶₀ #j )
+            case Sender_Requests_Token
+            solve( !Registered( 'C', 'g'^~csk ) ▶₁ #j )
+              case Setup
+              solve( !LocalAllows( 'A', 'C' ) ▶₂ #j )
+                case Initialize_C_Policy
+                solve( ReceiverUnusedOTK( 'A', 'g'^~otk2, otk_secret ) ▶₃ #j )
+                  case Setup
+                  by contradiction /* cyclic */
+                qed
+              qed
+            qed
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma accepted_request_has_matching_token_and_decryption:
+  all-traces
+  "∀ a s k t pac #i.
+    (RequestAccepted( a, s, k, t, pac ) @ #i) ⇒
+    (∃ #j #l.
+      (((ReceiverTokenIssued( a, s, k, t, pac ) @ #j) ∧
+        (ClientDecryptedToken( a, s, k, t, pac ) @ #l)) ∧
+       (#j < #l)) ∧
+      (#l < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k t pac #i.
+  (RequestAccepted( a, s, k, t, pac ) @ #i)
+ ∧
+  ∀ #j #l.
+   (ReceiverTokenIssued( a, s, k, t, pac ) @ #j) ∧
+   (ClientDecryptedToken( a, s, k, t, pac ) @ #l)
+  ⇒
+   ((¬(#j < #l)) ∨ (¬(#l < #i)))"
+*/
+simplify
+solve( TLSApplicationRequest( s, a, encrypted ) ▶₀ #i )
+  case Sender_Sends_Application_Request_case_1
+  solve( !Registered( 'B', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k, t, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_2
+  solve( !Registered( 'B', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k, t, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_3
+  solve( !Registered( 'C', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k, t, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_4
+  solve( !Registered( 'C', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k, t, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+qed
+
+lemma long_term_keys_not_disclosed:
+  all-traces
+  "∀ s sk #i #j. ((LongTermKey( s, sk ) @ #i) ∧ (K( sk ) @ #j)) ⇒ (⊥)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ s sk #i #j. (LongTermKey( s, sk ) @ #i) ∧ (K( sk ) @ #j)"
+*/
+simplify
+solve( LongTermKey( s, sk ) @ #i )
+  case Setup_case_1
+  by solve( !KU( ~bsk ) @ #vk )
+next
+  case Setup_case_2
+  by solve( !KU( ~csk ) @ #vk )
+qed
+
+lemma successful_use_requires_issue_to_same_sender:
+  all-traces
+  "∀ a s k t pac #i.
+    (RequestAccepted( a, s, k, t, pac ) @ #i) ⇒
+    (∃ #j. (ProviderIssue( a, s, k ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k t pac #i.
+  (RequestAccepted( a, s, k, t, pac ) @ #i)
+ ∧
+  ∀ #j. (ProviderIssue( a, s, k ) @ #j) ⇒ ¬(#j < #i)"
+*/
+simplify
+solve( TLSApplicationRequest( s, a, encrypted ) ▶₀ #i )
+  case Sender_Sends_Application_Request_case_1
+  solve( !Registered( 'B', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k, t, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_2
+  solve( !Registered( 'B', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k, t, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_3
+  solve( !Registered( 'C', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k, t, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_4
+  solve( !Registered( 'C', pac ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k, t, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      by contradiction /* from formulas */
+    qed
+  qed
+qed
+
+lemma sender_uses_at_most_one_distinct_OTK:
+  all-traces
+  "∀ a s k1 k2 t1 t2 p1 p2 #i #j.
+    ((RequestAccepted( a, s, k1, t1, p1 ) @ #i) ∧
+     (RequestAccepted( a, s, k2, t2, p2 ) @ #j)) ⇒
+    (k1 = k2)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k1 k2 t1 t2 p1 p2 #i #j.
+  (RequestAccepted( a, s, k1, t1, p1 ) @ #i) ∧
+  (RequestAccepted( a, s, k2, t2, p2 ) @ #j)
+ ∧
+  ¬(k1 = k2)"
+*/
+simplify
+solve( TLSApplicationRequest( s, a, encrypted ) ▶₀ #i )
+  case Sender_Sends_Application_Request_case_1
+  solve( !Registered( 'B', p1 ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k1, t1, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      solve( TLSApplicationRequest( 'B', 'A', encrypted ) ▶₀ #j )
+        case Sender_Sends_Application_Request
+        by contradiction /* from formulas */
+      qed
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_2
+  solve( !Registered( 'B', p1 ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'B', k1, t1, 'g'^~bsk,
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      solve( TLSApplicationRequest( 'B', 'A', encrypted ) ▶₀ #j )
+        case Sender_Sends_Application_Request
+        by contradiction /* from formulas */
+      qed
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_3
+  solve( !Registered( 'C', p1 ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k1, t1, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk1)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      solve( TLSApplicationRequest( 'C', 'A', encrypted ) ▶₀ #j )
+        case Sender_Sends_Application_Request
+        by contradiction /* from formulas */
+      qed
+    qed
+  qed
+next
+  case Sender_Sends_Application_Request_case_4
+  solve( !Registered( 'C', p1 ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( 'A', 'C', k1, t1, 'g'^~csk,
+                        senc(<'ACT', ~token, 'g'^~csk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~csk*~otk2)>))
+           ) ▶₂ #i )
+      case Receiver_Issues_Token
+      solve( TLSApplicationRequest( 'C', 'A', encrypted ) ▶₀ #j )
+        case Sender_Sends_Application_Request
+        by contradiction /* from formulas */
+      qed
+    qed
+  qed
+qed
+
+/* All wellformedness checks were successful. */
+
+/*
+Generated from:
+Tamarin version 1.12.0
+Maude version 3.5.1
+Git revision: UNKNOWN, branch: UNKNOWN
+Compiled at: 2026-03-08 10:05:47.616272992 UTC
+*/
+
+end

@@ -1,0 +1,20 @@
+{
+  "checked_utc": "2026-10-26T06:48:26.018850+00:00",
+  "target": "IEICE Transactions on Fundamentals of Electronics, Communications and Computer Sciences (A), LETTER",
+  "official_url": "https://www.ieice.org/eng/shiori/page2_ess.html",
+  "page_last_revised": "2026-08-25",
+  "verified_sections": [
+    "3.1",
+    "3.2",
+    "3.3"
+  ],
+  "standard_pages": 2,
+  "initial_max_pages_excluding_references": 4,
+  "summary_words_approximately": 50,
+  "keywords": "4-5",
+  "format_modification_allowed": false,
+  "published_page_charge_includes_references": true,
+  "local_html_download": "HTTP 403; requirements verified through web page retrieval; no saved HTML claimed",
+  "proposed_total_pages": 4.0,
+  "page_budget_is_estimate_not_typeset_confirmation": true
+}

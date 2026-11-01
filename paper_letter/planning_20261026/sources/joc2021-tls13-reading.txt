@@ -1,0 +1,190 @@
+===== joc2021-tls13 PDF PAGE 4 =====
+37 Page 4 of 69 B. Dowling et al.
+deﬁning a KEM-based alternative handshake enabling the deployment of post-quantum
+schemes [93].
+1.3. Our Contributions
+We give a reductionist security analysis of three modes of the TLS 1.3 handshake: the
+full 1-RTT handshake, the PSK handshake (with optional 0-RTT mode), and the PSK-
+(EC)DHE handshake (with optional 0-RTT mode); based on a cryptographic abstraction
+of the protocols we provide in Sect.3. In order to carry out our analysis, we formalize a
+multi-stage key exchange security model which can capture a variety of characteristics
+associated to each stage key. Our analysis shows that the design of the TLS 1.3 handshake
+follows sound cryptographic principles.
+Security Model Our security model, given in Sect. 4, follows the Bellare–Rogaway
+(BR) model [25] for authenticated key exchange security based on session key indistin-
+guishability, as formalized by Brzuska et al. [22,26], and our model builds speciﬁcally
+on the multi-stage model of Fischlin and Günther [ 52,61]. The latter deals with key
+exchange protocols that derive a series of session keys in the course of multiple protocol
+stages. Our extension of their multi-stage key exchange model allows us to capture the
+following characteristics associated to the session key established at each stage, which
+we call the stage key:
+• Authentication: whether a stage key is unauthenticated, unilaterally authenticated,
+or mutually authenticated. We further extend the multi-stage model to capture
+upgradable authentication: a stage’s key may be considered, say, unauthenticated
+at the time it is accepted, but the authentication level of this key may be “raised” to
+unilaterally authenticated or, potentially in a second step, mutually authenticated
+after some later operations, such as veriﬁcation of a signature in a later message.
+• F orward secrecy: whether a stage key is meant to provide forward secrecy, namely
+that it remains secure after compromise of a long-term secret involved in its deriva-
+tion.
+• Key usage: whether a stage key is meant to be used internally within the protocol
+(for example, to encrypt later handshake messages), or externally (for example,
+composed with a symmetric encryption scheme to protect application messages or
+used in some other external symmetric-key protocol).
+• Replayability: whether it is guaranteed that a stage key is not established in result
+of a replay attack; early stages of the 0-RTT modes do not have this guarantee.
+Our security model comes in two ﬂavors that capture security established through two
+types of credentials: public keys or symmetric pre-shared keys. Following the BR model,
+our model of compromise includes long-term key compromise (Corrupt) and stage key
+compromise (Reveal). While other models [33,79] further capture the compromise of
+session state or ephemeral randomness, TLS is not designed to be secure against such
+exposure of ephemeral values and we hence do not include these compromise capabilities
+in our model.
+In addition to capturing indistinguishability of stage keys, the model also ensures
+soundness of session identiﬁers using the Match-security notion of [22,26].
+
+===== joc2021-tls13 PDF PAGE 5 =====
+A Cryptographic Analysis of the TLS 1.3 Handshake Protocol Page 5 of 69 37
+Protocol Analysis We apply our multi-stage key exchange security model in Sects. 5
+and 6 to analyze the three modes of the TLS 1.3 handshake: full 1-RTT, PSK, and
+PSK-(EC)DHE, with the latter two having optional 0-RTT keys. There are four main
+classes of stage keys covered in the analysis: early data encryption and export keys
+(ETS, EEMS, only present in the PSK with 0-RTT modes); handshake trafﬁc secrets
+(tkchs, tkshs); application trafﬁc secrets (CATS , SATS); and exported keys (RMS for
+session resumption, EMS for other exported keys). This results in six stage keys in the
+full 1-RTT mode and eight stage keys in the PSK modes.
+As noted above, our security model allows us to precisely capture various character-
+istics of different stage keys. For example, consider the client handshake trafﬁc secret
+tk
+chs, used to encrypt handshake messages from the client to the server. In the full 1-RTT
+handshake, this key is initially unauthenticated, then unilaterally authenticated through
+a server signature after stage 3 is reached, and may ultimately be mutually authenticated
+after stage 6 is reached if the client authenticates; it is forward secret; it is intended for
+internal use within the protocol; and it is guaranteed to be non-replayed. In contrast,
+in the PSK handshake, this key is mutually authenticated as soon as it is established,
+but does not have forward secrecy. Finally, in the PSK-EC(DHE) handshake, this key is
+unauthenticated initially, then is upgraded to unilateral and eventually mutual authenti-
+cation after stages 5 and 8, when MACs within the Finished messages are veriﬁed;
+and it is forward secret.
+The reductions showing the security of the protocol modes in the model follow a
+game hopping technique, and mainly rely on standard signature resp. MAC scheme
+unforgeability (for authentication in the full 1-RTT resp. PSK handshake), hash func-
+tion collision resistance, PRF security (and in some cases dual PRF security), and an
+interactive Difﬁe–Hellman assumption (a variant of the PRF-Oracle-Difﬁe–Hellman
+assumption [17,64] called dual-snPRF-ODH).
+Observations on the Design and Security of TLS 1.3 In Sect. 7, we include a discussion
+about various characteristics of TLS 1.3 based on results of our security analysis, includ-
+ing how a variety of TLS 1.3 design decisions positively impact the security analysis
+(key separation and key independence, including the session hash in signatures and key
+derivation), some subtleties on the role of handshake encryption and key conﬁrmation
+via Finished messages, as well as the susceptibility of 0-RTT keys to replays.
+Relation to Our Earlier Work This paper is successor work to [ 38,39] and [ 53], as
+well as [47,61]. In [38], we ﬁrst extended the multi-stage key exchange model of [52]a s
+needed, then applied it to analyze two early drafts of TLS 1.3:draft-05, which has the
+same basic signed-Difﬁe–Hellman structure but a simpliﬁed key schedule compared to
+the ﬁnal version, and an alternative proposal calleddraft-dh incorporating ideas from
+the OPTLS design [77], in which servers could have a semi-static DH key share. In [39],
+we updated our analysis todraft-10 and added an analysis of the, by then revised, pre-
+shared-key handshake mode. In [53], a subset of us analyzed the 0-RTT pre-shared key
+and PSK-(EC)DHE mode indraft-14, as well as the later deprecated Difﬁe–Hellman-
+based 0-RTT mode using semi-static DH key shares in draft-12, which introduced
+the notion of replayable stages into the multi-stage key exchange security model. In a
+PhD thesis [47], one of us updated the work from [39] to address the full, PSK, and PSK-
+
+===== joc2021-tls13 PDF PAGE 53 =====
+A Cryptographic Analysis of the TLS 1.3 Handshake Protocol Page 53 of 69 37
+Game C.6. In this game, we replace the pseudorandom function HKDF.Expand in all
+evaluations of the value ˜MS replaced in GC.5 in the targeted session and its match-
+ing session. This affects the derivation of the client application trafﬁc secret CATS,
+the server application trafﬁc secret SATS the exporter master secret EMS and the re-
+sumption master secret RMS. For CATS, SATS and EMS, these evaluations are dis-
+tinct from any other session, as the evaluation of HKDF.Expand also takes as input
+H
+4 = H(CH∥SH∥SF) (where CH and SH contain the client and server random valuesrc
+and rs respectively), and by Game G2 we exclude hash collisions. For RMS, this evalu-
+ation is distinct from any other session, as the evaluation of HKDF.Expand also takes
+as input H5 = H(CH∥SH∥SF∥CF). We replace the derivation of CATS, SATS, EMS,
+and RMS with random values ˜CATS,˜SATS, ˜EMS, ˜RMS ← $ {0, 1}λ. We can bound the
+difference that this step introduces in the advantage of A by the secret of the pseudo-
+random function HKDF.Expand. Note that by the previous game ˜MS is a uniformly
+random and independent value, and these replacements are sound. Thus:
+AdvGC.5
+TLS1.3-PSK-(EC) DHE-0RT,A ≤ AdvGC.6
+TLS1.3-PSK-(EC) DHE-0RT,A
++AdvPRF-sec
+HKDF.Expand,B16 .
+We note that in this game we have now replaced all stages’ keys (with the restriction
+that the tested stage is from stages 3-8) in the tested session with uniformly random
+values independent of the protocol execution and thus
+Adv
+GC.6
+TLS1.3-PSK-(EC) DHE-0RT,A = 0.
+Combining the given single bounds yields the security statement below:
+AdvG2,FS test with partner
+TLS1.3-PSK-(EC) DHE-0RT,A ≤ ns
+⎛
+⎜⎝
+Advdual-snPRF-ODH
+HKDF.Extract,G,B12 + AdvPRF-sec
+HKDF.Expand,B13
++ 2 · AdvPRF-sec
+HKDF.Expand,B14 + AdvPRF-sec
+HKDF.Extract,B15
++ AdvPRF-sec
+HKDF.Expand,B16
+⎞
+⎟⎠
+□
+7. Discussion and Conclusions
+Our analysis provides several insights into the design and properties of the TLS 1.3
+handshake and indicates potential avenues for future research.
+7.1. Technical Differences from Our Earlier Work
+As noted in the introduction, this paper is a successor to earlier versions of our work
+[38,39,47,53,61]. Here we brieﬂy comment on the technical differences of the analyses
+of draft-05 in [ 38], draft-10 and draft-dh in [ 39], and draft-14 in [ 53],
+compared to the ﬁnal version of TLS 1.3 analyzed in this paper. We focus on three
+
+===== joc2021-tls13 PDF PAGE 59 =====
+A Cryptographic Analysis of the TLS 1.3 Handshake Protocol Page 59 of 69 37
+7.4. Conclusions
+In this work, we have updated our prior analyses of the cryptographic security of several
+draft TLS 1.3 handshakes to the ﬁnal, standardized version of TLS 1.3 in RFC 8446 [90].
+We analyzed the full 1-RTT handshake mode as well as the PSK-based resumption hand-
+shake modes, with optional 0-RTT keys, in the reductionist framework of an enhanced
+multi-stage key exchange security model that captures the various security properties of
+the several keys derived in TLS 1.3. Our analysis conﬁrmed that the TLS 1.3 handshake
+follows sound cryptographic design principles and establishes session keys with their
+desired security properties under standard cryptographic assumptions.
+The IETF TLS working group developed TLS 1.3 through a novel, proactively trans-
+parent standardization process (cf. [ 89]) that actively solicited industry and academia
+alike. In our opinion, this has led to an unprecedented success in having wide-ranging
+security analyses for a major Internet security protocol prior to its standardization and
+deployment. While security models or formal method tools can never capture the en-
+tirety of real-world threats to such protocols, we believe that, through this process, the
+boundaries of formal understanding have been pushed to an extent that signiﬁcantly
+strengthens conﬁdence in the soundness of TLS 1.3’s design. As such, the TLS 1.3
+standardization process exempliﬁes a commendable paradigm which rightfully is being
+adopted for standardization processes of other major Internet security protocols, and
+which we encourage other standards bodies to adopt.
+Acknowledgements
+We thank Markulf Kohlweiss for insightful discussions on the necessity of the PRF-
+ODH assumption for proofs of the TLS 1.3 handshakes. We thank Håkon Jacobsen for
+comments on the proof for the pre-shared key handshake, Joseph Jaeger and Damiano
+Abram for comments on the formalization of Match security, and Denis Diemert for
+comments on the handshake protocol ﬁgures. We also thank the reviewers of this and
+earlier versions of this work for valuable comments. Benjamin Dowling was supported
+by EPSRC grant EP/L018543/1. The work of Marc Fischlin has been funded in part by
+the German Federal Ministry of Education and Research and the Hessen State Ministry
+for Higher Education, Research and the Arts within their joint support of the National
+Research Center for Applied Cybersecurity. Felix Günther has been supported in part
+by Research Fellowship grant GU 1859/1-1 of the German Research Foundation (DFG)
+and National Science Foundation (NSF) grants CNS-1526801 and CNS-1717640. Dou-
+glas Stebila was supported by Australian Research Council (ARC) Discovery Project
+grant DP130104304, Natural Sciences and Engineering Research Council of Canada
+(NSERC) Discovery grant RGPIN-2016-05146, and NSERC Discovery Accelerator
+Supplement grant RGPIN-2016-05146. This work has been co-funded by the DFG as
+part of project S4 within the CRC 1119 CROSSING.
+Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which
+permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give
+appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence,
+and indicate if changes were made. The images or other third party material in this article are included in the

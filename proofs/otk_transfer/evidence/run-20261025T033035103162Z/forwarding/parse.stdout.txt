@@ -1,0 +1,325 @@
+theory Saga_OTK_Transfer
+
+begin
+
+// Function signature and definition of the equational theory E
+
+builtins: diffie-hellman
+functions: fst/1, h/1, pair/2, sdec/2, senc/2, snd/1
+equations:
+    fst(<x.1, x.2>) = x.1,
+    sdec(senc(x.1, x.2), x.2) = x.1,
+    snd(<x.1, x.2>) = x.2
+
+builtin  diffie-hellman
+
+builtin  symmetric-encryption
+
+builtin  hashing
+
+restriction UniqueSetup:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  // safety formula
+
+rule (modulo E) Setup:
+   [ Fr( ~bsk ), Fr( ~csk ), Fr( ~otk1 ), Fr( ~otk2 ) ]
+  --[ Setup( ), LongTermKey( 'B', ~bsk ), LongTermKey( 'C', ~csk ) ]->
+   [
+   !Client( 'B', ~bsk ), !Client( 'C', ~csk ), !Registered( 'B', 'g'^~bsk ),
+   !Registered( 'C', 'g'^~csk ), !ProviderAllows( 'A', 'B' ),
+   !LocalAllows( 'A', 'B' ), CPolicyInitialization( 'A', 'C' ),
+   ProviderCredit( 'A', 'B' ), ProviderCredit( 'A', 'C' ),
+   ProviderUnusedOTK( 'A', 'g'^~otk1 ), ProviderUnusedOTK( 'A', 'g'^~otk2 ),
+   ReceiverUnusedOTK( 'A', 'g'^~otk1, ~otk1 ),
+   ReceiverUnusedOTK( 'A', 'g'^~otk2, ~otk2 ),
+   Out( <'registered_public_keys', 'g'^~bsk, 'g'^~csk> )
+   ]
+
+rule (modulo E) Initialize_C_Policy:
+   [ CPolicyInitialization( receiver, sender ) ]
+  -->
+   [ !ProviderAllows( receiver, sender ), !LocalAllows( receiver, sender ) ]
+
+rule (modulo E) Sender_Requests_Access:
+   [ !Client( sender, sk ), Fr( ~request ) ]
+  --[ AccessRequested( 'A', sender, ~request ) ]->
+   [ TLSAccessRequest( sender, 'Provider', 'A', ~request ) ]
+
+rule (modulo E) Provider_Issues_OTK:
+   [
+   TLSAccessRequest( sender, 'Provider', receiver, request ),
+   !Registered( sender, pac ), !ProviderAllows( receiver, sender ),
+   ProviderCredit( receiver, sender ), ProviderUnusedOTK( receiver, otk )
+   ]
+  --[
+  ProviderIssue( receiver, sender, otk ),
+  ProviderQuotaExhausted( receiver, sender )
+  ]->
+   [
+   !NoProviderCredit( receiver, sender ),
+   TLSOTKResponse( 'Provider', sender, receiver, request, otk )
+   ]
+
+rule (modulo E) Provider_Rejects_Exhausted_Request:
+   [
+   TLSAccessRequest( sender, 'Provider', receiver, request ),
+   !ProviderAllows( receiver, sender ),
+   !NoProviderCredit( receiver, sender )
+   ]
+  --[ ProviderRejectExhausted( receiver, sender ) ]->
+   [ ]
+
+rule (modulo E) Sender_Receives_OTK:
+   [
+   TLSOTKResponse( 'Provider', sender, receiver, request, otk ),
+   !Client( sender, sk )
+   ]
+  --[ OTKReceived( receiver, sender, otk ) ]->
+   [ !HeldOTK( sender, receiver, otk ) ]
+
+rule (modulo E) B_Forwards_OTK_To_C:
+   [ !HeldOTK( 'B', receiver, otk ) ]
+  --[ ForwardOTK( receiver, 'B', 'C', otk ) ]->
+   [ ForwardDelivery( 'B', 'C', receiver, otk ) ]
+
+rule (modulo E) C_Receives_Forwarded_OTK:
+   [ ForwardDelivery( 'B', 'C', receiver, otk ), !Client( 'C', sk ) ]
+  --[ ForwardReceived( receiver, 'B', 'C', otk ) ]->
+   [ !HeldOTK( 'C', receiver, otk ) ]
+
+rule (modulo E) Sender_Requests_Token:
+   [ !Client( sender, sk ), !HeldOTK( sender, receiver, otk ), Fr( ~sid ) ]
+  --[ TokenRequested( receiver, sender, otk, ~sid ) ]->
+   [
+   TLSTokenRequest( sender, receiver, ~sid, otk, 'g'^sk ),
+   WaitingForToken( receiver, sender, ~sid, otk, sk )
+   ]
+
+rule (modulo E) Receiver_Issues_Token:
+   [
+   TLSTokenRequest( sender, receiver, sid, otk, pac ),
+   !Registered( sender, pac ), !LocalAllows( receiver, sender ),
+   ReceiverUnusedOTK( receiver, otk, otk_secret ), Fr( ~token )
+   ]
+  --[ ReceiverTokenIssued( receiver, sender, otk, ~token, pac ) ]->
+   [
+   TLSTokenResponse( receiver, sender, sid,
+                     senc(<'ACT', ~token, pac>,
+                          h(<'access-control-shdk-exchange', pac^otk_secret>))
+   ),
+   ActiveToken( receiver, sender, otk, ~token, pac,
+                senc(<'ACT', ~token, pac>,
+                     h(<'access-control-shdk-exchange', pac^otk_secret>))
+   )
+   ]
+
+rule (modulo E) Sender_Decrypts_Token:
+   [
+   WaitingForToken( receiver, sender, sid, otk, sk ),
+   TLSTokenResponse( receiver, sender, sid,
+                     senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+  --[ ClientDecryptedToken( receiver, sender, otk, token, 'g'^sk ) ]->
+   [
+   ReadyForApplication( receiver, sender, otk, token, 'g'^sk,
+                        senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+
+rule (modulo E) Sender_Sends_Application_Request:
+   [ ReadyForApplication( receiver, sender, otk, token, pac, encrypted ) ]
+  --[ ClientSendsRequest( receiver, sender, otk, token, pac ) ]->
+   [ TLSApplicationRequest( sender, receiver, encrypted ) ]
+
+rule (modulo E) Receiver_Accepts_Application_Request:
+   [
+   TLSApplicationRequest( sender, receiver, encrypted ),
+   !Registered( sender, pac ),
+   ActiveToken( receiver, sender, otk, token, pac, encrypted )
+   ]
+  --[ RequestAccepted( receiver, sender, otk, token, pac ) ]->
+   [ ]
+
+lemma normal_B_completes:
+  exists-trace
+  "∃ k t pac #i #j #l.
+    ((((ProviderIssue( 'A', 'B', k ) @ #i) ∧
+       (ClientDecryptedToken( 'A', 'B', k, t, pac ) @ #j)) ∧
+      (RequestAccepted( 'A', 'B', k, t, pac ) @ #l)) ∧
+     (#i < #j)) ∧
+    (#j < #l)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ k t pac #i #j #l.
+  (ProviderIssue( 'A', 'B', k ) @ #i) ∧
+  (ClientDecryptedToken( 'A', 'B', k, t, pac ) @ #j) ∧
+  (RequestAccepted( 'A', 'B', k, t, pac ) @ #l)
+ ∧
+  (#i < #j) ∧ (#j < #l)"
+*/
+by sorry
+
+lemma normal_C_completes:
+  exists-trace
+  "∃ k t pac #i #j #l.
+    ((((ProviderIssue( 'A', 'C', k ) @ #i) ∧
+       (ClientDecryptedToken( 'A', 'C', k, t, pac ) @ #j)) ∧
+      (RequestAccepted( 'A', 'C', k, t, pac ) @ #l)) ∧
+     (#i < #j)) ∧
+    (#j < #l)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ k t pac #i #j #l.
+  (ProviderIssue( 'A', 'C', k ) @ #i) ∧
+  (ClientDecryptedToken( 'A', 'C', k, t, pac ) @ #j) ∧
+  (RequestAccepted( 'A', 'C', k, t, pac ) @ #l)
+ ∧
+  (#i < #j) ∧ (#j < #l)"
+*/
+by sorry
+
+lemma transfer_after_C_exhaustion_completes:
+  exists-trace
+  "∃ kc kb tc tb pac #ic #ac #deny #ib #f #r #ab.
+    (((((((((((((ProviderIssue( 'A', 'C', kc ) @ #ic) ∧
+                (RequestAccepted( 'A', 'C', kc, tc, pac ) @ #ac)) ∧
+               (ProviderRejectExhausted( 'A', 'C' ) @ #deny)) ∧
+              (ProviderIssue( 'A', 'B', kb ) @ #ib)) ∧
+             (ForwardOTK( 'A', 'B', 'C', kb ) @ #f)) ∧
+            (ForwardReceived( 'A', 'B', 'C', kb ) @ #r)) ∧
+           (RequestAccepted( 'A', 'C', kb, tb, pac ) @ #ab)) ∧
+          (#ic < #ac)) ∧
+         (#ac < #deny)) ∧
+        (#deny < #f)) ∧
+       (#ib < #f)) ∧
+      (#f < #r)) ∧
+     (#r < #ab)) ∧
+    (¬(kc = kb))"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ kc kb tc tb pac #ic #ac #deny #ib #f #r #ab.
+  (ProviderIssue( 'A', 'C', kc ) @ #ic) ∧
+  (RequestAccepted( 'A', 'C', kc, tc, pac ) @ #ac) ∧
+  (ProviderRejectExhausted( 'A', 'C' ) @ #deny) ∧
+  (ProviderIssue( 'A', 'B', kb ) @ #ib) ∧
+  (ForwardOTK( 'A', 'B', 'C', kb ) @ #f) ∧
+  (ForwardReceived( 'A', 'B', 'C', kb ) @ #r) ∧
+  (RequestAccepted( 'A', 'C', kb, tb, pac ) @ #ab)
+ ∧
+  (#ic < #ac) ∧
+  (#ac < #deny) ∧
+  (#deny < #f) ∧
+  (#ib < #f) ∧
+  (#f < #r) ∧
+  (#r < #ab) ∧
+  (¬(kc = kb))"
+*/
+by sorry
+
+lemma provider_per_sender_issuance_limit:
+  all-traces
+  "∀ a s k1 k2 #i #j.
+    ((ProviderIssue( a, s, k1 ) @ #i) ∧ (ProviderIssue( a, s, k2 ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k1 k2 #i #j.
+  (ProviderIssue( a, s, k1 ) @ #i) ∧ (ProviderIssue( a, s, k2 ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+by sorry
+
+lemma provider_issues_each_OTK_once:
+  all-traces
+  "∀ a s1 s2 k #i #j.
+    ((ProviderIssue( a, s1, k ) @ #i) ∧ (ProviderIssue( a, s2, k ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s1 s2 k #i #j.
+  (ProviderIssue( a, s1, k ) @ #i) ∧ (ProviderIssue( a, s2, k ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+by sorry
+
+lemma receiver_consumes_each_OTK_once:
+  all-traces
+  "∀ a s1 s2 k t1 t2 p1 p2 #i #j.
+    ((ReceiverTokenIssued( a, s1, k, t1, p1 ) @ #i) ∧
+     (ReceiverTokenIssued( a, s2, k, t2, p2 ) @ #j)) ⇒
+    (#i = #j)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s1 s2 k t1 t2 p1 p2 #i #j.
+  (ReceiverTokenIssued( a, s1, k, t1, p1 ) @ #i) ∧
+  (ReceiverTokenIssued( a, s2, k, t2, p2 ) @ #j)
+ ∧
+  ¬(#i = #j)"
+*/
+by sorry
+
+lemma accepted_request_has_matching_token_and_decryption:
+  all-traces
+  "∀ a s k t pac #i.
+    (RequestAccepted( a, s, k, t, pac ) @ #i) ⇒
+    (∃ #j #l.
+      (((ReceiverTokenIssued( a, s, k, t, pac ) @ #j) ∧
+        (ClientDecryptedToken( a, s, k, t, pac ) @ #l)) ∧
+       (#j < #l)) ∧
+      (#l < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k t pac #i.
+  (RequestAccepted( a, s, k, t, pac ) @ #i)
+ ∧
+  ∀ #j #l.
+   (ReceiverTokenIssued( a, s, k, t, pac ) @ #j) ∧
+   (ClientDecryptedToken( a, s, k, t, pac ) @ #l)
+  ⇒
+   ((¬(#j < #l)) ∨ (¬(#l < #i)))"
+*/
+by sorry
+
+lemma long_term_keys_not_disclosed:
+  all-traces
+  "∀ s sk #i #j. ((LongTermKey( s, sk ) @ #i) ∧ (K( sk ) @ #j)) ⇒ (⊥)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ s sk #i #j. (LongTermKey( s, sk ) @ #i) ∧ (K( sk ) @ #j)"
+*/
+by sorry
+
+lemma successful_use_requires_issue_to_same_sender:
+  all-traces
+  "∀ a s k t pac #i.
+    (RequestAccepted( a, s, k, t, pac ) @ #i) ⇒
+    (∃ #j. (ProviderIssue( a, s, k ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k t pac #i.
+  (RequestAccepted( a, s, k, t, pac ) @ #i)
+ ∧
+  ∀ #j. (ProviderIssue( a, s, k ) @ #j) ⇒ ¬(#j < #i)"
+*/
+by sorry
+
+lemma sender_uses_at_most_one_distinct_OTK:
+  all-traces
+  "∀ a s k1 k2 t1 t2 p1 p2 #i #j.
+    ((RequestAccepted( a, s, k1, t1, p1 ) @ #i) ∧
+     (RequestAccepted( a, s, k2, t2, p2 ) @ #j)) ⇒
+    (k1 = k2)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ a s k1 k2 t1 t2 p1 p2 #i #j.
+  (RequestAccepted( a, s, k1, t1, p1 ) @ #i) ∧
+  (RequestAccepted( a, s, k2, t2, p2 ) @ #j)
+ ∧
+  ¬(k1 = k2)"
+*/
+by sorry
+
+end

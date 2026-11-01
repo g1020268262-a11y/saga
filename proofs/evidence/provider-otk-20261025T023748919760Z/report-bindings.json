@@ -1,0 +1,23 @@
+{
+  "role": "Post-run report and trace integrity bindings; original verifier outputs unchanged.",
+  "files_sha256": {
+    "proofs/evidence/provider-otk-20261025T023748919760Z/initiator-complete.trace.txt": "1a110d1d6edc3df102b7b39d5a1f38d3806dc43641cd7a8a21675dede849fbdc",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/manifest.json": "b3317adaa9d081732ad6488266448b1ec50ec05ca7cdc9e515119e7a10427a15",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/parse.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/parse.stdout.txt": "232265649028a2ea7be92bb6925f5c7aef1ee22351a88faa7625429ced11bb1e",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/proverif-version.txt": "c00f1890d591537c078cc8ce60db401be65197779353e07a6fdbb8ae2b07ec5f",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/receiver-accept.trace.txt": "4440fa1101eb009453d083ff25aaf5aacd6a0c98c9204bdaf21a22aae07534d3",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/REPORT_ZH.md": "35c48d12abfc4e064aa7b24f9330cb6019cd071c4eb2ba925ba1c62cd6bf72ee",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/summary.json": "358535b8710730a1adb3687519b426d7d9175cc24400f7195164bf7c25d033d5",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/trace-sources.json": "cbc2645fd34e1f5183e5aa6d54e012c4492b6a2ff8efdf8d04e2bc9df111546d",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/verification-summary.txt": "f5834e3ee68b23ace2646d12cabbb2fb2b71b9e6b278ead1ebabb19119b101d7",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/verify.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/verify.stdout.txt": "40c64ca8c554f17d73f386389301df77e626e2dcec8f81ba50262a00e69a520f",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/inputs/agent_communication.pv": "3faf15a801658dc70ceacf1752557cec62ad965854304ad703dce8bdee008302",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/inputs/agent_communication_provider_otk.pv": "703460a19fbf71af026039ffc35b447e92ec0fb89c21a631e3e13fd801083f32",
+    "proofs/evidence/provider-otk-20261025T023748919760Z/inputs/run_provider_otk_query.py": "07f10a0388590b6ef7f57db051557773d6e420c689bddad6489d09280d20b927",
+    "proofs/PROVIDER_OTK_QUERY.zh-CN.md": "19e789517e97d70a83e5f550d7f0f35516e6ef3776ae46f5bd8fdc5f4da909fe",
+    "proofs/run_provider_otk_query.py": "07f10a0388590b6ef7f57db051557773d6e420c689bddad6489d09280d20b927",
+    "proofs/proverif/agent_communication_provider_otk.pv": "703460a19fbf71af026039ffc35b447e92ec0fb89c21a631e3e13fd801083f32"
+  }
+}

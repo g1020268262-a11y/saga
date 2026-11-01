@@ -1,0 +1,62 @@
+{
+  "ccs2017-tls13": {
+    "primary": true,
+    "pages_for_detailed_structural_reading": [
+      2,
+      10,
+      11,
+      12
+    ],
+    "rendered_pages": [
+      2
+    ],
+    "local_pdf": "ccs2017-tls13.pdf",
+    "pdf_sha256": "a0aa5c83b7560e53a475ebb18dff4d72c9264a072d468a5ad01e89fd10fe1796",
+    "page_count": 16,
+    "title": "A Comprehensive Symbolic Analysis of TLS 1.3",
+    "source_url": "https://people.cispa.io/cas.cremers/downloads/papers/CHHSV2017-TLS13.pdf",
+    "whole_section_structure_inspected": true,
+    "mathematical_proofs_reverified": false
+  },
+  "sp2019-fapi": {
+    "primary": true,
+    "pages_for_detailed_structural_reading": [
+      2,
+      3,
+      7,
+      9,
+      12,
+      13,
+      14
+    ],
+    "rendered_pages": [
+      2
+    ],
+    "local_pdf": "sp2019-fapi.pdf",
+    "pdf_sha256": "30a979aa028a2d9768888b66fed621573778d43cfce5cabaae079284fbdddfac",
+    "page_count": 19,
+    "title": "An Extensive Formal Security Analysis of the OpenID Financial-grade API",
+    "source_url": "https://conferences.computer.org/sp/pdfs/sp/2019/AnExtensiveFormalSecurityAnalysisoftheOpenIDFi.pdf",
+    "whole_section_structure_inspected": true,
+    "mathematical_proofs_reverified": false
+  },
+  "joc2021-tls13": {
+    "primary": true,
+    "pages_for_detailed_structural_reading": [
+      4,
+      5,
+      53,
+      59
+    ],
+    "rendered_pages": [
+      4
+    ],
+    "local_pdf": "joc2021-tls13.pdf",
+    "pdf_sha256": "a710d1e8809a6517965f65dae3a5158e6e48ca4e3c9f8d2bd6fd261983b632a3",
+    "page_count": 69,
+    "title": "A Cryptographic Analysis of the TLS 1.3 Handshake Protocol",
+    "source_url": "https://link.springer.com/content/pdf/10.1007/s00145-021-09384-1.pdf",
+    "whole_section_structure_inspected": true,
+    "mathematical_proofs_reverified": false
+  }
+}

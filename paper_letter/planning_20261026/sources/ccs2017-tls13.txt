@@ -1,0 +1,863 @@
+
+===== PDF PAGE 1 =====
+                     AComprehensiveSymbolicAnalysisofTLS1.3
+
+                  Cas Cremers
+            University of Oxford, UK                          Marko HorvatMPI-SWS, Germany                          Jonathan HoylandRoyal Holloway, University of
+                                                                                                                             London, UK
+                                              Sam Scott                                   Thyla van der Merwe
+                                  Royal Holloway, University of                        Royal Holloway, University of
+                                              London, UK                                           London, UK
+ABSTRACT                                                                            Force (IETF) in the mid-nineties, the protocol has been incremen-
+TheTLSprotocolisintendedtoenablesecureend-to-endcommu-                              tallymodifiedandextended.InthecaseofTLS1.2andbelow,these
+nication over insecure networks, including the Internet. Unfortu-                   modifications have taken place in a largely retroactive fashion;
+nately, this goal has been thwarted a number of times throughout                    following the announcement of an attack [6, 7, 18, 20, 32, 43, 49],
+the protocol’s tumultuous lifetime, resulting in the need for a new                 theTLSWorkingGroup(WG)wouldeitherrespondby releasing a
+versionoftheprotocol,namelyTLS1.3.Overthepastthreeyears,in                          protocolextension(ARequestforComments(RFC)intendedtopro-
+anunprecedentedjointdesigneffortwiththeacademiccommunity,                           videincreasedfunctionalityand/orsecurityenhancements)orby
+the TLS Working Group has been working tirelessly to enhance                        applyingtheappropriate“patch"tothenextversionoftheprotocol.
+the security of TLS.                                                                Foramoredetailedanalysisofthedevelopmentandstandardisation
+   Wefurtherthiseffortbyconstructingthemostcomprehensive,                           of TLS see [45].
+faithful,andmodularsymbolicmodeloftheTLS1.3draft21release                              PriortotheannouncementoftheBEAST[26]andCRIME[27]
+candidate,andusetheTamarinprovertoverifytheclaimedTLS1.3                            attacks of 2011 and 2012, respectively, such a strategy was valid
+securityrequirements,aslaidoutindraft21ofthespecification.In                        given the frequency with which versions were updated, and the
+particular, our model covers all handshake modes of TLS 1.3.                        limited number of practical attacks against the protocol.
+   Ouranalysisrevealsanunexpectedbehaviour,whichweexpect                               Post-2011,however,theheightenedinterestintheprotocoland
+will inhibit strong authentication guarantees in some implementa-                   the resulting flood of increasingly practical attacks against it [1–
+tions of the protocol. In contrast to previous models, we provide                   3, 5, 9, 13, 15, 16, 26, 27, 29, 31, 41, 42, 44] rendered this design
+anovel wayof makingthe relationbetween theTLSspecification                          philosophyinadequate.Coupledwithpressuretoincreasethepro-
+and our model explicit: we provide a fully annotated version of                     tocol’s efficiency (owing to the release of Google’s QUIC Crypto
+thespecificationthatclarifieswhatprotocolelementswemodelled,                        [37]),theIETFstarteddraftingthenextversionoftheprotocol,TLS
+andpreciselyhowwemodelledtheseelements.Weanticipatethis                             1.3, in the Spring of 2014. Unlike the development of TLS 1.2 and
+model artifact to be of great benefit to the academic community                     below, the TLS WG adopted an “analysis-prior-to-deployment” de-
+and the TLS Working Group alike.                                                    signphilosophy,welcomingcontributionsfromtheacademiccom-
+                                                                                    munitybeforeofficialrelease.Therehavebeensubstantialefforts
+KEYWORDS                                                                            fromtheacademiccommunityintheareasofprogramverification–
+symbolic verification, authenticated key exchange, TLS 1.3                          analysingimplementationsofTLS[12,14],thedevelopmentofcom-
+                                                                                    putational models– analysing TLS within Bellare-Rogaway style
+                                                                                    frameworks [24, 25, 28, 33, 35, 38], and the use offormal methods
+1   INTRODUCTION                                                                    tools such as ProVerif[17] and Tamarin[48] to analyse symbolic
+                                                                                    models of TLS [4, 10, 22, 30]. All of these endeavours have helped
+TheTransportLayer Security(TLS)protocolis the de facto means                        tobothfindweaknessesintheprotocolandconfirmand guidethe
+for securing communications on the World Wide Web. Initially                        design decisions of the TLS WG.
+released as Secure Sockets Layer (SSL) by Netscape Communica-                          TheTLS1.3draftspecificationhowever,hasbeenarapidlymov-
+tionsin 1995,the protocolhas beensubject toa numberof version                       ing target, with large changes being effected in a fairly regular
+upgrades overthe course ofits 20-yearlifespan. Rebranded as TLS                     fashion. This has often rendered much of the analysis work ‘out-
+when it fell under the auspices of the Internet Engineering Task                    dated’ within the space of few months as large changes to the
+                                                                                    specificationeffectivelyresultinanewprotocol,requiringanew
+Permission to make digital or hard copies of all or part of this work for personal orwave of analysis.
+classroom use isgranted without fee providedthat copies are notmade or distributed     Inthis workwecontribute towhat ishopefully thelastwave of
+forprofitorcommercialadvantageandthatcopiesbearthisnoticeandthefullcitation         analysis of TLS 1.3 prior to its official release. We present a tool-
+on the first page. Copyrights for components of this work owned by others than the
+author(s)mustbehonored.Abstractingwithcreditispermitted.Tocopyotherwise,or          supported, symbolic verification of a near-final draft of TLS 1.3,
+republish,topostonserversortoredistributetolists,requirespriorspecificpermission    adding to the large effort by the TLS community to ensure that
+and/or a fee. Request permissions from permissions@acm.org.                         TLS1.3isfreeofthemanyweaknessesaffectingearlierversions,and
+CCS ’17, October 30-November 3, 2017, Dallas, TX, USA
+©2017Copyrightheldbytheowner/author(s).PublicationrightslicensedtoAssocia-          that it is imbued with security guarantees befitting such a critical
+tion for Computing Machinery.                                                       protocol.Wenotethatmostofthecryptographicmechanismsin
+ACM ISBN 978-1-4503-4946-8/17/10...$15.00                                           the current TLS 1.3 draft are stable, and other than fluctuations
+https://doi.org/10.1145/3133956.3134063
+
+===== PDF PAGE 2 =====
+surrounding the zero-Round-Trip-Time (0-RTT) mechanism [40],                      value of the server. This particular handshake mode was removed
+we do not expect substantial changes to come.                                      and replacedby apre-sharedkey (PSK)0-RTThandshake mode–
+                                                                                   early data can now only be encrypted using a PSK. In fact, the PSK
+1.1   Contributions                                                                mechanismhasbeengreatlyenhancedsincedraft10withnewPSK
+Our main contributions in this work are as follows:                               variants and binding values being incorporated in to the specifi-
+     (1)  Wedevelopasymbolicmodelofthelatestspecificationof                        cation.Post-handshakeauthenticationwasofficiallyincorporated
+         TLS1.3(draft21)thatconsidersallthepossibleinteractions                    fromdraft11onwardsandafewdraftslater,post-handshakeau-
+         of the available handshake modes, including PSK-based                     thenticationwasenabledtooperatewiththePSKhandshakemode.
+         resumption and 0-RTT. Its fine-grained, modular struc-                   Another change to be incorporated after draft 10 was the inclu-
+         turegreatlyextendsandrefinesthecoverageofprevious                         sion of 0.5-RTT data - the server being able to send fullyprotected
+         symbolic models that were successfully used to discover                   application data as part of its first flight of messages.
+         sophisticatedinteractionattacks,includingthatofCremers                       Allofthesechangeshaveresultedinwhatiseffectivelyavery
+         et al. [22]. Our model effectively captures a new TLS 1.3                 differentTLS1.3protocol,particularlyfromasymbolicperspective.
+         protocol, incorporating the many changes that have been                  Asa Tamarinmodelaims toconsiderthe interactionofall possible
+         madetotheprotocolsincethedevelopmentoftheseprevi-                         handshake modes and variants, changes to these modes, as well
+         ousmodels.Wealsonotethatourmodelishighlyflexible                          asthe inclusionofnew post-handshakecombinations,results ina
+         and can easily accommodate the removal of the 0-RTT                      very differentdifferent setof tracesto be consideredwhen proving
+         mechanism, should the need arise.                                         securityproperties.Hence,thisworkpresentsasubstantiallydiffer-
+     (2)  We prove the majority of the specified security require-                 ent model to [22], and follows a far more fine-grained and flexible
+         ments of TLS 1.3, including the secrecy of session keys,                  approach to modelling TLS 1.3.
+         perfect forward secrecy (PFS) of session keys (where ap-                     The workin [4] isan analysisof TLS1.3 by theCryptographic
+         plicable),peer authentication,andkeycompromiseimper-                      protocolEvaluationtowardsLong-LivedOutstandingSecurity(CEL-
+         sonationresistance.Wealsoshowthatafterasuccessful                         LOS)ConsortiumusingtheProVeriftool.AnnouncedontheTLS
+         handshake the client and server agree session keys and                   WGmailinglistat thestartof2016,itshowed theinitial(EC)DHE
+         that session keys are unique across handshakes.                           handshakeofdraft11tobesecureinthesymbolic setting. Incom-
+     (3)  Weuncoverabehaviourthatmayleadtosecurityproblems                         parisontoourwork,thisanalysiscoversonlyonehandshakemode
+         in applications that assume that TLS 1.3 provides strong                  of a draft that is now somewhat outdated.
+         authentication guarantees.                                                   The ProVerif models of draft 18 presented by Bhargavan et al.
+     (4)  Weprovideanovelwayofexhibitingtherelationbetween                         in [10] include most TLS1.3 modes, and cover rich threat models
+         thespecificationandourmodel:weprovideanannotated                          by considering downgrade attacks (both with weak crypto and
+         version of the TLS 1.3 specification that clarifies which                 downgradetoTLS1.2).However,unlikeourwork,theydonotcon-
+         parts are modelled and how, and which parts were ab-                      siderallmodes,astheydonotconsiderthepost-handshakeclient
+         stracted.Thisprovidesanunprecedentedlevelofmodelling                      authenticationmode.Whiletheycoverrelativestrongauthentica-
+         transparency and enables a straightforward assessment of                  tion guarantees (which led to the discovery of an unknown key
+         thefaithfulness andcoverageof ourmodel. Weanticipate                      shareattack),theiranalysisdidnotuncoverthepotentialmismatch
+         that this output will be of great benefit to the academic                 between client and server view that we describe in Section 5.2.
+         community analysing TLS 1.3, as well as the TLS Work-
+         ing Group as it provides a clear and easy-to-understand                   1.3   Paperorganisation
+         mapping between the TLS 1.3 specification and a TLS 1.3                  The paper is organised as follows. In Section 2 we describe the
+         model.                                                                   TLS 1.3 protocol and the security properties claimed in the spec-
+Allour Tamarininputfiles, proofs,andthe annotatedTLS 1.3spec-                      ification. Section 3 describes our Tamarin model and provides a
+ification thatshows therelation betweenthe RFCand the model,                       fewTamarinproverfundamentals.InSection4,wedescribeouren-
+can be downloaded from [21].                                                       codingofthesecurityguarantees,followedbySection5wherewe
+1.2   Relatedwork                                                                  describeourresults.Section6coverstherelationshipbetweenour
+As mentioned, there has been a great deal of work conducted in                     modelandthespecificationdocument,discussinghowweprovidea
+thecomplementaryanalysisspherespertinenttoTLS1.3.Ofmost                           websitethatdescribesourmodelside-by-sidewiththespecification,
+interest to this work are the symbolic analyses presented in [22],                 givingusunprecedentedmodellingtransparency.Weconcludein
+[4] and [10].                                                                      Section 7.
+
+   The work in [22] by Cremers et al. offered a symbolic model
+and accompanying analysis of draft 10 of the TLS 1.3 specification,                2   TLS1.3
+using the Tamarin prover. Since then, there have been multiple                     In this section we provide a brief description of the TLS 1.3 pro-
+changesmadetothespecification-10draftsworthofchangestobe                           tocol as is necessary for understanding our symbolic model, and
+precise.Theseupdateshave includedmajorrevisionsofthe0-RTT                         we outline the claimed security properties and guarantees of the
+mechanism and the key derivation schedule. In draft 10, the send-                  protocol.
+ing ofearly data requireda client topossess a semi-static(EC)DH
+
+===== PDF PAGE 3 =====
+                    2.1   Newmechanisms
+                    Thethreeyearsofeffortthathasgoneintocraftingandfine-tuning
+                    boththe securityandefficiency mechanismsofTLS 1.3is readily
+                    apparent in the large structural departures from TLS 1.2. The two
+                    protocols havebroadly similargoals butexhibit many differences.
+                    For example, a full TLS 1.3 handshake requires one fewer round
+                    tripbeforeaclientcantransmitprotectedapplicationdata,andthe
+                    new zero round trip time (0-RTT) mechanism allows less sensitive
+                    application datato be sentby the client aspart of itsfirst flight of
+                    messages.
+                        TLS1.3hasthreekeyexchangemodes,namely,Diffie–Hellman
+                    exchange(DHE), pre-sharedkey (PSK) exchange,and PSKcoupled
+                    withDHE.Thesemodesenableusefulfeatureslikesessionresump-
+                    tion and the transmission of early application data. Additionally,
+                    thereareanumberofhandshakevariantsthatallowforgrouprene-
+                    gotiationandthesendingofcontext-dependent,optionalmessages.
+                    Eachofthesevariants hasdifferentpropertiesandoffersdifferent
+                    security guarantees.
+                        Furthermore, TLS 1.3 has three post-handshake mechanisms
+                    coveringtraffickeyupdates,post-handshakeclientauthentication,
+                    and the sending of new session tickets (NSTs) for subsequent re-
+                    sumption via a PSK. The handshake protocol maintains a rolling
+                    transcript, onwhich both partiesmust agree.This transcripttakes
+                    the form of a hash value of all of the handshake messages. Post-
+                    handshake messages, however, are not included in this transcript                           Figure1:AfullTLS1.3handshake(Section2.1.1)
+                    resulting in different security properties for the post-handshake
+                    mechanisms.
+                        We analyse allof the TLS 1.3key exchange modes, handshake                       CertificateRequest message indicates that the server requests
+                    variants,andpost-handshakemechanismssimultaneously,consid-                          client authentication in the mutual authentication case.
+                    ering all possible interactions between them. We provide a brief                       TheserverwillalsosendaCertificatemessage,containingthe
+                    descriptionofthesecomponentsaswellasassociatedmessageflow                           server’scertificateandaCertificateVerifymessage,whichisa
+                    diagrams.                                                                           digitalsignatureoverthecurrenttranscript.Thesetwomessages
+
+                        2.1.1   Diffie–Hellmanexchange(DHE). ThedefaultmodeofTLS1.3                     allow the client to authenticate server. The server also sends a
+                    allowsforephemeralDiffie–Hellman(DH)keystobeestablished                             Finishedmessage.ThismessageisaMessageAuthenticationCode
+                    either over a finite field or using elliptic curves.                                (MAC)overtheentirehandshake,providingkeyconfirmationand
+                        In an initial (EC)DHE handshake, as depicted in Figure 1, the                   binding the server’s identity to the computed traffic keys.
+                    client sendsa ClientHello messagecontaining arandom nonce,                             TheclientrespondswithCertificateandCertificateVerify
+                    i.e. a freshly generated random value, and a list of symmetric al-                  messages, if requested, and then sends its own Finished message.
+                    gorithms. The client also sends a set of DH key shares and the                      These message flows are depicted in Figure 1.
+
+                    associated groups, KeyShare, and potentially some other exten-                         2.1.2   Pre-shared key (PSK). In the event that a PSK has been
+                    sions.                                                                              established,aclientandaservercanbegincommunicatingwithout
+                        UponreceiptofaClientHellomessage,theserverselectsap-                            a DH exchange.This is potentially attractivefor low-power envi-
+                    propriate cryptographic parameters for the connection and re-                       ronments, however, without a DHE the connection loses perfect
+                    sponds with a ServerHello message. This message contains a                          forwardsecrecy(PFS).InaPSKhandshake,theserverauthenticates
+                    server-generatedrandomnonce,anindication oftheselectedpa-                           via a PSK.
+                    rameters and potentially some other extensions. The server also                        2.1.3   PSK with DHE. By combining a PSK with DHE this mode
+                    sends aKeySharemessage, alongwith anEncryptedExtensions                             maintains PFS whilst limiting the number of expensive public key
+                    message and optionally a CertificateRequestmessage.                                 operations that the server needs to perform.
+                        The KeyShare contains the server’s choice of group and its
+                    ephemeral DH key share. The client and server key shares are                           2.1.4   Grouprenegotiation. Itcanbethecasethatthegroupssent
+                    used to compute handshake and application traffic keys.                             by a client are not acceptable to the server. In this case, the server
+                    The EncryptedExtensions message contains material that is not                       may respond with a HelloRetryRequest message. This indicates
+                    necessary for determining cryptographic parameters. For instance,                   to the client which groups the server will accept, and provides the
+                    thedraftspecificationliststheservernameand themaximumTLS                            client with the opportunity to respond with an appropriate key
+                    fragment lengthas possiblevalues tobe sentin thismessage. The                       share before returning to the main handshake.
+
+
+
+
+
+
+
+
+
+
+
+Client                                               Server
+
+
+                        ClientHello
+                         KeyShare
+                       ServerHello
+                         KeyShare
+
+                  EncryptedExtensions
+                   CertificateRequest*
+
+                        Certificate
+                     CertificateVerify
+                         Finished
+
+                        Certificate*
+                    CertificateVerify*
+                         Finished
+
+                    [ApplicationData]
+
+===== PDF PAGE 4 =====
+                        Figure2:APSKresumptionhandshake(Section2.1.7)
+
+
+                        2.1.5   New session ticket (NST). After a successful handshake,
+                    the server can issue an NST at any time. These tickets create a                               Figure3:A0-RTThandshake(Section2.1.8)
+                    binding to a resumption-specific secret and can be used by the
+                    client as PSKs in subsequent handshakes.
+                        2.1.6   PSKbinder. APSKbinderisavaluethatbindsaPSKtothe                         mightauthenticatetheclient.However,becausethespecification
+                    handshakewhere thePSKisoffered byaclient inaClientHello                             allowscertificatestoberejected‘silently’,theclientcannotbesure
+                    message and,if the PSKwas generated bya server in-band,to the                       of its authentication status in general. We discuss this in greater
+                    handshake where it was generated. A ClientHello can contain                         detail in Section 5.2.
+                    multiple bindersarranged ina list,where eachbinder iscomputed                          2.1.10   Keyupdate. Afterasuccessfulhandshake,eitherparty
+                    over a hash of the ClientHello message (without the binder list                     can request an applicationdata key update. Because the read and
+                    itself).                                                                            write keys for application data are independent, either party can
+                        2.1.7   SessionresumptionandPSK. Thishandshakevariantal-                        immediately update their write key after requesting a key update.
+
+                    lows a client to use a key established out-of-band (OOB) to start a                    2.1.11   Key derivation. A TLS 1.3 handshake will generate a set
+                    new session, or to usean NST established in a previous handshake                    ofkeysonwhichboththeclientandserveragree.Thespecification
+                    to resumethe session. Thisavoids theuse of expensivepublic-key                      defines a key schedule which uses the repeated application of an
+                    operationsandinthecaseofaresumption,tiesthesecuritycontext                          HMAC-basedkeyderivationfunction(HKDF)[34]tocombinethe
+                    ofthenewconnectiontotheoriginalconnection.Notethataserver                           secretinputswithfixedlabelssoastogenerateasetofindependent
+                    mayrejectaresumptionattemptmadebyaclient,sothespecifica-                            keys.
+                    tion recommends that the client supplies an additional (EC)DHE                         The key schedule has two secret inputs, the (EC)DHE and the
+                    keyshare withitsPSKwhen trying toresumea session.Figure2                            PSK.Dependingonthehandshakemode,eitheroneorbothofthese
+                    depicts a PSK resumption handshake.                                                 will be used. The key schedule also includes the transcript hash in
+                        2.1.8   Zero round trip time (0-RTT). A client can use a PSK to                 thekeyderivation.Becausethetranscriptincludesnonces,evenif
+                    sendapplicationdatainitsfirstflightofmessages,reducingthela-                        thesecret inputs arerepeated,thegenerated keysareguaranteed
+                    tencyoftheconnection.AsnotedintheTLS1.3draftspecification,                          to be independent.
+
+                    thisdataisnotprotectedagainstreplayattacks.Ifthecommunicat-                         2.2   Statedgoalsandsecurityproperties
+                    ing entities wish to take advantage of the 0-RTT mechanism, they                    The TLS 1.3 handshake protocol is intended to negotiate crypto-
+                    should providetheir own replay protection at theapplication layer.                  graphic keys via the mechanism of authenticated key exchange
+                    A 0-RTT handshake is depicted in Figure 3.                                          (AKE).Thesekeyscanthenbeusedbytherecordlayertoprovide
+                        2.1.9   Post-handshake client authentication. After asuccessful                 critical security guarantees, including confidentiality and integrity
+                    handshake, the server can send a CertificateRequest message.                        of messages. As stated in Section 2.1, TLS 1.3 makes use of inde-
+                    Iftheclientrespondswithanacceptablecertificate,thentheserver                        pendent keys to protect handshake messages and application data
+
+
+
+
+
+
+
+
+
+
+
+ClientClient                                         ServerServer
+
+
+                        ClientHelloClientHello
+                        KeyShare*KeyShare*
+                            PSKPSK
+
+                    (ApplicationData)ServerHello
+                        KeyShare*
+                       ServerHelloPSK
+                  EncryptedExtensionsKeyShare*
+                         FinishedPSK
+
+                  EncryptedExtensionsFinished
+                         Finished
+
+                    [ApplicationData][ApplicationData]
+
+                         Finished
+
+                    [ApplicationData]
+
+===== PDF PAGE 5 =====
+messages: protection of the handshake messages starts with the                     theirsecurityrequirementsandpowerfulDolev-Yao-styleattack-
+server’sEncryptedExtensions message, and in the majority of                        ers. The verification algorithm of Tamarin is based on constraint
+handshake modes, protection of application data messages occurs                    solvingandmultiset-rewritingtechniques,whichallowsitsusers
+afterthetransmission oftheserverandclientFinishedmessages,                         toproveintricatesecuritypropertiesincomplexprotocolsexhibit-
+respectively. In the case of a 0-RTT handshake, application data is                ing branches and loops. Moreover, it offers state-of-the-art sym-
+protectedwith aPSKaspart oftheclient’s firstflightofmessages.                      bolic Diffie-Hellman support. Tamarin inherently supports non-
+   The TLS specification[46, Appendix E.1] lists eight properties                  monotonic state and it includes an extensive graphical user inter-
+that the handshake protocol is required to satisfy:                                face that enables the visualisation and interactive constructionof
+ 1.    Establishingthesamesessionkeys.Uponcompletionof                             proofs.
+       the handshake, the client and the server should have estab-                    These featuresmake Tamarina goodfit for themodelling and
+       lished a set of session keys on which they both agree.                      in-depthanalysisofhighlycomplexprotocolssuchasTLS1.3.In
+ 2.    Secrecyofthesessionkeys.Uponcompletionofthehand-                            particular, the support for branching allowed us to model the deci-
+       shake, the client and server should have established a set of               sionsthattheprotocolparticipantscanmakeduringexecution,the
+       session keys which are known to the client and the server                   loopswereinstrumentalincoveringrepeatedconnectionswithina
+       only.                                                                       single session, and the main security aspects of TLS 1.3 critically
+ 3.    Peer authentication. In the unilateral case, upon comple-                   dependonDiffie-Hellmankeyexchange.Thenon-monotonicstate
+       tion ofthe handshake,if a client C believes itis communicat-                support enabled us to model branching without having to resort
+       ingwithaserverS,thenitisindeedSwhoisindeedexecuting                         to custom-tailored hacks or having to rely on the considerable
+       the server role. Ananalogous property for the serverholds                   over-approximation where all branches can be considered simul-
+       in the bilateral (mutual) authentication case.                              taneously. Lastly, the visualisations of attacks found by Tamarin
+ 4.    Uniquenessofsessionkeys.Eachrunoftheprotocolshould                          provideduswithawaytoquicklyidentifypotentialproblems,with
+       produce distinct, independent session keys.                                 either the protocolor our model– the graphical userinterface was
+ 5.    Downgrade protection. An active attacker should not be                      a great asset in guiding our TLS 1.3 verification workflow.
+       abletoforcetheclientandtheservertoemployweakcipher                             WeintroducetheTamarinspecificationlanguagebyconsidering
+       suites, or older versions of the TLS protocol.                              a toy example rule:
+ 6.    PerfectForwardSecrecy(PFS).Inthecaseofcompromise                            rule Example_Rule:
+       of either party’s long-term key, sessions completed before                   [ !Key(x,y), Fr(n) ]--[ Send(x,n,y) ]->[ Out(senc{n}y) ]
+       the compromise should remain secure. This property is not
+       claimed to hold in the PSK key exchange mode.                               Tamarin rules consist of three respective parts: a left-hand side,
+ 7.    Keycompromiseimpersonation(KCI)resistance.Should                            actionsandaright-handside.Therulesareusedtodefineatransition
+       an attacker compromise the long-term key of party A, the                    system,whoseglobal stateismaintainedasamultiset ofso-called
+       attackershouldnotbeabletousethiskeytoimpersonatean                          facts.Theinitialstateofthetransitionsystemistheemptymultiset.
+       uncompromised party in communication withA.                                 A rule can only be executed if all the facts on its left-hand side
+ 8.    Protectionofendpointidentities.Theidentityoftheserver                       are available in the current state. When a rule is executed, it will
+       cannot be revealed by a passive attacker that observes the                  consume the facts on the left, i.e. removing them from the global
+       handshake,andtheidentityoftheclientcannotberevealed                         state,and produce factsonthe right,i.e.addingthemto theglobal
+       evenbyanactiveattackerthatiscapableoftamperingwith                          state.Factsareeitherlinearorpersistent;eachavailablelinearfact
+       the communication.                                                          canonlybeconsumedonce,andpersistentfactscanbeconsumed
+   Wemodelsixoutoftheeightrequiredproperties,omittingdown-                         any number of times. Actions specify observable events in every
+gradeprotectionandtheprotectionofendpointidentities.Also,as                        trace,andareusedtoexpresssecurityproperties.Thereareseveral
+statedpreviously,0-RTTmechanismsallowforreplayofearlydata                          specialfacts,oneofwhichistheFrfact,whichisimplicitlyavailable
+acrosssessions. Wediscuss thereduced 0-RTTsecurity properties                      inallstatesbecauseofTamarin’sbuilt-inFreshrule,andisused
+as well as the properties described above more fully in Section 4.                 toproducefresh(unique)values.Intheaboveexample,ifanagent
+   The draft specification refers to RFC 3552[47] for an informal                  xownsasymmetrickeyy,thenitcansendoutafreshvaluenthat
+descriptionoftheTLS1.3threatmodel.ThismodelassumesaDolev-                          is symmetrically encrypted with y. A basic property thatstates the
+Yaoattacker[23]–anattackerthatcanperformman-in-the-middle                          secrecy of n can be encoded as a simple lemma:
+(MITM)attacksbybeingabletoreplay,insert,delete,andmodify
+messages at will. We consider a strictly more powerful attacker, as                lemma Example_Property:
+we will explain in Section 4.1.                                                     "All x y n #i. Send(x,n,y) @ i ==> not Ex #j. K(n) @ j"
+
+                                                                                   A more realistic lemma needs to account for the attacker model.
+3   MODELLINGTHEPROTOCOL                                                           Forexample,inthepresenceofanattackerwhocancompromise
+3.1   TheTamarinprover                                                             symmetrickeys,aformula resembling not Revealed(y) @ kneeds
+                                                                                   to be conjoined with the left-hand side of the above property or it
+The Tamarin prover [48] is a symbolic modelling and analysis                       will be trivially false.
+tool for security protocols. Its specification language facilitates                   WedeferthedetailsofourTamarinmodeltoSection4,andnote
+the construction of highly detailed models of security protocols,                  differences to other TLS 1.3 models in the next section.
+
+===== PDF PAGE 6 =====
+3.2   Acomprehensivemodel                                                             Fr(~data)
+UsingTamarin’smodellingframeworkwedevisedacomprehensive                            ]
+symbolic model of TLS 1.3 that captures the specified protocol                     --[ Send(~tid),
+behaviours, as well as unexpected behaviours that arise from a                          SendData(~tid, $actor, $peer, auth_status, ~data)
+complex interaction of an unbounded number of sessions. Our                        ]->
+                                                                                   [ SendStream(~tid, $actor, $peer, auth_status, app_key_out),
+model captures these behaviours in the presence of a powerful                         Out(senc{data_record(~data)}app_key_out)
+attacker1.                                                                         ]
+   OtherTLS1.3analysesconsidertheconstituentpartsofTLS1.3,                             We alsonotethe extensive useofmacrosinour model,whichis
+viewing these as separate protocols, and proceed to tie the indi-                  enabledbythe m4preprocessorandallowedustocovermostofthe
+vidualproofstogether withacompositionality result. Forinstance,                    specification,whilstsyntacticallykeepingourmodelclosetoit.For
+[10] considers the resumption mechanism as a separate protocol                     example, ourClientHello message is a macro that expands to:
+inwhichboththeclientandtheservertakeasinputasymmetric                                    handshake_record('1',
+value—the PSK. If the PSK remains unknown to the attacker in                                   ProtocolVersion,
+every execution of the resumption protocol, a gap remains to be                                ClientRandom,
+filled before concluding that the full handshake always completes                              '0', // legacy_session_id
+withouttheattackerknowingthePSK.Thisgapisfilledbyaman-                                         $cipher_suites,
+ual compositionality proof. In our work, there is no need for such                             '0', // legacy_compression_methods
+manualproofs;compositionistriviallysatisfiedbyourcomprehen-                                    ClientHelloExtensions)
+sive model, as Tamarin considers all the possible interactions in
+proving each property.                                                             which reflects almost exactly how it is written in our Tamarin files.
+   AlthoughourmodelundoubtedlydrawsfromtheTamarinmod-                              ClientRandom is itself another macro, defined to be the value of
+els described in [30] and [22], we opted to model TLS 1.3 with a                   the client nonce nc. In Tamarin’s syntax, constants are enclosed
+significant increase in fidelity to the draft specification. Such an               bysinglequotes.Constructingthemodel inthisfashionenablesa
+approach resulted in an improved ability to capture the full func-                 direct syntacticcomparison to thespecification. Previous Tamarin
+tionality of TLS, as well as a broader class of realistic attacks. This            modelsalsoemploymacros,buttheconnectiontothespecification
+classincludesthecoverageofcomplicatedinteractionattacks,such                       is much less evident. For instance, in [22] ClientHello is defined
+as the post-handshake client authentication attack in [22]. Addi-                  tobethepair ofvaluesnc,pc,representingtheclient’snonceand
+tionally, by closely matching our model to the specification and                   “parameters”,whichservesasaplaceholderforhandshakevalues
+allowing for an almost line-per-line comparison, we achieve full                   that are abstracted away.
+transparencyregardingwhichpartsofthespecificationweabstract                            Inour modelwehavetried todefinecryptographic components
+awayfrom,andwhichassumptionsourmodellingprocessrelieson.                           in a way that is reminiscent of imperative programming. As in
+WediscusstherelationbetweenourmodelandtheRFCindetailin                             the specification, we compute the handshake secret by computing
+Section 6.                                                                         the function HKDF-Extract(gxy,es), and the handshake keys are
+   Not only is our model more comprehensive than the Tamarin                       computed by applying a Derive-Secret function to this value.
+models that precede it, it also incorporates the many changes to                   This is not strictly necessary due to the assumption of perfect
+theTLS1.3specificationthathavematerialisedsincethedevelop-                         cryptography, but it makes it easier to connect our model to the
+ment of these models. In the following sections, we describe our                   specification.
+modelling process, pointing out enhancements over the previous
+models.                                                                            3.4   Advancedfeatures
+                                                                                   In ourmodelwe capturea number of complicatedinteractions and
+3.3   Closelymodellingthespecification                                             logicflowsinherenttotheTLS1.3handshake,greatlyimprovingon
+As with previous models [22], we employ the use of Tamarin rules                   precedingmodels, addingfeaturestothemodelwhich we consider
+to model state transitions within the TLS 1.3 protocol. However,                   to be ‘advanced’.
+ourstatetransitionsarefarmorefine-grainedandmodularincom-                              Groupnegotiation. Wemodeltheclientandtheserverashaving
+parison to [22], modelling the effective change in state as a result               alimitedabilityto negotiatethe groupused inthe Diffie–Hellman
+of transmission, receipt and processing of cryptographic parame-                   key exchange.
+ters. For instance, a basic, initial TLS 1.3 handshake invokes up to                   InTamarin,anyvaluecanbeusedasagroupgenerator.Typically,
+21 different rules and the associated state transitions before post-               thefixed(public)constant'g'isused,whichrepresentsallparties
+handshake operations can commence. These state transitions are                     agreeing to use a single group ahead of time. On receiving a key
+depicted in Figure 4, and correspond to message flights an crypto-                 share andstoringit inthe variablegx,wesimulatechecking that
+graphic processing as described in Section 2.1, Figure 1. The full                 the element resides in this group by pattern matching the value as
+state diagram can be found in Appendix A.                                          'g'^x = gx.Intuitively,thiscorrespondstocheckingthat∃x   .дx =
+   Below we provide an example of one of our rules:                                gx.
+rule send:                                                                             In Tamarin’s syntax, variables thatare always instantiated with
+[ SendStream(~tid, $actor, $peer, auth_status, app_key_out),                       publicvaluesareprefixedby$.Inourmodel,theclientstartswitha
+
+1We defer discussion of our attacker capabilities to Section 4.1.                  pairofpublicvalues$g1,$g2thatrepresenttwosupportedgroups,
+
+===== PDF PAGE 7 =====
+               Figure 4: Partial state diagram for full TLS 1.3 handshake. Tamarin rules are indicated in blue. The messages exchanged be-
+               tweenentitiesaregiveningreen.Ourfullmodelcontainsmanymoretransitions.Weomitthesehereforthesakeofsimplicity.
+
+
+               andoffersthesetotheserveralongwithacorrespondingkeyshare                          Since all ofthe above interactions can happen asynchronously,
+               for$g1.Similarly,theserverstartswithasupportedgroup$g.TheClientC0ServerS0      the resulting model becomes very complex and requires sophis-
+               model allows the server to return a HelloRetryRequest to theClientHello        ticated handling logic. A number of complicated protocol flows,
+               client, enforcing that $g is not equal to $g1, and expects the clientclient_hello+Extensionsrecv_client_helloinvolving any number of sequential handshake modes and post-
+               to return instead a key share that matches$g2.                                 handshakeextensionscan,andwill,transpireandwedealwiththis
+                  This interaction enables a much greater coverage of DH keyC1      S1        eventualitybymodellingallpossiblehandshakemodesinavery
+               exchangewithrespecttopreviousmodels, andopensupthepossi-ServerHello            modular fashion. Other models are, by and large, not capable of
+           recv_server_hellobilityoffutureextensionstothiswork.Onesuchextensionwouldserver_hellocapturing complicated protocol flows.
+               be to model aweak group by permitting theattacker to reveal the+Extensions
+               corresponding DH exponents.C2a                                      S2a
+             client_gen_keys                                                          server_gen_keys4   ENCODINGTHETHREATMODELAND
+                  Handshakeflows. Oneofthemostcomplexelementsinherent                              THESECURITYPROPERTIES
+               tomodellingTLS1.3isthevastnumberofpossiblestatemachineC2b           S2b        4.1   ThreatModel
+recv_encrypted_extensionstransitions.Afterasessionresumption,theservercanchoosebe-EncryptedExtensionsencrypted_extensionsWeconsideranextensionoftheDolev-Yao(DY)attacker[23]asour
+               tweenusingthePSKonly,orusingthePSKalong withaDHkey                             threatmodel.TheDYattackerhascompletecontrolofthenetwork,
+               share.Alternatively,theservermightrejectthePSKentirely,andC2c       S2c        and can intercept, send, replay, and delete any message. To con-
+    recv_cert_request ORfall back to a regular handshake, or request that the client use aCertRequestcert_request ORstructanewmessage,theattackercancombineanyinformation
+ skip_recv_cert_requestdifferentgroupfortheDHexchange.Additionally,thereareseveral       skip_cert_requestpreviouslylearnt,e.g., decryptingmessages forwhichit knowsthe
+               complex messages that can be sent in the post-handshake state:C2d   S2d        key, or creating its own encrypted messages. We assume perfect
+               client authentication requests, new session tickets, and key update            cryptography,whichimpliesthattheattackercannotencrypt,de-
+            recv_server_authrequests.               Cert CertVerify                   server_authcryptorsignmessageswithoutknowledgeoftheappropriatekeys.
+                                                        Finished
+
+                                  C3                                                S3
+
+            client_auth ORcert_req_ctxt= ‘0’        Cert CertVerify               cert_req_ctxt= ‘0’recv_client_auth OR
+         client_auth_cert        cert_req_ctxt, ‘0’     Finished            cert_req_ctxt, ‘0’recv_client_auth_cert
+
+                                  C4                                                S4
+
+===== PDF PAGE 8 =====
+Inorderto considerdifferenttypesof compromise,we additionally                       attackerdoes notknowthekey.However,given thecapabilitiesof
+allow the attacker to do the following:                                             theattacker,thiswillnotholdwithoutimposingsomerestrictions.
+      •  compromise the long-term keys of protocol participants,                    This is why the additional clauses are required.
+      •  compromisetheirpre-shared keys,whethercreatedOOB                              The fiveconditions statedin thedepicted lemmaaregenerally
+         or through a NST, and                                                      repeatedacross alllemmas,and encapsulatethebasic assumption
+      •  compromise their DH values.                                                we make about our attacker. We describe them in more detail here:
+   Note that TLS 1.3 is not intended to be secure under the full                    The first imposes the restriction that the long-term signing key
+combinationofallthesetypesofcompromise.Forexample,session                           ofthe peeris notcompromised2.This restrictioncan additionally
+keysecrecycanbebrokenbyanattackerwhoeavesdropsonthe                                 beunderstoodtosignifythattheactoriscommunicatingwithan
+communicationandcompromisestheDHvaluesofasingleprotocol                             honestpeer,sincetheattackercaneffectivelysimulateapartywhen
+participant.                                                                        in possession of its long-term key. Furthermore, it should be noted
+   Anaturalapproachistoweakentheattackermodelbyadding                               thattheattackerisstillallowedtocompromisethepeer’slong-term
+realisticconstraintsuntileithertheclaimedsecuritygoalsofthepro-                     key (LTK) after the session key is established. Hence we show that
+tocol areachieved, orthe corresponding attackersbecome weaker                       the session keys achieve PFS with respect to the LTK.
+thantheonesweexpecttofaceinpractice.Thisworkflowrequires                               Thesecondandthirdclausesbartheattackerfromrevealingany
+us toexpress, with highgranularity, exactly whatneeds to bepro-                     DHexponentsgeneratedbytheclientortheserverfrombeforethe
+tected and when each of the claimed TLS 1.3 properties can be                       session key was established. The attacker may reveal exponents
+expected to hold.                                                                   that are generated after the session key is established.
+   WenowgiveourformaldefinitionsoftheTLS1.3securityprop-                               Thelasttwoclausesspecifythattheattackercannotcompromise
+ertiesmentionedinSection2,notingwhereeachpropertyiscovered                          aPSKassociatedwitheithertheactoror thepeer.Notethat theat-
+in our model.                                                                       tackerisrestrictedfromrevealingthesePSKsevenafterthesession
+                                                                                    key hasbeen established,whichcorresponds tothe provisoin the
+4.2   Securityproperties                                                            specification that the PSK-only exchange mode doesnot provide
+                                                                                    PFS. We discuss this in more detail in Section 4.2.6.
+We encode the claimed security properties of TLS 1.3 as lemmas in
+thespecificationlanguageofTamarin.Herewediscusstherelation-                            4.2.3   PeerAuthentication. Thespecificationdefinesthisprop-
+ship between the lemmas we prove in the model, and the desired                      erty somewhat informally, as a form of authentication whereby
+properties in the specification.We note that there is some overlap                  both parties should agree on the identity of their peer. Looking
+betweenthematerialinthestatedgoalsexpressedinSection2.2.                            at this more formally through the lens of Lowe’s hierarchy of
+Forexample,therequirementforPFSiseffectivelyamodifiertothe                          authentication[39],thisdefinitioncorrespondstoweakagreement.
+requirement for secret session keys. Where possible, we will prove                  In particular, we note that this does not imply recentness—the re-
+these properties viadistinct lemmas to aid inthe comprehension                      quirementthatthepeeriscurrentlyrunningtheprotocol—nordoes
+ofthemodel.However,itisalsopossibletocombinemanyofthe                               it specify whether any other values should be agreed upon.
+properties into a single, more complex lemma.                                          Weinitiallymodelthispropertyviaourentity_authentication
+                                                                                    lemma. Entity authentication is modelled in two parts so as to cap-
+   4.2.1   Establishingthesamesessionkeys. Thedefinitionofthis                      turethedistinctionbetweenthebilateral(mutual)andunilateral
+first propertyis taken from[19], whereit is referredto as a consis-                 authentication cases. Authentication in the unilateral case means
+tency property. However, there is ambiguity in the circumstances                    thatifaclientcompletesaTLShandshake,apparentlywithaserver,
+that are necessary and sufficient for two protocol participants to                  thentheserverpreviouslyranaTLShandshakewiththeclient,and
+establish the same keys. An answer to this question is typically                    they both agree on certain data values of the handshake, including
+giventhroughthewell-establishedpracticeofdefiningsessionpart-                       the identity of the server and the nonces used. Note that this is
+nering [8, 19, 36]. One possible way to do so is to assign session                  alreadyastrongerproperty thanisstipulatedinthespecification.
+identifiersin termsof avalue (orpair ofvalues)on whichthe two                       Hereweprovenon-injectiveagreementonthenonces,whichaddi-
+parties agree. We opted for the least restrictive session identifier,               tionally provides recentnesssince bothparties contributea fresh
+namelythe pairof noncesgenerated bytheclient andthe server.                         noncetothehandshake.Theunilateralentityauthenticationlemma
+Therefore,ifa partnered clientandservercompletethehandshake,                        we prove appears in Figure 6.
+then they must agree on session keys.                                                  The intuition for this lemma is that if a client believes it has
+   We consider this property with respect to an attacker that can                   agreed on a pair of nonces with a server, then the server was,
+compromise all session keys except for those that are identical                     at some point prior, running the protocol with those nonces. We
+to that of the test session, i.e. the session in which the attacker                 againfindthenecessaryrestrictionsontheattackertoachievethis
+attemptstoobtaininformationaboutthekey[19,36].Thisproperty                          property.Thepropertycanonlyholdiftheattackerdoesnotacquire
+is captured by our lemmasession_key_agreement.                                      anyofthesecretspriortotheclientagreeingonnonces.Whileone
+   4.2.2   Secrecy of the session keys. The secret_session_keys                     mightexpectthatonlythelegitimacyofthesigningkeyisnecessary
+lemma is used to prove property (2) in Section 2.2.                                 for authentication, if the attacker is able toobtain the PSK through
+   The secret_session_keyslemmaweproveappearsinfulldetail                           2We remind the reader that both the client and the server are equipped with long-
+inFigure5. Theintuitionforthislemmaisthatifanactorbelieves                          term signing keys, and the corresponding public key certificates, for the purposes of
+ithasestablishedasessionkeywithanauthenticatedpeer,thenthe                          authentication.
+
+===== PDF PAGE 9 =====
+  1  lemma secret_session_keys:
+
+  2      "All tid actor peer write_key read_key peer_auth_status #i.
+
+  3              SessionKey(tid, actor, peer, <peer_auth_status,  'auth'>, <write_key, read_key>)@i&
+
+  4              not (Ex #r. RevLtk(peer)@r & #r < #i) &
+
+  5              not (Ex tid3 x #r. RevDHExp(tid3, peer, x)@r & #r < #i) &
+
+  6              not (Ex tid4 y #r. RevDHExp(tid4, actor, y)@r & #r < #i) &
+
+  7              not (Ex resumption_master_secret #r. RevealPSK(actor, resumption_master_secret)@r) &
+
+  8              not (Ex resumption_master_secret #r. RevealPSK(peer, resumption_master_secret)@r)
+
+  9          ==>not Ex #j. K(read_key)@j"
+
+                                                     Figure5:secret_session_keys(Section4.2.2)
+
+
+
+  1  lemma entity_authentication [use_induction, reuse]:
+
+  2      "All tid actor peer nonces client_auth_status #i.
+
+  3              CommitNonces(tid, actor, 'client', nonces)@i&
+
+  4              CommitIdentity(tid, actor,  'client', peer, <client_auth_status,  'auth'>)@i&
+
+  5              not (Ex #r. RevLtk(peer)@r & #r < #i) &
+
+  6              not (Ex tid3 x #r. RevDHExp(tid3, peer, x)@r & #r < #i) &
+
+  7              not (Ex tid4 y #r. RevDHExp(tid4, actor, y)@r & #r < #i) &
+
+  8              not (Ex resumption_master_secret #r. RevealPSK(actor, resumption_master_secret)@r & #r < #i) &
+
+  9              not (Ex resumption_master_secret #r. RevealPSK(peer, resumption_master_secret)@r & #r < #i)
+
+ 10          ==>(Ex tid2 #j. RunningNonces(tid2, peer,       'server', nonces)@j & #j < #i)"
+
+                                                   Figure6:entity_authentication(Section4.2.3)
+
+
+compromisingcryptographicmaterial,orthePSKdirectly,thenthe                           TLS achieves downgrade protection through our authentication
+attacker is able to resume a session and impersonate the peer.                       lemmas.
+   In addition to entity authentication, we consider a transcript                       However,wenotethatthisdoesnotaccuratelycapturethespirit
+agreementproperty,wherethevalueagreeduponisahashofthe                                ofdowngradeprotection,duetothefactthatweassumeallcryp-
+sessiontranscript.Thisprovidesuswithnear-fullagreement.How-                          tographic primitives are perfect and we do not model previous
+ever,thereareacoupleofnotableomissions.Firstly,theprotocol                           versions of TLS.
+technically continues after the initial handshake, although none
+of thesedelayed handshake messages areincluded in thesession                            4.2.6   Forward secrecy with respect to long-term keys. The PFS
+transcript.Secondly,weobservedthattheactorsdonotnecessar-                            propertywasbrieflymentionedinthecontextofthelong-termsign-
+ilyagree onthe currentauthenticationstatus ofthehandshake, a                         ingkeysandthesecrecyofsessionkeys.However,inthosecases,we
+situation we cover in more detail in Section 5.2.                                    didnotcovertherequirementforforwardsecrecywithregardsto
+   Finally,wealsoproveaninjectivevariantofmutualtranscript                           thePSK.Wehaveanadditionallemmasecret_session_keys_pfs
+agreement, which TLS naturally achieves by agreeing on fresh                         whichcapturesthat,ineitherafullDHEorPSK-DHEhandshake,
+nonces. Hence, we showthat TLS achieves a relatively strongau-                       thesecrecyofthesessionkeysdoesnotdependonthePSKremain-
+thentication notion:mutual agreement ona significant portionof                       ing secret after the session is concluded.
+the state with recentness.                                                              Toachievethis,wemodifysecret_session_keysasdepicted
+                                                                                     in Figure 5, by adding a condition for the key-exchange mode,
+   4.2.4   Uniqueness of the session keys. We provein the straight-                  not  psk_ke_mode  =  psk_ke, and loosening the restrictions on
+forwardwaythatforanytwosessionkeysgenerated,iftheymatch                              theattacker suchthat theRevealPSKactionis onlyforbidden for
+then they mustbe from the samesession. This holds withoutany                         any time point #r  <  #i. In proving this lemma, we show that the
+restrictionontheattacker,sinceitisastraightforwardconsequence                        session keys are forward secure after a DHE.
+of the actor generating a fresh nonce for each session. We do not
+prove anything about whether two session keys are related, since                        4.2.7   Key Compromise Impersonation (KCI) resistance. Obser-
+this triviallyfollowsfrom theassumption ofperfect cryptography.                      vant readers willnotice that the only restrictionon compromising
+                                                                                     long-term keys is that the peer’s LTK must not be compromised.
+   4.2.5   Downgrade protection. The specification cites the work                    Noneofoursecurityproperties relyontheactor’sLTKbeinghid-
+by Bhargavan et al. [11] for downgrade protection. This defini-                      den from the attacker3. Applying this fact to the authentication
+tionis notdirectlyequivalent toanyof Lowe’sclassical agreement                       properties,therefore,additionallyshowsthattheprotocol,asgiven
+methods;itonlyrequiresthatbothpartiesnegotiatethe same con-                          in the draft specification, achieves KCI resistance.
+figurationparametersthattheywoulddowithoutthepresenceof
+an attacker. Specifically, we observethat agreeing onthe parame-
+ters(inthesenseofnon-injectiveagreement)issufficienttoachieve                        3Aminorexceptiontothisisthattheattackercannotusetheactor’slong-termkeyto
+this, but not necessary. Therefore, within our model we prove that                   impersonate the actor to themselves since in this case, the actor is also the peer.
+
+===== PDF PAGE 10 =====
+4.3   ParameterNegotiation                                                            5.1.1   Proofstrategies. FormodelsascomplexasTLS1.3,prov-
+The security of a TLS session critically depends on the integrity                  ing lemmas in Tamarin is a multi-stage process, and proving com-
+of the parameters negotiated during the corresponding TLS hand-                    plexlemmasdirectlyisofteninfeasible.Forprotocolmodelsofthis
+shakes,intheinitialandsubsequentconnectionsinthesession.In                         size the proof trees can become very large. Tamarin provides a
+TLStheseparametersincludetheprotocolversion,theciphersuite,                        number of features that allow complex proofs to be broken down
+andthesignaturealgorithm.Dependingonthenegotiatedprotocol                          into more manageable sections. Writing sublemmas provides hints
+version, additional values may or must be negotiated, such as the                  to the Tamarin constraint solving algorithm, allowing it to solve
+handshake mode, the DH group, and/or the PSK to be used.                           complexsectionsofalargerproofdirectly,makingtheoverallproof
+   For DH group negotiation, we model the client sending a list                    more manageable. For the TLS 1.3 model, we used several types
+oftwosymbolicgroupsthattheservercanchoosebetween.This                              of lemmas. Helper lemmas can be used to quickly solve repetitive
+featureallowsustoprovidealimitedcoverageoftheHelloRetryRe-                         sections of a larger proof without repeatedly unrolling the entire
+questfunctionalityoftheprotocol,whichweaddressinmoredetail                         subtree. Typing lemmas provide hints to the Tamarin engine about
+inSection3.4. We alsoprovide supportforPSKsbutlimitthe num-                        the potential sources of messages, reducing the branching of a
+ber of PSKs offered to one per handshake.                                          proof tree. Inductive lemmas instruct Tamarin to prove the lem-
+   By using Tamarin, we prove that the client and the server agree                 mas inductively, allowing us to break out of loops in the protocol,
+on the transcript of the protocol, and thus on the values selected                 whichotherwisecanproduceinfiniteprooftrees.Provingthemain
+during negotiation. Thismeans that an attacker cannotforcethe                      properties of TLS 1.3 required many helper lemmas, of all of these
+clientortheservertoacceptavaluethattheydidnotinitiallyoffer.                       types.
+   There are two main classes of parameter negotiation attacks:                       TheTamarinenginecanalsouseheuristicstoauto-provelemmas,
+forcing the use of bad cipher suites [1, 16] or bad signature al-                  which proved invaluable in quickly re-proving large sections of
+gorithms [9], and forcing the use of older and insecure versions                   properties after making changes to the model. By investing time
+of SSL/TLS [5, 44]. Because we model perfect cryptography and                      inwritingauto-provablesublemmas,wecouldflexiblyincorporate
+coverTLS 1.3only,we considerthese attackstobeout ofscope(cf.                       changes made to the specification without having to restart our
+Section 4.2.5).                                                                    analysis from scratch.
+                                                                                      ThemorecomplexlemmasusedinouranalysisofTLS1.3,how-
+5   ANALYSISANDRESULTS                                                             ever, required manual proving in the Tamarin interactive prover.
+In this section we provide a detailed description of our analysis,                 We note that by manual proving in this context we mean manually
+including a discussion of our results and an exploration of an au-                 guiding the Tamarin prover througha proof by using the Tamarin
+thentication anomaly uncovered by our work.                                        graphical user interface.
+   IngeneralwefindthatTLS1.3meetsthepropertiesoutlinedin                              Using the m4 preprocessor to generate restricted subsets of the
+thespecificationthatourmodellingprocesswasabletocapture.We                         modelwewereabletoprototypelemmasinasimplerenvironment
+show that TLS 1.3 enables a client and a server to agree on secret                 without expending unnecessary effort.To givean indication ofthe
+session keysand thatthese session keysare uniqueacross, as well                    numberofhelperlemmasrequired,andtherelationshipbetween
+as within, handshake instances. Our analysis shows that PFS of                     allofourlemmas,wehaveconstructeda‘lemmamap’,displayedin
+session keys holds in the expected situations, i.e., inthe (EC)DHE                 Figure7.Themapalsoindicateswhichlemmaswereauto-proved
+andPSK+(EC)DHEhandshakemodes.WealsoshowthatTLS1.3,                                 by Tamarin, and whichones needed manual guidancefor Tamarin
+by and large, provides the desired authentication guarantees in                    to prove them.
+boththeunilateralandmutualauthenticationcases.Thesituation                            Intotal,themodellingeffortrepresentsapproximately3months
+in which this is not the case is covered in the section to follow.                 worth of work. However, the vast majority of that is the process
+   Weremindthereaderthatourmodeldoesnottrulycoverdown-                             of writing lemmas to break down the overall proving effort into
+grade protection, or the protection of endpoint identities at this                 smaller,autoprovablechunks.Withtheselemmasinplace,proving
+time. A treatment of downgrade protection across TLS protocol                      the entire model takes about a week of work, and significant com-
+versions would requiremodelling the earlierversions of TLSin a                     puting resources. The model itself takes over 10GB RAM just to
+waythatisconsistentwiththeTLS1.3modelasdevelopedhere.To                            load, andcan easily consume 100GBRAM in thecourse of aproof.
+considerthedowngradeprotectionofciphersuites,wewouldneed                           In one instance, an automatically-computed proof was almost 1
+torelaxourcurrentassumptionofperfectcryptographythrough                            million lines long. Once the proofs have been produced, they can
+rulesthat,forinstance,allowforanattackertolearnthepayloadof                        be verified in the space of about a day, although still requiring a
+aparticular kindofencryptedmessages withoutknowingthekey.                          vast amount of RAM.
+
+In spite of the fact that these additional considerations would sub-
+stantially complicate the model and the proof process, our model                      5.1.2   Findings. Wesummarise our results in Table 1. Foreach
+is perfectly suited to their inclusion and could form the basis of                 propertydiscussedinSections2and4,weindicateourfindings.We
+future work.                                                                       use∗ to indicate that the property holds in most situations. Cases
+5.1   Positiveresults                                                              in which the property does not hold to the expected degree, are
+Wenow presentour resultsforTLS 1.3,commenting onour proof                          coveredin sectionstofollow.WealsolisttheapplicableTamarin
+methods and findings.                                                              lemma(s).
+
+===== PDF PAGE 11 =====
+               Figure7:LemmaMap.BoldlemmanameswithapurplebackgroundindicatewheremanualinteractionviatheTamarinvisual
+               interfacewasrequired.TheremaininglemmaswereautomaticallyprovenbyTamarin,withoutmanualinteraction.Anarrow
+               fromonecategorytoanotherimpliesthattheproofofthelatterdependsontheformer.ThePropertiesboxcontainsthemain
+               TLS1.3properties.
+
+
+                   Propertyproven                  Lemma(s)          auth_helpers               share a common view of the session, i.e. that they agree on ex-Properties
+                   (1) Same session keys           session_key_agreementmatching_nonces         changeddata,keys,etc.Duringouranalysisofthepost-handshakesecret_session_keys
+                   (2) Secret session keys         secret_session_keysconsistent_nonces         client authentication, it became apparent that the client does notsecret_session_keys_pfs
+                   (3) Peer authentication∗        entity_authenticationinvariant_nonces        receiveanyexplicitconfirmationthattheserverhassuccessfullyunique_session_keys
+                                                   mutual_entity_authenticationmatching_rms_noncesreceived the client’s response. Due to the asynchronous nature of
+                   (4) Unique session keys         unique_session_keys                          thepost-handshakeclientauthentication,theclientmaykeepre-session_key_agreement
+                   (6) Perfect forward secrecy     secret_session_keys_pfs                      ceivingdatafromtheserver,andwillnotbeabletodetermineiftheentity_authentication(i)
+                   (7) Key compromise              entity_authentication                        serverhasreceived itsauthenticationmessage.Asa consequence,transcript_agreement
+                      impersonation                mutual_entity_authenticationsecret_helpers                  mut_entity_authentication(i)
+                                Table1:TLS1.3Tamarinresultsku_extract(i)                        the client cannot be sure whether the server sent the data undermut_transcript_agreement
+                                                                     ku_expand(i)               the assumption that the client is authenticated.injective_mut_entity_auth
+                                                                     ku_hs                         We formally modelled this property by adding a variable to
+                                                                     ku_ltk                     the client and the server that records the current status of the
+               5.2   Possiblemismatchbetweenclientandinvariants      ku_fresh_psk               connection, and in particular, if the connection is unilaterally or
+                                     tid_invariant(i)                hsms_derive                mutually authenticated.We discovered thateven when theserver
+                       serverviewone_start_per_tid(i)                posths_rms_weak(i)         asks for a post-handshake client authentication, and the client
+uniquenessDuringthedevelopmentofourmodel,andinparticulartheanalysiscert_req_origin(t)posths_rms(i)responds, the client cannot be sure that the server considers the
+one_s_per_tidof the post-handshake client authentication, we encountered anst_source(t)matching_transcripts_posthschannel to be mutually authenticated.
+*s in {ALL STATES}possiblebehaviourthatsuggestedthatTLS1.3failstomeetcertainmatching_rms_posths    InconcurrentworkbyBhargavanetal.[10],asimilarissuewas
+S1_vs_S1_PSK_DHEstrong authentication guarantees.                    matching_rms_actors        uncoveredforthe0.5-roundtriptime(RTT)case.Adiscussionwith
+S1_PSK_vs_S1_PSK_DHEWhiletherearemanydefinitionsofauthentication,thecommonDH_injectivitysig_origintheTLS1.3workinggrouprevealedthatanequivalentproblemalso
+S1_PSK_vs_S1   threadamongstrongauthenticationguaranteesisthatbothpartiesdh_exp_invariant(i)invariant_post_hsexistswithinthemainhandshake.Duringthemainhandshake,the
+
+C1_vs_C1_PSK_DHE                     one_dh_per_x                    matching_sessions(i)
+C1_PSK_vs_C1                         rev_dh_ordering(i)              auth_psk
+C1_PSK_vs_C1_PSK_DHE                 rev_dh_before_hs                matching_hsms
+s_vs_s_cert                                                          post_master_secret
+*s in {C3,S3}                                                        invariant_post_hs(i)
+s_vs_s_PSK                           DH_chal                         handshake_secret(i)
+*s in {C2a,S2a,C2d,S2d}              dh_chal_dual                    handshake_secret_pfs(i)
+
+===== PDF PAGE 12 =====
+servercanrequestaclientcertificate,andmaydecidetorejectthe                         rulesmodelthem.Theannotationsalsoshowexactlywhichdetails
+certificate(forexamplebecauseitviolatescertaindomain-specific                      we do not model (and often list the reasons why).
+policies), but still continue with the connection as if the certificate               We used these annotations ourselves during the development
+were accepted. Therefore,the client cannot be sure (after what ap-                 of our model to keep track of the parts of the specification that
+pearstobeamainhandshakewith mutualauthentication)thatthe                           we had already modelled, and how we modelled them, which also
+server considersthe client tobe authenticated. Thus,this phenom-                   simplified the task ofkeeping track of updates to thespecification,
+enonleavestheclientinthedarkaboutwhetherornottheserver                             somethingwhichprovedincrediblyusefulgiventherapidpaceat
+considersittobeauthenticated,eventhoughtheserveraskedfora                          which the draft specification would undergo changes.
+certificate and the client supplied it.                                               Our annotated RFC has a number of desirable features:
+   Tosee whythis maybecomea problemat theapplication level,                               •  Readers can check which parts we abstracted, and how,
+consider the following application. Imagine a client and a server                            withouthavingtoreinventthemappingbetweentheTamarin
+that implement TLS 1.3, where the server has the following policy:                           model and the RFC themselves. In other words, one can
+any data received over a mutually authenticated connection are                               read through our website to see what is covered, and how
+storedinasecuredatabase;alldatareceivedoverconnectionswhere                                  itiscovered,withouthavingtounderstandTamarin’sfor-
+the client is not authenticated are stored in an insecure log. The                           malism.
+clientconnects,theserverrequestsacertificate,whichtheclient                               •  Ifthespecificationisupdatedorchanged,wecanimmedi-
+dulyprovides,buttheserverrejectsandcontinuesregardless.Since                                 ately track where the model should be changed.
+the server rejected the certificate, it continues to store incoming                We encourage other analyses of TLS 1.3 to follow a similar trans-
+messagesintheinsecurelog.However,theclientmayassumeithas                           parent approach, which would help the community to better un-
+been authenticated, and start sending sensitive data, which ends                   derstand which details from the specification might still need to
+up in the insecure log.                                                            be covered. We envision this will enable a faster convergence of
+   The TLS working group has decided not to fix this behaviour                     confidence in all the details of the standard.
+forTLS1.3,andhasnotintroducedanymechanismthatinforms
+the clientof theserver’s viewof theclient’s authenticationstatus.                  7   CONCLUSIONS
+If a client wants to be sure that the server considers it to be au-
+thenticated, this needs to be dealt with at the application layer. We              In this work wemodelled the current draft of the TLS 1.3 specifica-
+anticipatethatsomeclientapplicationswillincorrectlyassumethat                      tionwithinthesymbolicanalysisframeworkoftheTamarinprover,
+sendinga clientcertificateand obtainingfurtherserver messages                      and usedthe toolto verifythe majorityof thesecurity guarantees
+indeedguarantees thatthe serverconsiders the connection to be                      that TLS 1.3 claims to offer its users.
+mutually authenticated. As we have shown,this is not the case in                      We focus on ruling out complex interaction attacks by consid-
+general,andmayleadtoserioussecurityissuesdespitetherebeing                         eringanunbounded numberofconcurrentconnections,and allof
+no direct violation of the specified TLS 1.3 security requirements.                theTLS1.3handshakemodes.Wecoverbothunilateralandmutual
+                                                                                   authentication, as well as session key secrecy in all of the TLS 1.3
+                                                                                   handshake modes with respect to a Dolev-Yao attacker. We also
+6   THERELATIONBETWEENOURMODEL                                                     capturemoreadvancedsecuritypropertiessuchasperfectforward
+     ANDTHETLS1.3SPECIFICATION                                                     secrecyand key compromiseimpersonation. OurTamarinmodel
+While there have been many academic analyses ofvarious drafts                      coverssubstantiallymoreinteractionsthanpreviousanalysesdue
+of TLS1.3 [4, 10, 22, 24, 25, 28, 30, 33, 35, 38], theyall (explicitly or          to its modularity.
+implicitly) consider only part of the specification. Most analyses,                   Besidesverifyingthatdraft21oftheTLS1.3specificationmeets
+eventhosethatclaimtobe“complete”donotconsiderallpossible                           theclaimedsecuritypropertiesinmostofthehandshakemodesand
+modes, and many manual cryptographic analyses consider modes                       variants, we also discover an unexpected authentication behaviour
+onlyinisolation(andnottheirinteraction).Thisiscausedbythe                          whichmayhaveserioussecurityimplicationsforimplementations
+inherentcomplexityofanalysingTLS1.3andisnotaproblemin                              of TLS 1.3. This unexpected behaviour, at a high level, implies
+itself; rather, it justifies the need for multiple approaches.                     thatTLS1.3providesnodirectmeansforaclienttodetermineits
+   However,weareoftheopinionthatreaders,regardlessofwhether                        authenticationstatusfromtheperspectiveofagivenserver.Asa
+ornottheyareexperts inthefield,shouldbeableto easilydeduce                         server may treat authenticated data differently to unauthenticated
+theexact coverageofa givenanalysis.Toensurethis,weprovide                          data, the client may end up in position in which its sensitive data
+an unprecedented level of transparency concerning the relation-                    gets processed as non-sensitive data by the server.
+ship between our model and the RFC (the draft specification) by                       During the course of our analysis we also developed a line-by-
+creating a website [21] that contains an annotated version of the                  line modelling aide that accurately captured which parts of the
+RFC. Consider the following excerpt:                                               specification we were able to model, and which parts were ab-
+   Intheaboveexcerpt,theleft-handsideisadirectcopyfromthe                          stracted.Thisartifactallowsustoeasilyassessthefaithfulnessand
+RFC,andtheright-handsidecontainsourannotations.Forexample,                         coverage of our model, and also makes our model highly amenable
+they showhow the concrete datastructures of TLS 1.3 are mapped                     to all kinds of extensions, especially with respect to the security
+into abstractterm structures.Additionally, weannotate theprose,                    propertiesandthreatmodel.Weexpectthatthisartifactmayserve
+describingthepossiblebehaviourssoastoindicatewhichTamarin                          asacomprehensiveinformationalaidetoacademicresearchersand
+                                                                                   well as the TLS Working Group.
+
+===== PDF PAGE 13 =====
+ Certificate  Verify                                                                                     We  compute  the  (server)  signature  as:
+
+ This  message  is  used  to  provide  explicit  proof  that  an  endpoint  possesses  the               messages  =  <messages,  Certificate>
+ private  key  corresponding  to  its  certificate  and  also  provides  integrity  for                  signature  =  compute_signature(~ltkS,  server)
+ the  handshake  up  to  this  point.  Servers  MUST  send  this  message  when                          where  compute_signature  expands  to:
+ authenticating  via  a  certificate.  Clients  MUST  send  this  message  whenever
+ authenticating  via  a  Certificate  (i.e.,  when  the  Certificate  message  is                        sign{<'TLS13_server_CertificateVerify',  h(messages)>}
+ non-empty).  When  sent,  this  message  MUST  appear  immediately  after  the                          Since  messages  contains  the  handshake  transcript  up  until  that  point,  this  is
+ Certificate  message  and  immediately  prior  to  the  Finished  message.                              valid  for  Handshake  Context.  We  do  not  attempt  to  add  the  padding  prefix
+                                                                                                         specified  in  the  specification  since  it  would  have  no  purpose  given  our
+ Structure  of  this  message:                                                                           assumption  of  perfect  crypto.
+
+ %%%  Authentication  Messages                                                                           The  CertificateVerify  message  is  simply  defined  as:
+
+     struct  {                                                                                           define(<!CertificateVerify!>,  <!handshake_record('15',  $sig_alg,  signature)!>)
+          SignatureScheme  algorithm;                                                                    We  do  not  currently  model  using  different  signing  algorithms  or  their  effects
+          opaque  signature<0..2^16-1>;                                                                  on  security.
+     }  CertificateVerify;
+ The  algorithm  field  specifies  the  signature  algorithm  used  (see                                 The  peer  validates  the  CertificateVerify  message  by  recomputing  the  signature
+ Section  4.2.3  for  the  definition  of  this  field).    The  signature  is  a                        input,  and  enforcing  the  action  Eq(verify(signature,  sig_messages,  pk(~ltkS)),
+ digital  signature  using  that  algorithm.    The  content  that  is  covered                          true)  which  makes  the  trace  invalid  if  the  verification  fails  (implying  the
+ under  the  signature  is  the  hash  output  as  described  in  Section  4.4,                          peer  terminates  the  connection  if  receiving  an  invalid  signature).
+ namely:
+                                                                                                         Note  that  an  alternative  way  to  model  this  in  Tamarin  would  be  to  provide  the
+     Transcript-Hash(Handshake  Context,  Certificate)                                                   peer  with  the  long-term  key  ~ltkA  and  pattern  match  the  signature  as  an
+ ---snip---                                                                                              expected  message.  While  this  can  (probably)  be  shown  to  be  equivalent  and  is
+                                                                                                         potentially  more  efficient  for  Tamarin,  we  believe  using  explicit  verification
+                                                                                                         is  clearer.
+
+     Figure8:Anexcerptofourwebsite,showinghowweannotatedthespecification.Thefullversioncanbefoundat[21].
+
+ACKNOWLEDGMENTS                                                                                               [11]  Karthikeyan Bhargavan, Christina Brzuska, Cédric Fournet, Matthew Green,
+ThisworkwassupportedbytheEngineeringandPhysicalSciences                                                              MarkulfKohlweiss, andSantiago Zanella-Béguelin.2016. Downgraderesilience
+                                                                                                                     inkey-exchangeprotocols.InSecurityandPrivacy(SP),2016IEEESymposiumon.
+ResearchCouncil, grantnumberEP/K035584/1, theEuropeanRe-                                                             IEEE, 506–525.
+searchCouncil, grantnumber610150,andthe AirForceOfficeof                                                      [12]  Karthikeyan Bhargavan, Antoine Delignat-Lavaud, Cédric Fournet, Markulf
+                                                                                                                     Kohlweiss, Jianyang Pan, Jonathan Protzenko, Aseem Rastogi, Nikhil Swamy,
+Scientific Research, grant number FA9550-17-1-0206.                                                                  SantiagoZanella-Béguelin,andJeanKarimZinzindohoué.2016. Implementing
+                                                                                                                     andProvingtheTLS1.3RecordLayer. TechnicalReport.INRIA. http://eprint.iacr.
+REFERENCES                                                                                                           org/2016/1178.
+                                                                                                              [13]  Karthikeyan Bhargavan, Antoine Delignat-Lavaud, Cédric Fournet, Alfredo
+ [1]  David Adrian, Karthikeyan Bhargavan, Zakir Durumeric, Pierrick Gaudry,                                         Pironti, and Pierre-Yves Strub. 2014.    Triple Handshakes and Cookie Cut-
+      MatthewGreen,J.AlexHalderman,NadiaHeninger,DrewSpringall,Emmanuel                                              ters: Breaking and Fixing Authentication over TLS. In 2014 IEEE Symposium
+      Thomé, LukeValenta,Benjamin VanderSloot,Eric Wustrow,Santiago Zanella-                                         on Security and Privacy, SP 2014, Berkeley, CA, USA, May 18-21, 2014. 98–113.
+      Béguelin,and Paul Zimmermann.2015. Imperfect Forward Secrecy:How Diffie-                                       http://dx.doi.org/10.1109/SP.2014.14
+      Hellman Fails in Practice.  (2015), 13 pages.  https://doi.org/10.1145/2810103.                         [14]  K.Bhargavan, N.Kobeissi, andB. Blanchet.2016. ProScript TLS:Building aTLS
+      2813707                                                                                                        1.3ImplementationwithaVerifiableProtocolModel.(2016). PresentedatTRON
+ [2]  NadhemJ.AlFardanandKennethG.Paterson.2012. Plaintext-RecoveryAttacks                                           1.0, San Diego, CA, USA, February 21.
+      Against Datagram TLS. In 19th Annual Network and Distributed System Security                            [15]  KarthikeyanBhargavanandGaëtanLeurent.2016. OnthePractical(In-)Security
+      Symposium, NDSS 2012, San Diego, California, USA, February 5-8, 2012.  http:                                   of 64-bit Block Ciphers: Collision Attacks on HTTP over TLS and OpenVPN. In
+      //www.internetsociety.org/plain-text-recovery-attacks-against-datagram-tls                                     Proceedingsofthe2016ACMSIGSACConferenceonComputerandCommunications
+ [3]  Nadhem J. AlFardan and Kenneth G. Paterson. 2013. Lucky Thirteen: Breaking                                     Security (CCS ’16).ACM,NewYork,NY,USA,456–467. https://doi.org/10.1145/
+      the TLS and DTLS Record Protocols. In 2013 IEEE Symposium on Security and                                      2976749.2978423
+      Privacy, SP 2013, Berkeley, CA, USA, May 19-22, 2013. 526–540. http://dx.doi.org/                       [16]  Karthikeyan Bhargavanand GaëtanLeurent. 2016. Transcriptcollision attacks:
+      10.1109/SP.2013.42                                                                                             BreakingauthenticationinTLS,IKE,andSSH.InNetworkandDistributedSystem
+ [4]  KenichiAraiandShin’ichiroMatsuo.2016. FormalVerificationofTLS1.3Full                                           Security Symposium–NDSS 2016.
+      Handshake Protocol Using ProVerif.  TLS mailing list post. (February 2016).                             [17]  Bruno Blanchet, Ben Smyth, Vincent Cheval, and Marc Sylvestre. 2016. Proverif
+      https://www.ietf.org/mail-archive/web/tls/current/msg19339.html                                                1.96: Automatic Cryptographic Protocol Verifier, User Manual and Tutorial List
+ [5]  Nimrod Aviram, Sebastian Schinzel, Juraj Somorovsky, Nadia Heninger, Maik                                      of Figures. (2016). http://prosecco.gforge.inria.fr/personal/bblanche/proverif/
+      Dankel, Jens Steube, Luke Valenta, David Adrian, J. Alex Halderman, Viktor                                     manual.pdf
+      Dukhovni,EmiliaKäsper,ShaananCohney,SusanneEngels,ChristofPaar,and                                      [18]  DanielBleichenbacher.1998. ChosenCiphertextAttacksAgainstProtocolsBased
+      Yuval Shavitt. 2016. DROWN: Breaking TLS with SSLv2. In 5th USENIX Security                                    on the RSA Encryption Standard PKCS #1. In Advances in Cryptology - CRYPTO
+      Symposium. 689–706.                                                                                           ’98, 18th Annual International Cryptology Conference, Santa Barbara, California,
+ [6]  Gregory V. Bard. 2004.  The Vulnerability of SSL to Chosen Plaintext Attack.                                   USA,August23-27,1998,Proceedings.1–12. http://dx.doi.org/10.1007/BFb0055716
+      IACR Cryptology ePrint Archive 2004(2004),111. http://eprint.iacr.org/2004/111                          [19]  RanCanettiandHugoKrawczyk.2001. AnalysisofKey-ExchangeProtocolsand
+ [7]  Gregory V. Bard. 2006. A Challenging but Feasible Blockwise-Adaptive Chosen-                                   TheirUseforBuildingSecureChannels.InAdvancesinCryptology-EUROCRYPT
+      PlaintextAttackonSSL.InSECRYPT2006,ProceedingsoftheInternationalConfer-                                        2001, International Conference on the Theory and Application of Cryptographic
+      enceon Security andCryptography, Setúbal,Portugal, August7-10, 2006,SECRYPT                                    Techniques,Innsbruck,Austria,May6-10,2001,Proceeding.453–474. http://dx.doi.
+      is part of ICETE - The International Joint Conference on e-Business and Telecom-                               org/10.1007/3-540-44987-6_28
+      munications. 99–109.                                                                                    [20]  BriceCanvel,AlainP.Hiltgen,SergeVaudenay,andMartinVuagnoux.2003.Pass-
+ [8]  Mihir Bellareand PhillipRogaway. 1993. Entity authentication and key distribu-                                 word Interception in a SSL/TLS Channel. In Advances in Cryptology - CRYPTO
+      tion. In Annual International Cryptology Conference. Springer, 232–249.                                        2003, 23rd Annual International Cryptology Conference, Santa Barbara, Califor-
+ [9]  BenjaminBeurdouche,KarthikeyanBhargavan,AntoineDelignat-Lavaud,Cédric                                          nia, USA, August 17-21, 2003, Proceedings. 583–599.  http://dx.doi.org/10.1007/
+      Fournet,MarkulfKohlweiss,Alfredo Pironti,Pierre-YvesStrub,andJeanKarim                                         978-3-540-45146-4_34
+      Zinzindohoue. 2015. A Messy State of the Union: Taming the Composite State                              [21]  Cas Cremers,Marko Horvat,Jonathan Hoyland, SamScott, andThyla van der
+      Machines ofTLS. In 2015 IEEE Symposium on Security and Privacy, SP 2015, San                                   Merwe. 2017.  Source files and annotated RFC for TLS 1.3 analysis.  (2017).
+      Jose, CA, USA, May 17-21, 2015. 535–552. http://dx.doi.org/10.1109/SP.2015.39                                  https://tls13tamarin.github.io/TLS13Tamarin/.
+[10]  KarthikeyanBhargavan,BrunoBlanchet,andNadimKobeissi.2017. VerifiedMod-                                  [22]  Cas Cremers, Marko Horvat, Sam Scott, and Thyla van der Merwe. 2016. Au-
+      els and Reference Implementations for the TLS 1.3 Standard Candidate. Technical                                tomated analysis and verification of TLS 1.3: 0-RTT, resumption and delayed
+      Report. INRIA.                                                                                                 authentication. In Security and Privacy (SP), 2016 IEEE Symposium on. IEEE,
+
+===== PDF PAGE 14 =====
+      470–485.                                                                                                      1–16. http://dx.doi.org/10.1007/978-3-540-75670-5_1
+[23]  Danny Dolev and Andrew Yao. 1983. On the security of public key protocols.                             [37]  A. Langley and W. Chang. 2013.    QUIC Crypto.    (June 2013).       Avail-
+      IEEE Transactions on information theory 29, 2 (1983), 198–208.                                                able at https://docs.google.com/document/d/1g5nIXAIkN_Y-7XJW5K45IblHd_
+[24]  Benjamin Dowling, Marc Fischlin, Felix Günther, and Douglas Stebila. 2015.                                    L2f5LTaDUDwvZ5L6g/.
+      A Cryptographic Analysis of the TLS 1.3 Handshake Protocol Candidates.                                 [38]  Yong Li, Sven Schäge, Zheng Yang, FlorianKohlar, and Jörg Schwenk. 2014. On
+      In Proceedings of the 22nd ACM SIGSAC Conference on Computer and Com-                                         the Security of the Pre-shared Key Ciphersuites of TLS. In Public-Key Cryp-
+      munications Security, Denver, CO, USA, October 12-6, 2015. 1197–1210.   http:                                 tography - PKC 2014 - 17th International Conference on Practice and Theory in
+      //doi.acm.org/10.1145/2810103.2813653                                                                         Public-KeyCryptography,BuenosAires,Argentina,March26-28,2014.Proceedings.
+[25]  Benjamin Dowling, Marc Fischlin, Felix Günther, and Douglas Stebila. 2016.                                    669–684. http://dx.doi.org/10.1007/978-3-642-54631-0_38
+      A Cryptographic Analysis of the TLS 1.3 draft-10 Full and Pre-shared Key                               [39]  GavinLowe. 1997. A Hierarchy ofAuthenticationSpecifications.InProceedings
+      Handshake Protocol.    Cryptology ePrint Archive, Report 2016/081. (2016).                                    of the 10th IEEE Workshop on Computer Security Foundations (CSFW ’97). IEEE
+      http://eprint.iacr.org/.                                                                                      Computer Society, Washington, DC, USA, 31–.  http://dl.acm.org/citation.cfm?
+[26]  Thai Duong and Juliano Rizzo. 2011. Here Come the ⊕ Ninjas. Unpublished                                       id=794197.795075
+      manuscript. (May 2011).                                                                                [40]  ColmMacCárthaigh.2017.SecurityreviewofTLS1.30-RTT.TLSmailinglistpost.
+[27]  Thai Duong and Juliano Rizzo. 2012.  The CRIME Attack.  Ekoparty Security                                     (May2017). https://www.ietf.org/mail-archive/web/tls/current/msg23051.html
+      Conference presentation. (2012).                                                                              Available at https://www.ietf.org/mail-archive/web/tls/current/msg23051.html.
+[28]  Marc Fischlin, Felix Günther, Benedikt Schmidt, and Bogdan Warinschi. 2016.                            [41]  ItsikMantin.2015. AttackingSSLwhenusingRC4. WhitePaper.(March2015).
+      Key Confirmation in Key Exchange: A Formal Treatment and Implications for                                     https://www.imperva.com/docs/HII_Attacking_SSL_when_using_RC4.pdf
+      TLS 1.3. In 2016 IEEE Symposium on Security and Privacy, SP 2016, San Jose, CA,                        [42]  NikosMavrogiannopoulos,FrederikVercauteren,VesselinVelichkov,andBart
+      USA, May 23-25, 2016.                                                                                         Preneel.2012.Across-protocolattackontheTLSprotocol.IntheACMConference
+[29]  ChristinaGarman,KennethGPaterson,andThylaVanderMerwe.2015. Attacks                                            on Computer and Communications Security, CCS’12, Raleigh, NC, USA, October
+      Only Get Better: Password Recovery Attacks Against RC4 in TLS.. In USENIX                                     16-18, 2012. 62–72. http://doi.acm.org/10.1145/2382196.2382206
+      Security. 113–128.                                                                                     [43]  Bodo Moeller. 2004. Security of CBC Ciphersuites in SSL/TLS: Problems and
+[30]  Marko Horvat. 2016.  Formal Analysis of Modern Security Protocols in Current                                  Countermeasures. Unpublished manuscript. (May 2004). http://www.openssl.
+      Standards. Ph.D. Dissertation. University of Oxford.                                                          org/~bodo/tls-cbc.txt.
+[31]  Tibor Jager, Jörg Schwenk, and Juraj Somorovsky. 2015. On the Security of TLS                          [44]  Bodo Möller, Thai Duong, and Krzysztof Kotowicz. 2014. This POODLE bites:
+      1.3 and QUIC Against Weaknesses in PKCS#1 v1.5 Encryption. In Proceedings                                     Exploiting The SSL 3.0 Fallback. Security Advisory. (September 2014). https:
+      of the 22nd ACM SIGSAC Conference on Computer and Communications Security,                                    //www.openssl.org/~bodo/ssl-poodle.pdf
+      Denver, CO, USA, October 12-6, 2015. 1185–1196.  http://doi.acm.org/10.1145/                           [45]  Kenneth G. Paterson and Thyla van der Merwe. 2016. Reactive and Proactive
+      2810103.2813657                                                                                               Standardisation of TLS. In Security Standardisation Research - Third International
+[32]  Vlastimil Klíma, Ondrej Pokorný, and Tomás Rosa. 2003. Attacking RSA-Based                                    Conference, SSR 2016, Gaithersburg, MD, USA, December 5-6, 2016, Proceedings.
+      Sessions in SSL/TLS. In Cryptographic Hardware and Embedded Systems - CHES                                    160–186.
+      2003, 5th International Workshop, Cologne, Germany, September 8-10, 2003, Pro-                         [46]  E.Rescorla.2015. TheTransportLayerSecurity(TLS)ProtocolVersion1.3(draft,
+      ceedings. 426–440. http://dx.doi.org/10.1007/978-3-540-45238-6_33                                             revision 10). (October 2015). https://tools.ietf.org/html/draft-ietf-tls-tls13-10
+[33]  MarkulfKohlweiss, UeliMaurer, CristinaOnete, BjörnTackmann, andDaniele                                        Available at https://tools.ietf.org/html/draft-ietf-tls-tls13-10.
+      Venturi. 2014.  (De-)Constructing TLS.  IACR Cryptology ePrint Archive 2014                            [47]  EricRescorlaandBrianKorver.2003. GuidelinesforwritingRFCtextonsecurity
+      (2014), 20. http://eprint.iacr.org/2014/020                                                                   considerations. RFC3552(Informational).(July2003). https://tools.ietf.org/html/
+[34]  HugoKrawczyk.2010. CryptographicExtractionandKeyDerivation:TheHKDF                                            rfc3552
+      Scheme. In Advances in Cryptology - CRYPTO 2010, 30th Annual Cryptology                                [48]  BenediktSchmidt,SimonMeier,CasCremers,andDavidBasin.2012. Automated
+      Conference, Santa Barbara, CA, USA, August 15-19, 2010. Proceedings. 631–648.                                 Analysis of Diffie-Hellman Protocols and Advanced Security Properties. In25th
+      http://dx.doi.org/10.1007/978-3-642-14623-7_34                                                                IEEE Computer Security Foundations Symposium, CSF 2012, Cambridge, MA, USA,
+[35]  HugoKrawczykandHoeteckWee.2015. TheOPTLSProtocolandTLS1.3. IACR                                               June 25-27, 2012, Stephen Chong (Ed.). IEEE, 78–94.
+      Cryptology ePrint Archive 2015 (2015), 978. http://eprint.iacr.org/2015/978                            [49]  Serge Vaudenay. 2002.   Security Flaws Induced by CBC Padding - Applica-
+[36]  Brian A. LaMacchia, Kristin E. Lauter, and Anton Mityagin. 2007.  Stronger                                    tions to SSL, IPSEC, WTLS .... In Advances in Cryptology - EUROCRYPT 2002,
+      SecurityofAuthenticatedKeyExchange.In Provable Security, First International                                  International Conference on the Theory and Applications of Cryptographic Tech-
+      Conference, ProvSec 2007, Wollongong, Australia, November 1-2, 2007, Proceedings.                             niques, Amsterdam, The Netherlands, April 28 - May 2, 2002, Proceedings. 534–546.
+                                                                                                                    http://dx.doi.org/10.1007/3-540-46035-7_35
+
+===== PDF PAGE 15 =====
+Figure 9: Part 1 of the full state diagram for Tamarin model, showing all rules covered in the initial handshake (excluding
+rulesdealingwithrecordlayer).
+
+===== PDF PAGE 16 =====
+Figure10:Part2ofthefullstatediagramforTamarinmodel,showingallpost-handshakerulescovered.

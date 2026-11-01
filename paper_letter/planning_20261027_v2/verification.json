@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "protected_original_files": 431,
+  "changed_originals": [],
+  "primary_source_pdfs_verified": 8,
+  "new_pdfs": 6,
+  "reused_pdfs": 2,
+  "inspected_page_renders": 12,
+  "local_markdown_link_errors": [],
+  "existing_model_results_read_only_checked": true,
+  "native_source_hashes_match": true,
+  "native_observed_counts": [
+    51,
+    51,
+    51
+  ],
+  "provers_or_native_experiments_rerun": false,
+  "manuscript_compiled": false,
+  "page_budget_sum": 3.8
+}

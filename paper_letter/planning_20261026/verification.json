@@ -1,0 +1,68 @@
+{
+  "checked_utc": "2026-10-26T06:48:26.228260+00:00",
+  "repository_head": "be6db035d03b0ce16f9159ec6437014f3ddb0eb0",
+  "research_order": [
+    "policy",
+    "OTK",
+    "ACT/token"
+  ],
+  "reviewed_three_contributions_confirmed_by_user": true,
+  "existing_files_protected": 260,
+  "existing_files_changed": [],
+  "evidence_audit": {
+    "policy-consumer": {
+      "manifest": "proofs\\consumer_validation\\evidence\\20260926T070021921746Z-d64c8064\\manifest.json",
+      "manifest_sha256": "1eaf889371615e56123ff30af96ea3af5768ebbbbe56893e09460f3880bc5e68",
+      "artifact_count": 16,
+      "hash_mismatches": [],
+      "execution_status": "completed",
+      "exit_code": 0,
+      "expectations_met": true,
+      "message_acceptance": "not_executed"
+    },
+    "otk-transfer": {
+      "manifest": "proofs\\otk_transfer\\evidence\\run-20261025T033815645931Z\\manifest.json",
+      "manifest_sha256": "1fb1d5a0406e117d98432a9358014f7e4ab704033c8cc12c873c9f2b5d186cb7",
+      "artifact_count": 44,
+      "hash_mismatches": [],
+      "all_expected": true,
+      "case_count": 3
+    },
+    "ACT-quota": {
+      "manifest": "proofs\\quota_validation\\evidence\\delivery-20261024T150331844425Z\\manifest.json",
+      "manifest_sha256": "d81e53e24400537626573be8c943f985cb0c80ea9453d78327e83eb1e7bd70eb",
+      "input_hash_count": 14,
+      "input_mismatches": [],
+      "current_source_mismatches": [],
+      "concurrent_observed_violations": [
+        "ReceiverQuotaSafety"
+      ],
+      "trace_states": 13,
+      "native_replay_performed": false,
+      "repair_implemented": false
+    },
+    "ACT-native-methods": {
+      "path": "output\\analysis\\qmax-20261020\\results.json",
+      "sha256": "5fae2339db3543165d8b59c8d1665e9bac14339ffbef89e1c8c765abe12ebae3",
+      "current_source_mismatches": [],
+      "scope": "Real native methods and local credential checks; substituted byte transport, certificate discovery and counting backend; no Provider DB, live TLS, real LLM, deployment claim or formal proof. Trace barrier selects a legal schedule after native validation returns and before debit lock acquisition.",
+      "serial": {
+        "issued_quota": 50,
+        "requests_submitted": 51,
+        "backend_calls": 50,
+        "remaining": 0,
+        "encrypted_initial_quota": 50
+      },
+      "controlled_parallel_backend_calls": [
+        51,
+        51,
+        51
+      ]
+    }
+  },
+  "local_markdown_link_errors": [],
+  "provers_or_experiments_rerun": false,
+  "compiled_manuscript": false,
+  "errors": [],
+  "status": "PASS"
+}

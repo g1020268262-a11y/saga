@@ -1,0 +1,443 @@
+{
+  "source": "traces.json",
+  "source_sha256": "97722cb77d3d933cc8a78f6f903d8310abd5b90556135573c55df6acc3548a66",
+  "lemma": "transfer_after_C_exhaustion_completes",
+  "graph_label": "trace_Saga_OTK_Transfer_SL2-AS0-CL0-A1-C1-NB_transfer_after_C_exhaustion_completes-Sender_Requests_Access-Setup-Initialize_C_Policy-Setup-Setup_case_1-Sender_Sends_Application_Request_case_1-Setup-Receiver_Issues_Token-Sender_Requests_Access-Initialize_C_Policy-Provider_Issues_OTK-Sender_Requests_Access-Setup-Setup-Setup-Setup-Sender_Receives_OTK-Sender_Receives_OTK-B_Forwards_OTK_To_C-Setup-Sender_Sends_Application_Request-Setup-Receiver_Issues_Token",
+  "checks": {
+    "one_provider_issue_to_B_and_one_to_C": true,
+    "C_accepted_with_two_distinct_OTKs": true,
+    "accepted_keys_are_exactly_the_two_issued_keys": true,
+    "one_explicit_B_to_C_forward_of_Bs_issued_key": true,
+    "C_decrypted_both_tokens": true,
+    "Provider_explicitly_rejected_C_for_exhaustion": true,
+    "both_acceptances_bound_to_same_C_PAC": true
+  },
+  "keys_by_provider_recipient": {
+    "'B'": "exp('g',~otk2)",
+    "'C'": "exp('g',~otk1)"
+  },
+  "provider_issue_counts": {
+    "'B'": 1,
+    "'C'": 1
+  },
+  "C_distinct_used_OTKs": [
+    "exp('g',~otk1)",
+    "exp('g',~otk2)"
+  ],
+  "nodes_one_topological_order": [
+    {
+      "node": "#vr.1",
+      "rule": "Setup",
+      "actions": [
+        "Setup( )",
+        "LongTermKey( 'B', ~bsk )",
+        "LongTermKey( 'C', ~csk )"
+      ]
+    },
+    {
+      "node": "#vr",
+      "rule": "Sender_Requests_Access",
+      "actions": [
+        "AccessRequested( 'A', 'C', ~request.2 )"
+      ]
+    },
+    {
+      "node": "#vr.2",
+      "rule": "Initialize_C_Policy",
+      "actions": []
+    },
+    {
+      "node": "#vr.8",
+      "rule": "Sender_Requests_Access",
+      "actions": [
+        "AccessRequested( 'A', 'C', ~request )"
+      ]
+    },
+    {
+      "node": "#vr.9",
+      "rule": "Sender_Requests_Access",
+      "actions": [
+        "AccessRequested( 'A', 'B', ~request.1 )"
+      ]
+    },
+    {
+      "node": "#ib",
+      "rule": "Provider_Issues_OTK",
+      "actions": [
+        "ProviderIssue( 'A', 'B', 'g'^~otk2 )",
+        "ProviderQuotaExhausted( 'A', 'B' )"
+      ]
+    },
+    {
+      "node": "#ic",
+      "rule": "Provider_Issues_OTK",
+      "actions": [
+        "ProviderIssue( 'A', 'C', 'g'^~otk1 )",
+        "ProviderQuotaExhausted( 'A', 'C' )"
+      ]
+    },
+    {
+      "node": "#vr.10",
+      "rule": "Sender_Receives_OTK",
+      "actions": [
+        "OTKReceived( 'A', 'B', 'g'^~otk2 )"
+      ]
+    },
+    {
+      "node": "#vr.7",
+      "rule": "Sender_Receives_OTK",
+      "actions": [
+        "OTKReceived( 'A', 'C', 'g'^~otk1 )"
+      ]
+    },
+    {
+      "node": "#vr.5",
+      "rule": "Sender_Requests_Token",
+      "actions": [
+        "TokenRequested( 'A', 'C', 'g'^~otk1, ~sid )"
+      ]
+    },
+    {
+      "node": "#vr.6",
+      "rule": "Receiver_Issues_Token",
+      "actions": [
+        "ReceiverTokenIssued( 'A', 'C', 'g'^~otk1, ~token.1, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#vr.4",
+      "rule": "Sender_Decrypts_Token",
+      "actions": [
+        "ClientDecryptedToken( 'A', 'C', 'g'^~otk1, ~token.1, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#vr.3",
+      "rule": "Sender_Sends_Application_Request",
+      "actions": [
+        "ClientSendsRequest( 'A', 'C', 'g'^~otk1, ~token.1, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#ac",
+      "rule": "Receiver_Accepts_Application_Request",
+      "actions": [
+        "RequestAccepted( 'A', 'C', 'g'^~otk1, ~token.1, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#deny",
+      "rule": "Provider_Rejects_Exhausted_Request",
+      "actions": [
+        "ProviderRejectExhausted( 'A', 'C' )"
+      ]
+    },
+    {
+      "node": "#f",
+      "rule": "B_Forwards_OTK_To_C",
+      "actions": [
+        "ForwardOTK( 'A', 'B', 'C', 'g'^~otk2 )"
+      ]
+    },
+    {
+      "node": "#r",
+      "rule": "C_Receives_Forwarded_OTK",
+      "actions": [
+        "ForwardReceived( 'A', 'B', 'C', 'g'^~otk2 )"
+      ]
+    },
+    {
+      "node": "#vr.13",
+      "rule": "Sender_Requests_Token",
+      "actions": [
+        "TokenRequested( 'A', 'C', 'g'^~otk2, ~sid.1 )"
+      ]
+    },
+    {
+      "node": "#vr.14",
+      "rule": "Receiver_Issues_Token",
+      "actions": [
+        "ReceiverTokenIssued( 'A', 'C', 'g'^~otk2, ~token, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#vr.12",
+      "rule": "Sender_Decrypts_Token",
+      "actions": [
+        "ClientDecryptedToken( 'A', 'C', 'g'^~otk2, ~token, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#vr.11",
+      "rule": "Sender_Sends_Application_Request",
+      "actions": [
+        "ClientSendsRequest( 'A', 'C', 'g'^~otk2, ~token, 'g'^~csk )"
+      ]
+    },
+    {
+      "node": "#ab",
+      "rule": "Receiver_Accepts_Application_Request",
+      "actions": [
+        "RequestAccepted( 'A', 'C', 'g'^~otk2, ~token, 'g'^~csk )"
+      ]
+    }
+  ],
+  "native_edges": [
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#f:c0",
+      "jgeTarget": "#r:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#ib:c1",
+      "jgeTarget": "#vr.10:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#ic:c0",
+      "jgeTarget": "#deny:p2"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#ic:c1",
+      "jgeTarget": "#vr.7:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#r:c0",
+      "jgeTarget": "#vr.13:p1"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr:c0",
+      "jgeTarget": "#ic:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c0",
+      "jgeTarget": "#vr.9:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c0",
+      "jgeTarget": "#vr.10:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#r:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#vr:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#vr.5:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#vr.7:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#vr.8:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c1",
+      "jgeTarget": "#vr.13:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c2",
+      "jgeTarget": "#ib:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c3",
+      "jgeTarget": "#ab:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c3",
+      "jgeTarget": "#ac:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c3",
+      "jgeTarget": "#ic:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c3",
+      "jgeTarget": "#vr.6:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c3",
+      "jgeTarget": "#vr.14:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.1:c4",
+      "jgeTarget": "#ib:p2"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c6",
+      "jgeTarget": "#vr.2:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c7",
+      "jgeTarget": "#ib:p3"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c8",
+      "jgeTarget": "#ic:p3"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c9",
+      "jgeTarget": "#ic:p4"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c10",
+      "jgeTarget": "#ib:p4"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c11",
+      "jgeTarget": "#vr.6:p3"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.1:c12",
+      "jgeTarget": "#vr.14:p3"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.2:c0",
+      "jgeTarget": "#deny:p1"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.2:c0",
+      "jgeTarget": "#ic:p2"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.2:c1",
+      "jgeTarget": "#vr.6:p2"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.2:c1",
+      "jgeTarget": "#vr.14:p2"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.3:c0",
+      "jgeTarget": "#ac:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.4:c0",
+      "jgeTarget": "#vr.3:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.5:c0",
+      "jgeTarget": "#vr.6:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.5:c1",
+      "jgeTarget": "#vr.4:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.6:c0",
+      "jgeTarget": "#vr.4:p1"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.6:c1",
+      "jgeTarget": "#ac:p2"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.7:c0",
+      "jgeTarget": "#vr.5:p1"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.8:c0",
+      "jgeTarget": "#deny:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.9:c0",
+      "jgeTarget": "#ib:p0"
+    },
+    {
+      "jgeRelation": "PersistentFact",
+      "jgeSource": "#vr.10:c0",
+      "jgeTarget": "#f:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.10:c1",
+      "jgeTarget": "#f:p1"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.11:c0",
+      "jgeTarget": "#ab:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.12:c0",
+      "jgeTarget": "#vr.11:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.13:c0",
+      "jgeTarget": "#vr.14:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.13:c1",
+      "jgeTarget": "#vr.12:p0"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.14:c0",
+      "jgeTarget": "#vr.12:p1"
+    },
+    {
+      "jgeRelation": "ProtoFact",
+      "jgeSource": "#vr.14:c1",
+      "jgeTarget": "#ab:p2"
+    },
+    {
+      "jgeRelation": "LessAtoms",
+      "jgeSource": "#ac",
+      "jgeTarget": "#deny"
+    },
+    {
+      "jgeRelation": "LessAtoms",
+      "jgeSource": "#deny",
+      "jgeTarget": "#f"
+    }
+  ],
+  "ordering_note": "One topological ordering, not a unique total schedule."
+}

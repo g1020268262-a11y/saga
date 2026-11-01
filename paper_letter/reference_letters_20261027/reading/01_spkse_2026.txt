@@ -1,0 +1,204 @@
+===== PDF PAGE 1 =====
+                                                                          IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+1618
+
+LETTER    SpecialSectiononDiscreteMathematicsandItsApplications
+SecurityAnalysison“SPKSE:SecurePublicKeySearchable
+EncryptionWithstandKeywordGuessingAttacks”
+
+
+                                       KeitaEMURA†,††a),ToshihiroOHIGASHI†††,andNobuyukiSUGIO††††,Members
+
+
+
+
+SUMMARY   Shietal.(ScientiﬁcReports2025(SJRQ1Journal))pro-            OurContribution. Inthisshortnote,weanalyzethese-
+posedapublickeysearchableencryptionscheme,whichtheycallsecure         curityoftheSXCCscheme[2]. Concretely,weshowthat
+publickeysearchableencryption(SPKSE).Inthisshortnote,weshowthat       atrapdoorcanbegeneratedfromaciphertextwithoutusing
+atrapdoorcanbegeneratedfromaciphertextwithoutusingthereceiver’s       thereceiver’ssecretkey.
+secretkey.Wealsoshowthatthetestalgorithmcanberunwithoutusingthe
+server’ssecretkey,althoughtheschemeemploysadesignatedtestersetting.        Weclarifythatourattackviolatestheirsecuritymodel
+Ouranalysisindicatesthattheschememustbecompletelyredesigned.          becausetheyemployedaslightlyweakersecuritymodel(See
+keywords:  publickeyencryptionwithkeywordsearch,securityanalysis      Sect.2).Concretely,anadversaryisnotallowedtoissuean
+                                                                      encryptionqueryforthechallengekeyword.Sinceourattack
+1.  Introduction                                                      convertsaciphertextintoatrapdoor,theadversaryneedsto
+                                                                      obtainaciphertextofthetargetedkeyword. Theirsecurity
+Inpublickeyencryptionwithkeywordsearch(PEKS)[1],                      modelsdonotallowforsuchaquery.
+areceivergeneratesatrapdoor(thatcorrespondstoasearch                       Nevertheless,weclaimthatouranalysisindicatesthat
+query)thatallowstosearchaciphertextencryptedbythe                     theschememustbecompletelyredesigned. Forexample,
+receiver’spublickey. Aserver,thatistypicallycalledthe                 acloudserverthatreceivesaciphertextfromasendercan
+cloudserverorthetestserver,runsthe Testalgorithmthat                  generateatrapdoorandexecutethe Testalgorithm,even
+takesaciphertextandatrapdoor.Sinceatrapdoorisgener-                   thoughthereceiverdoesnotprovideatrapdoortotheserver.
+atedbythereceiver’ssecretkey,nobody,exceptthereceiver,                Thissituationdoesnotmatchtherolesofthecloudserver
+shouldnotbeabletogenerateatrapdoor.                                   inPEKS.Moreconcerningly,ifanythirdpartyobtainsaci-
+     Shi,Xu,Cao,andCheng(SXCC)[2]consideredthe                        phertext,theyalsocangenerateatrapdoor.Thismeansthat
+followingtwotypesofkeywordguessingattacks(KGAs).                      theycandecidewhethertwociphertextsareencryptionfor
+                                                                      thesamekeywordornotbygeneratingatrapdoorfromthe
+OﬄineKGA: Assumethatanadversaryhasatrapdoorand                        ﬁrstciphertextandbyrunningthe Testalgorithm.Thisob-
+     wouldliketoknowwhichkeywordisassociatedtothe                     servationsuggeststhat,intheirscheme,keywordencryption
+     trapdoor. Then,theadversarychoosesakeyword,en-                   doesnoteﬀectivelyfulﬁllitsintendedpurpose,highlighting
+     cryptsthekeyword,andrunstheTestalgorithm.Then,                   apotentialconceptualoversightthatmaywarrantreconsid-
+     theadversarycanobtainkeywordinformationfromthe                   erationofthedesign.
+     trapdoorthatleaksinformationofsearchqueries.
+OnlineKGA: Assumethatanadversarygeneratesacipher-                     2.  SXCCScheme
+     textofakeywordandsendsittothetestserver(cloud
+     server).Whentheserverreturnstheciphertextagainst                 Inthissection,weintroducetheSXCCscheme.Weremark
+     areceiver’squery(atrapdoor),thentheadversarycan                  thattheyconsidernotonlysearchableencryptionfunctional-
+     decidethetrapdoorisassociatedtothekeyword.                       itybutalsopublickeyencryption(PKE),i.e.,theencryption
+                                                                      algorithmtakesaplaintext minadditiontoakeywordw.
+ThemainaimoftheSXCCpaperistoproposeraPEKS                             Sinceoursecurityanalysisfocusesonthesearchableen-
+schemethatdefendsagainstbothtypesofKGAs.Wecallit                      cryptionpart,weomitthePKEpartinthispaper. They
+theSXCCscheme.                                                        employaﬂavorofpublickeyauthenticatedencryptionwith
+    ManuscriptreceivedAugust4,2025.                                   keywordsearch(PAEKS)[3],[4]wheretheencryptional-
+    ManuscriptrevisedNovember28,2025.                                 gorithmtakesasender’ssecretkey skS(inadditiontothe
+    ManuscriptpublicizedMarch3,2026.                                  receiver’spublickey pkR),andthetrapdoorgenerational-
+   †KanazawaUniversity,Kanazawa-shi,920-1192Japan.                    gorithmtakesasender’spublickey pkS(inadditiontothe
+  ††NationalInstituteofAdvancedIndustrialScienceandTech-              receiver’ssecretkey skR).Theyalsoemployaﬂavorofthe
+nology(AIST),Tokyo135-0064Japan.                                      designatedtestersetting[5]wherethecloudserveralsohas
+ †††TokaiUniversity,Tokyo108-8619Japan.                               apublickeypkCandasecretkeyskC,andtheTestalgorithm
+††††Hokkaido University of Science, Sapporo-shi, 006-8585             takes skCasinput∗.IntheSXCCscheme, skCisalsoused
+Japan.                                                                tore-randomizeaciphertext,inadditiontorunningtheTest
+  a)E-mail: k-emura@se.kanazawa-u.ac.jp(Correspondingau-                  ∗Precisely,theTestalgorithmdoesnottakeskCasinputintheir
+thor)
+    DOI:10.1587/transfun.2025DML0001                                  syntax.Atrapdoorisconvertedusing skCandthe Testalgorithm
+
+                  Copyright©2026TheInstituteofElectronics,InformationandCommunicationEngineers
+
+===== PDF PAGE 2 =====
+LETTER
+                                                                                                                                1619
+
+algorithm.Sincethisprocedureisindependentofourattack,                     gskC.
+weomitthere-randomizationprocedure.                                  Enc(pkS,skS,pkR,pkC,w): The keyword encryption algo-
+     TheSXCCpaperintroducesfoursecuritydeﬁnitions.                        rithmtakes pkS, skS, pkR, pkCandakeywordw ∈
+WeomittwoofthembecausetheyarerelatedtothePKE
+partandthere-randomizationprocedure.                                      {0,1}∗. Choose r    $←− Zpandcompute C1 = H(w)skS ·
+CiphertextIndistinguishability(CI): TheydeﬁneCI†as                        pkrCandC2 = pkrR.OutputaciphertextC =(C1,C2).
+     follows. Let Cbethechallengerand Abeanadver-                    Trapdoor(pkS,pkR,skR,w′): Thetrapdoorgenerationalgo-
+     sary. CgeneratesppandsendspptoA.Itisnotexplic-                       rithm takes  pkS,  pkR,  skR, and a keywordw′  ∈
+     itlydeﬁnehowtogenerate (pkS,skS), (pkR,skR),and                      {0,1}∗.   Choose  s      $←−  Zp and compute  td1  =
+     (pkC,skC),andnopublickeyisgiventoA.Weassume                          e(H(w′)skR,pkS)e(gs,pkC)skRand td2 =gs. Outputa
+     that Cgeneratesthesekeysandsends (pkS,pkR,pkC)                       trapdoortd=(td1,td2).
+     to A.   A is allowed to issue encryption queries.               Test(C,td,skC): Parse C  =  (C1,C2) and  td  =  (td1,td2).
+     Asendsakeywordwto Candobtainsaciphertext                             Compute td1/e(td2,pkR)skC = e(H(w′)skR,pkS). Out-
+     C ← Enc(pkS,skS,pkR,pkC,w). Aisallowedtoissue                        put1if e(H(w′)skR,pkS)e(C2,pkC) = e(C1,pkR)holds
+     trapdoorqueries. Asendsakeywordwto Candob-                           and0,otherwise.
+     tainsatrapdoor td ← Trapdoor(pkS,pkR,skR,w). We
+     clarifythatnotestqueryisdeﬁnedintheirmodel. A
+     declarestwochallengekeywords,w0andw1,which                      3.  OurAttack
+     havenotbeensentasaquery.   C picksarandom
+     b ∈ {0,1}andsendsthechallengeciphertext C∗ ←                    Ourattackshowsthat td = (td1,td2)canbecomputedfrom
+     Enc(pkS,skS,pkR,pkC,wb)toA. Aisallowedtoissue                   C =(C1,C2)withoutusingskRasfollows.
+     encryptionandtrapdoorqueriesw <{w0,w1}.Finally,
+     Aoutputsabit b′ ∈ {0,1}. Theadvantageof Ais                                      e(C1,pkR)= e(H(w)skS · pkrC,pkR)
+     deﬁnedtobe|Pr[b= b′]−1/2|.Asmentionedbefore,                                                 = e(H(w)skS,pkR)e(pkr
+     Aisnotallowedtoissueanencryptionqueryforthe                                                                         C,pkR)
+     challengekeyword.                                                                            = e(H(w)skS,pkR)e(pkC,pkrR)
+TrapdoorIndistinguishability(TI): Theyalsodeﬁnetrap-                                              = e(H(w)skS,pkR)e(pkC,C2)
+     door indistinguishability.   The deﬁnition is the                    e(C1,pkR)/e(pkC,C2)= e(H(w)skS,pkR)
+     same as that of ciphertext indistinguishability ex-
+     ceptthat Cgeneratesthechallengetrapdoor td∗ ←                                                = e(H(w)skR,pkS)
+     Trapdoor(pkS,pkR,skR,wb).
+     Next,wedescribetheSXCCscheme.LetGandGTbe                        Choose s′   $←−Zpandcomputetd2 =gs′and
+groupswithprimeorder p,e :G×G→GTbeasymmetric                              (e(C1,pkR)/e(pkC,C2))e(pkR,pkC)s′
+pairing,andg ∈Gbeagenerator.Let H :{0,1}∗ →Gbea
+hashfunction.                                                              = e(H(w)skR,pkS)e(gs′,pkC)skR
+TheSXCCScheme                                                              = td1
+
+Setup(1λ): Thesetupalgorithmtakesasecurityparam-                     Wealsoremarkthat skCisusedinthe Testalgorithmsuch
+     eterλ  ∈ N and outputs a public parameter  pp  =                that td1/e(td2,pkR)skC  =  e(H(w)skR,pkS).  As shown in
+     (G,GT,e,p,g,H).                                                 theattackprocedure, e(H(w)skR,pkS)canbeextractedby
+                                                                     e(C1,pkR)/e(pkC,C2)withoutusingskC.
+KeyGenS(pp): Thesenderkeygenerationalgorithmtakes                         WeexplicitlydescribeourattackbreakstheCIsecurity
+     ppasinput.ChooseskS        $←−ZpandoutputspkS =gskS.            ifAisallowedtoissueanencryptionqueryforthechallenge
+KeyGenR(pp): Thereceiverkeygenerationalgorithmtakes                  keywordasfollows. Asendsw0asanencryptionquery,and
+                                $←−ZpandoutputspkR =gskR.            obtainsaciphertextC. AconvertsCtotdwhichisatrapdoor
+     ppasinput.ChooseskR                                             forw0. Since Acanrunthe Testalgorithmwithoutusing
+KeyGenC(pp): Thecloudserverkeygenerationalgorithm                    skC,Acandetermine bbyrunningthe Testalgorithmwith
+                                      $←−ZpandoutputspkC =           thechallengeciphertext C∗andtheconvertedtrapdoor td.
+     takesppasinput.ChooseskC                                        Ifthe Testalgorithmoutputs1,thenAoutputs b′ = 0,and
+                                                                     b′ = 1otherwise.Asmentionedbefore,ourattackviolates
+takestheconvertedtrapdoor(e(H(w′)skR,pkS)inthealgorithm)as           theirCImodel. Nevertheless,weclaimthatouranalysis
+input. Duetothisprocedure,weassumethatthe Testalgorithm              indicatesthattheschememustbecompletelyredesigned.
+takesskCasinput.                                                     Asdemonstratedbyourattack,atrapdoorcanbecomputed
+   †Thenotionisreferredtoasindexindistinguishabilityin[2],
+sinceaPKEciphertextisdenotedasaciphertextandaPEKS                    fromaciphertextwithoutusingskR,andanyonecanrunthe
+ciphertextasanindex. Inourwork,weadoptthetermCIin                    Testalgorithmwithoutusing skC. Thisfactsuggeststhat
+accordancewiththestandardsecuritydeﬁnitionofPAEKS.                   eachkeyfailstofulﬁllitsintendedrole,trapdoorgeneration
+
+===== PDF PAGE 3 =====
+                                                                                 IEICETRANS.FUNDAMENTALS,VOL.E109–A,NO.9SEPTEMBER2026
+1620
+
+andrunningthe Testalgorithm,respectively.Therefore,we                       canrunthe Testalgorithmwithoutusing skC. Although
+arguethatrevisingtheSXCCschemerequiresanewproposal                          ourattackviolatestheirsecuritymodel,weclaimthatour
+builtentirelyfromscratch.Notethatwhenthecloudserver                         analysisindicatesthattheSXCCschememustbecompletely
+hasapublickey,andthe Testalgorithmtakesthesecretkey                         redesigned.
+ofthecloudserverasinput,thenitissuﬃcienttoencrypt
+atrapdoorbythepublickeytohidekeywordinformation                             Acknowledgments
+associatedwiththetrapdoor[6],[7]. Moreover,Liand
+Boyen[4]haveproposedagenericconstructionofPAEKS.                            Theauthorswouldliketothankthereviewerforthevalu-
+Giventheseconsiderations,webelievefurtherexploration                        ablecommentsandhelpfulsuggestions. Thisworkwas
+oftheSXCCschememayhavelimitedmerit.Therefore,we                             supportedbyJSPSKAKENHIGrantNumbersJP21K11897
+donotpursuethisdirectionfurther.                                            andJP25K15119.
+
+4.  AttackComplexity                                                        References
+
+Here,weclarifythecomplexityintermsofruntime. We                             [1]D.Boneh,G.D.Crescenzo,R.Ostrovsky,andG.Persiano,“Publickey
+reportaverageexecutiontimesover10,000runs.Sincethe                               encryptionwithkeywordsearch,”EUROCRYPT,pp.506–522,2004.
+SXCCschemeemployssymmetricpairings,weusethePBC                              [2]D.Shi,M.Xu,C.Cao,andH.Cheng,“SPKSE:Securepublickey
+                                                                                 searchableencryptionwithstandkeywordguessingattacks,”Sci.Rep.,
+library†.Forachieving128-bitsecurity,weemployparame-                             vol.15,no.19658,2025.https://doi.org/10.1038/s41598-025-01454-9
+tersgivenin[8].Toanalyzeattackcomplexity,alltestswere                       [3]Q.HuangandH.Li,“Aneﬃcientpublic-keysearchableencryption
+runonanUbuntu24.04.2LTSsystemfeaturingaRyzenTM                                   schemesecureagainstinsidekeywordguessingattacks,”Information
+5800XCPU,128GiBRAM,and9TBstorage. Oneattack                                      Sciences,vol.403,pp.1–14,2017.https://doi.org/10.1016/j.ins.2017.
+scenarioinvolvesobtainingtwociphertextsanddetermining                            03.038
+                                                                            [4]Q.LiandX.Boyen,“Public-keyauthenticatedencryptionwithkey-
+whethertheycorrespondtothesamekeyword. Thisisac-                                 wordsearchmadeeasy,”IACRCommunicationsinCryptology,vol.1,
+complishedbyconvertingtheﬁrstciphertexttoatrapdoor                               no.2,p.16,2024.https://doi.org/10.62056/a63z11zn4
+andexecutingtheTestalgorithmwiththeconvertedtrapdoor                        [5]J.Baek,R.Safavi-Naini,andW.Susilo,“Publickeyencryptionwith
+andthesecondciphertext. Thetotalrunningtimeforthis                               keywordsearchrevisited,”ICCSAPartI,pp.1249–1259,2008.
+processis37.969ms:20.849msfortrapdoorconversionand                          [6]Y.Chen,“SPEKS:Secureserver-designationpublickeyencryption
+17.119msforexecutingthe Testalgorithm. Notethatrun-                              withkeywordsearchagainstkeywordguessingattacks,”TheCom-
+                                                                                 puterJournal,vol.58,no.4,pp.922–933,2015.https://doi.org/10.1093/
+ningthe Encalgorithmtwicetakes59.335ms. Evenwhen                                 comjnl/bxu013
+accountingfortheencryptiontime,theoverallrunningtime                        [7]K.Emura,“Genericconstructionofdual-serverpublickeyauthen-
+ofourattackis97.304ms,whichisconsideredreasonably                                ticatedencryptionwithkeywordsearch,”IETInfomationSecurity,
+practical.                                                                       vol.2025,pp.1–14,2025.https://doi.org/10.1049/ise2/6610587
+                                                                            [8]K.Emura,K.Ito,andT.Ohigashi,“Secure-channelfreesearchable
+                                                                                 encryptionwithmultiplekeywords: Agenericconstruction,anin-
+5.  Conclusion                                                                   stantiation,anditsimplementation,”JournalofComputerandSystem
+                                                                                 Sciences,vol.114,pp.107–125,2020.https://doi.org/10.1016/j.jcss.
+Inthisshortnote,weshowthatatrapdoorcanbecomputed                                 2020.06.003
+fromaciphertextwithoutusing skR,andshowthatanyone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    †PBC: Pairing-Based Cryptography (https://crypto.stanford.
+edu/pbc/)

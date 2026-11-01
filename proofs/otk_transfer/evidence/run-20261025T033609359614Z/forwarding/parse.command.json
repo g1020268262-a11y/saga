@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+    "--quit-on-warning",
+    "--parse-only",
+    "/mnt/d/Users/10202/Desktop/saga/proofs/otk_transfer/evidence/run-20261025T033609359614Z/inputs/saga_otk_transfer.spthy",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "cwd": "/mnt/d/Users/10202/Desktop/saga",
+  "exit_code": 0,
+  "timeout": false,
+  "elapsed_seconds": 0.131
+}

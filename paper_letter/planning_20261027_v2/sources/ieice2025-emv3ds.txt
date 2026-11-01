@@ -1,0 +1,1403 @@
+===== PDF PAGE 1 =====
+1052
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+PAPER
+Formal Veriﬁcation of Challenge Flow in EMV 3-D Secure and Its
+Improvement∗
+Kakeru WATANABE†a), Nonmember and Kazuki YONEYAMA†b), Member
+SUMMARY EMV 3-D Secure is an authentication service mainly to
+identifyandverifycardholdersforcard-not-present(CNP)transactionsover
+theInternet. EMV3-DSecureservicesareprovidedbyinternationalcredit
+cardbrandssuchasVisa,MastercardandAmericanExpress, anditsproto-
+col is speciﬁed by EMVCo. There are known existing works on evaluating
+security of several versions of 3-D Secure, such as a formal veriﬁcation
+using Casper/FDR2 for the old speciﬁcation (3-D Secure 1.0) and a spoof-
+ing attack using reverse engineering on risk assessment indicators for the
+current speciﬁcation, EMV 3-D Secure (3-D Secure 2.0). However, there
+isnosecurityveriﬁcationofEMV3-DSecurebasedonitsprotocolspeciﬁ-
+cation. Formalmethodsareknownasmethodsthatcanverifysecuritywith
+highﬁdelitytotheprotocolspeciﬁcationandhavebeenactivelyresearched
+in recent years. In this paper, we verify the security of EMV 3-D Secure
+using ProVerif, an automated security veriﬁcation tool for cryptographic
+protocols. First, one of the diﬃculties we faced is to correctly extract the
+detailed protocol structure from the entire speciﬁcation that is written by
+natural language over 400 pages. Based on the extracted protocol struc-
+ture, we formalize Challenge Flow for authentication by secret information
+underthreeenvironments(App-based(default-sdk),App-based(split-sdk),
+and Browser-based) in the latest version 2.3.1.1, which are speciﬁed for
+the purpose of identity veriﬁcation in CNP transactions. We then verify
+the conﬁdentiality and resistance to oﬀ-line dictionary attacks of secret
+information, the authenticity and the resistance to replay attacks against
+both man-in-the-middle attacks and colluding attacks with relay servers.
+As veriﬁcation results, we show that Challenge Flow satisﬁes all of the
+above security requirements. Furthermore, we discuss the necessity of the
+unilateralauthenticatedchannelbetweenthecardholderandthecardissuer
+assumed in the EMV 3-D Secure speciﬁcation, and show that if we use
+a public channel instead of a unilateral authenticated channel, Challenge
+Flow still satisﬁes security requirements. It indicates that the protocol can
+be more eﬃcient than the speciﬁcation without reducing security.
+key words: formal methods, ProVerif, EMV 3-D secure, credit card payment
+1. Introduction
+Cashless payments by credit card are now widespread and
+canbebroadlyclassiﬁedintocard-present(CP)transactions
+and card-not-present (CNP) transactions via the Internet.
+Sincethepresenceofaphysicalcardisessentialtocomplete
+a CP transaction, strict control of the physical card is nec-
+essary to prevent fraudulent use. On the other hand, since
+CNP payment authentication is based on information such
+as primary account number (pan), expiration dates, security
+codes,andnames,theriskoffraudulentuseincreasesifsuch
+Manuscript received September 24, 2024.
+Manuscript revised January 9, 2025.
+Manuscript publicized February 19, 2025.
+†Ibaraki University, Hitachi-shi, 316-8511 Japan.
+∗Thispaperisthefullversionoftheextentedabstractappeared
+in [1].
+a)E-mail: 24nm771g@vc.ibaraki.ac.jp
+b)E-mail: kazuki.yoneyama.sec@vc.ibaraki.ac.jp
+DOI: 10.1587/transfun.2024EAP1132
+information is revealed to a malicious third party. Hence,
+card issuers usually adopt 3-D Secure, an authentication
+service for identity veriﬁcation provided by Visa, Master-
+card, American Express, and other international credit card
+brands. Although the names of the services oﬀered by such
+brands diﬀer, the protocol speciﬁcation of 3-D Secure is
+standardized by EMVCo [2].
+Therearetwomajorversionsof3-DSecure. 3-DSecure
+1.0 was the ﬁrst version launched by Visa, Mastercard, and
+AmericanExpressin2001. Thepurposeofthisversionwas
+toverifyiftheidentityoftheusermatchesatruecardholder
+by authenticating all transactions for e-shopping through a
+browser using secret information. However, the fact that all
+transactions require the entry of secret information raised
+the hurdle for customers to make payments and increased
+the withdrawal ratio of customers from payments.
+EMV3-DSecure(3-DSecure2.0)[3]wasproposedto
+solve problems of 3-D Secure 1.0. The biggest diﬀerence
+compared to 3-D Secure 1.0 is that authentication based
+on secret information is not always required. In EMV 3-D
+Secure, payment risks are numerically evaluated based on
+personal information provided by the user and the device
+information used by the user for payment, and each transac-
+tionisdividedintothreetypes: FrictionlessFlow,Challenge
+Flow, and “Not Authenticated”. Transactions classiﬁed as
+credibleareacceptedwithouttheentryofsecretinformation
+by using Frictionless Flow. In contrast, transactions classi-
+ﬁedassomewhatriskyareauthenticatedwithsecretinforma-
+tion using Challenge Flow. Also, transactions classiﬁed as
+high-riskarerejectedwithouttheentryofsecretinformation
+by setting to “Not Authenticated”. Since EMVCo does not
+specify how to determine the transaction risk assessment,
+each card issuer has its risk assessment method. Such a
+divergence of authentication ﬂows based on the risk assess-
+ment can reduce the burden of entering secret information
+on the user side and the withdrawal rate from transactions
+on the merchant side.
+Sinceauthenticationisdoneusingsecretinformationin
+Challenge Flow, security is required, such as the conﬁden-
+tiality of secret information and resistance to impersonation
+attacks for the cardholder.
+1.1 Related Works
+There are various known examples of the application of for-
+mal methods to security protocols in the real world for se-
+curity veriﬁcation and research on the security of cashless
+Copyright © 2025 The Institute of Electronics, Information and Communication Engineers
+
+===== PDF PAGE 2 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1053
+payments by credit card.
+1.1.1 Formal Methods for Security
+Formalmethodshavestrengthsparticularlyintheﬁeldofse-
+curityinthattheyenablerigorousveriﬁcationofsecurity,and
+areexpectedanautomationofveriﬁcationandapreventionof
+humanerrorinveriﬁcation,andresearchinthisﬁeldhasbeen
+active in recent years. Typical examples of tools targeting
+protocolsareProVerif[4]andTamarinProver(Tamarin)[5],
+whichhaveawiderangeofapplications: TLS1.3[6],LINE
+Encryption [7], QUIC [8], Bluetooth [9], FIDO [10]–[12],
+and etc.
+1.1.2 CP Transactions (EMV)
+EMV [13], [14] is a protocol for CP transactions. Some
+works [15]–[18] on formal veriﬁcation of EMV using
+ProVerif [4] or Tamarin [5] are known. Multiple attacks
+have been found by these studies. However, these studies
+focused on CP transactions and not CNP transactions.
+1.1.3 SET (Secure Electronic Transaction)
+SET [19] is a communication protocol designed for CNP
+transactions and is no longer in use. Some works [20], [21]
+gave formal veriﬁcation of SET using Coq [22] or Is-
+abelle/HOL [23].
+1.1.4 3-D Secure
+A security veriﬁcation [24] of 3-D Secure 1.0 by formal
+methodsusingCasper/FDR2andreverseengineeringspoof-
+ing attacks [25] on risk assessment indicators of EMV 3-D
+Secure are known.
+Pasupathinathan et al. [24] veriﬁed the authenticity of
+each entity, the conﬁdentiality of secret information such as
+card information and passwords, and the integrity of mes-
+sages. Althoughallsecurityrequirementsaresatisﬁedasthe
+veriﬁcationresult,anattackbyamaliciousmerchantoutside
+oftheveriﬁcationmodelwasalsoproposed. However,nose-
+curityveriﬁcationforthecurrentEMV3-DSecureisshown.
+Ali and van Moorsel [25] noticed that the risk assessment
+indicators for EMV 3-D Secure were not speciﬁed in the
+speciﬁcations, and they reverse-engineered credit cards is-
+sued by diﬀerent companies to obtain the risk assessment
+indicators for each credit card. As a result, it was shown
+that the risk assessment indicators for each card issuer can
+be obtained. Furthermore, by exploiting the information
+obtainedthroughreverseengineering,theydiscoveredanat-
+tackthatimpersonatesthecardholderbyavoidingChallenge
+FlowandexecutingFrictionlessFlow. However,thesecurity
+of Challenge Flow itself has not been evaluated.
+Other works on the security and validity of 3-D Secure
+1.0[26]–[28]areknown,buttheydonotdiscussthesecurity
+of EMV 3-D Secure. 3-D Secure 1.0 is now no longer
+supported, and all currently in the market are EMV 3-D
+Secure. The protocol speciﬁcations of EMV 3-D Secure
+is widely changed from 3-D Secure 1.0, and there is no
+knownstudyfocusingonthesecurityoftheEMV3-DSecure
+protocol speciﬁcation. In addition, a blockchain-driven 3-D
+secure [29] has been proposed, but no security evaluation
+has been performed against the speciﬁcation in that work.
+1.2 Contribution
+Inthispaper,weshowtheﬁrstformalveriﬁcationofEMV3-
+D Secure using the cryptographic protocol veriﬁcation tool
+ProVerif [4]. The ﬁrst challenge is to correctly read and
+understandthedetailsoftheprotocolfromalmost400pages
+of natural language speciﬁcation. Since there are several
+ambiguous points in the protocol description of the speciﬁ-
+cations, we used an installation guide of EMV 3-D Secure
+[30] published by Japan Consumer Credit Association as a
+readingassistance. Then,weextractacryptographicformof
+the protocol structure. Although EMV 3-D Secure has mul-
+tiple options depending on the purpose and environment for
+several use cases, we focus on ﬂows for the App-based and
+theBrowser-basedenvironmentsbecauseChallengeFlowfor
+CNP transactions appears in these ﬂows.
+We verify the conﬁdentiality and resistance to oﬀ-line
+dictionaryattacksofsecretinformation,andtheauthenticity
+of the cardholder and resistance to replay attacks in two dif-
+ferent attacker models: the relay servers colluding with the
+attacker and the man-in-the-middle attacker. EMV 3-D Se-
+cure assumes that a unilateral authenticated channel is used
+between the cardholder and the authentication server of the
+card issuer. Since ProVerif only provides either a mutually
+authenticated channel or an unauthenticated public channel
+tobedeclared,weformalizeaunilateralauthenticatedchan-
+nel using public key encryption, Authenticated Encryption
+with Associated Data (AEAD) and digital certiﬁcate. For
+the case where the relay servers collude with an attacker,
+we formalize the situation of the collusion by switching the
+channel involving the relay servers from the private chan-
+nel to the public channel and disclosing the private inputs
+of servers. As veriﬁcation results, we show that Challenge
+Flow in EMV 3-D Secure satisﬁes all of the above security
+requirements.
+Furthermore, we verify the security of the protocol
+when a unilateral authenticated channel between the card-
+holder and the card issuer, which is assumed in the speciﬁ-
+cationofChallengeFlow,isweakenedtoapublicchannelto
+improve the eﬃciency of the protocol. As a result, we show
+that the same security requirements as in the case assuming
+aunilateralauthenticatedchannelaresatisﬁed. Itmeansthat
+thesecurityisnotaﬀectedeveniftheprotocolismademore
+eﬃcient than the speciﬁcation.
+1.2.1 Diﬀerences from Extended Abstract [1]
+Theadditionalcontentsofthispaper(fullversion)compared
+to the extended abstract [1] are as follows.
+• In Sect.1.1.1, by presenting examples of formal veriﬁ-
+
+===== PDF PAGE 3 =====
+1054
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+cation of real-world cryptographic protocols, the rela-
+tionship with this research is clariﬁed.
+• The main part of veriﬁcation codes is included in Ap-
+pendix.
+• WeaddedSect.4.4,whichdetailstheformalizationand
+veriﬁcation of Browser-based ﬂow. Though the ex-
+tended abstract [1] was not clear from the paper on the
+validity of the formalization of Browser-based ﬂow, it
+is clariﬁed in this paper.
+• WeaddedSect.6.1,whichstatestheimpactofourﬁnd-
+ings of (non-)necessity of the unilateral authenticated
+channel on real-world systems. The impact of our pro-
+posed improvements on real-world systems is clariﬁed.
+2. EMV 3-D Secure
+In this section, we explain the details of EMV 3-D Secure.
+There are several versions of EMV 3-D Secure, and this
+paper is based on Version 2.3.1.1 (2023.05.30).
+2.1 Authentication Flows
+Challenge Flow of EMV 3-D Secure has several ﬂow op-
+tions for diﬀerent purposes. In this paper, we examine three
+authentication ﬂows: App-based (default-sdk), App-based
+(split-sdk), and Browser-based, which are mainly used for
+identity veriﬁcation on CNP transactions.
+App-based is an authentication ﬂow prepared for the
+case of authentication via an application on a device. In the
+App-basedcase,therearevariantsintheauthenticationﬂow
+depending on how the SDK is embedded in the application
+(default-sdk and split-sdk). Browser-based is an authentica-
+tionﬂowpreparedforauthenticationviaaPCorsmartphone
+browser. The App-based ﬂow diagram is shown in Fig.1,
+and the Browser-based ﬂow diagram is shown in Fig.2.
+2.2 Entities
+The entities in App-based are as follows. Entities except for
+3DSRequestorAppand3DSSDKarethesameforBrowser-
+based.
+Cardholder: thepersonauthorizedtousethecardhavinga
+device, which holds secret information for authentica-
+tion
+3DS Requestor App:an application that runs on the Card-
+holder’s device and executes 3-D Secure together with
+the 3DS SDK described below
+3DS SDK:a package to run 3-D Secure in the 3DS Re-
+questor App
+3DS Server:a server that serves as an interface between
+the EC site and the DS described below, and collects
+necessary information from the 3DS Requestor App,
+etc., when initiating 3-D Secure
+Directory Server (DS):an authentication server provided
+by an international brand (e.g., Visa, Mastercard, etc.),
+which communicates between the 3DS Server and the
+ACS described below, determines the ACS associated
+with the card number and relays messages between the
+3DS Server and the ACS
+Access Control Server (ACS):an authentication server
+provided by the card issuer, responsible for risk assess-
+ment of transactions and authentication of transactions
+In Browser-based, the following entities are present in-
+stead of the 3DS Requestor App and the 3DS SDK.
+Browser: asoftwareforaccessinginformationontheWorld
+Wide Web, such as Chrome, Safari, and Edge
+3DS Requestor:a merchant or payment processor that ex-
+ecutes 3-D Secure’s Authentication Request
+TheBrowserandthe3DSRequestorarecollectivelyreferred
+to as the 3DS Requestor Website.
+2.3 Messages
+As shown in Fig.1 and Fig.2, there are messages for 3-D
+Secure whose contents are clearly deﬁned in the speciﬁca-
+tions and those without. The messages whose contents are
+clearly deﬁned in the speciﬁcations are as follows. See [31]
+and Sect.4 for the components of each message.
+Authentication Request (AReq):a message to initiate
+EMV 3-D Secure, created by the 3DS Server, request-
+ing authentication of the Cardholder, and transmitted
+via the DS to the ACS related to the Cardholder
+Authentication Response (ARes):a response message
+from the ACS to the 3DS Server forAReq such that
+theauthenticationresult(e.g.,authenticationsuccessor
+failure, or a request for additional secret information
+(challenge), etc.) is communicated to the 3DS Server
+Set Up Challenge Request (Set Up CReq):a message to
+prepare for sending secret information
+Challenge Response (CRes):aresponsefromtheACS,in-
+cluding information on authentication screens
+Challenge Request (CReq):amessagethatcontainssecret
+information and is used for authentication by the ACS
+Resutls Request (RReq):the authentication result by
+CReq sent from the ACS to the 3DS Server via the
+DS
+Results Response (RRes):aresponsefromthe3DSServer
+to the ACS forRReq
+Challenge Response (Completion) :a response to CReq
+fromtheACStotheCardholder,informingwhetherthe
+challenge is accepted or not
+3. ProVerif
+ProVerif is an automated cryptographic protocol veriﬁca-
+tiontoolthatworksbydeﬁningthespeciﬁcationofacrypto-
+graphicprotocolandthesecurityrequirementstobeveriﬁed.
+ProVerifveriﬁescryptographicprotocolsbyidealizingmes-
+sages ﬂowing in the communication channel into symbols.
+Since the veriﬁcation in ProVerif is based on the Dolev-Yao
+
+===== PDF PAGE 4 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1055
+Fig.1 App-basedchallengeﬂow. Dashedlinesmeanoutofspeciﬁcation,doublelinesmeanmutually
+authenticated private channels, and single lines mean unilateral authenticated channel.
+Fig.2 Browser-based challenge ﬂow. Dashed lines mean out of speciﬁcation, double lines mean
+mutually authenticated private channels, and single lines mean unilateral authenticated channel.
+model [32] such that attackers can read, modify, manipu-
+latedatainternally, delete,andsendmessages. Theinputted
+cryptographicprotocolisautomaticallytranslatedintoHorn
+clauses by the applied pi-calculus, and the security require-
+ment is veriﬁed by whether or not an event violating the
+security requirement can be derived. See the manual [33]
+for security etc. that can be veriﬁed with ProVerif.
+ProVerif has the advantage of easily describing proto-
+col speciﬁcations as input. Furthermore, Challenge Flow’s
+protocolspeciﬁcationandsecurityrequirementscanbewell
+formalized, which is the reason why ProVerif is used in this
+work.
+4. Formalization of EMV 3-D Secure Using ProVerif
+See [34] for all ProVerif codes used for veriﬁcation.
+4.1 Formalization Assumptions
+Inthispaper,weassumethefollowingsettingsforsimplicity.
+• The Cardholder, the 3DS Requestor App, and the 3DS
+SDK in App-based (resp. the Cardholder, the Browser,
+and the 3DS Requestor in Browser-based) are all col-
+
+===== PDF PAGE 5 =====
+1056
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+lectively deﬁned as the Cardholder (because all com-
+munications between these entities are out of the spec-
+iﬁcation).
+• Messagesoutofthespeciﬁcationareformalizedsothat
+input/output is consistent with other messages.
+• Each entity exists only once.
+• TheACSshallreceive CReqfromtheCardholderonly
+once (i.e., Although the speciﬁcation states that secret
+information shall be tested up to the maximum number
+of the ACS challenges, we do not consider the case
+wheresecretinformationforthesecondorlaterattempt
+is tested.).
+• As related to the above, the Cardholder does not fail
+to enter secret information and enters correct secret
+information at the ﬁrst attempt.
+• In the speciﬁcation, although each message contains
+lotsofinformationnotaﬀectingencryptionandauthen-
+tication,thispaperformalizesonlythemessagesaﬀect-
+ingencryptionandauthentication(i.e.,Allinformation
+not aﬀecting them is treated collectively as “Additional
+Data”).
+Examples of information not aﬀecting encryption and au-
+thentication are as follows. These are only used for the risk
+assessment during the ﬂow branching, etc.
+• Credit card information
+• Device information
+• Purchase information (store name, country, amount,
+time of day, etc.)
+• Recurring purchase information (amount, expiration
+date, etc.)
+• Other information related to ID and UI used inside the
+system
+4.2 Declaration of Cryptographic Primitives, etc.
+4.2.1 Declaration of Channels
+ThedeﬁnitionofcommunicationchannelsisasAppendixA
+Lines 1-6. The communication channels are named based
+on the entities to be communicated with. The communica-
+tion channel with[private] is a communication channel
+that assumes mutual authentication in the speciﬁcation. In
+ProVerif, the [private] setting makes it impossible for
+an attacker to eavesdrop on, alter, or delete messages. The
+channel c is used in the main process to pass preliminary
+information (e.g., the key for the signature veriﬁcation) to
+the attacker.
+4.2.2 Declaration of Types, Functions, etc.
+ForCReqandCRes,thespeciﬁcationstatesthataunilateral
+authenticated channel over which the Cardholder authenti-
+cates the ACS must be TLS 1.2 or higher. To grasp the
+above situation, we formalize it in the following way: the
+Cardholder generates a symmetric key for encryption, en-
+crypts it with the ACS’s public key and sends it, and the
+ACS decrypts it with its private key, then encrypts and de-
+crypts the message with an Authenticated Encryption with
+Associated Data (AEAD) with the symmetric key. To for-
+malizesuchanapproach,wedeﬁnetwofunctions( aenckey
+and adeckey) for encrypting and decrypting the symmetric
+key by public key encryption.
+We also deﬁne the secret key and generator types
+(eskey and Gen) used in Elliptic Curve Diﬃe-Hellman
+(ECDH) key exchange, constants for the generatorG, and
+thescholarmultiplicationfunction smultthattakesasecret
+key and a generator as input. These are used to generate
+commonkeysfordataencryptionin CReqandCRes. Then,
+we deﬁne a type conversion functionGenToKey to use the
+key shared in key exchange for symmetric key encryption.
+Amongthetypes,functions,etc.,usedintheApp-based
+formalization,thosenotlistedintheProVerifmanualandwe
+deﬁned originally are as Appendix A lines 8–37. We deﬁne
+the types and functions of symmetric key encryption using
+nonce. In this paper, the nonce for the encryption function
+senc and the decryption functionsdec is obtained by the
+nonce generation functionngen with inputting the key used
+for encryption (decryption) and the corresponding natural
+number(initially0;incrementedforeachnoncegeneration).
+We deﬁne the functionmacfor message authentication code
+(MAC)generation,andfunctions aeadencand aeaddecfor
+AEAD†. aeadenc and aeaddec use the above symmetric
+key encryption functions senc, sdec and mac as compo-
+nents. We deﬁne the functions of digital certiﬁcates. For
+details, we deﬁne the digital certiﬁcate generation function
+gencert_spk that takes as input a private key and a public
+keyofthesametypeasdigitalsignature, adigitalcertiﬁcate
+generationfunction gencert_pkthattakesasinputthepub-
+lickeyofpublickeyencryptionandtheprivatekeyofdigital
+signature, and their veriﬁcation functionscheckcert_spk
+and checkcert_pk. We deﬁne the initialization function
+for the natural number typenat. ProVerif provides a type
+of natural numbers,nat, but it cannot be declared asnew
+like other types; thus, we deﬁne a functionnat_init that
+returns a natural number received as an argument.
+Inaddition,inBrowser-based,wedeﬁneBase64urlEn-
+coding/Decoding functions Base64urlenc and
+Base64urldecrespectively.
+4.2.3 Declaration of Conﬁdential Information and Events
+The declaration of conﬁdential and events are as Appendix
+A Lines 41-46. We declare the secret information used for
+thechallenge challengeDataEntry. Sinceitisdeclaredas
+[private],itisdeclaredinaformthatcannotbeusedbyan
+attacker,andinthesecrecyveriﬁcation,itisveriﬁedwhether
+or not it is possible to reachchallengeDataEntry. And
+wedeﬁnetheeventsindicatingthesendingandacceptingof
+the above secret information. send_challenge is placed
+just before the Cardholder sends a CReq containing secret
+information, and auth_challenge is placed just after the
+†We assume Encrypt-then-MAC AEAD in this paper.
+
+===== PDF PAGE 6 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1057
+ACS conﬁrms the validity of secret information.
+4.3 Formalization of App-Based
+In this section, we use App-based (default-sdk) as an exam-
+ple.
+4.3.1 Main Process
+Deviceinformation deviceInfo,andforReferenceNumber
+of each entity, sdkReferenceNumber,
+threeDSServerRefNumber, dsReferenceNumber and
+acsReferenceNumber are generated. Certiﬁcate Author-
+ityfordigitalsignature(DSCA)’ssigningkey Pv_DSCAand
+veriﬁcation keyPb_DSCAare generated, and thePb_DSCAis
+published. The DS secret keys_dsand public keyp_dsfor
+encryption and decryption of device information are gener-
+ated, andp_dsis published. The commercial certiﬁcate au-
+thority(CA)’ssigningkey Pv_CAandveriﬁcationkey Pb_CA
+aregeneratedand Pb_CAispublished†. TheACSprivatekey
+skey_acs and public keypkey_acs for public key encryp-
+tion used to establish the unilateral authenticated channel
+aregenerated,andthecertiﬁcate Cert_PkACSof pkey_acs
+is generated withPv_CA and published. The ACS signing
+key Pv_ACS and veriﬁcation keyPb_ACS are generated, the
+certiﬁcate Cert_PbACSof Pb_ACSisgeneratedwith Pv_CA,
+and the URL of the ACSacsURL is generated. ThePbACS
+and Cert_PbACSare published.
+Finally, each entity sub-process executes in parallel,
+as Appendix A Lines 185–186.
+4.3.2 AReq/ARes
+The Cardholder sub-process performs as Appendix A Lines
+56–66. First, the SDK TransactionID sdkTransID is
+generated, and the device informationdeviceInfo is en-
+crypted with the DS public key p_ds. Next, to share
+keys with the ACS for data protection of CReq/CRes,
+the secret key dC and public key QC for ECDH key ex-
+change are generated. The Additional Data AddData0
+is generated and deviceInfo, SDK Reference Number
+sdkReferenceNumver, sdkTransID, QC, AddData0 are
+sent to the 3DS Server.
+After receiving the necessary information forAReq
+from the Cardholder, the 3DS Server generates its Trans-
+action ID threeDSServerTransID and Additional Data
+AddData5,addstheseinformationandMessageType( AReq)
+tothereceivedinformation,andsendsitas AReqtotheDS.
+After receiving AReq from the 3DS Server, the DS
+performs some further processing and sendsAReq to the
+ACS. On receivingAReq from the DS, the ACS generates
+ACSTransactionID acsTransIDandgeneratesasecretkey
+dT and a public keyQT for key exchange with the Card-
+holder (3DS SDK). Also, signatureacsSignedContent is
+†The speciﬁcation states that there are multiple CAs in each
+role; thus we formalize them according to the speciﬁcation.
+generated for the ACS URLacsURL and the ACS/Card-
+holder’s public keyQTand QC. Then, fromdTand the Card-
+holder’spublickey QC,thesymmetrickeyfordataencryption
+CEK_ASisgenerated. Then,twocounters acsCounterAtoS
+and acsCounterStoAusedforsendingandreceiving CReq
+are initialized, Additional DataAddData7 is generated, and
+AResis sent to the DS.
+4.3.3 CReq/CRes
+ARes is transferred from the ACS to the 3DS Server via
+the DS, and the necessary information forCReqamong the
+components of ARes is sent to the Cardholder (3DS Re-
+questor App). After receiving this information, the Card-
+holder veriﬁes the certiﬁcate Cert_PbACS of the public
+key of the ACS, and if the veriﬁcation holds, veriﬁes the
+acsSignedContent. If valid, it generates the symmetric
+key CEK_SA in the same way as the ACS.
+Sinceitisspeciﬁedthataunilateralauthenticatedchan-
+nel is used for sending and receivingCReq and CRes, the
+unilateral authenticated channel must be established before
+sending and receiving them. The Cardholder receives the
+ACS public key and its certiﬁcate from the channel and
+veriﬁes them with the CA’s veriﬁcation keyPb_CA. If the
+veriﬁcation holds, the Cardholder generates the symmetric
+key key_11, encrypts it with pkey_acs, and sends it to
+the ACS askey_11_enc. The ACS decryptskey_11_enc
+with its secret key skey_acs and makes it into key_11.
+Weformalizetheunilateralauthenticatedchannelbyhaving
+the Cardholder and the ACS encrypt and decryptCReqand
+CReswithAEADatthetimeofsendingandreceiving CReq
+and CRes.
+The Cardholder initializes the counters
+(sdkCounterAtoS,sdkCounterStoA) in the same way as
+the ACS, and after generating Additional DataAddData11,
+uses it for encryption by key_11. After initializing
+the counter cnt_11 for nonce, and similarly initializ-
+ing the counter cnt_CEK_SA, CReq encrypted by AEAD
+with CEK_SA is added to cnt_SA. After the increment of
+sdkCounterStoA, it is sent through the unilateral authenti-
+cated channel bykey_11.
+After receivingCReq, the ACS increments the receiv-
+ing counter, checks that the received Cardholder’s sending
+counterisequaltothereceivingcounter,andsends CRes. As
+with the previousCReq sending, a unilateral authenticated
+channelisestablishedagain ††. Theevent send_challenge,
+which means the sending ofCReq containing secret infor-
+mation, is placed just beforeCReq containing the secret
+information challengeDataEntryis sent.
+After receiving CReq, the ACS verify the valid-
+ity of secret information after verifying the equality of
+acsCounterStoAand sdkCounterStoA,andincrementing
+the value ofacsCounterStoA. If received secret informa-
+††Fromtheviewpointofcryptography,itisconsideredsuﬃcient
+tore-encryptwiththeaforementioned key_11,butthespeciﬁcation
+requirestheunilateralauthenticatedchanneltobeestablishedagain.
+
+===== PDF PAGE 7 =====
+1058
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+tion is valid, the counterinteractionCounter is incre-
+mented and the eventauth_challenge indicates that the
+challenge has been accepted.
+4.3.4 Diﬀerences between default-sdk and split-sdk
+In the case of App-based (split-sdk), we change the
+ﬁrst operation of the Cardholder in 4.3.2 as Ap-
+pendix B. The diﬀerence is generating the timestamp
+sdkSignatureTimestamp and the signature
+sdkServerSignedContent, and that the signature veriﬁ-
+cation keyPb_SDK and its certiﬁcateCertificate_PbSDK
+arealsosenttothe3DSServer. TheDSveriﬁes Pb_SDKand
+sdkServerSignedContent, and sendsAReq to the ACS
+only if the veriﬁcation holds.
+4.4 Formalization of Browser-Based
+4.4.1 Main Process
+For reference numbers of each entity,
+threeDSServerRefNumber, dsReferenceNumber
+and acsReferenceNumber, and for the information on the
+authentication screen UI,UI_Info are generated. Certiﬁ-
+cate Authority (CA)’s signing keyPv_CA and veriﬁcation
+key Pb_CA are generated, and thePb_CA is published. The
+ACS’sprivatekey skey_acs,publickey pkey_acs,andthe
+certiﬁcate Cert_PkACS of pkey_acs are generated.
+Finally, each entity sub-process executes in parallel,
+as Appendix C Lines 123–124.
+4.4.2 AReq/ARes
+Prior to the sending of the AReq from the 3DS Server
+to the DS, the Cardholder informs the 3DS Server
+that he has checked out and the 3DS Server sends
+the threeDSServerTransID to the Cardholder as a re-
+sponse to this. The 3DS Server sends AReq including
+threeDSServerRefNumber, threeDSServerTransID,
+etc. to the DS. After receiving this, the DS generates its
+ownTransactionID dsTransIDandsendsan AReqwiththe
+dsReferenceNumber and dsTransID to the ACS.
+The operation of the ACS upon receiving AReq
+is as Appendix C Lines 79–87. The ACS gener-
+ates its own Transaction ID acsTransID and sends
+ARes containing acsReferenceNumber, acsTransID,
+dsReferenceNumber, dsTransID,
+threeDSServerTransID etc. to the DS. WhenARes is
+sent to the 3DS Server via DS, the 3DS Server sends the
+acsTransIDto the Cardholder.
+4.4.3 CReq/Final CRes
+The operation of the Cardholder upon receiving
+acsTransID is as Appendix C Lines 25–37. Additional
+Data AddData10 is generated and the format of theCReq
+to be sent to the ACS is generated,Base64urlencoding
+is performed and this is used as theCReq. The CReq in-
+cludes the acsTransID and threeDSServerTransID. As
+with App-based, a unilateral authenticated channel is estab-
+lished† and theCReqis sent on the unilateral authenticated
+channel.
+After the ACS receiving theCReqsent from the Card-
+holderanddecodingitusing key_10, Base64urlDecoding
+is performed. Then, it sends the authentication screen infor-
+mation UI_Info to the Cardholder on the same communi-
+cation channel.
+After the Cardholder receivingUI_Info, secret infor-
+mation challengeDataEntry is sent. The ACS that re-
+ceivesthisinformationasintheApp-basedcase,iftheveriﬁ-
+cationissuccessful,incrementsthe interactionCounter,
+and the eventauth_challnge indicates that the challenge
+has been accepted.
+RReq/RRes are sent and received by ACS††, DS and
+3DS Server and ACS sends FinalCRes when RRes are
+received. As with the sending and receiving of CReq,
+Base64urlEncoding is performed before sending to the
+Cardholder. Finally, the authentication ﬂow ends when the
+Cardholder receives the FinalCRes.
+4.5 Formalization of Security Requirements
+4.5.1 Security Veriﬁcation against Man-in-the-Middle At-
+tacks
+See Appendix A Lines 48–52. We formalize the conﬁ-
+dentiality and the resistance to oﬀ-line dictionary attacks
+of secret information (challengeDataEntry). And we
+formalize the authenticity of the Cardholder. It corre-
+sponds to checking if the Cardholder has sent the challenge
+(send_challenge)whenevertheACSauthenticatesachal-
+lenge (auth_challenge). Finally, we formalize whether
+theaboveauthenticityisaninjectioneventrelationship(i.e.,
+whether it is replay attack resistant).
+4.5.2 Security Veriﬁcation against Colluding Attacker
+Models with Relay Servers (3DS Server, DS)
+To verify the security against the colluding attacker model
+with the relay servers (3DS Server, DS), in addition to the
+description of thesecurity requirements against man-in-the-
+middleattacks, thedeﬁnitionofthecommunicationchannel
+in 4.2.1 shall be changed as Appendix D. By changing all
+private communication channels used by the 3DS Server
+and the DS topublic, all communication between these
+two entities can be eavesdropped and tampered with by an
+attacker. In addition, the 3DS Server and the DS identiﬁers
+threeDSServerRefNumberand dsReferenceNumberare
+†Unlike App-based, Browser-based uses the unilateral authen-
+ticated channel that has once been established until the end of the
+session.
+††The handling ofRReq/RRes diﬀers only in whether or not
+sdkTransID is included compared to App-based, hence we omit
+the detailed explanation.
+
+===== PDF PAGE 8 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1059
+Table 1 Results of veriﬁcation against man-in-the-middle attacker model.
+Table 2 Results of veriﬁcation against colluding attacker model with relay servers.
+Table 3 Veriﬁcation environment.
+disclosedinthemainprocess,andthesecretkeyusedbythe
+DS to decrypt device information in the App-based process
+s_ds is also disclosed. These processes correspond to the
+case of collusion with an attacker.
+5. Veriﬁcation Results
+We show the results of the veriﬁcation of the eight security
+requirements (the conﬁdentiality and oﬀ-line dictionary at-
+tackresistanceofsecretinformation,andtheauthenticityand
+replay attack resistance of Cardholder for both the man-in-
+the-middleattackermodelandthecolludingattackermodel)
+for the three authentication ﬂows (App-based (default-sdk),
+App-based(split-sdk)andBrowser-based)inTables1and2.
+The veriﬁcation results show that each of the three authen-
+tication ﬂows satisﬁes the security requirements described
+above. The veriﬁcation environment and execution time of
+the veriﬁcation codes are shown in Tables 3 and 4, respec-
+tively.
+Therefore, it is clariﬁed that Challenge Flow in EMV
+3-D Secure is also secure against strong colluding attackers.
+6. (Non-)NecessityofUnilateralAuthenticatedChannel
+In App-based, data encryption is performed using the sym-
+metrickeygeneratedbyECDHkeyexchangeandaunilateral
+authenticatedchannelisalsoassumedwhensending/receiv-
+ingCReq/CRes. Thisappears,atﬁrstglance,tobearedun-
+dant process. Hence, we examine the security aﬀection if
+the assumption of the unilateral authenticated channel was
+removed. Tables 5 and 6 show the results of the security
+veriﬁcation of App-basedCReq/CReswhen using the pub-
+lic channel instead of the unilateral authenticated channel.
+Although there may be implementation reasons for doubly
+using the unilateral authenticated channel, the results show
+thatthesecuritywasnotaﬀectedeveniftheprotocolismade
+more eﬃcient by using the public channel.
+Forthedetails,pleaserefertotheveriﬁcationcode[34]
+as well as Sect.4.
+6.1 Consideration of Impact of Our Findings on Real-
+World Systems
+If our relaxed scheme that does not require a unilateral au-
+thenticated channel is adopted in an actual system, it is ex-
+pected to reduce latency in establishing the communication
+channel. Our scheme can simply be realized by omitting
+the establishment of the secure channel between the card-
+holder and the ACS in the implementation. In the speciﬁca-
+tion [31], App-basedCReq/CRescommunication shall use
+TLS 1.2 or higher. At ISPEC 2022, Tasopoulos et al. [35]
+presentedareportontheimplementationofTLS1.3(includ-
+ing post-quantum cryptographic primitives). Their evalua-
+tionindicatesthattheECDSA-ECDHEhandshake,whichis
+currently typical for TLS1.3, has a communication volume
+of about 2,300 bytes, which results in a latency of about
+100 milliseconds. In addition, NIST [36] plans to transi-
+tion to post-quantum cryptography in 2030, and it has been
+revealed that Dilithium-Kyber, which is equivalent to NIST
+Level3,hasacommunicationvolumeofabout20,000bytes
+and a latency of about 150 milliseconds in TLS 1.3. On
+the other hand, CNP transactions are executed daily around
+the world, and data exist showing that in 2022, for example
+in Singapore, about 280 million transactions were executed
+annually [37]. If it is possible to reduce the number of TLS
+1.3 connections established in the Challenge Flow in EMV
+3-D Secure, which is executed a large number of times, it
+is expected to reduce latency and server load in the Internet
+
+===== PDF PAGE 9 =====
+1060
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+Table 4 Execution time of veriﬁcation.
+Table 5 Results of veriﬁcation against man-in-the-middle attacker model when unilateral authenti-
+cated channel is removed.
+Table 6 Results of veriﬁcation against colluding attacker model with relay servers when unilateral
+authenticated channel is removed.
+communications.
+7. Conclusion
+In this paper, we presented the ﬁrst formal veriﬁcation for
+Challenge Flow in EMV 3-D Secure. We have shown that
+all of the veriﬁed models of Challenge Flow satisfy all of
+the following security requirements: conﬁdentiality and re-
+sistance to oﬀ-line dictionary attacks of secret information,
+and authenticity and resistance to replay attacks of the card-
+holder, for both the man-in-the-middle attacker model and
+thecolludingattackermodelwithrelayservers(3DSServer,
+DS). In addition, we clariﬁed that, in App-based, even if the
+protocol is made more eﬃcient without assuming a unilat-
+eral authenticated channel, it does not aﬀect the security of
+the protocol.
+Althoughthispaperonlyfocusesonverifyingthespec-
+iﬁcations,itisalsointerestingtoinvestigatesecurityinareas
+outside of the speciﬁcations for EMV 3-D Secure, depend-
+ingonspeciﬁcimplementationsofapplicationsorbrowsers.
+For example, do the services oﬀered by each international
+brand really follow the speciﬁcations? Also, can malicious
+browsersstealthesecretinformationenteredbyauser? Fur-
+thermore, could a website be created that mimics the EMV
+3-D Secure’s authentication screen so that users could enter
+their secret information? Thus, we leave a remaining prob-
+lem for not only security focused on protocol speciﬁcations
+but also security focused on actual use in future work.
+Acknowledgments
+This work was supported by JST, CREST Grant Number
+JPMJCR22M1, Japan.
+References
+[1] K. Watanabe and K. Yoneyama, “Formal veriﬁcation of challenge
+ﬂow in EMV 3-D secure,” Australasian Conference on Information
+Security and Privacy, pp.290–310, Springer, 2024.
+[2] “Enabling Seamless and Secure Payments Worldwide—EMVCo,”
+https://www.emvco.com/ (Accessed on 04/15/2024).
+[3] “EMV ® 3-D Secure—EMVCo,” https://www.emvco.com/emv-
+technologies/3-d-secure/ (Accessed on 04/15/2024).
+[4] “ProVerif,” https://bblanche.gitlabpages.inria.fr/proverif/ (Accessed
+on 04/15/2024).
+[5] “Tamarin prover,” https://tamarin-prover.com/ (Accessed on
+04/15/2024).
+[6] K. Bhargavan, B. Blanchet, and N. Kobeissi, “Veriﬁed models and
+referenceimplementationsfortheTLS1.3standardcandidate,”2017
+IEEESymposiumonSecurityandPrivacy(SP),pp.483–502, IEEE,
+2017.
+[7] C. Shi and K. Yoneyama, “Veriﬁcation of LINE encryption version
+1.0 using ProVerif,” IEICE Trans. Inf. & Syst., vol.E102-D, no.8,
+pp.1439–1448, Aug. 2019.
+[8] H.Sakurada,K.Yoneyama,Y.Hanatani,andM.Yoshida,“Analyzing
+and ﬁxing the QACCE security of QUIC,” Security Standardisation
+Research: Third International Conference, SSR 2016, Gaithersburg,
+MD, USA, 2016, Proceedings 3, pp.1–31, Springer, 2016.
+[9] M.K. Jangid, Y. Zhang, and Z. Lin, “Extrapolating formal analysis
+touncoverattacksinBluetoothpasskeyentrypairing,”NDSS,2023.
+[10] H. Feng, H. Li, X. Pan, Z. Zhao, and T. Cactilab, “A formal analysis
+of the FIDO UAF protocol,” NDSS, 2021.
+
+===== PDF PAGE 10 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1061
+[11] H.Feng,J.Guan,H.Li,X.Pan,andZ.Zhao,“FIDOgetsveriﬁed: A
+formalanalysisoftheuniversalauthenticationframeworkprotocol,”
+IEEE Trans. Dependable Secure Comput., vol.20, no.5, pp.4291–
+4310, 2022.
+[12] J.Guan,H.Li,H.Ye,andZ.Zhao,“AformalanalysisoftheFIDO2
+protocols,”EuropeanSymposiumonResearchinComputerSecurity,
+pp.3–21, Springer, 2022.
+[13] “EMV ® Contact Chip—EMVCo,” https://www.emvco.com/emv-
+technologies/emv-contact-chip/ (Accessed on 04/15/2024).
+[14] “EMV ®ContactlessChip—EMVCo,”https://www.emvco.com/emv-
+technologies/emv-contactless-chip/ (Accessed on 04/15/2024).
+[15] J.DeRuiterandE.Poll,“FormalanalysisoftheEMVprotocolsuite,”
+TheoryofSecurityandApplications: JointWorkshop,TOSCA2011,
+pp.113–129, Springer, 2012.
+[16] D. Basin, R. Sasse, and J. Toro-Pozo, “Card brand mixup attack:
+Bypassing the PIN in non-Visa cards by using them for Visa trans-
+actions,” 30th USENIX Security Symposium (USENIX Security),
+pp.179–194, USENIX Association, Aug. 2021.
+[17] D. Basin, R. Sasse, and J. Toro-Pozo, “The EMV standard: Break,
+ﬁx, verify,” 2021 IEEE Symposium on Security and Privacy (SP),
+pp.1766–1781, IEEE, 2021.
+[18] D.Basin,P.Schaller,andJ.Toro-Pozo,“Inducingauthenticationfail-
+urestobypasscreditcardPINs,”32rdUSENIXSecuritySymposium
+(USENIX Security), 2023.
+[19] “SETSecureElectronicTransactionSpeciﬁcationSETBook3: For-
+mal Protocol Deﬁnition,” https://www.maithean.com/docs/set_bk3.
+pdf (Accessed on 04/15/2024).
+[20] D. Bolignano, “Towards the formal veriﬁcation of electronic com-
+merce protocols,” Proc. 10th Computer Security Foundations Work-
+shop, pp.133–146, 1997.
+[21] G.Bella,F.Massacci,L.C.Paulson,andP.Tramontano,“Formalver-
+iﬁcationofcardholderregistrationinSET,”ESORICS2000,pp.159–
+174, Springer, 2000.
+[22] “Welcome! | the coq proof assistant,” https://coq.inria.fr/ (Accessed
+on 04/15/2024).
+[23] “Isabelle,” https://isabelle.in.tum.de/ (Accessed on 04/15/2024).
+[24] V. Pasupathinathan, J. Pieprzyk, H. Wang, and J.Y. Cho, “Formal
+analysis of card-based payment systems in mobile devices,” ACSW
+Frontiers 2006, pp.213–220, 2006.
+[25] M.A. Ali and A. van Moorsel, “Designed to be broken: A reverse
+engineeringstudyofthe3Dsecure2.0paymentprotocol,”FC2019,
+pp.201–221, 2019.
+[26] P. Jarupunphol, “A critical analysis of 3-D Secure,” E-COM-03,
+pp.87–94, 2003.
+[27] M. Assora and A. Shirvani, “Enhancing the security and eﬃciency
+of 3-D secure,” ISC 2006, pp.489–501, 2006.
+[28] S.J.MurdochandR.Anderson,“VeriﬁedbyVisaandMasterCardSe-
+cureCode: Or, how not to design authentication,” FC 2010, pp.336–
+342, 2010.
+[29] V.S. Shah, “Blockchain driven three domain secure 2.x in digital
+payment services architecture,” Services–SERVICES 2020: 16th
+World Congress, Proceedings 16, pp.11–27, Springer, 2020.
+[30] J.C.C. Association, “EMV 3-D Secure Installation Guide (version
+1.3),” 2023 (in Japanese).
+[31] “EMV ® Speciﬁcations&AssociatedBulletinsArchive—EMVCo,”
+https://www.emvco.com/speciﬁcations/ (Accessed on 04/15/2024).
+[32] D. Dolev and A. Yao, “On the security of public key protocols,”
+IEEE Trans. Inf. Theory, vol.29, no.2, pp.198–208, 1983.
+[33] “ProVerif 2.05: Automatic Cryptographic Protocol Veriﬁer, User
+Manual and Tutorial,” https://bblanche.gitlabpages.inria.fr/proverif/
+manual.pdf (Accessed on 12/19/2024).
+[34] “GitHub-xk-watanabe/EMV_3-D_Secure_ProVerif,”https://github.
+com/xk-watanabe/EMV_3-D_Secure_ProVerif (Accessed on 04/15/
+2024).
+[35] G. Tasopoulos, J. Li, A.P. Fournaris, R.K. Zhao, A. Sakzad, and
+R. Steinfeld, “Performance evaluation of post-quantum TLS 1.3
+on resource-constrained embedded systems,” International Confer-
+ence on Information Security Practice and Experience, pp.432–451,
+Springer, 2022.
+[36] “National Institute of Standards and Technology,” https://www.nist.
+gov/ (Accessed on 12/22/2024).
+[37] “H1 2023 Retail Payment Statistics for Selected Payment Systems
+and Industries in Singapore,” https://www.mas.gov.sg/-/media/mas/
+sectors/payments/2023-h1-retail-payment-statistics.pdf (Accessed
+on 12/22/2024).
+Appendix A: Veriﬁcation Code of App-Based (default-
+sdk)
+The part of the App-based (default-sdk) veriﬁcation code
+that is relevant to the explanation in the main part of this
+paper is as follows.
+1 (* Channel Declaration *)
+2 free c: channel .
+3 free C_TDSServer : channel [ private ].
+4 free TDSServer_DS : channel [ private ].
+5 free DS_ACS : channel [ private ].
+6 free C_ACS : channel .
+7
+8 (* Symmetric Key Encryption and Decryption
+*)
+9 type key.
+10 type nonce .
+11 fun ngen (key , nat) : nonce .
+12 fun senc (key , nonce , bitstring ) : bitstring .
+13 fun sdec (key , nonce , bitstring ) : bitstring .
+14 equation forall k:key , n:nonce , m: bitstring ;
+sdec (k,n, senc (k,n,m)) = m.
+15 equation forall k:key , n:nonce , m: bitstring ;
+senc (k,n, sdec (k,n,m)) = m.
+16
+17 (* Message Authentication Code (MAC) *)
+18 fun mac(key , bitstring ): bitstring .
+19
+20 (* Authenticated Encryption with Associated
+Data ( AEAD ) *)
+21 letfun aeadenc (k:key , n:nonce , plaintext :
+bitstring ) =
+22 ( senc (k,n, plaintext ), mac(k ,(n, senc (k,n,
+plaintext )))).
+23 letfun aeaddec (k:key , n:nonce , ciphertext :
+bitstring , tag: bitstring ) =
+24 let (= tag) =mac(k ,(n, ciphertext )) in
+25 let plaintext : bitstring = sdec (k,n,
+ciphertext ) in
+26 plaintext .
+27
+28 ...
+29
+30 (* Digital Certificate *)
+31 fun gencert_spk (spkey , sskey ): bitstring .
+32 reduc forall a:spkey , b: sskey ;
+checkcert_spk (a, gencert_spk (a,b), spk(b
+)) = true .
+33 fun gencert_pk (pkey , sskey ): bitstring .
+34 reduc forall a: pkey , b: sskey ; checkcert_pk
+(a, gencert_pk (a,b), spk(b)) = true .
+35
+36 (* Functions for Making Natural Numbers *)
+37 reduc forall x:nat; nat_init (x) = x.
+38
+39 ...
+40
+
+===== PDF PAGE 11 =====
+1062
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+41 (* Challenge Data ( secret for attacker ) *)
+42 free challengeDataEntry : bitstring [ private ].
+43
+44 (* Events *)
+45 event send_challenge ( TransID ).
+46 event auth_challenge ( TransID ).
+47
+48 (* Security to be verified *)
+49 query attacker ( challengeDataEntry ).
+50 weaksecret challengeDataEntry .
+51 query i: TransID ; event ( auth_challenge (i))==>
+event ( send_challenge (i)).
+52 query i: TransID ; inj - event ( auth_challenge (i)
+)==>inj - event ( send_challenge (i)).
+53
+54
+55 let Cardholder ( deviceInfo : bitstring ,
+sdkReferenceNumber : bitstring , p_ds :pkey ,
+Pb_DSCA :spkey , Pb_CA : spkey )=
+56 (* Generate the SDK Transaction ID *)
+57 new sdkTransID : TransID ;
+58 (* Encrypt the Device Information using
+the public key of the DS *)
+59 let sdkEncData = aenc ( deviceInfo , p_ds )
+in
+60 (* Prepare the 3DS SDK to ACS secure
+channel *)
+61 new dC: eskey ;(* Secretkey for 3DS SDK
+*)
+62 let QC = smult (dC ,G) in (* QC : SDK
+Ephemeral Public Key *)
+63 (* Additional Data *)
+64 new AddData0 : bitstring ;
+65 (* Send the necessary information to 3DS
+Server *)
+66 out( C_TDSServer ,( sdkEncData ,
+sdkReferenceNumber , sdkTransID ,QC ,
+AddData0 ));
+67
+68 ...
+69
+70 (* Complete the ACS to 3DS SDK secure
+channel *)
+71 if checkcert_spk (Pb_ACS , Cert_PbACS ,
+Pb_DSCA ) then
+72 if checksign (( acsURL ,QT ,QC),
+acsSignedContent , Pb_ACS ) then
+73 let CEK_SA = GenToKey ( smult (dC ,QT)) in
+74 (* Establish a secure link to ACS *)
+75 in(C_ACS ,( pkey_acs :pkey , Cert_PkACS :
+bitstring ));
+76 if checkcert_pk ( pkey_acs , Cert_PkACS ,
+Pb_CA ) then
+77 (* Generate one - sided authenticated key
+between Cardholder and ACS *)
+78 new key_11 :key;
+79 let key_11_enc = aenckey (key_11 , pkey_acs
+) in out(C_ACS , key_11_enc );
+80 (* Prepare for CReq *)
+81 let sdkCounterAtoS = nat_init (0) in
+82 let sdkCounterStoA = nat_init (0) in
+83 (* Additonal Data *)
+84 new AddData11 : bitstring ;
+85 (* Send the CReq to ACS *)
+86 let cnt_11 = nat_init (0) in
+87 let cnt_CEK_SA = nat_init (0) in
+88 let CReq_11 = aeadenc (key_11 , ngen (key_11
+, cnt_11 ),aeadenc (CEK_SA , ngen (CEK_SA ,
+cnt_CEK_SA ) ,(CReq , acsTransID ,
+sdkCounterStoA , sdkTransID ,
+threeDSServerTransID , AddData11 ))) in
+89 let sdkCounterStoA = sdkCounterStoA + 1
+in
+90 if sdkCounterStoA <> 0 then
+91 out(C_ACS , CReq_11 );
+92
+93 ...
+94
+95 (* Establish a secure link to ACS *)
+96 in(C_ACS ,( pkey_acs ’: pkey , Cert_PkACS ’:
+bitstring ));
+97 if checkcert_pk ( pkey_acs ’, Cert_PkACS ’,
+Pb_CA ) then
+98 (* Generate one - sided authenticated key
+between Cardholder and ACS *)
+99 new key_16 :key;
+100 let key_16_enc = aenckey (key_16 , pkey_acs
+) in out(C_ACS , key_16_enc );
+101 (* Additional Data *)
+102 new AddData15 : bitstring ;
+103 (* Send the CReq with Challenge Data to
+the ACS *)
+104 let cnt_16 = nat_init (0) in
+105 let cnt_CEK_SA = cnt_CEK_SA + 1 in
+106 let CReq_16 = aeadenc (key_16 , ngen (key_16
+, cnt_16 ),aeadenc (CEK_SA , ngen (CEK_SA ,
+cnt_CEK_SA ) ,(CReq , acsTransID ,
+challengeDataEntry , sdkCounterStoA ,
+sdkTransID , threeDSServerTransID ,
+AddData15 ))) in
+107 let sdkCounterStoA = sdkCounterStoA + 1
+in
+108 if sdkCounterStoA <> 0 then
+109 event send_challenge ( acsTransID );
+110 out(C_ACS , CReq_16 );
+111
+112 ...
+113
+114 0.
+115
+116 let TDSServer ( threeDSServerRefNumber :
+bitstring )=
+117 (* Receive the necessary information for
+AReq from Cardholder *)
+118 in( C_TDSServer ,( sdkEncData : bitstring ,
+sdkReferenceNumber : bitstring ,
+sdkTransID : TransID ,QC:Gen ,
+AddData_SDK : bitstring ));
+119 (* Generate the 3DS Server Transaction
+ID *)
+120 new threeDSServerTransID : TransID ;
+121 (* Additional Data *)
+122 new AddData : bitstring ;
+123 let AddData5 = ( AddData_SDK , AddData ) in
+124 (* Send AReq to DS *)
+125 out( TDSServer_DS ,( AReq , sdkEncData ,
+sdkReferenceNumber , sdkTransID ,
+threeDSServerRefNumber ,
+threeDSServerTransID ,QC , AddData5 ));
+126
+127 ...
+128
+129 .
+130
+131
+132 let DS( dsReferenceNumber : bitstring , s_ds : skey
+)=
+133
+134 ...
+135
+
+===== PDF PAGE 12 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1063
+136 .
+137
+138
+139 let ACS( acsReferenceNumber : bitstring , acsURL :
+bitstring , Pb_ACS :spkey , Pv_ACS :sskey ,
+Cert_PbACS : bitstring , pkey_acs :pkey ,
+skey_acs :skey , Cert_PkACS : bitstring )=
+140 (* Receive AReq from DS *)
+141 in(DS_ACS ,(= AReq , deviceInfo : bitstring ,
+dsReferenceNumber : bitstring ,
+dsTransID : TransID , sdkReferenceNumber
+: bitstring , sdkTransID : TransID ,
+threeDSServerRefNumber : bitstring ,
+threeDSServerTransID : TransID ,QC:Gen ,
+AddData6 : bitstring ));
+142 (* Generate the ACS Transaction ID *)
+143 new acsTransID : TransID ;
+144 (* *************************** *)
+145 (* Suppose that the ACS determines that
+additional certification is required
+. ( Transaction Status = ’C’ ) *)
+146 (* *************************** *)
+147 (* Set up the ACS to 3DS SDK secure
+channel *)
+148 new dT: eskey ;
+149 let QT = smult (dT ,G) in
+150 let acsSignedContent = sign (( acsURL ,QT ,
+QC),Pv_ACS ) in
+151 (* Key Agreement with SDK *)
+152 let CEK_AS = GenToKey ( smult (dT ,QC)) in
+153 (* Zero the channel counters
+acsCounterAtoS and acsCounterStoA *)
+154 let acsCounterAtoS = nat_init (0) in
+155 let acsCounterStoA = nat_init (0) in
+156 (* Additional Data *)
+157 new AddData7 : bitstring ;
+158 (* Send ARes to DS *)
+159 out(DS_ACS ,( ARes , acsReferenceNumber ,
+acsSignedContent , acsTransID ,acsURL ,
+Cert_PbACS , dsReferenceNumber ,
+dsTransID , sdkTransID ,
+threeDSServerTransID ,QT ,Pb_ACS ,
+AddData7 ));
+160
+161 ...
+162
+163 (* Receive the CReq from SDK *)
+164 in(C_ACS ,( ciphertext_17 : bitstring , tag_17
+: bitstring ));
+165 let cnt_16 = nat_init (0) in
+166 let cnt_CEK_AS = cnt_CEK_AS + 1 in
+167 let ( ciphertext_17 ’: bitstring ,tag_17 ’:
+bitstring ) = aeaddec (key_16 , ngen (
+key_16 , cnt_16 ),ciphertext_17 , tag_17 )
+in
+168 let (= CReq ,= acsTransID ,
+challengeDataEntry ’: bitstring ,
+sdkCounterStoA :nat ,= sdkTransID ,=
+threeDSServerTransID , AddData15 :
+bitstring ) = aeaddec (CEK_AS , ngen (
+CEK_AS , cnt_CEK_AS ),ciphertext_17 ’,
+tag_17 ’) in
+169 if sdkCounterStoA = acsCounterStoA then
+170 let acsCounterStoA = acsCounterStoA + 1
+in
+171 if acsCounterStoA <> 0 then
+172 (* Verify the challenge data from SDK *)
+173 if challengeDataEntry ’ =
+challengeDataEntry then
+174 let interactionCounter =
+interactionCounter + 1 in
+175 event auth_challenge ( acsTransID );
+176
+177 ...
+178
+179 .
+180
+181 process
+182 (
+183 ...
+184
+185 (* Parallel execution of processes *)
+186 ((! Cardholder ( deviceInfo ,
+sdkReferenceNumber ,p_ds , Pb_DSCA ,
+Pb_CA ))|(! TDSServer (
+threeDSServerRefNumber ))|(! DS(
+dsReferenceNumber , s_ds ))|(! ACS(
+acsReferenceNumber ,acsURL ,Pb_ACS ,
+Pv_ACS , Cert_PbACS , pkey_acs , skey_acs ,
+Cert_PkACS )))
+187 )
+Appendix B: Diﬀenrences between default-sdk and
+split-sdk
+The key point of the diﬀences of operation of Cardholder is as
+follows.
+1 new sdkTransID : TransID ;
+2
+3 let sdkEncData = aenc ( deviceInfo , p_ds ) in
+4
+5 new dC: eskey ;
+6 let QC = smult (dC ,G) in
+7
+8 new sdkSignatureTimestamp : Timestamp ;
+9 let sdkServerSignedContent = sign ((
+sdkReferenceNumber , sdkSignatureTimestamp
+, sdkTransID , splitSdkServerID ),Pv_SDK ) in
+10
+11 new AddData0 : bitstring ;
+12
+13 out( C_TDSServer ,( Cert_PbSDK ,Pb_SDK ,
+sdkEncData , sdkReferenceNumber ,
+sdkServerSignedContent ,
+sdkSignatureTimestamp , sdkTransID ,
+splitSdkServerID ,QC , AddData0 ));
+Appendix C: Veriﬁcation Code of Browser-Based
+The part of the Browser-based veriﬁcation code that is relevant to
+the explanation in the main part of this paper is as follows.
+1 ...
+2
+3 (* Base64url Encoding and Decoding *)
+4 fun Base64urlenc ( bitstring ): bitstring .
+5 reduc forall m: bitstring ; Base64urldec (
+Base64urlenc (m))=m.
+6
+7 ...
+8
+9 (* Challenge Data ( secret for attacker ) *)
+10 free challengeDataEntry : bitstring [ private ].
+11
+12 (* Events *)
+
+===== PDF PAGE 13 =====
+1064
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.8 AUGUST 2025
+13 event send_challenge ( TransID ).
+14 event auth_challenge ( TransID ).
+15
+16 (* Security to be verified *)
+17 query attacker ( challengeDataEntry ).
+18 weaksecret challengeDataEntry .
+19 query i: TransID ; event ( auth_challenge (i))==>
+event ( send_challenge (i)).
+20 query i: TransID ; inj - event ( auth_challenge (i)
+)==>inj - event ( send_challenge (i)).
+21
+22 let Cardholder ( Pb_CA : spkey )=
+23 ...
+24
+25 (* Additional Data *)
+26 new AddData10 : bitstring ;
+27 (* Base64url - encode the CReq message *)
+28 let CReq_10 = Base64urlenc (( CReq ,
+acsTransID , threeDSServerTransID ,
+AddData10 )) in
+29 (* Establish One - sided Authenticated
+Channel *)
+30 in(C_ACS ,( pkey_acs :pkey , Cert_PkACS :
+bitstring ));
+31 if checkcert ( pkey_acs , Cert_PkACS , Pb_CA )
+then
+32 (* Generate session key between
+Cardholder and ACS *)
+33 new key_10 :key;
+34 let key_10_enc = aenckey (key_10 , pkey_acs
+) in out(C_ACS , key_10_enc );
+35 (* Send CReq to the ACS *)
+36 let cnt_10 = nat_init (0) in
+37 out(C_ACS , aeadenc (key_10 , ngen (key_10 ,
+cnt_10 ),CReq_10 ));
+38
+39 (* Receive ACSUI information *)
+40 in(C_ACS ,( ciphertext_12 : bitstring , tag_12
+: bitstring ));
+41 let cnt_10 = cnt_10 + 1 in
+42 let UI_Info = aeaddec (key_10 , ngen (key_10
+, cnt_10 ),ciphertext_12 , tag_12 ) in
+43
+44 (* Send the challenge data to the ACS *)
+45 event send_challenge ( acsTransID );
+46 let cnt_10 = cnt_10 + 1 in
+47 out(C_ACS , aeadenc (key_10 , ngen (key_10 ,
+cnt_10 ), challengeDataEntry ));
+48
+49 (* Receive FinalCRes *)
+50 in(C_ACS ,( ciphertext_22 : bitstring , tag_22
+: bitstring ));
+51 let cnt_10 = cnt_10 + 1 in
+52 let (= CRes , transStatus :bool ,= acsTransID
+,= threeDSServerTransID , AddData21 :
+bitstring ) = Base64urldec ( aeaddec (
+key_10 , ngen (key_10 , cnt_10 ),
+ciphertext_22 , tag_22 )) in
+53 if transStatus then
+54 0.
+55
+56 let TDSServer ( threeDSServerRefNumber :
+bitstring )=
+57 ...
+58
+59 (* Additional Data *)
+60 new AddData6 : bitstring ;
+61 (* Format and send the AReq to the DS *)
+62 out( TDSServer_DS ,( AReq ,
+threeDSServerRefNumber ,
+threeDSServerTransID , AddData6 ));
+63
+64 ...
+65
+66 .
+67
+68
+69 let DS( dsReferenceNumber : bitstring )=
+70
+71 ...
+72
+73 .
+74
+75
+76 let ACS( acsReferenceNumber : bitstring ,
+Cert_PkACS : bitstring , pkey_acs :pkey ,
+skey_acs :skey , UI_Info : bitstring )=
+77 ...
+78
+79 (* Generate the ACS Transaction ID *)
+80 new acsTransID : TransID ;
+81 (* *************************** *)
+82 (* Suppose that the ACS determines that
+additional certification is required
+. ( Transaction Status = ’C’ ) *)
+83 (* *************************** *)
+84 (* Additional Data *)
+85 new AddData8 : bitstring ;
+86 (* Send ARes to the DS *)
+87 out(DS_ACS ,( ARes , acsReferenceNumber ,
+acsTransID , dsReferenceNumber ,
+dsTransID , threeDSServerTransID ,
+AddData8 ));
+88
+89 ...
+90
+91 (* Receive and decode CReq message from
+Cardholder *)
+92 in(C_ACS ,( ciphertext_11 : bitstring , tag_11
+: bitstring ));
+93 let cnt_10 = nat_init (0) in
+94 let (= CReq ,= acsTransID ,=
+threeDSServerTransID , AddData10 :
+bitstring ) = Base64urldec ( aeaddec (
+key_10 , ngen (key_10 , cnt_10 ),
+ciphertext_11 , tag_11 )) in
+95 (* Set the interactioncounter Zero *)
+96 let interactionCounter = nat_init (0) in
+97
+98 (* Send the ACSUI information to
+Cardholder ( Browser ) *)
+99 let cnt_10 = cnt_10 + 1 in
+100 out(C_ACS , aeadenc (key_10 , ngen (key_10 ,
+cnt_10 ),UI_Info ));
+101
+102 (* Receive the challengedata from
+Cardholder ( Browser ) *)
+103 in(C_ACS ,( ciphertext_15 : bitstring , tag_15
+: bitstring ));
+104 let cnt_10 = cnt_10 + 1 in
+105 let challengeDataEntry ’: bitstring =
+aeaddec (key_10 , ngen (key_10 , cnt_10 ),
+ciphertext_15 , tag_15 ) in
+106 if challengeDataEntry =
+challengeDataEntry ’ then
+107 let interactionCounter =
+interactionCounter + 1 in
+108 event auth_challenge ( acsTransID );
+109
+110 ...
+
+===== PDF PAGE 14 =====
+WATANABE and YONEYAMA: FORMAL VERIFICATION OF CHALLENGE FLOW IN EMV 3-D SECURE AND ITS IMPROVEMENT
+1065
+111
+112 (* Additional Data *)
+113 new AddData21 : bitstring ;
+114 (* Send the Final CRes to Cardholder (
+Browser ) *)
+115 let cnt_10 = cnt_10 + 1 in
+116 out(C_ACS , aeadenc (key_10 , ngen (key_10 ,
+cnt_10 ),Base64urlenc (( CRes ,
+transStatus , acsTransID ,
+threeDSServerTransID , AddData21 )))).
+117
+118
+119 process
+120 (
+121 ...
+122
+123 (* Parallel execution of processes *)
+124 ((! Cardholder ( Pb_CA ))|(! TDSServer (
+threeDSServerRefNumber ))|(! DS(
+dsReferenceNumber ))|(! ACS(
+acsReferenceNumber , Cert_PkACS ,
+pkey_acs , skey_acs , UI_Info )))
+125 )
+Appendix D: Declaration of Channels in Case of Veri-
+ﬁcation Against Colluding Attackers
+Thedeclarationofchannelsincaseofveriﬁcationagainstcolluding
+attackers is as follows.
+1 free c: channel .
+2 free C_TDSServer : channel .
+3 free TDSServer_DS : channel .
+4 free DS_ACS : channel .
+5 free C_ACS : channel .
+KakeruWatanabe receivedtheB.E.degree
+from Ibaraki University, Ibaraki, Japan in 2024.
+He is currently a graduate student in cryptogra-
+phy at Ibaraki University.
+Kazuki Yoneyama received the B.E.,
+M.E. and Ph.D. degrees from the University
+of Electro-Communications, Tokyo, Japan, in
+2004, 2006 and 2008, respectively. He was a
+researcherofNTTSecurePlatformLaboratories
+from2009to2015. Heispresentlyengagedinre-
+searchoncryptographyattheIbarakiUniversity,
+since 2015. He is a member of the International
+Association for Cryptologic Research (IACR),
+IPSJ and JSIAM.

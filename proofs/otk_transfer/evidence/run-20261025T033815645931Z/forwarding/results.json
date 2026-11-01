@@ -1,0 +1,62 @@
+{
+  "normal_B_completes": {
+    "type": "exists-trace",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "normal_C_completes": {
+    "type": "exists-trace",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "transfer_after_C_exhaustion_completes": {
+    "type": "exists-trace",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "provider_per_sender_issuance_limit": {
+    "type": "all-traces",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "provider_issues_each_OTK_once": {
+    "type": "all-traces",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "receiver_consumes_each_OTK_once": {
+    "type": "all-traces",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "accepted_request_has_matching_token_and_decryption": {
+    "type": "all-traces",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "long_term_keys_not_disclosed": {
+    "type": "all-traces",
+    "actual": "verified",
+    "expected": "verified",
+    "matches_expected": true
+  },
+  "successful_use_requires_issue_to_same_sender": {
+    "type": "all-traces",
+    "actual": "falsified",
+    "expected": "falsified",
+    "matches_expected": true
+  },
+  "sender_uses_at_most_one_distinct_OTK": {
+    "type": "all-traces",
+    "actual": "falsified",
+    "expected": "falsified",
+    "matches_expected": true
+  }
+}
