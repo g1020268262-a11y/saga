@@ -1,0 +1,363 @@
+PDF PAGE 1
+IEICE TRANS. INF. & SYST., VOL.E92–D, NO.5 MA Y 2009
+1033
+LETTER Special Section on Formal Approach
+Comparison of the Expressive Power of Language-Based Access
+Control Models∗
+Y oshiaki TAKATA†a) and Hiroyuki SEKI††b), Members
+SUMMARY This paper compares the expressive power of ﬁve
+language-based access control models. We show that the expressive powers
+are incomparable between any pair of history-based access control, regular
+stack inspection and shallow history automata. Based on these results, we
+introduce an extension of HBAC, of which expressive power exceeds that
+of regular stack inspection.
+key words: history-based access control, stack inspection, shallow history
+automaton, expressive power
+1. Introduction
+To protect secret information against malicious access, it is
+desirable to incorporate a runtime access control mechanism
+in a host language. This approach is called language-based
+access control, and a few models have been proposed [1],
+[5], [6], [9]. A common feature of these models is that the
+history of execution such as method invocation and resource
+access is used for access control. Stack inspection provided
+in the Java virtual machine [6] is one of the best-known such
+control mechanisms. In stack inspection, a set of permis-
+sions is assigned statically to each method and when the
+control reaches a statement for checking permissions, it is
+examined whether or not every method on the runtime stack
+has the permissions speciﬁed by the statement. Stack in-
+spection has been extended in several ways. For example,
+stack pattern can be speciﬁed by LTL formula in [7] and
+regular language in [4], [8]. Automatic veriﬁcation meth-
+ods for a program with stack inspection are also discussed
+in [4], [7], [8]. Abadi and Fournet [1] pointed out the prob-
+lem of stack inspection, which completely cancels the ef-
+fect of the ﬁnished method execution. They proposed a
+new control mechanism called history-based access control
+(HBAC). In HBAC, current permissions are modiﬁed each
+time a method is invoked, and they may depend on all the
+methods executed so far. V eriﬁcation of HBAC programs
+is also discussed in [2], [3], [11]. Meanwhile, Schneider [9]
+deﬁnes security automata , and later Fong [5] deﬁnes shal-
+low history automata as a subclass of ﬁnite-state security
+automata. Fong showed that the expressive powers of shal-
+low history automata and regular stack inspection are in-
+Manuscript received July 22, 2008.
+†The author is with Kochi University of Technology, Kami-shi,
+782–8502 Japan.
+††The author is with Nara Institute of Science and Technology,
+Ikoma-shi, 630–0192 Japan.
+∗This is a companion paper of [11].
+a) E-mail: takata.yoshiaki@kochi-tech.ac.jp
+b) E-mail: seki@is.naist.jp
+DOI: 10.1587/transinf.E92.D.1033
+comparable. However, the relations among the control mod-
+els mentioned so far have not been fully clariﬁed.
+In this paper, we ﬁrst deﬁne ﬁve of the existing con-
+trol mechanisms in a simple and uniform framework based
+on control ﬂow graph. Then, we compare the expressive
+power of these mechanisms in terms of trace-based seman-
+tics. Since these mechanisms are used for pruning execution
+traces that violate a policy, we think the comparison should
+be based on how they can alter the trace set of a host pro-
+gram. As a result, we show that the expressive powers are
+incomparable between any pair of history-based access con-
+trol, regular stack inspection and shallow history automata.
+Based on these results, we introduce an extension of HBAC,
+of which expressive power exceeds that of regular stack in-
+spection.
+2. Deﬁnitions
+2.1 HBAC Program
+An HBAC program is a tupleπ= (Mhd, f
+0,{G f | f∈Mhd},
+PRM) where Mhd is a ﬁnite set of method names, f0∈Mhd
+is the main method name, G f ( f ∈Mhd)i sa control ﬂow
+graph of f deﬁned below and PRM is a ﬁnite set of per-
+missions. G f is a directed graph ( NO f, TG f, IS f, IT f, SP f )
+where NO f is a ﬁnite set of nodes, TG f ⊆NO f×NO f is a set
+of transfer edges, IS f : NO f →{callg[PG, PA]| g∈Mhd,
+PG⊆SP f, PA⊆SP f}∪{check[P]| P⊆PRM}∪{return, nop}
+is a labeling function for nodes, IT f ⊆NO f is a set of initial
+nodes, which represents the set of entry points of method f ,
+and SP f ⊆PRM is a subset of permissions assigned to f be-
+fore runtime ( static permissions ). NO f is divided into four
+subsets by IS f as follows.
+•IS f (n)= callg[PG, PA]. Node n is a call node that rep-
+resents a call to method g. Parameters PG and PA are
+called grant permissions and accept permissions ,r e -
+spectively.
+•IS f (n)= return. Node n is a return node that represents
+a return to the caller method.
+•IS f (n)= check[P] where P⊆PRM. Node n is a check
+node that represents a test for the current permissions.
+For p∈PRM, check[{p}] is abbreviated as check[p].
+•IS f (n)= nop. Node n is a nop node with no eﬀect.
+We write n→n′ for n, n′∈NO f if⟨n, n′⟩∈TG f .L e t NO=⋃
+f∈Mhd NO f and IS = ⋃
+f∈Mhd IS f .F o r n ∈NO,a l s ol e t
+in(n)={ n′| n′→n} and out(n)={ n′| n→n′}.
+Copyright c⃝ 2009 The Institute of Electronics, Information and Communication Engineers
+
+PDF PAGE 2
+1034
+IEICE TRANS. INF. & SYST., VOL.E92–D, NO.5 MA Y 2009
+In the ﬁgures in this paper, a dotted arrow denotes a
+transfer edge and a solid arrow connects between a call node
+and the initial node(s) of the callee method. Also, a method
+is surrounded by a rectangle and a set beside the rectangle
+denotes the static permissions of the method.
+A state of πis a pair ⟨n, C⟩ of a node n ∈NO and
+a subset of permissions C ⊆PRM.A conﬁguration ofπ
+is a ﬁnite sequence of states, which is also called a stack.
+The concatenation of state sequences ξ
+1 andξ2 is denoted
+asξ1 :ξ2. The semantics of an HBAC program is deﬁned
+by the transition relation ⇒over the set of conﬁgurations,
+which is the least relation satisfying the following rules.
+IS(n)= callg[PG, PA], n′∈ITg
+ξ:⟨n, C⟩⇒ξ:⟨n, C⟩ :⟨n′, (C∪PG)∩SPg⟩
+IS(m)= return, IS(n)= callg[PG, PA], n→n′
+ξ:⟨n, C⟩ :⟨m, C′⟩⇒ξ:⟨n′, C∩(C′∪PA)⟩
+IS(n)= check[P], P⊆C, n→n′
+ξ:⟨n, C⟩⇒ξ:⟨n′, C⟩
+IS(n)= nop, n→n′
+ξ:⟨n, C⟩⇒ξ:⟨n′, C⟩
+The rule of nop for the other program subclasses in the fol-
+lowing subsections is the same as above and will be omit-
+ted below. For a conﬁguration ⟨n1, C1⟩ : ... : ⟨nℓ, Cℓ⟩,
+the stack top is ⟨nℓ, Cℓ⟩ where nℓ and Cℓ are called the
+current program point and the current permissions of the
+conﬁguration, respectively. The trace set ofπis deﬁned
+as [ [π]]={ n0n1... nk | n0 ∈IT f0 , ∃C1,..., Ck ⊆PRM,
+∃ξ1,...,ξk∈(NO×2PRM )∗,ξi :⟨ni, Ci⟩⇒ξi+1 :⟨ni+1, Ci+1⟩
+for 0 ≤i< k, C0 = SP f0 , ξ0 =ε}, whereεdenotes the
+empty sequence. For a set S of sequences, let preﬁx( S ) de-
+note the set of all nonempty preﬁxes of sequences in S .
+2.2 JVM and R-SI Programs
+A program with Java stack inspection (abbreviated as JVM
+program) has a form π= (Mhd, f0,{G f | f ∈Mhd}, PRM,
+PRV) similar to an HBAC program such that G f = (NO f,
+TG f, IS f, IT f, SP f ) where each component of G f is the same
+as that of an HBAC program, except that the label IS f (n)o f
+each call node n is simply callg (g∈Mhd) without PG or PA,
+and a set of privileged nodes PRV⊆NO is speciﬁed. The
+semantics ofπis deﬁned as follows. (The rule for check is
+the same as HBAC programs.)
+IS(n)= callg, n /nelementPRV, n′∈ITg
+ξ:⟨n, C⟩⇒ξ:⟨n, C⟩ :⟨n′, C∩SPg⟩
+IS(n)= callg, n∈PRV∩NO f, n′∈ITg
+ξ:⟨n, C⟩⇒ξ:⟨n, C⟩ :⟨n′, SP f ∩SPg⟩
+IS(m)= return, n→n′
+ξ:⟨n, C⟩ :⟨m, C′⟩⇒ξ:⟨n′, C⟩
+A regular stack inspection (R-SI) programπ= (Mhd,
+f0,{G f | f∈Mhd}) is introduced in [4], [8] as an extension
+of a JVM program where G f = (NO f, TG f, IS f, IT f ). Its
+semantics is given by the following rules.
+IS(n)= callg, n′∈ITg
+ξ: n⇒ξ: n : n′
+IS(m)= return, n→n′
+ξ: n : m⇒ξ: n′
+IS(n)= check[R],ξ: n∈R, n→n′
+ξ: n⇒ξ: n′
+where R⊆(NO)∗is a regular language over NO. The trace
+set of a JVM or R-SI program is deﬁned in the same way as
+that of an HBAC program except that current permissions
+are missing in R-SI.
+2.3 F-SA and SHA Programs
+A ﬁnite security automaton (F-SA) [9] is just a deterministic
+ﬁnite automaton (DFA) M= (Σ, Q, q
+0,δ) without ﬁnal states
+whereΣis a ﬁnite set of input symbols, Q is a ﬁnite set of
+states, q0 ∈Q is the initial state and δis a state transition
+function, which is a partial function from Q×Σto Q.W e
+writeδ(q, a)=⊥ifδ(q, a) is undeﬁned. A shallow history
+automaton ( S H A )[ 5 ]i sa nF - S AM= (Σ, Q, q0,δ) such that
+Q= 2Σand q0=∅and ifδ(q, a) /nequal⊥thenδ(q, a)= q∪{a}.
+An F-SA program is a tuple ( Mhd, f0,{G f | f∈Mhd},
+M) without permissions or check nodes where G f = (NO f,
+TG f, IS f, IT f )( f ∈Mhd) and M= (Σ, Q, q0,δ)i sa nF - S A
+such thatΣ={ f, f| f∈Mhd}. The semantics of an F-SA
+program is deﬁned as follows.
+IS(n)= callg, n′∈ITg,δ(q, g) /nequal⊥
+⟨ξ: n, q⟩⇒⟨ξ: n : n′,δ(q, g)⟩
+IS(m)= return, m∈NOg, n→n′,δ(q, g) /nequal⊥
+⟨ξ: n : m, q⟩⇒⟨ξ: n′,δ(q, g)⟩
+The trace set of an F-SA program πis deﬁned as [ [π]]=
+{ n0n1... nk | n0 ∈IT f0 , ∃q1,..., qk ⊆Q, ∃ξ1,...,ξk ∈
+NO∗,⟨ξi : ni, qi⟩⇒⟨ξi+1 : ni+1, qi+1⟩ for 0≤i< k,ξ0=ε}.
+3. Expressive Power
+A program without check nodes, permissions or privileged
+nodes is called a basic program .L e t α∈{HBAC, R-SI,
+JVM, F-SA, SHA}.A n αprogramπis an extension of a
+basic programπ0 ifπ0 is obtained fromπby the following
+operations.
+(S1) Delete each check node n (ifα= HBAC, R-SI or
+JVM). At the same time, for any pair of n1 ∈in(n)
+and n2 ∈out(n), add a transfer edge n1→n2. More-
+over, if n∈IT f for some f ∈Mhd, then add every
+n2∈out(n)i n t oIT f .
+(S2) Delete grant permissions and accept permissions from
+each call node (ifα= HBAC).
+(S3) Delete the designation of privileged nodes (if α=
+JVM).
+(S4) Unite call nodes n1 and n2 such that IS(n1)= IS(n2),
+in(n1)= in(n2), and out(n1)= out(n2).
+
+PDF PAGE 3
+LETTER
+1035
+Fig. 1 HBAC̸⪯ R-SI.
+Fig. 2 JVM̸⪯ F-SA.
+Let nc be a homomorphism over the set of nodes de-
+ﬁned by nc(n)= n for a call or return node n and nc(n)=ε
+for a check or nop node n. For two programs π1 andπ2,w e
+say thatπ1 is trace equivalent toπ2 if they are extensions of
+a single basic programπ0 and nc([ [π1]] )= nc([ [π2]] ) .
+Let us denote the class ofαprograms byα. For classes
+of programs αandβ, we write α⪯ βif for an arbitrary
+αprogramπ1 there is a βprogramπ2 trace equivalent to
+π1 (we say that π1 can be simulated by π2). If α⪯β,w e
+also say that αcan be simulated by β. ⪯ is reﬂexive and
+transitive. We write α̸⪯ βifα⪯ βdoes not hold. By
+deﬁnition, SHA⪯ F-SA. It is known that JVM ⪯ R-SI [8],
+R-SI̸⪯ SHA, SHA̸⪯ R-SI [5] and JVM⪯ HBAC [11].
+Theorem 1. HBAC̸⪯ R-SI.
+Proof Sketch. The HBAC program π1 in Fig. 1 cannot be
+simulated by any R-SI program. In π1, the call to g at m1
+prevents the control from reaching s1; however, an R-SI pro-
+gram completely cancels the e ﬀect of the ﬁnished method
+execution. □
+Theorem 2. JVM̸⪯ F-SA.
+Proof Sketch. Suppose that there exists an F-SA programπ′
+2
+that simulates the JVM program π2 in Fig. 2. The F-SA of
+π′
+2 must have a run (i.e. path from the initial state) for se-
+quence gi(hhg)i−1g for i≥1 but must not have any run for
+gi(hhg)i−1h. However, such a ﬁnite automaton never exists
+by the pumping lemma of regular languages. □
+Theorem 3. F-SA̸⪯ SHA.
+Proof. In the program π3 shown in Fig. 3, calling h is per-
+mitted only when g has been called an odd number of times.
+Fig. 3 F-SA̸⪯ SHA.
+Fig. 4 R-SI̸⪯ HBAC.
+Fig. 5 SHA̸⪯ HBAC.
+If there is an SHA program π′
+3 that simulates π3, then the
+SHA ofπ′
+3 must have a run for sequence g2i−1h for i≥1b u t
+must not have any run for g2ih. However, there is no such
+SHA because the state of an SHA just after reading g j for
+any j≥1i s{g}, and thus the SHA has a run for g2ih if it has
+ar u nf o rg2i−1h. □
+Theorem 4. R-SI̸⪯ HBAC.
+Proof Sketch. Suppose that there exists an HBAC pro-
+gramπ′
+4 that simulates the R-SI program π4 in Fig. 4. In π′
+4
+the current permissions always equal SPg and thusπ′
+4 cannot
+distinguish between even and odd numbers of calls atn1. □
+Theorem 5. SHA̸⪯ HBAC
+Proof Sketch. The SHA programπ5 in Fig. 5 cannot be sim-
+ulated by any HBAC program. In π5, the call to g at m1
+enables the call to h at m2; however, any HBAC program
+cannot simulate such a program since the current permis-
+sions never increase as a result of a call. □
+
+PDF PAGE 4
+1036
+IEICE TRANS. INF. & SYST., VOL.E92–D, NO.5 MA Y 2009
+Fig. 6 Comparison of the expressive power.
+4. An Extended Model
+An HBAC program cannot remove a permission from the
+current permissions unless it takes the intersection of the
+current permissions and the static permissions of a callee
+method. Thus, we extend HBAC by introducing a sub-
+set SET of NO (like PRV in a JVM program) such that if
+n∈NO
+f ∩SET and IS(n)= callg[PG, PA] in HBAC then n
+replaces the current permissions with PG before taking the
+intersection of the current permissions and the static permis-
+sions of g. We also extend HBAC so that the initial current
+permissions C0 in the deﬁnition of the trace set can be an
+arbitrary subset of SP f0 and is given as a component of an
+HBAC program.
+The syntax and semantics of the extended model,
+called sHBAC, are deﬁned as follows.
+•An sHBAC program isπ= (Mhd, f0,{G f | f∈Mhd},
+PRM, SET, C0).
+•The semantic rules for an sHBAC program are the rules
+obtained from the original rules in Sect. 2.1 by replac-
+ing the ﬁrst rule with the following two rules.
+IS(n)= callg[PG, PA], n /nelementSET, n′∈ITg
+ξ:⟨n, C⟩⇒ξ:⟨n, C⟩ :⟨n′, (C∪PG)∩SPg⟩
+IS(n)= callg[PG, PA], n∈SET, n′∈ITg
+ξ:⟨n, C⟩⇒ξ:⟨n, C⟩ :⟨n′, PG∩SPg⟩
+The deﬁnition of trace equivalence is the same as the
+one in Sect. 3 except that we add:
+(S3′) Delete the designation of set nodes (nodes being in
+SET)i fα= sHBAC.
+We also deﬁne a subclass of sHBAC, called sH-SI, in
+which the accept permissions of every call node in method f
+equal SP f . This means that the eﬀect of ﬁnished method ex-
+ecution is canceled and thus the current permissions depend
+only on the current stack.
+We can show the following theorems. Proofs of these
+theorems are given in the full version [10] of this paper.
+Theorem 6. R-SI⪯ sH-SI
+Theorem 7. sH-SI⪯ R-SI
+Note that HBAC ⪯ sHBAC by deﬁnition. SHA ̸⪯
+sHBAC since the proof of Theorem 5 remains valid for
+sHBAC.
+Known results and new results are summarized in
+Fig. 6. For any pair of program classes α,β, either α⪯β
+orα̸⪯βhas been proved. In the ﬁgure, an arrow is omitted
+between program classes αandβifα⪯βorα̸⪯βcan
+be implied by other relations. For example, R-SI ̸⪯ JVM is
+implied by JVM⪯ HBAC and R-SI̸⪯ HBAC.
+5. Conclusion
+The expressive power of ﬁve subclasses of programs with
+access control was compared. In particular, the expressive
+powers are incomparable between any pair of history-based
+access control, regular stack inspection and shallow history
+automata. Based on these results, we introduced an ex-
+tension of HBAC, of which expressive power exceeds that
+of regular stack inspection. It is left as a future study to
+clarify whether some composition of programs can simu-
+late HBAC, for example, HBAC ⪯ JVM× SHA and/or
+HBAC⪯ R-SI× F-SA.
+References
+[1] M. Abadi and C. Fournet, “Access control based on execution his-
+tory,” Network & Distributed System Security Symp., pp.107–121,
+2003.
+[2] A. Banerjee and D.A. Naumann, “History-based access control and
+secure information ﬂow,” CASSIS04, LNCS 3362, pp.27–48, 2004.
+[3] M. Bartoletti, P . Degano, and G.L. Ferrari, “History-based access
+control with local policies,” 8th FOSSACS, LNCS 3441, pp.316–
+332, 2005.
+[4] J. Esparza, A. Ku ˇcera, and S. Schwoon, “Model-checking LTL with
+regular variations for pushdown systems,” TACS01, LNCS 2215,
+pp.316–339, 2001.
+[5] P .W. Fong, “Access control by tracking shallow execution history,”
+IEEE Symp. on Security & Privacy, pp.43–55, 2004.
+[6] L. Gong, M. Mueller, H. Prafullchandra, and R. Schemers, “Going
+beyond the sandbox: An overview of the new security architecture in
+the JavaTM development kit 1.2,” USENIX Symp. on Internet Tech-
+nologies and Systems, pp.103–112, 1997.
+[7] T. Jensen, D. le M ´etayer, and T. Thorn, “V eriﬁcation of control
+ﬂow based security properties,” IEEE Symp. on Security & Privacy,
+pp.89–103, 1999.
+[8] N. Nitta, Y . Takata, and H. Seki, “An e ﬃcient security veriﬁcation
+method for programs with stack inspection,” 8th ACM Computer &
+Communications Security, pp.68–77, 2001.
+[9] F.B. Schneider, “Enforceable security policies,” ACM Trans. Infor-
+mation & System Security, vol.3, no.1, pp.30–50, 2000.
+[10] Y . Takata and H. Seki, “Comparison of the expressive power
+of language-based access control models,” Tech. Rep. NAIST-IS-
+TR2008007, Nara Institute of Science and Technology, 2008.
+[11] Y . Takata, J. Wang, and H. Seki, “A formal model and its veriﬁcation
+of history-based access control,” IEICE Trans. Inf. & Syst. (Japanese
+Edition), vol.J91-D, no.4, pp.847–858, April 2008. Earlier version
+appeared in 11th ESORICS, LNCS 4189, pp.263–278, 2006.

@@ -1,0 +1,107 @@
+{
+  "date": "2026-11-06",
+  "status": "PASS",
+  "papers_verified": 9,
+  "pdf_pages_verified": 35,
+  "pairwise_author_lists_disjoint": true,
+  "individual_authors": 27,
+  "new_downloads": 6,
+  "local_reuses": 3,
+  "local_markdown_links_checked": 25,
+  "broken_local_links": [],
+  "checks": [
+    {
+      "id": "L01",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true,
+      "reused_original_sha256_matches": true
+    },
+    {
+      "id": "L02",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true,
+      "reused_original_sha256_matches": true
+    },
+    {
+      "id": "L03",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L04",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L05",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L06",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L07",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L08",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true
+    },
+    {
+      "id": "L09",
+      "sha256_matches": true,
+      "pdf_magic": true,
+      "expected_page_count": true,
+      "letter_on_first_page": true,
+      "title_on_first_page": true,
+      "all_page_renders_present": true,
+      "reused_original_sha256_matches": true
+    }
+  ],
+  "problems": [],
+  "review_scope": "Letter article type, source bytes, full text structure, all-page visual inspection and writing analysis.",
+  "report_hashes": {
+    "Letter写作归纳.md": "367815e16a6a5241f3247a02620dab303e8f0246faae82c54d1d238e9f434f82",
+    "README.zh-CN.md": "4d6db0579f304a0942ffc570f9d953ca03fa773679f472fff2ccd58e998c0334",
+    "逐篇写作拆解.md": "39782965a8c1187f7383e914591600b5e125cf3ed0c9520927ca26358b564726"
+  },
+  "saga_outline_generated": false,
+  "research_models_or_provers_run": false
+}

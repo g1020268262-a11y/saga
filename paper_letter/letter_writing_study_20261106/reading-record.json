@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-06",
+  "page_numbering": "PDF physical page number",
+  "source": "Local official PDF listed in sources-manifest.json",
+  "paper_records": [
+    {
+      "id": "L01",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "背景",
+        "问题与攻击",
+        "对策与分析",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "背景和相关研究后，以三项条目预告贡献",
+      "narrative": "问题成立后进入方案和验证",
+      "evidence_locations": [
+        "p.1 引言末尾贡献条目",
+        "p.2-3 核心问题",
+        "p.3-4 对策与分析"
+      ]
+    },
+    {
+      "id": "L02",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "安全切换协议",
+        "GNY形式化分析",
+        "安全分析",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "自然段介绍方案、目标和形式化分析，随后给章节安排",
+      "narrative": "安全要求先行，设计和推导后按要求讨论",
+      "evidence_locations": [
+        "p.1 引言贡献段及§2.1",
+        "p.2-4 §3",
+        "p.4 §4比较表",
+        "p.4-5附录"
+      ]
+    },
+    {
+      "id": "L03",
+      "pages_reviewed": [
+        1,
+        2,
+        3
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "原协议回顾",
+        "安全缺陷",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 2,
+      "intro_form": "已有目标与主张之后，用末段给出带观察条件的具体结果",
+      "narrative": "原有主张、关键推导、影响范围及修改方向",
+      "evidence_locations": [
+        "p.1 引言末段",
+        "p.2 §3核心推导与范围",
+        "p.2结论和p.3参考文献"
+      ]
+    },
+    {
+      "id": "L04",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "原机制回顾",
+        "攻击",
+        "对策",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 3,
+      "intro_form": "一个连续段落串联需求、已有方案、原有主张与本次结果",
+      "narrative": "直观观察和例子之后给一般过程，再由原因引出对策",
+      "evidence_locations": [
+        "p.1引言",
+        "p.2-3 §3直观解释和一般步骤",
+        "p.3 §4-5",
+        "p.4致谢与参考文献"
+      ]
+    },
+    {
+      "id": "L05",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "定义",
+        "表达能力",
+        "扩展模型",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "已知关系到未明关系，再说明共同框架、比较标准及结果",
+      "narrative": "共同定义后给多项命题，最后综合关系和扩展",
+      "evidence_locations": [
+        "p.1引言末段",
+        "p.1-2 §2定义",
+        "p.3 §3定理与反例图",
+        "p.4 §4综合图及完整版本指引"
+      ]
+    },
+    {
+      "id": "L06",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "安全性质的模型检查",
+        "发现的缺陷",
+        "增量验证",
+        "使用embeddedC改进性能",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "从相关局限进入自己先前工作的成本，再交代新增方法及实验效果",
+      "narrative": "总体过程和案例先定位工作，新方法用小例子、应用和比较展开",
+      "evidence_locations": [
+        "p.1引言第二段",
+        "p.2 §3轨迹和代码",
+        "p.3-4 §5方法及效果",
+        "p.4 §6适用条件"
+      ]
+    },
+    {
+      "id": "L07",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "预备知识与问题陈述",
+        "提出的方法",
+        "安全分析",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "场景、机制背景、已有设计限制、本次方法与收益",
+      "narrative": "具体问题转为设计规则，再以操作和安全分析回应",
+      "evidence_locations": [
+        "p.1引言末段",
+        "p.2 §2.2问题与规则",
+        "p.3方案总图和算法",
+        "p.4 §4假设及分析"
+      ]
+    },
+    {
+      "id": "L08",
+      "pages_reviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "预备知识",
+        "研究对象",
+        "搜索方法",
+        "结果",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 4,
+      "intro_form": "基线与研究范围、方法、量化结果三个层次，结果章再列贡献",
+      "narrative": "定义和编码、对象与基线、搜索步骤、结果比较",
+      "evidence_locations": [
+        "p.1引言末段",
+        "p.2-3 §3.2已有结果",
+        "p.3 §4步骤",
+        "p.4 §5贡献条目及结果表"
+      ]
+    },
+    {
+      "id": "L09",
+      "pages_reviewed": [
+        1,
+        2,
+        3
+      ],
+      "text_review": "Body structure, introduction, contribution statements, transitions, figures/tables and conclusions reviewed",
+      "visual_review": "All pages inspected in rendered contact sheets, with previously reviewed original page images for L01 and L02",
+      "all_published_pdf_pages_present": true,
+      "author_results_independently_revalidated": false,
+      "chapters": [
+        "引言",
+        "原方案",
+        "分析",
+        "攻击开销",
+        "结论"
+      ],
+      "main_text_ends_on_pdf_page": 3,
+      "intro_form": "贡献段同时交代结果、原模型的查询条件与设计含义",
+      "narrative": "角色职责和条件先定位，再给关键推导及成本",
+      "evidence_locations": [
+        "p.1贡献段与模型条件",
+        "p.2安全定义和推导",
+        "p.3范围解释、开销和结论"
+      ]
+    }
+  ]
+}

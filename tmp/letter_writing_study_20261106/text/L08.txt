@@ -1,0 +1,304 @@
+PDF PAGE 1
+760
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.5 MAY 2025
+LETTER
+Finding New Diﬀerential Characteristics on SPECK Family
+Rikuto KURAHARA†, Nonmember, Kosei SAKAMOTO††, and Takanori ISOBE†a), Members
+SUMMARY SPECK is a family of lightweight block ciphers. While
+Sun et al.’s evaluation ofSPECK’s diﬀerential characteristics was the most
+eﬀective, it left room for further analysis over longer rounds. In this paper,
+we use a SAT-based search algorithm to analyzeSPECK48, SPECK96,
+and SPECK128,presentingoptimaldiﬀerentialcharacteristicsupto19,15,
+and 11 rounds, respectively. We also explore the best characteristics up
+to 20 rounds forSPECK48, 18 rounds forSPECK96, and 20 rounds for
+SPECK128.
+key words: symmetric-keycipher, SPECK,diﬀerentialcharacteristics,SAT
+solver
+1. Introduction
+SPECK [1] is a family of lightweight, software-optimized
+block ciphers developed by the National Security Agency
+(NSA). The cryptanalysis of SPECK has been extensively
+studied,particularlythroughsolver-basedapproaches,which
+have yielded signiﬁcant results. Song et al. evaluated the
+diﬀerentialcharacteristicsof SPECKusingSMTmodels[2]
+and identiﬁed the best-known diﬀerential characteristics for
+a large number of rounds. In addition, Sun et al. explored
+optimal diﬀerential characteristics using a SAT solver [3].
+While their approach successfully analyzed nearly the full
+number of rounds forSPECK32 and SPECK64, there re-
+mains potential for further evaluation of longer rounds in
+SPECK48, SPECK96, andSPECK128.
+In this paper, we evaluateSPECK48, SPECK96, and
+SPECK128, which still present opportunities for improve-
+ment based on Sun’s research. Our approach begins with an
+evaluationofeachvariantacrosstheentiresearchspace,aim-
+ingtodiscoveroptimaldiﬀerentialcharacteristicsinmoreex-
+tendedroundscomparedtoexistingresearch. Subsequently,
+for rounds where ﬁnding the optimal diﬀerential character-
+istics becomes challenging, we focus on identifying diﬀer-
+ential characteristics with the highest possible probability.
+To facilitate this search, we implement a method to reduce
+the computational load by ﬁxing the diﬀerential character-
+istics of the intermediate rounds, drawing on the evaluation
+method of Song et al. [2].
+Asaresult,weprovideoptimaldiﬀerentialcharacteris-
+ticsforlongerroundsthanpreviouslyreported. Speciﬁcally,
+Manuscript received September 4, 2024.
+Manuscript publicized November 14, 2024.
+†GraduateSchoolofAppliedInformatics,UniversityofHyogo,
+Kobe-shi, 650-0047 Japan.
+††Mitsubishi Electric Corporation, Kamakura-shi, 247-8501
+Japan.
+a)E-mail: takanori.isobe@ai.u-hyogo.ac.jp
+DOI: 10.1587/transfun.2024EAL2077
+we present new optimal diﬀerential characteristics for 19
+rounds of SPECK48, 11–15 rounds ofSPECK96, and 10–
+11 rounds ofSPECK128. Furthermore, we explore the best
+diﬀerentialcharacteristicsupto20roundsfor SPECK48,18
+rounds forSPECK96, and 20 rounds forSPECK128.
+2. Preliminaries
+In this section, we ﬁrst describe diﬀerential characteristics.
+Then, we explain the security evaluation using the SAT
+solver.
+2.1 Diﬀerential Cryptanalysis
+The diﬀerential cryptanalysis proposed by Biham et al. [4]
+is one of the most powerful cryptanalysis techniques to the
+symmetric-keycipher. Whenevaluatingthesecurityofadif-
+ferentialattack,weestimatetheprobabilitythattheplaintext
+diﬀerenceswillreachtheciphertextdiﬀerences. Toestimate
+that probability, calleddiﬀerential characteristic probabil-
+ity,weoftenuse diﬀerentialcharacteristics,sequenceofthe
+internal diﬀerences in the cipher. LetE(·) = fr(·)◦··◦ f1(·)
+be ther-round block cipher, then diﬀerential characteristics
+are deﬁned as follows:
+Deﬁnition 1: (Diﬀerential Characteristics)
+Diﬀerentialcharacteristicsareasequenceofdiﬀerencesover
+E deﬁned as follows:
+C =(c0
+f1
+→ c1
+f2
+→...
+fr
+→ cr),
+where(c0, c1,··· , cr) denotes the diﬀerences in the output
+of each round, and c0, cr denote the diﬀerence between
+plaintext and ciphertext respectively.
+Wecanestimatetheprobabilityofdiﬀerentialcharacteristics
+as follows:
+Pr(C) =
+rÖ
+i=1
+Pr(ci−1
+fi
+→ ci).
+Weoftenuse weighttoexpresstheprobabilityordiﬀer-
+ential characteristics for simpliﬁcation. A weight is deﬁned
+as follows:
+Deﬁnition 2: (Weight)
+Aweight w isanegatedvalueofthebinarylogarithmofthe
+probability Pr deﬁned asw =− log2 Pr
+Whenweevaluateweightinstreamciphers,weconsider
+Copyright © 2025 The Institute of Electronics, Information and Communication Engineers
+
+PDF PAGE 2
+LETTER
+761
+weight related only to the ﬁrst output key stream.
+2.2 Evaluation Using SAT Solver
+Securityevaluationusingmathematicalsolversisknownasa
+promisingmethodtoevaluatethesecurityofsymmetric-key
+primitives. SATisaproblemofdeterminingwhetherthereis
+atruevariableassignmentinthebooleanformulagivenbya
+binary variable. It is known that SAT solvers can eﬃciently
+solve such a problem. The recently proposed SAT solver
+accepts the boolean formula written in Conjunctive normal
+form (CNF), which is the conjunction (∧) of the disjunction
+(∨) on boolean variables.
+2.2.1 The SAT Model to Evaluate Optimal Diﬀerential
+Characteristics
+ToexplaintheSATmodelsforeachoperation,wefollowthe
+explanationofSunetal.’swork[3]. Sincetherotation,which
+istheoperationofARX-basedciphers,involvesjustchanges
+the position of the bit, it does not require SAT modeling.
+Therefore, we explain the models of an XOR and modular
+addition.
+2.2.2 XOR
+Let α, β, andγ be boolean variables such thatα⊕ β = γ.
+The diﬀerential propagation over an XOR is expressed as
+follows:
+α∨β∨γ = 1, α ∨β∨γ = 1,
+α∨β∨γ = 1, α∨β∨γ = 1.
+2.2.3 Modular Addition
+Let α =(α0,α 1,...,α b−1), β =(β0,β 1,...,β b−1) and γ =
+(γ0,γ 1,...,γ b−1) be boolean variables such thatα +β = γ,
+where bdenoteswordsizeoftargetvariant. A b-bitmodular
+addition is expressed as follows:
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αi∨βi∨γi∨αi+1∨βi+1∨γi+1 = 1,
+αb−1⊕ βb−1⊕γb−1 = 0.
+where 0≤ i≤ b− 1. Inaddition,correspondingweight w =
+(w0,w 1,...,w b−1)over b-bitmodularadditionisdetermined
+for 0≤ i≤ b− 2 as follows:
+αi+1∨γi+1∨wi = 1, β i+1∨γi+1∨wi = 1,
+αi+1∨βi+1∨wi = 1, α i+1∨βi+1∨γi+1∨wi = 1,
+αi+1∨βi+1∨γi+1∨wi = 1.
+2.2.4 Objective Function
+We set the objective function to identify the weigh of dif-
+ferential characteristics. Letw =(w0,w 1,...,w n−1) be a set
+of weights in a primitive. It is enough to give the following
+objective function to identify the total weight in a primitive:
+n−1Õ
+i=0
+wi≤ k.
+Wecallaobjectivefunction Booleancardinalityconstraints
+and can eﬃciently implement it bykmtotalizer [5].
+3. Our Target
+3.1 Speciﬁcations of SPECK
+Inthissection,weintroducethespeciﬁcationof SPECK[1].
+SPECKisalightweightblockcipherwithARXstructurepro-
+posed by the National Security Agency (NSA).SPECK has
+variantswith5messageblocksizesof32/48/64/96/128bits.
+For example, the 32-bit variant is expressed asSPECK32.
+The Table 1 shows the size of the parameters in each
+variant,andtheFig.1showstheﬂowinwhichciphertext CT
+isgeneratedfromplaintxst PT through Nrounds. Where,the
+>>>α,<<<β, ⊞ in the Fig.1 meanα rotate on the right,β
+rotate on the left, and modular addition, respectively. Also,
+ki (1≤ i ≤ N) indicates the round key generated by the
+key schedule. In this paper, we do not elaborate on the key
+schedule,becauseitisnotrelatedwiththeevaluationofours.
+PT is divided intoPT1 and PT2, and BT r
+1,2, which is
+Table 1 Parameter of each variant of SPECK.
+Fig.1 Outlook of SPECK.
+
+PDF PAGE 3
+762
+IEICE TRANS. FUNDAMENTALS, VOL.E108–A, NO.5 MAY 2025
+Table 2 Diﬀerential characteristic probability onSPECK48 where each result is given in weight.
+Table 3 Diﬀerential characteristic probability onSPECK96 where each result is given in weight.
+the middle block of ther round, wherer for 1≤ r≤ N, are
+calculated by the following formula.
+BT r
+1 =(BT r−1
+1 >>>α) ⊞ BT r−1
+2 ,
+BT r
+2 =(BT r−1
+2 <<<β)⊕(( BT r−1
+1 >>>α) ⊞ BT r−1
+2 ),
+where, BT 0and BT N denoteplaintextandciphertextrespec-
+tively.
+3.2 Existing Results
+Diﬀerentialanalysisof SPECKhasbeenextensivelystudied
+in exisitng research. Notably, the combination of the SAT
+solverandMatsui’salgorithmimplementedbySunetal.[3]
+provide signiﬁcant results compared to other methods.
+Theydiscoveredoptimaldiﬀerentialcharacteristicsina
+largenumberofroundsforallvariants. Whiletheirapproach
+successfully analyzed nearly the full number of rounds for
+SPECK32and SPECK64,thereremainspotentialforfurther
+evaluation of longer rounds inSPECK48, SPECK96, and
+SPECK128.
+Additionally, although not optimal, the analysis using
+SMTbySong[2]identiﬁedthebest-knowndiﬀerentialchar-
+acteristicsforlongrounds. Intheirevaluationoflongrounds,
+theyﬁxthediﬀerencesinintermediateroundsandreducethe
+computationalburdenbydividingtheproblemintotwoparts.
+4. Eﬃcient Search for Diﬀerential Characteristics
+In this paper, we evaluate the SPECK48, SPECK96 and
+SPECK128, which still has room for improvement for ex-
+isting research. In order to conduct an eﬃcient search for
+a larger numner of rounds, we utilize a automatic search
+method using the SAT solver proposed by Sun et al. [3].
+SAT modeling is built by the method shown in Sect.2.
+Our approach begins by evaluating each variant across
+theentire searchspace toﬁndoptimal diﬀerentialcharacter-
+isticsoverextendedrounds. Forroundswherethisisdiﬃcult,
+wefocusonidentifyingcharacteristicswiththehighestprob-
+ability. Toreducecomputationalload,weﬁxthediﬀerential
+characteristicsofintermediaterounds,followingthemethod
+of Song et al. [2]. The search in each variant follows three
+steps
+Step 1: (SearchfortheOptimalDiﬀerentialCharacter-
+istic)
+In this step, we aim to discover optimal diﬀerential char-
+acteristics that cannot be further improved, conducting the
+search for as many rounds as feasible within the available
+computation time.
+Step 2: (SearchfortheBestDiﬀerentialCharacteristic)
+Inthisstep,webeginwiththeroundthatdidnotyieldoptimal
+results in step 1 and explore the best possible diﬀerential
+characteristics for each round.
+Step 3: (Limitation of Search Space)
+In this step, by ﬁxing the intermediate diﬀerential path, the
+search space is reduced, which makes it easier to discover
+the best diﬀerential characteristics. The diﬀerential charac-
+teristics that are ﬁxed corresponds to the segment where the
+Hamming weight is expected to be lower. This approach
+is inspired by the search method proposed by Song [2], as
+discussed in Sect.3.
+We conﬁrm that the optimal diﬀerential characteristics
+associated with the increase in rounds exhibit a partial, reg-
+ular transition. To select an intermediate round to ﬁx, this
+regularitycanbeusedtopredictwheretheHammingweight
+will decrease.
+
+PDF PAGE 4
+LETTER
+763
+Table 4 Diﬀerential characteristic probability onSPECK128 where each result is given in weight.
+5. Results
+Tables 2, 3, and 4 present the results of the existing evalua-
+tionsalongsideourevaluationresults. Thenumericalvalues
+ineachtableprimarilyrepresenttheweightofthediﬀerential
+characteristics. Additionally, the entries highlighted in bold
+indicate the diﬀerential characteristics that were identiﬁed
+under the conditions of step 3.
+AsshowninTables2, 3, and4, weidentifytheoptimal
+diﬀerential characteristics up to 19 rounds inSPECK48, up
+to15roundsin SPECK96,andupto11roundsin SPECK128.
+Furthermore,inthesearchforthebestdiﬀerentialcharacter-
+istics, we discover diﬀerential characteristics for all rounds
+up to 20, 18, and 20 rounds, respectively.
+Our contributions are summarized below.
+• In the search for optimal diﬀerential characteristics
+(step1),weﬁndnewoptimaldiﬀerentialcharacteristics
+of19roundsof SPECK48,11-15roundsof SPECK96,
+and 10-11 rounds ofSPECK128.
+• In the search for the best diﬀerential characteristics
+(step 2 and 3), we discover diﬀerential characteristics
+inseveralroundseachvariant. Speciﬁcally,diﬀerential
+characteristics in 20 round ofSPECK48, 16-18 round
+in SPECK96,and12-20roundsin SPECK128areiden-
+tiﬁed.
+6. Conclusion
+Inthispaper,weutilizedaSAT-basedsearchalgorithmtoan-
+alyze SPECK48, SPECK96,and SPECK128,presentingop-
+timaldiﬀerentialcharacteristicsupto19,15,and11rounds,
+respectively. We also explored the best characteristics up to
+20 rounds forSPECK48, 18 rounds forSPECK96, and 20
+rounds forSPECK128.
+References
+[1] R. Beaulieu, D. Shors, J. Smith, S. Treatman-Clark, B. Weeks, and
+L. Wingers, “The SIMON and SPECK families of lightweight block
+ciphers,” Cryptology ePrint Archive, Paper 2013/404, 2013.
+[2] L. Song, Z. Huang, and Q. Yang, “Automatic diﬀerential analysis of
+ARXblockcipherswithapplicationtoSPECKandLEA,”Information
+Security and Privacy, J.K. Liu and R. Steinfeld, eds., Cham, pp.379–
+394, Springer International Publishing, 2016.
+[3] L.Sun,W.Wang,andM.Wang,“Acceleratingthesearchofdiﬀerential
+and linear characteristics with the SAT method,” IACR Transactions
+on Symmetric Cryptology, vol.2021, no.1, pp.269–315, March 2021.
+[4] E.BihamandA.Shamir,“DiﬀerentialcryptanalysisofDES-likecryp-
+tosystems,” J. Cryptol., vol.4, no.1, pp.3–72, 1991.
+[5] R. Martins, S. Joshi, V.M. Manquinho, and I. Lynce, “Incremental
+cardinalityconstraintsforMaxSAT,”CoRR,vol.abs/1408.4628,2014.

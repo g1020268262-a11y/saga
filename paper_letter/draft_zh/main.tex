@@ -1,0 +1,39 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% Compile from this directory, or run build.ps1 from any directory.
+\RequirePackage{iftex}
+\RequireXeTeX
+\makeatletter
+\def\input@path{{../ieice_template/}}
+\makeatother
+\documentclass[letter]{ieice}
+
+\usepackage{graphicx,xcolor}
+\usepackage[fleqn]{amsmath}
+\usepackage{newtxtext}
+\usepackage[varg]{newtxmath}
+\usepackage{xeCJK}
+\setCJKmainfont[
+  BoldFont=FandolSong-Bold.otf,
+  ItalicFont=FandolKai-Regular.otf
+]{FandolSong-Regular.otf}
+\setCJKsansfont[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\setCJKmonofont{FandolFang-Regular.otf}
+
+\usepackage[noadjust]{cite}
+\renewcommand{\citepunct}{],\,\allowbreak[}
+\renewcommand{\citedash}{]--\allowbreak[}
+\makeatletter
+\let\hyper@nopatch@caption\@empty
+\makeatother
+\usepackage[hidelinks,hyperfootnotes=false]{hyperref}
+
+\begin{document}
+\pagestyle{plain}
+\setcounter{section}{1}
+\input{02_授权流程与分析目标}
+\input{03_模型与分析结果}
+
+\bibliographystyle{../ieice_template/ieicetr}
+\bibliography{../references}
+\end{document}

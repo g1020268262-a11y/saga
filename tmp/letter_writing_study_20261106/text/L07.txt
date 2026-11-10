@@ -1,0 +1,383 @@
+PDF PAGE 1
+IEICE TRANS. INF. & SYST., VOL.E106–D, NO.9 SEPTEMBER 2023
+1495
+LETTER Special Section on Log Data Usage T echnology and Ofﬁce Information Systems
+Design of Enclosing Signing Keys by All Issuers in Distributed
+Public Key Certiﬁcate-Issuing Infrastructure
+Shohei KAKEIya), Member, Hiroaki SEKOy, Nonmember, Y oshiaki SHIRAISHIyy, Senior Member,
+and Shoichi SAITOy, Nonmember
+SUMMARY This paper ﬁrst takes IoT as an example to provide the
+motivation for eliminating the single point of trust (SPOT) in a CA-based
+private PKI. It then describes a distributed public key certiﬁcate-issuing
+infrastructure that eliminates the SPOT and its limitation derived from gen-
+erating signing keys. Finally, it proposes a method to address its limitation
+by all certiﬁcate issuers.
+key words: authentication, public key infrastructure, distributed ledger
+technology
+1. Introduction
+The Internet of Things (IoT) is not just a mechanism for
+connecting devices to the Internet but for realizing advanced
+applications through the interconnection of many of these
+heterogeneous devices. For example, the IoT will trans-
+form homes into smart homes, power grids into smart grids,
+and cities into smart cities. IoT systems have the poten-
+tial to transform social infrastructures, and it is reasonable
+to assume that they will be widely implemented in society
+through building consortium of various stakeholders. While
+the widespread of devices in every corner of society will
+enable seamless service provision, it will also expand the
+possible areas of attack. Hence, it is essential to ensure the
+security of each IoT device.
+Authentication is one of the most important aspects
+to consider for enhancing the security of inter-device com-
+munication [1]. Public Key Infrastructure (PKI) is widely
+known as an authentication mechanism for the Internet. In a
+certiﬁcate authority (CA) based PKI, a CA, which is a single
+point of trust (SPOT), issues public key certiﬁcates to bind
+public keys and subjects expressed by any identities such as
+domain names, URIs, or e-mail addresses. There are two
+types of CAs: a public CA and a private CA. A public CA
+is operated by a publicly trusted party, and it is suitable for
+publicly known subjects such as web servers. For example,
+a public CA validates a domain name of a web server and is-
+sues a certiﬁcate binding a public key to that domain. On the
+other hand, a private CA is operated by a private party and
+is suitable for known subjects within a private service oper-
+Manuscript received November 22, 2022.
+Manuscript revised March 22, 2023.
+Manuscript publicized May 25, 2023.
+yThe authors are with the Graduate School of Engineering,
+Nagoya Institute of Technology, Nagoya-shi, 466–8555 Japan.
+yyThe author is with the Graduate School of Engineering, Kobe
+University, Kobe–shi, 657–0013 Japan.
+a) E-mail: kakei.shohei@nitech.ac.jp
+DOI: 10.1587/transinf.2022OFL0001
+ated by that party. For example, an operating party assigns
+IDs to devices and issues certiﬁcates binding public keys to
+IDs. Because of these di ﬀerences, a private CA is generally
+more suitable for client authentication, while a public CA is
+more suitable for server authentication.
+Considering the features of CA-based PKI, private
+CAs would be more suitable for authenticating IoT devices.
+However, in light of the expansion of consortium-based IoT
+systems involving multiple stakeholders, the challenge is
+how to operate a private CA without relying on a speciﬁc
+party in the consortium. We have proposed a distributed
+public key certiﬁcate-issuing infrastructure (DCII) [2] that
+uses distributed ledger technology (DLT) to address the
+problem of a SPOT for CA-based PKI in private environ-
+ments where devices are interconnected. In the DCII, CA
+functions are shared among parties as smart contracts, and
+logs of the process are recorded in a distributed ledger (DL)
+to improve CA transparency. However, there were limita-
+tions in terms of transparency and availability due to the
+need for a administrator at generating signing keys and the
+need to execute smart contracts at verifying certiﬁcates.
+In this paper, we provide an overview of the DCII and
+propose a method of enclosing signing keys through the co-
+operation of all certiﬁcate issuers without depending on a
+administrator. The transparency and availability of the DCII
+are improved by eliminating the need for the administrator
+to generate signing keys.
+2. Preliminaries and Problem Statement
+2.1 Distributed Public Key Certiﬁcate-Issuing Infrastruc-
+ture
+When constructing a CA-based PKI with multiple parties,
+there are two possible approaches: constructing a single CA
+trusted by all parties and coordinating CAs managed indi-
+vidually by each party. In the former approach, a single CA
+deploys certiﬁcates to all devices. Each party owning de-
+vices trusts a single party operating the CA. Then, the oper-
+ating party deploys certiﬁcates to devices on behalf of all the
+parties. Since this approach trusts a single operating party,
+unauthorized devices can participate in the network if unau-
+thorized certiﬁcates are issued due to fraud or compromise
+of the operating party. In the latter approach, each party
+owning devices operates a CA and deploys certiﬁcates to its
+own devices. By cooperating with each other, the devices
+Copyright c⃝ 2023 The Institute of Electronics, Information and Communication Engineers
+
+PDF PAGE 2
+1496
+IEICE TRANS. INF. & SYST., VOL.E106–D, NO.9 SEPTEMBER 2023
+of each party can authenticate other devices across parties.
+There is no need to place a point of trust on a speciﬁc party
+since this approach is based on the cooperation of multiple
+parties. However, since all parties can be attack surfaces,
+compromising one of them will allow unauthorized devices
+to participate in the PKI. Although each party should have
+the same level of security measures in place, the problem of
+the weakest link [3] arises.
+We have proposed the DCII that employs Hyperledger
+Fabric, which is an open-source permissioned DLT, to ad-
+dress the problem of a SPOT for a CA-based PKI in private
+environments where devices are interconnected. This infras-
+tructure has the following two features to realize certiﬁcate
+management that does not depend on the operating party of
+the CA.
+ Certiﬁcate management (issuance, validation, and re-
+vocation) is implemented as smart contracts and shared
+among all parties.
+ Signed keys are enclosed in a DL protected by Intel
+SGX and cannot be retrieved.
+By enclosing signing keys in a manner that they cannot be
+retrieved from the DL, they cannot be used for arbitrary pur-
+poses, and the use of signing keys can be restricted to pre-
+deﬁned processes.
+Figure 1 shows an overview of the DCII. The infras-
+tructure manager (IM) ﬁrst sets up the DLT system and de-
+ploys smart contracts. The IM then generates two types of
+signing keys: one for signing certiﬁcates and the other for
+signing match results which prove that certiﬁcates is stored
+in the DL. The IM ﬁnally encloses them in the DL. After
+the setup is completed, a certiﬁcate issuer (CI), which is a
+node in the DLT network, issues a certiﬁcate to a certiﬁcate
+holder (CH) using the smart contract and the enclosed sign-
+ing key in response to a certiﬁcate signing request from the
+CH. When a CH sends a certiﬁcate veriﬁer (CV) the certiﬁ-
+cate, the CV request a CI to match the certiﬁcate with the
+DL. The CI creates a signed match result using the smart
+contract and the enclosed signing key. After conﬁrming the
+match result, the CV veriﬁes the signature on the certiﬁcate
+and returns the veriﬁcation result to the CH. It is noted that
+the IM periodically updates the signing keys.
+2.2 Problem Statement and Design Rules
+The DCII implements countermeasures against the risk of
+unauthorized certiﬁcate issuance by the IM and tampering
+with the match result by CIs. First, for the former risk, since
+the IM has the signing keys before it is enclosed, there is a
+risk of abuse of them. However, certiﬁcates signed without
+using the smart contract are not stored in the DL, and this
+risk can be mitigated by matching a certiﬁcate with the DL.
+Next, for the latter risk, since CIs stand between the smart
+contract for matching certiﬁcates and CVs, there is a risk
+that a CI falsiﬁes match results. For example, a CI can fal-
+sify a legitimate device as an illegal device and vise versa.
+Therefore, the DCII guarantees that match results originates
+Fig. 1 An overview of a distributed public key certiﬁcate-issuing infras-
+tructure (DCII).
+from the DCII by signing the match results with the smart
+contract and prevents tampering by CIs. However, the tech-
+nique of signing match results of each certiﬁcate match pro-
+cess causes the cost of the match process to increase propor-
+tionately to the number of devices.
+To summarize the above, the match process is im-
+plemented to counter fraud by the infrastructure manager.
+However, assuming numerous devices, such as in advanced
+IoT systems, the match process from all devices becomes a
+bottleneck. If the match process is bypassed and only the
+certiﬁcate signature is veriﬁed, it is not possible to detect
+fraud by the IM. In this paper, we propose a method to ad-
+dress this problem. The above problem is caused by the
+fact that the IM has the signing key, and it is required that
+the signing key is not exposed outside the DL. Therefore,
+we design the proposed method with the following design
+rules.
+ Rule 1: To enclose signing keys into the DL without
+exposing them outside the DL in cooperation with all
+CIs.
+ Rule 2: To update signing keys without exposing them
+outside the DL without the cooperation of the parties
+involved in the enclosure
+Rule 1 is to securely enclose signing keys in a DL without
+dependence on a speciﬁc party. Rule 2 is to securely update
+signing keys without interference by some parties.
+3. Proposed Method
+The proposed method prevents signing keys from being ex-
+posed outside the DL by generating them within smart con-
+tracts. However, smart contracts do not generate signing
+keys randomly because they can only operate deterministi-
+cally. Hence, the proposed method takes the approach that
+the smart contract receives random numbers from all CIs
+and generates a signing key based on those numbers. A CI
+can only know the signing key if it knows all those random
+numbers.
+
+PDF PAGE 3
+LETTER
+1497
+Fig. 2 An overview of the proposed method.
+Due to the restriction on using multiple random num-
+bers for signing key generation, the proposed method em-
+ploys elliptic curve cryptography (ECC) based digital sig-
+nature algorithm in which any integer value can be used as
+a private key. Especially, this paper adopts the elliptic curve
+digital signature algorithm (ECDSA). Compared with RSA,
+ECC has more ﬂexibility in choosing a signing key, where
+n is a prime number and an integer randomly selected from
+[1; n  1] is used as a private key. Though RSA-based digital
+signature algorithms can be considered if two prime num-
+bers can be computed from the random numbers of the CIs,
+they are out of the scope of this paper.
+Figure 2 shows an overview of the proposed method.
+In this section, we describe the proposed contract that com-
+prise the proposed method: setup, enclosing signing keys,
+updating signing keys, issuing certiﬁcate, and matching cer-
+tiﬁcate contract.
+3.1 Setup
+The IM sets elliptic curve domain parameters T and the
+number k of CIs. The recommended parameters for T are
+deﬁned in [4]. In this study, we use secp256k1. The setup
+contract is shown in Algorithm 1. It is noted that the param-
+eters set in this contract are agreed upon by all CIs.
+3.2 Enclosing Signing Keys
+A CH i checks that k is the correct value, randomly selects
+an integer si as a seed from [1 ; n  1], and puts it in the DL
+(Algorithm 2). Once k seeds have been collected, the IM
+executes the enclosing signing keys contract shown in Al-
+gorithm 3. It generates a seed s from k integers by exclusive
+disjunction. Next, a signing key skmatch for signing match
+results and a signing key skcert for signing certiﬁcates are
+created from s using the 256-bit hash function H256.
+Algorithm 1 Setup Contract
+Input: T , k
+Output: null
+1: putState(“param”, T ) ▷ secp256k1
+2: putState(“num-entities”, k)
+Algorithm 2 Setting Seed
+Input: k′, si
+Output: result
+1: if k′ , k then ▷ V erify that the IM has set k correctly.
+2: return “failure”
+3: end if
+4: putState(i, si)
+5: return “success”
+Algorithm 3 Enclosing Singing Keys Contract
+Input: null
+Output: result
+1: if s1 to sk have not yet been collected then
+2: return “failure”
+3: end if
+4: s s1 ::: si ::: sk ▷ exclusive disjunction
+5: skmatch H256(s) (mod n)
+6: skcert H256(skmatch) (mod n)
+7: putState(“match-sk”, skmatch)
+8: putState(“cert-sk”, skcert)
+9: return “success”
+Algorithm 4 Updating Singing Key Contract
+Input: null
+Output: null
+1: if s1 to sk have not yet been collected then
+2: return “failure”
+3: end if
+4: for i 1 to k do
+5: s′
+i PRF256(si)
+6: SettingSeed(k; s′
+i )
+7: end for
+8: EnclosingSigningKeys()
+3.3 Updating Signing Keys
+If a signing key is compromised, the signing key needs to be
+updated immediately. It is also conceivable to periodically
+update signing keys based on the security policy. Although
+it is possible to update signing keys by re-executing the en-
+closing signing keys contract, this requires the cooperation
+of a deﬁned number of parties. Thus, if some parties refuse
+to cooperate, the signing keys cannot be updated. In this
+study, we update signing keys by using the seeds used when
+the signing keys are enclosed, as shown in Algorithm 4.
+First, the updating signing key contract updates each seed si
+to s′
+i with PRF256, which is a 256-bit pseudo-random num-
+ber generator. After updating all k seeds, it executes the en-
+closing signing keys contract to obtain the updated signing
+keys sk′
+match and sk′
+cert.
+
+PDF PAGE 4
+1498
+IEICE TRANS. INF. & SYST., VOL.E106–D, NO.9 SEPTEMBER 2023
+3.4 Issuing Certiﬁcates and Matching Certiﬁcates
+In the issuing certiﬁcates and matching certiﬁcates con-
+tracts, public key certiﬁcates and matching results are cre-
+ated based on the input data. Then, they are signed with
+skcert and skmatch. ECDSA uses a random number (nonce)
+for signing, so the signature value is non-deterministic. As
+explained before, since smart contracts can only implement
+deterministic algorithms, the proposed method determinis-
+tically calculates a nonce by deterministic ECDSA as spec-
+iﬁed in RFC 6979. Digital signatures of public key certiﬁ-
+cates and matching results are calculated deterministically
+by this scheme. Produced signatures remain fully compati-
+ble with plain ECDSA, and the signature veriﬁcation algo-
+rithm does not need to be changed.
+4. Security Analysis
+The adversary aims to pretend that the public key certiﬁcate
+of a dishonest IoT device is issued by the DCII, and its goal
+is to obtain skmatch and skcert. In this paper, we analyze the
+security of the DCII when the IM is an adversary since the
+IM has higher privileges to set up the DCII. Since skmatch
+and skcert are signing keys generated in the same way, they
+will be discussed collectively as sk.
+We ﬁrst assume that the DLT system underlying the
+proposed method is secure. The underlying cryptographic
+primitives are secure, and each DLT node is honest with re-
+spect to the underlying consensus model. Furthermore, it
+is assumed that Intel SGX functionality is not compromised
+and works properly. The IM can collude with CIs, but due
+to the distributed nature of DLT, we do not suppose that all
+CIs collude with the IM. That is, at least one CI is indepen-
+dent of the IM. In addition, we assume some CIs that do not
+collude with the IM, thus vulnerable smart contracts cannot
+be replaced without those CI being aware of it.
+Under the assumption, the adversary cannot directly re-
+trieve enclosed sk. Therefore, we analyze a guessing attack
+on sk by the adversary. The following explanation denotes
+s1 ::: s j as s j
+1.
+First of all, sk is calculated from the seed of each CI,
+but it is not easy to be guessed whether these seeds are suf-
+ﬁciently random. Hence, since the IM has the potential to
+collude with CIs, we consider the following case; the IM
+colludes with CI 1 to CI j ( j < k) and can calculate s j
+1. In this
+case, the adversary can guess sk by guessing sk
+j+1. However,
+if each of CH j+1 to CH k uses a su ﬃciently random seed, it
+is hard to guess sk because sk
+j+1 is also su ﬃciently random.
+It is noted that even if the number of j changes, it is still a
+matter of guessing a single sk
+j+1 for the attacker. Thus, this
+method is resistant to the guessing attack on sk.
+5. Conclusion
+In this paper, we proposed a method for enclosing signing
+keys in the DCII through the cooperation of all CIs. Lever-
+aging the property that ECC private keys are integers in a
+speciﬁc range, the proposed method encloses and updates
+signing keys without exposing them outside the DL. In this
+way, the extra certiﬁcate veriﬁcation processes to counter
+fraud by the IM can be eliminated. As a result, the applica-
+bility of the DCII to systems with numerous devices, such
+as advanced IoT systems, would be improved. As a security
+evaluation, we analyzed collusion attacks on the part of par-
+ties participating in the DCII and proved that the proposed
+method is secure against such attacks. The processing time
+and ledger size increase for the updating signing key con-
+tract are proportional to the number of CIs. In future works,
+we will experimentally evaluate the relationship between the
+number of CIs and the cost of the updating signing key con-
+tract and improve the method not proportional to the number
+of CIs.
+Acknowledgments
+This work was supported by JSPS KAKENHI Grant Num-
+ber JP22K17881.
+References
+[1] A.M. Gamundani, A. Phillips, and H.N. Muyingi, “An overview of po-
+tential authentication threats and attacks on internet of things (IoT): A
+focus on smart home applications,” 2018 IEEE International Confer-
+ence on Internet of Things (iThings) and IEEE Green Computing and
+Communications (GreenCom) and IEEE Cyber, Physical and Social
+Computing (CPSCom) and IEEE Smart Data (SmartData), pp.50–57,
+2018.
+[2] K. Kumagai, S. Kakei, Y . Shiraishi, and S. Saito, “Distributed public
+key certiﬁcate-issuing infrastructure for consortium certiﬁcate author-
+ity using distributed ledger technology,” Security and Communication
+Networks, vol.2023, Article ID 9559439, 2023.
+[3] W. Pieters, “Deﬁning ”The weakest link” comparative security in
+complex systems of systems,” 2013 IEEE 5th International Confer-
+ence on Cloud Computing Technology and Science, pp.39–44, 2013.
+[4] D.R.L. Brown, “SEC 2: Recommended elliptic curve domain param-
+eters,” Standars for Eﬃcient Cryptography, 2010.

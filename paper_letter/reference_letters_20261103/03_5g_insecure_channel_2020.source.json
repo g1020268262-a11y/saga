@@ -1,0 +1,29 @@
+{
+  "title": "A Security Enhanced 5G Authentication Scheme for Insecure Channel",
+  "authors": [
+    "Xinxin Hu",
+    "Caixia Liu",
+    "Shuxin Liu",
+    "Xiaotao Cheng"
+  ],
+  "journal": "IEICE Transactions on Information and Systems",
+  "series": "D",
+  "year": 2020,
+  "volume": "E103.D",
+  "issue": 3,
+  "pages": "711-713",
+  "article_type": "LETTER",
+  "doi": "10.1587/transinf.2019EDL8190",
+  "source_url": "https://www.jstage.jst.go.jp/article/transinf/E103.D/3/E103.D_2019EDL8190/_pdf/-char/en",
+  "resolved_url": "https://www.jstage.jst.go.jp/article/transinf/E103.D/3/E103.D_2019EDL8190/_pdf/-char/en",
+  "retrieved_at_utc": "2026-11-03T07:07:29.517776+00:00",
+  "content_type": "application/pdf;charset=UTF-8",
+  "pdf_file": "03_5g_insecure_channel_2020.pdf",
+  "pdf_pages": 3,
+  "sha256": "76b9d8cbbcf7c736bd877aabcad205e7be68cd180443f29c60df0cfe1cf93f75",
+  "byte_count": 498120,
+  "purpose": "Accessible supplementary reading after RADIUS article access failed; does not replace or claim access to the RADIUS full text.",
+  "reading_scope": "All three PDF pages read and all three rendered pages visually inspected; no independent validation of its security arguments.",
+  "visual_pages_checked": 3,
+  "selection_status": "Supplementary same-team 5G reading only; not selected as an independent second writing example."
+}

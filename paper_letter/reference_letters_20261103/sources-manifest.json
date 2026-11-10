@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-03",
+  "selection_scope": "Two confirmed IEICE LETTERs about protocol analysis with formal methods; different IEICE Transactions series from Fundamentals A. Similarity is in the analysis workflow, not identical SAGA properties.",
+  "papers": [
+    {
+      "id": "01",
+      "title": "A Vulnerability in 5G Authentication Protocols and Its Countermeasure",
+      "authors": [
+        "Xinxin Hu",
+        "Caixia Liu",
+        "Shuxin Liu",
+        "Jinsong Li",
+        "Xiaotao Cheng"
+      ],
+      "year": 2020,
+      "journal": "IEICE Transactions on Information and Systems",
+      "series": "D",
+      "volume": "E103.D",
+      "issue": 8,
+      "pages": "1806-1809",
+      "article_type": "LETTER, Special Section on Formal Approaches",
+      "doi": "10.1587/transinf.2019FOL0001",
+      "article_url": "https://www.jstage.jst.go.jp/article/transinf/E103.D/8/E103.D_2019FOL0001/_article/-char/en",
+      "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E103.D/8/E103.D_2019FOL0001/_pdf/-char/en",
+      "pdf_file": "01_5g_authentication_vulnerability_2020.pdf",
+      "status": "PDF_VERIFIED",
+      "pdf_pages": 4,
+      "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
+      "reading_scope": "All four PDF pages read and all four rendered pages visually inspected; no independent rerun or proof validation."
+    },
+    {
+      "id": "02",
+      "title": "Model Checking of RADIUS Protocol in Wireless Networks",
+      "authors": [
+        "Il-Gon Kim",
+        "Jin-Young Choi"
+      ],
+      "year": 2005,
+      "journal": "IEICE Transactions on Communications",
+      "series": "B",
+      "volume": "E88-B",
+      "issue": 1,
+      "pages": "397-398",
+      "article_type": "LETTER",
+      "doi": "10.1093/ietcom/e88-b.1.397",
+      "article_url": "https://globals.ieice.org/en_transactions/communications/10.1093/ietcom/e88-b.1.397/_p",
+      "status": "OFFICIAL_METADATA_AND_ABSTRACT_VERIFIED_ONLY",
+      "pdf_file": null,
+      "reported_page_count": 2,
+      "reading_scope": "Official article metadata and abstract only; full text not obtained. Do not claim exact chapter structure.",
+      "download_limit": "Official page and DOI requests returned HTTP 403; direct J-STAGE PDF request failed with HTTP 500; browser official page also displayed 403."
+    }
+  ],
+  "verification": {
+    "local_5g_pdf_valid": true,
+    "fiveg_rendered_and_inspected_pages": 4,
+    "radius_pdf_obtained": false,
+    "metadata_source": "Official IEICE article records and J-STAGE; article type is explicit",
+    "existing_manuscript_models_modified": false
+  }
+}

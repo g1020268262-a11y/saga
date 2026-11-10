@@ -1,0 +1,354 @@
+PDF PAGE 1
+IEICE TRANS. INF. & SYST., VOL.E96–D, NO.3 MARCH 2013
+735
+LETTER
+Model Checking an OSEK /VDX-Based Operating System for
+Automobile Safety Analysis∗
+Yunja CHOI†a), Member
+SUMMARY An automotive operating system is a typical safety-critical
+software and therefore requires extensive analysis w.r.t its eﬀect on system
+safety. Our earlier work [1] reported a systematic model checking approach
+for checking the safety properties of the OSEK/VDX-based operating sys-
+tem Trampoline. This article reports further performance improvement
+using embeddedC constructs for e ﬃcient veriﬁcation of the Trampoline
+model developed in the earlier work. Experiments show that the use of
+embeddedC constructs greatly reduces veriﬁcation costs.
+key words: OSEK/VDX, Trampoline, model checking, safety analysis
+1. Introduction
+An operating system is a representative safety-critical sys-
+tem, since a fault in an automotive operating system can
+result in catastrophic failures of the automobile. A com-
+prehensive safety analysis is a must, not only at the overall
+system level, but also at the software level. Model check-
+ing [3], one of the most commonly used automated formal
+veriﬁcation techniques, has been applied for the veriﬁcation
+of operating systems [4]–[6]. Nevertheless, existing works
+are either limited to small-scale operating systems such as
+TinyOS or focus on speciﬁc aspects of a system, such as
+timing and scheduling analysis.
+Our earlier work [1] reported a case study for model
+checking the safety properties of Trampoline [7], an oper-
+ating system based on the OSEK /VDX international stan-
+dard [2]. By adopting a faithful model translation from
+the kernel code and thus avoiding aggressive abstractions,
+the approach made the comprehension of counterexamples
+straightforward, reducing the time needed for manual anal-
+ysis. The faithful translation approach, however, naturally
+suﬀers from high veriﬁcation cost. This paper presents a
+method for further improving the veriﬁcation performance
+by utilizing the embeddedC constructs in Promela. Exper-
+iments show that the use of embeddedC constructs reduces
+the number of states and transitions to be traversed during
+the model checking process, resulting in greatly reduced
+veriﬁcation costs.
+This paper brieﬂy reviews the model checking ap-
+proach presented in [1] and then explains how the former
+approach is extended for better performance together with
+the experimental evidence showing its positive impact.
+Manuscript received May 31, 2012.
+Manuscript revised October 17, 2012.
+†The author is with School of CSE, Kyungpook National Uni-
+versity, South Korea.
+∗Based on [1] c⃝2011 IEEE.
+a) E-mail: yuchoi76@knu.ac.kr
+DOI: 10.1587/transinf.E96.D.735
+2. Model Checking Safety Properties
+The safety properties are identiﬁed by means of a Soft-
+ware Fault Tree Analysis (SFTA), starting from system-
+level safety requirements, such as “an automobile control
+system shall change the direction of the wheels in time”.
+Each safety requirement is analyzed in a top-down manner
+to identify detailed potential software faults such as “delay
+in task sequencing”. Each such software fault is further
+analyzed to identify operating system level safety proper-
+ties by combining the top-down analysis with the identiﬁca-
+tion of safety requirements from the international standards
+OSEK/VDX and AUTOSAR to reduce the depth of the soft-
+ware fault tree; in our study, a total of 56 safety properties
+were identiﬁed from three software fault trees with an aver-
+age depth of six. The two safety properties identiﬁed from
+the SFTA are listed in the following:
+SR1. Tasks shall not be in the waiting state indeﬁnitely
+while allocating resources.
+SR2. Tasks shall not wait for events indeﬁnitely.
+Figure 1 illustrates our model checking process in three
+steps: (1) light-weight model checking, (2) incremental ver-
+iﬁcation, and (3) performance improvement using embed-
+dedC, which is an extension from the earlier work.
+2.1 Light-Weight Model Checking
+In the ﬁrst step, a formal model (the P romela model in this
+case study) is constructed from the Trampoline kernel code,
+which is validated using the SPIN simulator and then ver-
+iﬁed with respect to each safety property using the SPIN
+model checker. Our model construction process eliminates
+Fig. 1 V eriﬁcation process for Trampoline.
+Copyright c⃝ 2013 The Institute of Electronics, Information and Communication Engineers
+
+PDF PAGE 2
+736
+IEICE TRANS. INF. & SYST., VOL.E96–D, NO.3 MARCH 2013
+wrapper functions, tracing functions, and emulating func-
+tions from the code. As a result, the original Trampoline
+operating system comprising a total of 4,530 lines of code is
+converted into a Promela model comprising a total of 1,500
+lines of code. The model checker generates a counterexam-
+ple for each refuted safety property. We analyze this using
+counterexample replay in the SPIN simulator and use it to
+generate a test scenario so that we can conﬁrm through run-
+time testing that the counterexample trace actually leads to
+a safety violation. In this step, light-weight model checking
+is applied using limited resources, e.g., 4 Gbytes of system
+memory. The process ends if all the properties are veriﬁed
+in this step.
+2.2 Incremental V eriﬁcation
+However, it is possible that the model checker neither veri-
+ﬁes nor refutes the property due to a lack of resources. The
+second step tries to address this issue by using incremen-
+tal veriﬁcation, which imposes constraints on the external
+model (i.e., the task model) of the operating system and per-
+forms incremental veriﬁcation as the constraints are gradu-
+ally lifted. This provides a method for quantitatively mea-
+suring the veriﬁcation coverage even when comprehensive-
+ness cannot be achieved.
+2.3 Performance Improvement Using EmbeddedC
+Even incremental veriﬁcation might not scale in case the
+number of application tasks is over the threshold. The third
+step utilizes the embeddedC constructs in Promela to reduce
+the number of states and transitions to be traversed during
+the model checking process. This step is applied only to
+those properties that are not veriﬁed or refuted in the ﬁrst
+and the second step, due to the issue of usability; SPIN does
+not provide simulation capabilities for models using embed-
+dedC constructs, and thus it is extremely diﬃcult to validate
+models with embeddedC constructs in the initial step.
+3. A Safety Bug Found
+Our case study revealed that Trampoline violates SR 2. A
+counterexample trace that leads to an abnormal system halt
+is illustrated in Fig. 2: Task t
+1 activates task t2, which pre-
+empts t1 as soon as it is activated. t2 activates task t3 and
+then waits for event 2. While t2 is in the waiting state, t3
+goes to the running state, since it has higher priority than
+t1, and activates task t4. t3 is preempted by t4, but is soon
+resumed after t4 goes to the waiting state for event 0. t3 sets
+event 0 for t4 and terminates afterwards. Setting event 0 is
+supposed to resume t4,b u tt1 is resumed instead. Both t2 and
+t4 remain in the waiting state indeﬁnitely.
+The counterexample trace is applied directly to the
+Trampoline kernel code for analysis since the mapping be-
+tween the kernel and the Promela model is one-to-one, mak-
+ing the analysis straightforward. It turns out that the prob-
+lem is due to the encoding and checking mechanism for
+Fig. 2 A counterexample of SR 2.
+events in the Trampoline kernel code:
+1: tpl_status
+tpl_set_event(tpl_task_id task_id,
+tpl_event_mask in_event){
+2: ....
+3: if((events->evt_wait & in_event)!=0){
+4: ....
+5: // wake up and put the waiting process
+//in the ready queue
+6: ...
+7: } ...
+8: }
+As stated in line 3 of the code, tpl set event performs a
+bitwise-and operation of the event mask and the event num-
+ber to check that the event number is indeed on the wait-
+ing list. However, this encoding and checking mechanism
+only works correctly when the event number is greater than
+0; tpl
+set event(t4, 0) does not have any eﬀect on the event
+mask since the bitwise-and operation of the event mask and
+the event number are always equal to 0. In this case, the lines
+between 4 and 6 are not executed, and thus cannot wake up
+the task waiting for event 0. Trampoline does not provide
+any means for checking or warning that the value of an event
+is not supposed to be equal to zero. We anticipate that this is
+a typical case of a safety gap; bad things may happen where
+we take things for granted.
+4. Incremental V eriﬁcation
+Though the initial veriﬁcation was successful in ﬁnding a
+safety bug for SR 2, it failed to verify or refute SR 1. SPIN
+quickly ran out of memory on a SUN workstation with
+30 Gbytes of memory. Even when using the bit-state hash-
+ing option provided by SPIN for better scalability, the mea-
+sured coverage was around 20%, which is far from being
+comprehensive. We anticipate that the ine ﬃciency of the
+initial veriﬁcation comes from two factors: (1) The Tram-
+poline kernel itself is too large in the statespace, and (2) the
+task model is too generous in that it allows an arbitrary num-
+ber of system calls per task, which is not realistic in practice.
+We tackle the second issue by adopting an incremen-
+tal veriﬁcation approach that limits and increases the num-
+ber of system calls per task as veriﬁcation succeeds. In this
+way, we still allow arbitrary behavior of user tasks up to
+a certain point while providing comprehensive veriﬁcation
+under the given constraints. Table 1 shows the performance
+of model checking SR 1 as the number of system calls per
+task increases from 3 to 11. The columns from left to right
+
+PDF PAGE 3
+LETTER
+737
+Table 1 Performance of incremental veriﬁcation.
+APIs Depth States Transitions Memory Time
+3 35,159 8.00e+06 1.26e+07 1019.498 289
+5 1,041,301 4.20e+07 6.57e+07 3318.760 1.37e+03
+7 2,180,863 1.12e+08 1.75e+08 8555.065 3.65e+03
+9 3,396,568 1.92e+08 2.97e+08 13,418.443 6.20e+03
+11 4,934,305 3.02e+08 4.67e+08 28,229.922 9.90e+03
+represent the number of API calls, the depth of the veriﬁ-
+cation search, the number of states explored, the number of
+transitions, the amount of memory used in Megabytes, and
+the time required to ﬁnish veriﬁcation in seconds.
+5. Performance Improvement Using EmbeddedC
+Though the experimental result is promising, it was per-
+formed with limited environmental parameters; the number
+of tasks was limited to four, with the maximum number of
+API calls per task being limited to 11. We suggest utilizing
+embeddedC constructs to achieve better performance.
+5.1 EmbeddedC Constructs
+EmbeddedC constructs were introduced to facilitate model-
+driven veriﬁcation of software systems, making it possible
+to directly embed implementation code into Promela mod-
+els [8]. In this way, high-level system design can be mod-
+eled independent of implementation details, which can be
+embedded later and replaced whenever necessary [9].
+The nature of the constructs and the way they are han-
+dled in the model checking process have an interesting side
+eﬀect: The execution of the embedded code is invoked dur-
+ing the model checking process, which is treated as a single
+transition no matter how many lines of code are embedded
+inside. In contrast, a typical model checking process treats
+each statement as a source of a new transition, producing a
+large number of intermediate states. For example, Fig. 3 il-
+lustrates two Promela models for the same C program code.
+The model in the ﬁrst column is a model that uses no em-
+beddedC constructs and the model in the second column is
+a model that uses embeddedC constructs.
+Table 2 shows the performance comparison when
+model checking the two models in Fig. 3, as the number
+of global variables increases from two to ﬁve in lines 1–2
+and their corresponding assignment statements are added in
+lines 9–12. From columns two to six, Table 2 shows the
+number of global variables, the search depth, the number
+of states traversed, the number of transitions traversed, and
+the amount of memory in Mega bytes consumed during the
+model checking process. The ﬁrst model is a Promela model
+that uses atomic sequences (PW A), and the second model is
+a Promela model that uses embedded C constructs (PWE).
+Note that the model using embedded C requires far fewer re-
+sources than the one using the original Promela model and
+that the veriﬁcation cost does not increase as the number of
+variables increases in the models using embedded C con-
+structs.
+Fig. 3 Sample models.
+Table 2 Performance comparison of the sample models.
+model vars depth states transitions memory
+PW A 2 9,057 50 82 2.64
+3 9,062 65 108 2.73
+4 9,067 81 133 2.73
+5 9,072 96 159 2.83
+PWE 2,3,4,5 25 38 58 2.54
+5.2 Application of EmbeddedC to the Trampoline Model
+We anticipate that embeddedC is applicable not only for
+model-driven veriﬁcation, but also for improving model
+checking scalability, especially for synchronized event pro-
+cessing systems with a large number of global variables,
+which is a common characteristic of embedded software.
+As illustrated in Fig. 1, the Promela model constructed
+from the Trampoline kernel is partly converted into a model
+with embeddedC constructs in the third step, which is used
+for incremental veriﬁcation afterwards. This partial model
+conversion is performed according to the following steps:
+1. Convert the atomic sequence of statements into c
+code
+blocks for synchronized event-driven processes.
+2. Embed all global variables referenced or used from the
+converted c code blocks into c code blocks.
+3. Embed all user-deﬁned data types used in the c code
+blocks into c decl declarations.
+4. Track each global variable declared in c code blocks
+using the c track construct.
+The conversion process converts only the atomic se-
+quence of statements and related variables into embededC.
+This preserves the semantics of the original model since an
+
+PDF PAGE 4
+738
+IEICE TRANS. INF. & SYST., VOL.E96–D, NO.3 MARCH 2013
+atomic sequence is executed without interrupts, and thus
+there is no need to handle them as individual transitions.
+Figure 4 shows a fragment of the Trampoline model
+with embeddedC code, converted from the original Promela
+model. The atomic sequence in the inline function is con-
+verted into a c
+code block, the global variables tpl fifo rw
+and tpl h prio accessed from the c code block are declared
+in a c code block, and then the user-deﬁned data type
+TP L FIFO STA TE is declared in a c decl block. Finally,
+the global variables are traced by using the c track con-
+struct. We note that the multiple transitions required by the
+inline function tpl get proc are reduced to one by collaps-
+ing them into one c code construct.
+5.3 Performance Improvement
+Figure 5 illustrates the performance diﬀerence between the
+original Trampoline kernel model and the model with em-
+beddedC constructs in terms of memory and time consump-
+tion as the number of API calls per task increases from 3 to
+11. We see that both the absolute value of the veriﬁcation
+cost and the rate of the cost increments are greatly reduced
+as the number of API calls increases.
+Fig. 4 Conversion example from the Trampoline OS.
+Fig. 5 Performance comparison.
+6. Conclusion
+This case study indicates that model checking can be ef-
+fective in identifying subtle safety issues even if aggres-
+sive abstractions are not employed in model construction.
+Our approach of faithfully translating the kernel code into
+a formal model is systematic and allows engineers to eas-
+ily understand the counterexamples. The scalability issue,
+which is aggravated by the faithful translation, is handled
+through incremental veriﬁcation and the reverse use of em-
+beddedC constructs. The embeddedC constructs were ex-
+tremely useful for systematically reducing the veriﬁcation
+cost. Nevertheless, the approach must be used with care
+since merging multiple transitions may result in the obfusca-
+tion of the important interleaving behavior of asynchronous
+processes. The application of embeddedC constructs was
+limited to atomic statements only in our case study for this
+reason. It was also delayed till the third step because merg-
+ing transitions makes it diﬃcult to analyze counterexamples
+and simulation results; the original Promela model is pre-
+ferred for initial and incremental veriﬁcation as long as the
+available resources allow this. EmbeddedC is the last choice
+for better scalability.
+Acknowledgements
+This work was partially supported by Kyungpook National
+University Research Fund, 2012 and the National Research
+Foundation of Korea Grant funded by Korean Government
+(2012R1A1A4A01011788).
+References
+[1] Y . Choi, “Safety analysis of the Trampoline OS using model checking:
+An experience report,” Proc. 22nd IEEE International Symposium on
+Software Reliability Engineering, 2011.
+[2] “OSEK/VDX operating system speciﬁcation 2.2.3.”
+[3] G.J. Holzmann, The SPIN Model Checker: Primer and Reference
+Manual, Addison-Wesley Publishing Company, 2003.
+[4] J. Penix, W. Visser, S. Park, C. Pasareanu, E. Engstrom, A. Larson,
+and N. Weininger, “V erifying time partitioning in the DEOS schedul-
+ing kernel,” Formal Methods in Systems Design Journal, vol.26, no.2,
+pp.103–135, March 2005.
+[5] D. Bucur and M. Kwiatkowska, “On software veriﬁcation for sensor
+nodes,” J. Systems and Software, vol.84, no.10, Oct. 2010.
+[6] L. Waszniowski and Z. Hanz´ alek, “Formal veriﬁcation on multitask-
+ing applications based on timed automata model,” Real-Time Sys-
+tems, vol.38, pp.39–65, 2008.
+[7] “Trampoline – opensource RTOS project.” http: //trampoline.rts-
+software.org.
+[8] G.J. Holzmann and T.C. Ruys, “E ﬀective bug hunting with Spin and
+Modex,” Model Checking Software: The SPIN Workshop, April
+2005.
+[9] G.J. Holzmann, R. Joshi, and A. Groce, “Model driven code check-
+ing,” Automated Software Engineering, pp.283–297, 2008.

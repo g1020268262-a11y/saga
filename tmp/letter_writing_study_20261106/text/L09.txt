@@ -1,0 +1,293 @@
+PDF PAGE 1
+1618
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.9 SEPTEMBER 2026
+LETTER Special Section on Discrete Mathematics and Its Applications
+Security Analysis on “SPKSE: Secure Public Key Searchable
+Encryption Withstand Keyword Guessing Attacks”
+Keita EMURA†,††a), Toshihiro OHIGASHI†††, and Nobuyuki SUGIO††††, Members
+SUMMARY Shi et al. (Scientiﬁc Reports 2025 (SJR Q1 Journal)) pro-
+posed a public key searchable encryption scheme, which they call secure
+publickeysearchableencryption(SPKSE).Inthisshortnote,weshowthat
+a trapdoor can be generated from a ciphertext without using the receiver’s
+secretkey. Wealsoshowthatthetestalgorithmcanberunwithoutusingthe
+server’ssecretkey,althoughtheschemeemploysadesignatedtestersetting.
+Our analysis indicates that the scheme must be completely redesigned.
+key words: public key encryption with keyword search, security analysis
+1. Introduction
+In public key encryption with keyword search (PEKS) [1],
+a receiver generates a trapdoor (that corresponds to a search
+query) that allows to search a ciphertext encrypted by the
+receiver’s public key. A server, that is typically called the
+cloud server or the test server, runs theT estalgorithm that
+takes a ciphertext and a trapdoor. Since a trapdoor is gener-
+atedbythereceiver’ssecretkey,nobody,exceptthereceiver,
+should not be able to generate a trapdoor.
+Shi, Xu, Cao, and Cheng (SXCC) [2] considered the
+following two types of keyword guessing attacks (KGAs).
+Oﬄine KGA:Assumethatanadversaryhasatrapdoorand
+would like to know which keyword is associated to the
+trapdoor. Then, the adversary chooses a keyword, en-
+cryptsthekeyword,andrunsthe T estalgorithm. Then,
+theadversarycanobtainkeywordinformationfromthe
+trapdoor that leaks information of search queries.
+Online KGA:Assumethatanadversarygeneratesacipher-
+text of a keyword and sends it to the test server (cloud
+server). When the server returns the ciphertext against
+a receiver’s query (a trapdoor), then the adversary can
+decide the trapdoor is associated to the keyword.
+The main aim of the SXCC paper is to proposer a PEKS
+scheme that defends against both types of KGAs. We call it
+the SXCC scheme.
+Manuscript received August 4, 2025.
+Manuscript revised November 28, 2025.
+Manuscript publicized March 3, 2026.
+†Kanazawa University, Kanazawa-shi, 920-1192 Japan.
+††National Institute of Advanced Industrial Science and Tech-
+nology (AIST), Tokyo 135-0064 Japan.
+†††Tokai University, Tokyo 108-8619 Japan.
+††††Hokkaido University of Science, Sapporo-shi, 006-8585
+Japan.
+a)E-mail: k-emura@se.kanazawa-u.ac.jp (Corresponding au-
+thor)
+DOI: 10.1587/transfun.2025DML0001
+Our Contribution. In this short note, we analyze the se-
+curity of the SXCC scheme [2]. Concretely, we show that
+a trapdoor can be generated from a ciphertext without using
+the receiver’s secret key.
+We clarify that our attack violates their security model
+becausetheyemployedaslightlyweakersecuritymodel(See
+Sect.2). Concretely, an adversary is not allowed to issue an
+encryptionqueryforthechallengekeyword. Sinceourattack
+converts a ciphertext into a trapdoor, the adversary needs to
+obtain a ciphertext of the targeted keyword. Their security
+models do not allow for such a query.
+Nevertheless, we claim that our analysis indicates that
+the scheme must be completely redesigned. For example,
+a cloud server that receives a ciphertext from a sender can
+generate a trapdoor and execute theT estalgorithm, even
+thoughthereceiverdoesnotprovideatrapdoortotheserver.
+This situation does not match the roles of the cloud server
+in PEKS. More concerningly, if any third party obtains a ci-
+phertext, they also can generate a trapdoor. This means that
+they can decide whether two ciphertexts are encryption for
+the same keyword or not by generating a trapdoor from the
+ﬁrst ciphertext and by running theT estalgorithm. This ob-
+servationsuggeststhat,intheirscheme,keywordencryption
+doesnoteﬀectivelyfulﬁllitsintendedpurpose, highlighting
+a potential conceptual oversight that may warrant reconsid-
+eration of the design.
+2. SXCC Scheme
+In this section, we introduce the SXCC scheme. We remark
+thattheyconsidernotonlysearchableencryptionfunctional-
+itybutalsopublickeyencryption(PKE),i.e.,theencryption
+algorithm takes a plaintextm in addition to a keywordw.
+Since our security analysis focuses on the searchable en-
+cryption part, we omit the PKE part in this paper. They
+employ a ﬂavor of public key authenticated encryption with
+keyword search (PAEKS) [3], [4] where the encryption al-
+gorithm takes a sender’s secret keyskS (in addition to the
+receiver’s public keypkR), and the trapdoor generation al-
+gorithm takes a sender’s public keypkS (in addition to the
+receiver’s secret keyskR). They also employ a ﬂavor of the
+designated tester setting [5] where the cloud server also has
+apublickey pkC andasecretkey skC,andthe T estalgorithm
+takes skC as input∗. In the SXCC scheme,skC is also used
+to re-randomize a ciphertext, in addition to running theT est
+∗Precisely,the T estalgorithmdoesnottake skCasinputintheir
+syntax. A trapdoor is converted usingskC and theT estalgorithm
+Copyright © 2026 The Institute of Electronics, Information and Communication Engineers
+
+PDF PAGE 2
+LETTER
+1619
+algorithm. Sincethisprocedureisindependentofourattack,
+we omit the re-randomization procedure.
+The SXCC paper introduces four security deﬁnitions.
+We omit two of them because they are related to the PKE
+part and the re-randomization procedure.
+Ciphertext Indistinguishability (CI):They deﬁne CI† as
+follows. Let C be the challenger andA be an adver-
+sary. Cgenerates ppandsends ppto A. Itisnotexplic-
+itly deﬁne how to generate(pkS, skS), (pkR, skR), and
+(pkC, skC),andnopublickeyisgivento A. Weassume
+that C generates these keys and sends(pkS, pkR, pkC)
+to A. A is allowed to issue encryption queries.
+A sends a keywordw to C and obtains a ciphertext
+C ← Enc(pkS, skS, pkR, pkC,w ). A is allowed to issue
+trapdoor queries. A sends a keywordw to C and ob-
+tains a trapdoortd ← Trapdoor(pkS, pkR, skR,w ). We
+clarify that no test query is deﬁned in their model.A
+declares two challenge keywords,w0 and w1, which
+have not been sent as a query. C picks a random
+b ∈ { 0, 1} and sends the challenge ciphertextC∗ ←
+Enc(pkS, skS, pkR, pkC,w b)to A. A is allowed to issue
+encryption and trapdoor queriesw < {w0,w 1}. Finally,
+A outputs a bit b′ ∈ { 0, 1}. The advantage of A is
+deﬁned to be|Pr[b = b′] − 1/2|. As mentioned before,
+A is not allowed to issue an encryption query for the
+challenge keyword.
+Trapdoor Indistinguishability (TI):Theyalsodeﬁnetrap-
+door indistinguishability. The deﬁnition is the
+same as that of ciphertext indistinguishability ex-
+cept that C generates the challenge trapdoor td∗ ←
+Trapdoor(pkS, pkR, skR,w b).
+Next, wedescribe theSXCC scheme. LetGand GT be
+groupswithprimeorder p, e : G × G → GT beasymmetric
+pairing, andg ∈ Gbe a generator. LetH : {0, 1}∗ → Gbe a
+hash function.
+The SXCC Scheme
+Setup(1λ): The setup algorithm takes a security param-
+eter λ ∈ N and outputs a public parameter pp =
+(G, GT, e, p,g, H).
+KeyGenS(pp): The sender key generation algorithm takes
+ppasinput. Choose skS
+$
+← −Zp andoutputs pkS =gskS.
+KeyGenR(pp): The receiver key generation algorithm takes
+ppasinput. Choose skR
+$
+← −Zp andoutputs pkR =gskR.
+KeyGenC(pp): The cloud server key generation algorithm
+takes ppasinput. Choose skC
+$
+← −Zp andoutputs pkC =
+takestheconvertedtrapdoor( e(H(w ′)skR, pkS)inthealgorithm)as
+input. Due to this procedure, we assume that theT estalgorithm
+takes skC as input.
+†The notion is referred to as index indistinguishability in [2],
+since a PKE ciphertext is denoted as a ciphertext and a PEKS
+ciphertext as an index. In our work, we adopt the term CI in
+accordance with the standard security deﬁnition of PAEKS.
+gskC.
+Enc(pkS, skS, pkR, pkC,w ): The keyword encryption algo-
+rithm takes pkS, skS, pkR, pkC and a keywordw ∈
+{0, 1}∗. Choose r
+$
+← −Zp and computeC1 = H(w)skS ·
+pkr
+C and C2 = pkr
+R. Output a ciphertextC = (C1, C2).
+Trapdoor(pkS, pkR, skR,w ′): The trapdoor generation algo-
+rithm takes pkS, pkR, skR, and a keyword w ′ ∈
+{0, 1}∗. Choose s
+$
+← −Zp and compute td1 =
+e(H(w ′)skR, pkS)e(gs, pkC)skR and td2 = gs. Output a
+trapdoor td = (td1, td2).
+T est(C, td, skC): Parse C = (C1, C2) and td = (td1, td2).
+Compute td1/e(td2, pkR)skC = e(H(w ′)skR, pkS). Out-
+put 1 ife(H(w ′)skR, pkS)e(C2, pkC) = e(C1, pkR) holds
+and 0, otherwise.
+3. Our Attack
+Our attack shows thattd = (td1, td2) can be computed from
+C = (C1, C2)without usingskR as follows.
+e(C1, pkR) = e(H(w)skS · pkr
+C, pkR)
+= e(H(w)skS, pkR)e(pkr
+C, pkR)
+= e(H(w)skS, pkR)e(pkC, pkr
+R)
+= e(H(w)skS, pkR)e(pkC, C2)
+e(C1, pkR)/e(pkC, C2) = e(H(w)skS, pkR)
+= e(H(w)skR, pkS)
+Choose s′ $
+← −Zp and computetd2 =gs′
+and
+(e(C1, pkR)/e(pkC, C2))e(pkR, pkC)s′
+= e(H(w)skR, pkS)e(gs′
+, pkC)skR
+= td1
+We also remark thatskC is used in theT estalgorithm such
+that td1/e(td2, pkR)skC = e(H(w)skR, pkS). As shown in
+the attack procedure, e(H(w)skR, pkS) can be extracted by
+e(C1, pkR)/e(pkC, C2)without usingskC.
+WeexplicitlydescribeourattackbreakstheCIsecurity
+if Aisallowedtoissueanencryptionqueryforthechallenge
+keywordasfollows. A sendsw0 asanencryptionquery,and
+obtainsaciphertext C. Aconverts Cto tdwhichisatrapdoor
+forw0. Since A can run theT estalgorithm without using
+skC, A can determinebby running theT estalgorithm with
+the challenge ciphertextC∗ and the converted trapdoortd.
+If theT estalgorithm outputs 1, thenA outputs b′ = 0, and
+b′ = 1 otherwise. As mentioned before, our attack violates
+their CI model. Nevertheless, we claim that our analysis
+indicates that the scheme must be completely redesigned.
+As demonstrated by our attack, a trapdoor can be computed
+fromaciphertextwithoutusing skR,andanyonecanrunthe
+T estalgorithm without using skC. This fact suggests that
+each key fails to fulﬁll its intended role, trapdoor generation
+
+PDF PAGE 3
+1620
+IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.9 SEPTEMBER 2026
+and running theT estalgorithm, respectively. Therefore, we
+arguethatrevisingtheSXCCschemerequiresanewproposal
+built entirely from scratch. Note that when the cloud server
+has a public key, and theT estalgorithm takes the secret key
+of the cloud server as input, then it is suﬃcient to encrypt
+a trapdoor by the public key to hide keyword information
+associated with the trapdoor [6], [7]. Moreover, Li and
+Boyen [4] have proposed a generic construction of PAEKS.
+Given these considerations, we believe further exploration
+oftheSXCCschememayhavelimitedmerit. Therefore, we
+do not pursue this direction further.
+4. Attack Complexity
+Here, we clarify the complexity in terms of runtime. We
+report average execution times over 10,000 runs. Since the
+SXCCschemeemployssymmetricpairings,weusethePBC
+library†. Forachieving128-bitsecurity,weemployparame-
+tersgivenin[8]. Toanalyzeattackcomplexity,alltestswere
+run on an Ubuntu 24.04.2 LTS system featuring a RyzenTM
+5800X CPU, 128GiB RAM, and 9TB storage. One attack
+scenarioinvolvesobtainingtwociphertextsanddetermining
+whether they correspond to the same keyword. This is ac-
+complished by converting the ﬁrst ciphertext to a trapdoor
+andexecutingthe T estalgorithmwiththeconvertedtrapdoor
+and the second ciphertext. The total running time for this
+processis37.969ms: 20.849msfortrapdoorconversionand
+17.119ms for executing theT estalgorithm. Note that run-
+ning the Enc algorithm twice takes 59.335ms. Even when
+accounting for the encryption time, the overall running time
+of our attack is 97.304ms, which is considered reasonably
+practical.
+5. Conclusion
+In this short note, we show that a trapdoor can be computed
+from a ciphertext without usingskR, and show that anyone
+†PBC: Pairing-Based Cryptography (https://crypto.stanford.
+edu/pbc/)
+can run the T estalgorithm without using skC. Although
+our attack violates their security model, we claim that our
+analysisindicatesthattheSXCCschememustbecompletely
+redesigned.
+Acknowledgments
+The authors would like to thank the reviewer for the valu-
+able comments and helpful suggestions. This work was
+supportedbyJSPSKAKENHIGrantNumbersJP21K11897
+and JP25K15119.
+References
+[1] D.Boneh,G.D.Crescenzo,R.Ostrovsky,andG.Persiano,“Publickey
+encryption with keyword search,” EUROCRYPT, pp.506–522, 2004.
+[2] D. Shi, M. Xu, C. Cao, and H. Cheng, “SPKSE: Secure public key
+searchableencryptionwithstandkeywordguessingattacks,”Sci.Rep.,
+vol.15, no.19658, 2025.https://doi.org/10.1038/s41598-025-01454-9
+[3] Q. Huang and H. Li, “An eﬃcient public-key searchable encryption
+scheme secure against inside keyword guessing attacks,” Information
+Sciences, vol.403, pp.1–14, 2017. https://doi.org/10.1016/j.ins.2017.
+03.038
+[4] Q. Li and X. Boyen, “Public-key authenticated encryption with key-
+wordsearchmadeeasy,”IACRCommunicationsinCryptology,vol.1,
+no.2, p.16, 2024. https://doi.org/10.62056/a63z11zn4
+[5] J. Baek, R. Safavi-Naini, and W. Susilo, “Public key encryption with
+keyword search revisited,” ICCSA Part I, pp.1249–1259, 2008.
+[6] Y. Chen, “SPEKS: Secure server-designation public key encryption
+with keyword search against keyword guessing attacks,” The Com-
+puterJournal,vol.58,no.4,pp.922–933,2015.https://doi.org/10.1093/
+comjnl/bxu013
+[7] K. Emura, “Generic construction of dual-server public key authen-
+ticated encryption with keyword search,” IET Infomation Security,
+vol.2025, pp.1–14, 2025. https://doi.org/10.1049/ise2/6610587
+[8] K. Emura, K. Ito, and T. Ohigashi, “Secure-channel free searchable
+encryption with multiple keywords: A generic construction, an in-
+stantiation, anditsimplementation,” JournalofComputerandSystem
+Sciences, vol.114, pp.107–125, 2020. https://doi.org/10.1016/j.jcss.
+2020.06.003

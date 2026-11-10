@@ -1,0 +1,29 @@
+{
+  "title": "Secure Handover Protocol for Mobile WiMAX Networks",
+  "authors": [
+    "Song-Hee Lee",
+    "Nam-Sup Park",
+    "Jin-Young Choi"
+  ],
+  "journal": "IEICE Transactions on Information and Systems",
+  "series": "D",
+  "year": 2008,
+  "volume": "E91.D",
+  "issue": 12,
+  "pages": "2875-2879",
+  "article_type": "LETTER",
+  "doi": "10.1093/ietisy/e91-d.12.2875",
+  "article_url": "https://www.jstage.jst.go.jp/article/transinf/E91.D/12/E91.D_12_2875/_article/-char/en",
+  "source_url": "https://www.jstage.jst.go.jp/article/transinf/E91.D/12/E91.D_12_2875/_pdf/-char/en",
+  "resolved_url": "https://www.jstage.jst.go.jp/article/transinf/E91.D/12/E91.D_12_2875/_pdf/-char/en",
+  "retrieved_at_utc": "2026-11-03T07:19:31.710509+00:00",
+  "content_type": "application/pdf;charset=UTF-8",
+  "pdf_file": "04_wimax_secure_handover_2008.pdf",
+  "pdf_pages": 5,
+  "sha256": "0f3282503e76ee2758f3d1128c21cde236e6dd5c02a3895901a61f79d67821a6",
+  "byte_count": 307963,
+  "selection_reason": "Different authors and protocol from both Hu et al. 5G Letters; logic-based formal security analysis. Historical published five-page Letter, not a statement about current submission limits.",
+  "reading_scope": "All five PDF pages read and all five rendered pages visually inspected; GNY logic proof reported by authors, not independently revalidated.",
+  "visual_pages_checked": 5,
+  "formal_method": "GNY logic; not Tamarin or automated model checking"
+}
