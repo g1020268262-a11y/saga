@@ -7,12 +7,9 @@
 \section{授权流程与分析目标}
 \label{sec:authorization-workflow-objectives}
 
-本章介绍 SAGA 从策略判定到请求准入的授权流程，并据此确定后续分析的目标与假设。
-第~\ref{subsec:authorization-workflow}~节说明接触策略、OTK 和 ACT 的作用，
-重点区分 Provider 的发放计数、接收方的 OTK 消费状态与 ACT 请求额度。
-第~\ref{subsec:analysis-objectives-assumptions}~节沿该流程提出策略求值一致性、
-OTK 发放与使用对应、ACT 累计准入上限三个检查目标，
-为第三章的模型构建与结果分析提供依据。
+SAGA 的通信授权由策略判定、OTK 发放与消费以及 ACT 请求准入共同实现。
+相关约束由 Provider 与接收方基于不同状态执行，
+对通信许可及使用次数的分析因此需要分别考察规则求值、领取与使用身份以及请求额度的执行。
 
 \subsection{授权流程}
 \label{subsec:authorization-workflow}
@@ -20,9 +17,17 @@ OTK 发放与使用对应、ACT 累计准入上限三个检查目标，
 SAGA 通过接触策略控制一次性公钥（One-Time Key，OTK）的发放，
 以 OTK 建立访问控制令牌（Access Control Token，ACT），
 并通过 ACT 约束后续请求~\cite{syros2025sagaV2}。
-本节从代理完成注册与身份绑定后展开，记 Provider 为 $P$，接收方代理为 $A$，发送方代理为 $B$。
+Provider 记为 $P$，已完成注册与身份绑定的接收方和发送方代理分别记为 $A$ 和 $B$。
 用户为 $A$ 配置接触策略。
 $P$ 在材料发放时求值该策略，$A$ 在连接建立时再次执行本地策略检查。
+图~\ref{fig:saga-authorization-sequence}~给出认证材料、密钥派生与令牌使用的消息顺序。
+
+\begin{figure*}[t]
+  \centering
+  \input{figures/saga_authorization_sequence.tikz}
+  \caption{SAGA authorization after registration. Cryptographic messages follow the full specification, and local policy and state checks follow the reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
+  \label{fig:saga-authorization-sequence}
+\end{figure*}
 
 接触策略的求值结果决定发送方领取 OTK 的资格与初始额度。
 每条规则关联一个代理身份模式及相应预算。
@@ -46,7 +51,8 @@ $B$ 解密并保存该 ACT，供后续请求使用~\cite{syros2025sagaV2,sagaRef
 
 OTK 的发放与消费分别由 Provider 的领取计数和接收方的本地密钥状态约束。
 $P$ 发放一枚 OTK 后，$A$ 仍保留其未消费记录，直到某次有效的令牌申请消费该 OTK。
-$A$ 在这一过程中检查本地策略与 OTK 状态，不查询 $P$ 对当前发送方维护的剩余领取额度~\cite{sagaReferenceImpl2026}。
+$A$ 在这一过程中检查本地策略与 OTK 状态，
+消费检查未核对该 OTK 的最初领取身份，也不查询 $P$ 对当前发送方维护的剩余领取额度~\cite{sagaReferenceImpl2026}。
 协议说明中的 OTK 签名覆盖 $A$ 的身份与该公钥，未包含领取者身份~\cite{syros2025sagaV2}。
 ACT 则绑定实际连接者的访问控制公钥~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 因此，按身份计数的发放与实际使用之间具有何种对应关系，需要单独考察。
@@ -54,24 +60,20 @@ ACT 则绑定实际连接者的访问控制公钥~\cite{syros2025sagaV2,sagaRefe
 ACT 的使用约束由接收方维护的活动记录和剩余请求额度执行。
 $B$ 在每次请求中携带 ACT，$A$ 核对提交者的访问控制公钥、令牌有效期和剩余额度，
 通过后执行扣减与请求处理~\cite{sagaReferenceImpl2026}。
-持有有效 ACT 时，$B$ 可以复用该令牌建立后续通信，无须再次向 $P$ 领取 OTK。
-令牌到期或额度耗尽后，才需重新取得 OTK 以建立新的 ACT~\cite{syros2025sagaV2}。
+有效 ACT 可以在连接重建时复用，任务结束标记则会使接收方删除相应活动记录。
+需要建立新 ACT 时，发送方提交尚未消费的 OTK~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 ACT 的初始请求额度由 $A$ 单独设置，与 $P$ 的 OTK 领取计数分别维护。
-参考实现由独立线程处理不同连接，同一 ACT 的多个连接共享同一份活动记录及剩余额度，
-使该额度的执行还涉及并发请求之间的协调~\cite{sagaReferenceImpl2026}。
+参考实现由独立线程处理不同连接，同一 ACT 的多个连接共享同一份活动记录及剩余额度。
+ACT 的请求次数限制因此同时依赖剩余额度的判定，以及多个连接并发执行时额度检查与更新之间的协调~\cite{sagaReferenceImpl2026}。
 
 \subsection{分析目标与假设}
 \label{subsec:analysis-objectives-assumptions}
 
-上述流程将初始联系许可的判定与后续请求的额度约束连接起来。
-策略求值确定领取资格及预算，OTK 的消费触发新 ACT 的签发，ACT 再约束后续请求。
-相应检查由 $P$ 与 $A$ 基于各自维护的状态执行。
-本文据此依次检查策略判定、OTK 发放与使用关系以及 ACT 累计准入三个方面的约束。
+策略求值一致性、OTK 发放与使用对应关系以及 ACT 累计准入上限，
+分别用于检查许可语义、凭证使用身份与请求计数约束。
 
 策略求值的一致性要求实际决策符合预先确定的规则优先语义。
-对于合法接触策略和发送方身份，本文依据匹配器文档及其具体性评分确定参考结果，
-并检查实现是否返回相同预算。
-分析限定于具有唯一最高评分匹配规则的配置，使规则选择及其许可结果具有明确的判断依据。
+参考求值依据协议说明与匹配器文档的规则优先要求确定，实际函数的预算返回值与之对照。
 
 OTK 分析区分按身份限制发放次数与按身份限制新许可次数两项目标。
 前者要求 $P$ 向每个发送方发放的 OTK 数量不超过相应预算。
@@ -80,18 +82,12 @@ OTK 分析区分按身份限制发放次数与按身份限制新许可次数两�
 该对应关系是本文提出的更强使用目标，与原有发放计数性质分别报告。
 
 ACT 的次数限制要求同一令牌的累计准入请求数不超过其初始额度。
-记令牌 $t$ 的初始额度为 $Q(t)$，累计准入次数为 $N_{\mathrm{adm}}(t)$，检查目标为
-\begin{equation}
-  N_{\mathrm{adm}}(t) \leq Q(t).
-  \label{eq:act-admission-bound}
-\end{equation}
 准入指请求通过访问控制检查并获准进入处理流程。
-$N_{\mathrm{adm}}(t)$ 是分析中的观测量，区别于实现保存的剩余额度。
-本文考察有效性检查与额度更新在多个连接并发提交请求时，能否共同维持式~\eqref{eq:act-admission-bound}。
+累计准入次数是分析中的观测量，剩余额度则是接收方保存的本地状态。
+该目标检查有效性判断与额度更新在多个连接并发提交请求时能否共同维持累计上限。
 
-本文在固定接触策略和已建立身份绑定的条件下研究上述约束。
-OTK 协议模型以已登记代理为起点，假定身份、访问控制公钥与 TLS 对端正确绑定，并采用理想化密码操作。
-模型设置两个身份独立且获接触策略允许的发送方 $B$、$C$，
-允许 $B$ 将其已领取且尚未消费的 OTK 公钥主动转交给 $C$，长期私钥保持保密。
-ACT 分析考察无故障条件下有效令牌持有者通过多个连接并发提交请求的行为。
-第三章分别说明各项分析的状态表示、具体配置、源码到模型的对应及实现观测范围。
+固定接触策略下，各项目标按相应机制的输入与执行条件分别检查。
+策略分析采用参考求值器支持的精确小写 ASCII 身份、字面 UID 通配与全通配规则，并要求最高评分匹配唯一。
+OTK 分析以已登记代理为起点，假定身份、访问控制公钥与 TLS 对端正确绑定，并采用理想化密码操作。
+发送方 $B$ 可以将已领取的 OTK 公钥主动转交给身份独立、同样获 $P$ 与 $A$ 策略允许的发送方 $C$，长期私钥保持保密。
+ACT 分析限定于无故障条件下，同一有效令牌持有者通过多个连接并发提交普通请求的行为。

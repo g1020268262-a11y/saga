@@ -1,0 +1,96 @@
+% !TeX root = saga_authorization_sequence.tex
+% Protocol messages and signatures: SAGA full version, arXiv:2504.21034v2,
+% Sections IV-D2 and IV-E. Local policy/state checks: reference implementation
+% 7372111, saga/provider/provider.py and saga/agent.py.
+\begin{tikzpicture}[
+  x=1mm,y=1mm,
+  font=\fontsize{8}{9.5}\selectfont,
+  actor/.style={draw=black!75,fill=black!7,rounded corners=0.6mm,
+    minimum width=47mm,minimum height=8mm,font=\bfseries\fontsize{8.5}{10}\selectfont},
+  life/.style={draw=black!45,densely dashed,line width=0.4pt},
+  msg/.style={-{Latex[length=1.8mm,width=1.2mm]},line width=0.55pt},
+  check/.style={draw=black!55,fill=white,rounded corners=0.5mm,
+    text width=46mm,align=center,inner sep=1.2mm,
+    font=\fontsize{7.6}{9.2}\selectfont},
+  wire/.style={fill=white,inner sep=0.5mm,font=\fontsize{8}{9.5}\selectfont}
+]
+  \node[align=center,font=\itshape\fontsize{8}{9.5}\selectfont]
+    at (86,8) {Registered agents and signed OTK pool\quad\textbullet\quad Authenticated TLS for all messages};
+
+  \node[actor] at (25,-3) {Provider $P$};
+  \node[actor] at (86,-3) {Initiating agent $B$};
+  \node[actor] at (147,-3) {Receiving agent $A$};
+  \draw[life] (25,-7) -- (25,-47);
+  \draw[life] (86,-7) -- (86,-174);
+  \draw[life] (147,-7) -- (147,-174);
+
+  \draw[msg] (86,-15) -- node[wire,above] {$\langle\mathrm{aid}_B,\mathrm{aid}_A\rangle$} (25,-15);
+  \node[check] at (25,-29) {
+    Authenticate $B$, evaluate $CP_A(B)$.\\
+    Require a positive policy budget.\\
+    Initialize $c_{A,B}$ if first request.\\
+    Require $c_{A,B}>0$ and a key available.\\
+    Pop $k_i$, decrement $c_{A,B}$.
+  };
+  \draw[msg] (25,-44) -- node[wire,above] {$\langle\mathcal I_A,k_i,\sigma_{k_i}^{U_A}\rangle$} (86,-44);
+
+  \node[check] at (86,-53) {
+    Verify $U_A$'s certificate,\\
+    signed metadata and $\sigma_{k_i}^{U_A}$.
+  };
+  \draw[msg] (86,-64) -- node[wire,above] {$\langle\mathcal I_B,\sigma_B^P,k_i\rangle$} (147,-64);
+
+  \node[check] at (147,-76) {
+    Verify $B$'s registration and TLS identity.\\
+    Check local contact policy.\\
+    Check $k_i$ is unused, then consume it.
+  };
+
+  \node[check] at (86,-92) {
+    $Z_B=\operatorname{DH}(\mathrm{SAC}_B,k_i)$\\
+    $K=\operatorname{KDF}(Z_B)$
+  };
+  \node[check] at (147,-92) {
+    $Z_A=\operatorname{DH}(\mathrm{SOTK}_A^i,\mathrm{PAC}_B)$\\
+    $K=\operatorname{KDF}(Z_A)$
+  };
+  \node[check] at (147,-107) {
+    $m_t=\langle N,T_{\rm issued},T_{\rm expire},$\\
+    $Q_{\max},\mathrm{PAC}_B\rangle$\\
+    $t=\operatorname{Enc}_K(m_t)$\\
+    Store $t$, set $q_A[t]=Q_{\max}$.
+  };
+  \draw[msg] (147,-120) -- node[wire,above] {$t$\quad (encrypted ACT)} (86,-120);
+  \node[anchor=east,align=right,font=\fontsize{7.6}{9.2}\selectfont]
+    at (84,-127) {Decrypt $t$ with $K$ and cache it.};
+
+  \draw[draw=black!45,rounded corners=1mm,line width=0.4pt]
+    (59,-134) rectangle (173,-171);
+  \node[anchor=west,fill=white,inner sep=0.7mm,font=\itshape\fontsize{7.6}{9.2}\selectfont]
+    at (61,-134) {For each request, reuse a valid ACT};
+  \draw[msg] (86,-142) -- node[wire,above] {$\langle t,\mathrm{msg}\rangle$} (147,-142);
+  \node[check] at (147,-152) {
+    Check active $t$, bound $\mathrm{PAC}_B$,\\
+    expiry and $q_A[t]>0$.
+  };
+  \node[check] at (147,-164) {
+    $q_A[t]\gets\max(0,q_A[t]-1)$\\
+    Admit and process the request.
+  };
+
+  \node[draw=black!35,fill=black!2,rounded corners=0.6mm,
+    text width=46mm,align=left,inner sep=1.5mm,
+    font=\fontsize{7.6}{9.2}\selectfont,anchor=north]
+    at (25,-57) {
+    \textbf{Notation}\\[1mm]
+    $k_i=\mathrm{OTK}_A^i$\\
+    $c_{A,B}=\mathrm{Counter}_{\rm OTK}[A,B]$\\[1mm]
+    $\mathcal I_X=\langle\mathrm{Cert}_{U_X},M_X\rangle$\\
+    $M_X$ carries the agent identity, endpoint,
+    TLS certificate, $\mathrm{PAC}_X$ and the owner's signature.\\[1mm]
+    $\sigma_{k_i}^{U_A}=$\\
+    $\operatorname{Sign}_{\mathrm{SK}_{U_A}}(\langle\mathrm{aid}_A,k_i\rangle)$\\[1mm]
+    $\sigma_B^P$ authenticates $B$'s registration material.\\[1mm]
+    $q_A[t]$ is the receiver's remaining request quota for $t$.
+  };
+\end{tikzpicture}
