@@ -20,12 +20,13 @@ SAGA 通过接触策略控制一次性公钥（One-Time Key，OTK）的发放，
 Provider 记为 $P$，已完成注册与身份绑定的接收方和发送方代理分别记为 $A$ 和 $B$。
 用户为 $A$ 配置接触策略。
 $P$ 在材料发放时求值该策略，$A$ 在连接建立时再次执行本地策略检查。
-图~\ref{fig:saga-authorization-sequence}~给出认证材料、密钥派生与令牌使用的消息顺序。
+Provider 维护的身份级 OTK 发放额度与接收方维护的 OTK 消费状态、ACT 请求额度共同约束授权流程，
+如图~\ref{fig:saga-authorization-sequence}~所示。
 
 \begin{figure*}[t]
   \centering
   \input{figures/saga_authorization_sequence.tikz}
-  \caption{SAGA authorization after registration. Cryptographic messages follow the full specification, and local policy and state checks follow the reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
+  \caption{SAGA authorization after registration over authenticated TLS. The Provider applies the receiver's policy and decrements the initiator's OTK issuance budget $c_{A,B}$. The receiver consumes an OTK to establish an ACT bound to $\mathsf{PAC}_B$, then checks the ACT and decrements its request quota $q_A[t]$ on each admission. Messages follow the full specification, with local policy and state checks from the reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
   \label{fig:saga-authorization-sequence}
 \end{figure*}
 
@@ -44,8 +45,8 @@ $B$ 向 $P$ 请求 $A$ 的通信材料时，$P$ 核对申请者身份、策略�
 接收方通过核验并消费 OTK，为实际连接的发送方签发 ACT。
 $B$ 验证取得的通信材料后，与 $A$ 建立 TLS 连接，并提交自己的身份材料及 OTK。
 $A$ 检查本地接触许可、验证 $B$ 的身份材料，并确认该 OTK 尚未消费。
-检查通过后，$A$ 移除本地的该 OTK，使用其对应私钥与 $B$ 的访问控制公钥 $\mathsf{PAC}_B$ 派生共享密钥。
-$B$ 则以自己的访问控制私钥与该 OTK 派生相同密钥。
+检查通过后，$A$ 移除本地的该 OTK，使用其对应私钥 $\mathsf{SOTK}_A^i$ 与 $B$ 的访问控制公钥 $\mathsf{PAC}_B$ 派生共享密钥。
+$B$ 则以自己的访问控制私钥 $\mathsf{SAC}_B$ 与该 OTK 派生相同密钥。
 $A$ 生成绑定 $\mathsf{PAC}_B$、包含有效期与初始请求额度的 ACT，保存其活动记录，并以共享密钥加密后返回。
 $B$ 解密并保存该 ACT，供后续请求使用~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 

@@ -8,7 +8,7 @@
 规则选择偏差、OTK 使用身份与并发额度分别通过预算对照、事件轨迹和状态交错进行分析。
 表~\ref{tab:authorization-analysis-results}~汇总三项目标的检查依据与结果。
 
-\begin{table}[tb]
+\begin{table}[htb]
   \caption{三类授权约束的分析依据与结果}
   \label{tab:authorization-analysis-results}
   \centering
@@ -60,7 +60,7 @@ $C$ 以自己的身份、访问控制公钥和私钥使用 $k_B$，取得并解�
 
 % Evidence: proofs/otk_transfer/evidence/run-20261025T033815645931Z/summary.json.
 归档查询在第~\ref{subsec:otk-issuance-use-model}~节的固定配置中报告按身份发放上限与 OTK 单次消费成立，
-同时给出式~\eqref{eq:otk-same-sender-correspondence}~的反例。
+同时给出式~\eqref{eq:otk-same-sender-correspondence}~的反例\footnote{原始轨迹通过事件投影核对发放、ACT 解密和首次准入的先后关系。归档结果采用工具原生输出，独立证明证书检查尚未实施。}。
 仅移除主动转交后，$C$ 的正常流程仍可达，同人对应性质得到验证。
 这组对照将差异定位到领取材料的转交与实际使用身份之间的关系。
 在允许主动转交的模型中，按领取身份计数的 OTK 配额不足以单独保证按实际使用身份限制新 ACT 的取得次数。

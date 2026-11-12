@@ -5,23 +5,26 @@
 \section{形式化建模与验证设置}
 \label{sec:formal-modeling-analysis-setup}
 
-规则选择、带身份的凭证消费和共享额度更新分别决定 SAGA 授权约束的执行。
-相应分析以可执行参考语义、带事件的多重集重写规则和可交错状态转换，
-刻画预算决定、凭证使用身份与累计请求次数。
+针对第二章提出的三项授权目标，依据 SAGA 的协议规定与参考实现建立相应的分析模型。
+策略部分以独立参考计算对照实际预算，OTK 部分追踪发放、转交与消费中的身份关系，
+ACT 部分刻画共享额度检查与扣减的并发交错。
+各部分进一步给出模型假设、源码映射、待检查性质及验证配置。
 
 \subsection{建模方法与抽象原则}
 \label{subsec:modeling-approach-abstractions}
 
-协议规定确定预期授权语义，参考实现确定状态更新与并发操作的执行结构。
-分析依据固定版本的 SAGA 代码~\cite{sagaReferenceImpl2026}，
-提取匹配器的规则选择、Provider 的按身份发放状态、接收方的密钥消费及令牌检查与扣减。
-确定性的预算求值通过独立参考计算与生产函数对照，
-多方 OTK 交互采用 Tamarin 的多重集重写表示~\cite{meier2013tamarin}，
-共享 ACT 额度采用 TLA$^{+}$ 状态与动作表示~\cite{lamport2002specifying}。
-这些表示分别保留对应性质所依赖的决策、身份或交错行为。
+协议规定与参考实现分别提供预期授权语义和实际执行结构的建模依据。
+策略规则的优先关系根据协议说明与匹配器文档确定，
+Provider 的按身份发放、接收方的 OTK 消费及 ACT 额度更新则从固定版本的代码提取~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
+由此，策略返回值、凭证使用身份和共享余额更新成为各项目标的直接检查对象。
 
-源码对应的依据为人工映射与选定的受控执行，OTK 符号分析结果在理想原语和信道假设下解释。
-形式化实现精化和计算安全转移尚未建立。
+形式化表示依据目标性质所依赖的行为确定。
+策略预算取决于身份匹配和规则选择，因此采用独立参考求值与原始匹配函数对照。
+OTK 的发放与使用涉及多个主体及分处两端的资源状态，因此采用 Tamarin 的多重集重写规则记录身份、资源消费和交互事件~\cite{meier2013tamarin}。
+ACT 的累计准入取决于多个连接对同一余额的交错访问，因此采用 TLA$^{+}$ 的共享变量、连接局部状态和独立动作表示~\cite{lamport2002specifying}。
+
+模型与代码的对应由人工源码映射及选定的受控执行支撑。
+OTK 模型采用理想化密码操作和带身份的信道，模型与实现之间的精化关系及向计算安全的转移尚未建立。
 模型、完整查询、源码映射和原始运行记录按固定工件版本提供\footnote{\raggedright
 \href{https://github.com/g1020268262-a11y/saga/tree/13455bb644f954964ef2fcd9303f50d0fdc43830}{\texttt{github.com/g1020268262-a11y/saga}},
 revision \texttt{13455bb6}.
@@ -30,20 +33,22 @@ OTK 和 ACT 工件分别位于 \texttt{proofs/otk\_transfer} 与 \texttt{proofs/
 \subsection{策略求值模型}
 \label{subsec:policy-evaluation-model}
 
-参考策略语义以匹配规则的具体性确定预算。
-对接触策略 $CP_A$ 与发送方身份 $s$，参考端独立计算匹配与评分，并返回唯一最高评分匹配规则的预算。
-支持的语法为精确小写 ASCII 身份、字面 UID 通配及全通配。
-生产端直接调用原始 \texttt{match()}，检查目标为
+策略求值的一致性通过独立参考预算与实际函数返回值的对照检查。
+对接触策略 $CP_A$ 与发送方身份 $s$，参考求值器依据最具体规则优先的要求，独立计算匹配和评分。
+对照限定于参考求值器支持的精确小写 ASCII 身份、固定 UID 的名称通配（\texttt{uid:*}）与全通配规则，
+并要求存在唯一最高评分匹配规则，以该规则的预算作为参考结果。
+这一范围使预算的选择依据保持确定，语法外规则或并列最高匹配由参考端标记为不支持。
+
+一致性性质要求相同输入下的实际预算符合上述参考语义。
+记实际函数与参考求值的结果分别为 $\operatorname{Eval}_{\mathrm{impl}}$ 与 $\operatorname{Eval}_{\mathrm{ref}}$，检查
 \begin{equation}
   \operatorname{Eval}_{\mathrm{impl}}(CP_A,s)
   =\operatorname{Eval}_{\mathrm{ref}}(CP_A,s).
   \label{eq:policy-evaluation-consistency}
 \end{equation}
-两侧分别表示实际函数与独立参考求值的预算。
-对照采用相同身份、相同规则及不同规则排列。
-Provider 的 \texttt{/access} 路由与接收方的
-\texttt{handle\_i\_agent\_\allowbreak connection()} 均调用生产匹配器，
-消费者执行进一步记录两处决策及其后的凭证状态。
+对照保留相同身份和规则集合，比较所选规则排列下原始 \texttt{match()} 的返回值与参考预算。
+Provider 与接收方均调用该匹配函数，受控消费者执行进一步记录两端决策及 ACT 的签发与存储，
+并使用发送方密钥核对解密结果，检查决策差异在授权链中的传播。
 
 % Reference evaluator: proofs/decision_bridge/bridge.py:49--93.
 % Consumer: proofs/consumer_validation/harness.py:102--113.
@@ -51,42 +56,39 @@ Provider 的 \texttt{/access} 路由与接收方的
 \subsection{OTK 发放与使用模型}
 \label{subsec:otk-issuance-use-model}
 
-OTK 的发放、持有与消费分别对应具有不同更新位置的资源状态。
+OTK 发放与使用的对应关系需要同时追踪领取身份、材料持有及最终建立 ACT 的主体。
 模型固定 Provider $P$、接收方 $A$ 和身份独立的发送方 $B,C$，
 设置两枚 OTK，以及每个发送方一次不可补充的领取额度。
-线性事实 \texttt{ProviderCredit} 表示领取机会，
-\texttt{Provider\allowbreak UnusedOTK} 与 \texttt{Receiver\allowbreak UnusedOTK}
-分别表示尚未发放和尚未消费的密钥。
-持久事实 \texttt{HeldOTK} 表示已持有的公钥材料。
-Provider 的单次数据库发放更新对应同时消费领取机会与待发放 OTK 的规则，
-接收方本地密钥表的检查与删除则对应另一条消费规则。
-因此，发放改变 Provider 的资源状态，后续 ACT 签发才改变接收方的密钥状态。
+\texttt{UniqueSetup} 将初始化限制为至多一次，使领取预算与密钥资源具有固定来源。
+
+Provider 发放与接收方消费由两组独立的线性资源表示，以保留两端不同的状态更新位置。
+\texttt{ProviderCredit} 表示领取机会，\texttt{Provider\allowbreak UnusedOTK} 表示池中待发放的 OTK。
+发放规则同时消费这两项资源并返回公钥材料，接收方对应的 \texttt{Receiver\allowbreak UnusedOTK} 记录继续保留。
+收到材料后，发送方通过持久事实 \texttt{HeldOTK} 保存公钥，允许重复提出令牌申请。
+接收方的 ACT 签发规则核对当前连接者的本地许可，并消费匹配的 \texttt{Receiver\allowbreak UnusedOTK}。
+这一划分保留了 Provider 发放完成后、接收方尚未消费 OTK 的中间状态，
+并将后续成功签发约束于本地密钥的单次消费。
 
 % Source map: proofs/otk_transfer/SOURCE_MAP.zh-CN.md.
 % Rules: proofs/otk_transfer/saga_otk_transfer.spthy.
-协议交互通过保留实际连接者身份的规则继续执行。
-已登记身份与 PAC 的绑定由初始持久事实表示，TLS 以带端点身份的私有消息事实表示。
-接收方核对本地许可和未消费 OTK，使用其私钥与连接者 PAC 派生密钥，并签发绑定该 PAC 的 ACT。
-发送方保留对应的 DH 密钥依赖，正确解密后才能提交模型中的应用请求。
+为将 OTK 使用关联到实际连接者，模型保留登记身份、公钥与解密所需的私钥依赖。
+登记身份与 PAC 的绑定由持久事实表示，TLS 以带端点身份的私有消息事实表示。
+接收方使用 OTK 私钥与连接者 PAC 派生密钥，并签发绑定该 PAC 的 ACT。
+发送方使用自身私钥和所持 OTK 执行对应计算，正确解密返回密文后才能提交应用请求。
 DH 使用内建等式理论，KDF 以带域标签的哈希项表示，
 ACT 以包含新鲜标识及 PAC 的理想对称密文表示。
 
-主动转交规则允许 $B$ 将已领取的 OTK 公钥发送给 $C$，
-后续签发仍受接收方的未消费状态约束。
-$C$ 使用自己的身份、公钥和私钥继续协议。
+主动转交行为用于检查材料持有者改变后，接收方的消费约束与使用身份如何对应。
+转交规则允许 $B$ 将已领取的 OTK 公钥发送给 $C$，由 $C$ 以自己的登记身份、公钥和私钥继续协议。
 主配置中，两发送方均获 $P$ 与 $A$ 的策略允许，长期私钥保持保密。
-\texttt{UniqueSetup} 约束单次初始化，每枚已领取 OTK 至多触发一次转交，访问与令牌申请规则可以重复触发。
-运行采用 Tamarin 1.12.0 与 Maude 3.5.1，
-检查允许转交、关闭转交及两端拒绝 $C$ 三种配置。
-原始轨迹通过事件投影核对发放、解密和准入的先后关系。
-独立证明证书检查尚未实施。
+每枚由 $B$ 领取的 OTK 至多触发一次转交，访问与令牌申请规则可以重复执行，成功发放和签发次数由线性资源约束。
 
 % Archive: proofs/otk_transfer/evidence/run-20261025T033815645931Z/.
-发放数量与使用身份分别由计数性质和事件对应刻画。
+发放事件记录 OTK 的领取者，准入事件记录实际使用者，两者通过接收方身份与密钥关联。
 记 $I_{A,s}$ 为执行前缀中 $P$ 向获准身份 $s$ 发放 $A$ 的 OTK 的次数，
-$\beta_{A,s}$ 为其预算，原有发放约束为 $I_{A,s}\leq\beta_{A,s}$。
+$\beta_{A,s}$ 为其预算，原有发放约束为 $I_{A,s}\leq\beta_{A,s}$，当前配置中 $\beta_{A,s}=1$。
 $\mathsf{Issue}(A,s,k)$ 表示向 $s$ 发放 $k$ 的事件。
-$\mathsf{Use}(A,s,k)$ 表示匹配的新 ACT 已签发、由 $s$ 正确解密且其首个应用请求获准入的事件投影。
+将每枚 ACT 的首次应用请求准入事件投影为 $\mathsf{Use}(A,s,k)$，其前置规则要求匹配的新 ACT 已签发且由 $s$ 正确解密。
 对任意 $s,k$ 和位置 $i$，额外检查
 \begin{equation}
   \begin{aligned}
@@ -95,34 +97,39 @@ $\mathsf{Use}(A,s,k)$ 表示匹配的新 ACT 已签发、由 $s$ 正确解密且
   \end{aligned}
   \label{eq:otk-same-sender-correspondence}
 \end{equation}
-该对应关系是将领取预算解释为按身份限制新 ACT 取得次数时的更强目标。
-每枚 ACT 的使用观察到其首次请求准入。
+该对应关系要求每次成功使用均能追溯到向同一身份的先前发放，
+是将领取预算进一步解释为按身份限制新 ACT 取得次数时的更强目标。
+检查同时保留每枚 OTK 至多发放一次，以及至多用于一次 ACT 签发的资源性质。
+
+验证采用 Tamarin 1.12.0 与 Maude 3.5.1，在上述固定实体与资源下比较允许转交、关闭转交及两端拒绝 $C$ 三种配置。
 
 \subsection{ACT 并发配额模型}
 \label{subsec:act-quota-model}
 
-共享额度的并发表示由源码中两段临界区的边界确定。
-模型从同一有效 ACT 已在双端保存后开始，
-保留双端余额、连接局部位置、消息交付状态及准入与后端调用计数。
-状态变量 \texttt{receiverRemaining} 记录接收方余额 $r$，
-观测算子 \texttt{Accepted} 对各连接的准入计数求和。
-\texttt{ACheck} 对应 \texttt{token\_is\_valid()} 的检查临界区，
-读取余额并使连接进入已检查位置，随后释放锁。
-\texttt{ADebit} 对应 \texttt{receive\_conversation()} 中重新加锁的扣减，
-更新余额为 $\max(0,r-1)$、增加准入计数并推进连接位置。
-扣减动作以连接已经完成检查为前提。
-后续后端处理由 \texttt{ABackend} 记录。
-该划分保留连接在检查与扣减之间的调度位置~\cite{sagaReferenceImpl2026}。
+ACT 准入上限的检查需要同时表示接收方的共享余额与各连接的执行进度。
+模型从同一有效 ACT 已在双端保存后开始，以 \texttt{receiverRemaining} 记录接收方余额 $r$，
+以每个连接的局部位置区分请求已解析、已检查及已扣减等状态。
+发送方余额与消息交付状态则保留双端提交和接收请求的执行条件。
+这种表示使多个连接能够访问同一额度，并分别推进各自的处理过程。
+
+检查与扣减分别建模为原子动作，其边界对应参考实现中的两段持锁临界区~\cite{sagaReferenceImpl2026}。
+\texttt{ACheck} 抽象 \texttt{token\_is\_valid()} 的检查，核对元数据与正余额，使连接从已解析推进到已检查位置。
+\texttt{ADebit} 抽象 \texttt{receive\_conversation()} 中重新持锁的扣减，
+以连接已经完成检查为前提，将当前共享余额更新为 $\max(0,r-1)$，并推进到已扣减位置。
+两个动作之间保留其他连接的调度机会，使检查通过与完成扣减具有各自的执行位置。
 
 % Model: proofs/quota_validation/SagaQuotaDelivery.tla:132--160,290.
 % Config: proofs/quota_validation/evidence/delivery-20261024T150331844425Z/inputs/delivery_configs/concurrent_race.cfg.
-累计准入上限以进入处理流程的请求数量为判断依据。
+准入计数对应普通请求通过令牌检查并执行额度更新后进入处理路径的位置。
+模型在 \texttt{ADebit} 中增加各连接的准入计数，观测算子 \texttt{Accepted} 对这些计数求和，
+后续后端调用则由独立动作 \texttt{ABackend} 记录。
 对初始额度为 $Q(t)$ 的令牌 $t$，记累计准入为 $N_{\mathrm{adm}}(t)$，检查
 \begin{equation}
   N_{\mathrm{adm}}(t)\leq Q(t).
   \label{eq:act-admission-bound}
 \end{equation}
-$N_{\mathrm{adm}}(t)$ 对应 \texttt{Accepted}，余额表示扣减后的可用状态，后端调用另行计数。
-TLC 2.19 在初额 $1$、两个连接各至多一个普通请求、
-非配额元数据有效且零故障的配置中检查可达状态不变量。
-精确输入、工具版本、日志及输出状态随运行记录归档。
+$N_{\mathrm{adm}}(t)$ 对应 \texttt{Accepted}。
+
+TLC 2.19 用于检查式~\eqref{eq:act-admission-bound}~的可达状态不变量。
+有限配置将双端初始余额均设为 $1$，包含两个连接，每个连接至多提交一个普通非终止请求。
+非配额元数据固定有效且故障数为零，使状态探索聚焦于共享额度的检查、扣减及其交错。
