@@ -5,10 +5,9 @@
 \section{验证结果与安全分析}
 \label{sec:verification-results-security-analysis}
 
-三项授权检查分别发现，策略规则顺序可将预期拒绝变为许可，OTK 转交可使领取身份与使用身份不对应，
-同一 ACT 的并发准入可超过初始额度。
-结合反例输入、执行轨迹与对照结果，分析各问题的触发条件、根因及授权影响，
-表~\ref{tab:authorization-analysis-results}~汇总主要结果与证据。
+依据第~\ref{sec:formal-modeling-analysis-setup}~节的性质与配置，报告三项授权检查的结果，
+并结合反例和对照分析其根因与授权影响。
+表~\ref{tab:authorization-analysis-results}~汇总主要观察。
 
 \begin{table}[htb]
   \caption{三类授权约束的关键结果与证据}
@@ -20,7 +19,7 @@
     检查目标 & 关键结果 & 证据 \\
     \hline
     策略一致性 & 预期拒绝变为许可，ACT 签发并存储 & 函数对照、受控执行 \\
-    OTK 同人使用对应 & $C$ 领取 $1$ 枚，成功使用 $2$ 枚不同 OTK & Tamarin 反例、对照配置 \\
+    OTK 同人使用对应\newline（增强性质） & $C$ 领取 $1$ 枚，成功使用 $2$ 枚不同 OTK & Tamarin 反例、对照配置 \\
     ACT 累计准入 & 模型额度 $1$ 准入 $2$ 次，原生额度 $50$ 调用 $51$ 次 & TLC、原生方法实验 \\
     \hline
   \end{tabular}
@@ -56,7 +55,8 @@
 \label{subsec:otk-issuance-use}
 
 % Evidence: proofs/otk_transfer/evidence/run-20261025T033815645931Z/forwarding/witness.zh-CN.md.
-领取额度耗尽的发送方仍可借助另一身份领取的 OTK 建立新 ACT。
+在允许主动转交且 Provider 与接收方策略均许可 $C$ 的符号配置中，
+$C$ 耗尽领取额度后仍可借助 $B$ 的未消费 OTK 建立新 ACT。
 在第~\ref{subsec:otk-issuance-use-model}~节配置的符号见证中，$C$ 先领取并使用 $k_C$，建立和解密第一枚 ACT，完成首次请求准入。
 随后 $P$ 因额度耗尽拒绝再次向 $C$ 发放。
 $B$ 将另一枚已领取而尚未消费的 $k_B$ 转交给 $C$，
@@ -64,7 +64,9 @@ $C$ 以自己的登记身份、访问控制公钥及对应私钥建立和解密�
 该轨迹中 $C$ 的领取次数为 $1$，成功使用的不同 OTK 数量为 $2$，两枚新 ACT 均绑定其自身公钥。
 
 % Evidence: proofs/otk_transfer/evidence/run-20261025T033815645931Z/summary.json.
-性质检查同时报告按身份发放上限与 OTK 单次消费成立，以及式~\eqref{eq:otk-same-sender-correspondence}~存在反例\footnote{原始轨迹通过事件投影核对发放、ACT 解密和首次准入的先后关系。归档结果采用工具原生输出，独立证明证书检查尚未实施。}。
+Tamarin 的 \texttt{all-traces} 检查对按身份发放上限与 OTK 单次消费均返回 \texttt{verified}，
+对式~\eqref{eq:otk-same-sender-correspondence}~的同人使用对应返回 \texttt{falsified} 并产生反例\footnote{原始轨迹通过事件投影核对发放、ACT 解密和首次准入的先后关系。归档结果采用工具原生输出，独立证明证书检查尚未实施。}。
+耗尽后转交成功的 \texttt{exists-trace} 查询返回 \texttt{verified}，确认上述转交使用轨迹可达。
 关闭主动转交后，$B,C$ 的正常路径均可达，同人对应性质得到验证。
 两端明确拒绝 $C$ 时，$C$ 的正常路径和转交完成轨迹均不可达，$B$ 的合法路径仍可达。
 这些对照将见证限定于允许主动转交且两端策略准许 $C$ 的配置。
@@ -94,7 +96,7 @@ Provider 按领取者维护额度，接收方则依据实际连接身份、本�
 这一反例前缀的后端调用计数为 $0$，准入上限已失效。
 
 % Evidence: output/analysis/qmax-20261020/results.json and probe_qmax.py.
-原生方法级受控实验进一步观察到该交错引起的额外后端调用。
+原生方法级受控实验进一步表明，合法 ACT 持有者可通过多个连接并发使用同一令牌，触发额外后端调用。
 初始额度为 $50$ 时，串行提交 $51$ 条请求产生 $50$ 次计数后端调用，余额为 $0$。
 先串行处理 $49$ 条，再以线程屏障使两个连接均通过剩余一次额度的原生检查，
 随后释放线程继续执行，可得到累计 $51$ 次后端调用，余额仍为 $0$。
@@ -105,4 +107,3 @@ Provider 按领取者维护额度，接收方则依据实际连接身份、本�
 \texttt{token\_is\_valid()} 持锁检查令牌与剩余额度，函数返回后释放锁。
 \texttt{receive\_conversation()} 随后重新获取同一把锁进行截断扣减，扣减前未再次要求余额为正~\cite{sagaReferenceImpl2026}。
 两个连接因此可在任一扣减发生前通过检查，随后各自进入处理路径。
-将检查与额度消耗合并为一次原子准入决策，可阻断上述两个连接均通过末次额度检查的交错。
