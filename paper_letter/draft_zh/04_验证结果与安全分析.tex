@@ -5,21 +5,23 @@
 \section{验证结果与安全分析}
 \label{sec:verification-results-security-analysis}
 
-规则选择偏差、OTK 使用身份与并发额度分别通过预算对照、事件轨迹和状态交错进行分析。
-表~\ref{tab:authorization-analysis-results}~汇总三项目标的检查依据与结果。
+三项授权检查分别发现，策略规则顺序可将预期拒绝变为许可，OTK 转交可使领取身份与使用身份不对应，
+同一 ACT 的并发准入可超过初始额度。
+结合反例输入、执行轨迹与对照结果，分析各问题的触发条件、根因及授权影响，
+表~\ref{tab:authorization-analysis-results}~汇总主要结果与证据。
 
 \begin{table}[htb]
-  \caption{三类授权约束的分析依据与结果}
+  \caption{三类授权约束的关键结果与证据}
   \label{tab:authorization-analysis-results}
   \centering
   \small
-  \begin{tabular}{@{}p{0.18\linewidth}p{0.26\linewidth}p{0.44\linewidth}@{}}
+  \begin{tabular}{@{}p{0.20\linewidth}p{0.43\linewidth}p{0.25\linewidth}@{}}
     \hline
-    检查目标 & 分析依据 & 主要结果 \\
+    检查目标 & 关键结果 & 证据 \\
     \hline
-    策略求值 & 函数对照与受控执行 & 规则顺序改变预算，并传播至 ACT 签发与存储 \\
-    OTK 发放与使用 & Tamarin\newline 固定资源模型 & 发放上限与单次消费成立，同人使用对应出现反例 \\
-    ACT 累计准入 & TLC 有限状态检查与原生方法实验 & 双连接共享末次额度时出现超额准入 \\
+    策略一致性 & 预期拒绝变为许可，ACT 签发并存储 & 函数对照、受控执行 \\
+    OTK 同人使用对应 & $C$ 领取 $1$ 枚，成功使用 $2$ 枚不同 OTK & Tamarin 反例、对照配置 \\
+    ACT 累计准入 & 模型额度 $1$ 准入 $2$ 次，原生额度 $50$ 调用 $51$ 次 & TLC、原生方法实验 \\
     \hline
   \end{tabular}
 \end{table}
@@ -28,67 +30,79 @@
 \label{subsec:policy-evaluation-consistency}
 
 % Evidence: proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json.
-规则顺序对照给出了式~\eqref{eq:policy-evaluation-consistency}~的具体反例。
+同一组规则的排列变化能够将预期拒绝转为许可，构成式~\eqref{eq:policy-evaluation-consistency}~的反例。
 对于身份 \texttt{alice@\allowbreak example.com:\allowbreak agent}，规则
 \texttt{alice@\allowbreak example.com:*} 的预算为 $-1$，通配规则 \texttt{*} 的预算为 $10$，
 两者的具体性评分分别为 $70$ 和 $0$。
-参考结果均为 $-1$。
-直接调用原始匹配函数时，具体拒绝规则在前、通配允许规则在后得到 $10$，交换顺序则得到 $-1$。
-该差异源于 \texttt{best\_pattern} 的状态维护。
-该变量初始化为 \texttt{None}，对应评分为 $-1$。
-循环更新预算时未更新该变量，使后续匹配持续与初始评分比较，通配允许规则因而能够覆盖先前的具体拒绝规则。
+两种排列的参考结果均为 $-1$。
+原始匹配函数在具体拒绝规则在前、通配允许规则在后时返回 $10$，交换顺序后返回 $-1$。
+
+该分歧源于匹配循环对当前最佳规则状态的更新缺失。
+\texttt{best\_pattern} 初始化为 \texttt{None}，对应评分为 $-1$。
+匹配到具体拒绝规则时，函数更新预算，却未同步更新最佳模式。
+后续通配规则的评分 $0$ 因此仍与初始评分 $-1$ 比较，满足更新条件并将预算覆盖为 $10$~\cite{sagaReferenceImpl2026}。
 
 % Evidence: proofs/consumer_validation/evidence/20260926T070021921746Z-d64c8064/cases/da/.
-受控消费者执行进一步显示，规则选择分歧可以传播至后续 ACT 签发。
-在具体拒绝规则先于通配允许规则的配置中，Provider 与接收方的匹配结果均为 $10$，
-执行完成 OTK 发放与消费，并发送及保存 ACT。
+错误预算进一步使预期拒绝的发送方获得新 ACT。
+受控消费者执行中，具体拒绝规则先于通配允许规则时，Provider 与接收方均返回 $10$，
+依次完成 OTK 发放、接收方消费及 ACT 签发与存储。
+实验以发送方密钥解密，所得内容与接收方存储一致。
 交换规则顺序后，Provider 返回拒绝，执行在材料发放之前终止。
-实验保留生产授权函数、数据库更新、签名校验及令牌密码操作，
-以本地身份材料与替代传输组织执行，并在会话处理入口结束观察。
-该结果将策略求值分歧的影响定位到凭证签发，也说明两端复用同一匹配实现时，两次检查会继承同一规则选择偏差。
+两端复用同一匹配器，使接收方的再次检查继承了相同的规则选择偏差。
+实验保留生产授权、数据库更新与密码操作，采用本地身份材料和替代传输，
+观察终点为 ACT 签发、发送方解密核对与接收方存储。
 
 \subsection{OTK 发放与使用身份不对应}
 \label{subsec:otk-issuance-use}
 
 % Evidence: proofs/otk_transfer/evidence/run-20261025T033815645931Z/forwarding/witness.zh-CN.md.
-转交见证显示，发放上限与更强的同人对应具有不同的检查结果。
-$C$ 先使用自行领取的 $k_C$，取得并解密新 ACT，完成首次请求准入。
-其 OTK 领取额度耗尽后，$P$ 拒绝再次发放。
-$B$ 随后将另一枚已领取而未消费的 $k_B$ 转交给 $C$。
-$C$ 以自己的身份、访问控制公钥和私钥使用 $k_B$，取得并解密另一枚 ACT，其请求再次获准入。
-因此，该执行中 $C$ 的领取次数为 $1$，成功使用的不同 OTK 数量为 $2$，并取得及解密两枚绑定自身公钥的新 ACT。
+领取额度耗尽的发送方仍可借助另一身份领取的 OTK 建立新 ACT。
+在第~\ref{subsec:otk-issuance-use-model}~节配置的符号见证中，$C$ 先领取并使用 $k_C$，建立和解密第一枚 ACT，完成首次请求准入。
+随后 $P$ 因额度耗尽拒绝再次向 $C$ 发放。
+$B$ 将另一枚已领取而尚未消费的 $k_B$ 转交给 $C$，
+$C$ 以自己的登记身份、访问控制公钥及对应私钥建立和解密第二枚新 ACT，其首次请求再次被 $A$ 接受。
+该轨迹中 $C$ 的领取次数为 $1$，成功使用的不同 OTK 数量为 $2$，两枚新 ACT 均绑定其自身公钥。
 
 % Evidence: proofs/otk_transfer/evidence/run-20261025T033815645931Z/summary.json.
-归档查询在第~\ref{subsec:otk-issuance-use-model}~节的固定配置中报告按身份发放上限与 OTK 单次消费成立，
-同时给出式~\eqref{eq:otk-same-sender-correspondence}~的反例\footnote{原始轨迹通过事件投影核对发放、ACT 解密和首次准入的先后关系。归档结果采用工具原生输出，独立证明证书检查尚未实施。}。
-仅移除主动转交后，$C$ 的正常流程仍可达，同人对应性质得到验证。
-这组对照将差异定位到领取材料的转交与实际使用身份之间的关系。
-在允许主动转交的模型中，按领取身份计数的 OTK 配额不足以单独保证按实际使用身份限制新 ACT 的取得次数。
-这一结论对应额外的使用目标，Provider 原有发放限制在该配置中保持成立。
+性质检查同时报告按身份发放上限与 OTK 单次消费成立，以及式~\eqref{eq:otk-same-sender-correspondence}~存在反例\footnote{原始轨迹通过事件投影核对发放、ACT 解密和首次准入的先后关系。归档结果采用工具原生输出，独立证明证书检查尚未实施。}。
+关闭主动转交后，$B,C$ 的正常路径均可达，同人对应性质得到验证。
+两端明确拒绝 $C$ 时，$C$ 的正常路径和转交完成轨迹均不可达，$B$ 的合法路径仍可达。
+这些对照将见证限定于允许主动转交且两端策略准许 $C$ 的配置。
+
+根因在于两端约束采用不同的身份基准。
+Provider 按领取者维护额度，接收方则依据实际连接身份、本地许可和 OTK 未消费状态签发 ACT，
+签发条件未核对该 OTK 的最初领取身份，ACT 在建立时绑定当前连接者的公钥。
+原有发放上限在该配置中保持成立，反例针对额外检查的更强同人使用目标。
+若将领取预算进一步解释为按实际使用身份限制新 ACT 的取得次数，还需约束领取材料与使用身份的对应关系。
 
 \subsection{并发 ACT 准入超额}
 \label{subsec:act-concurrent-quota}
 
 % Evidence: proofs/quota_validation/evidence/delivery-20261024T150331844425Z/concurrent_race/.
-TLC 在第~\ref{subsec:act-quota-model}~节的配置中给出了累计准入上限的反例。
+同一 ACT 的累计准入可以超过初始额度，式~\eqref{eq:act-admission-bound}~在第~\ref{subsec:act-quota-model}~节配置中出现反例。
 当接收方余额为 $1$ 时，两个连接先后通过检查，随后分别执行扣减。
 以接收方余额 $r$ 与累计准入次数 $n=N_{\mathrm{adm}}(t)$ 投影关键交错，可表示为
 \begin{equation}
   \begin{aligned}
     (1,0)&\xrightarrow{\mathsf{check}_{c_1},\,\mathsf{check}_{c_2}}(1,0)\\
-         &\xrightarrow{\mathsf{debit}_{c_1}}(0,1)
-          \xrightarrow{\mathsf{debit}_{c_2}}(0,2).
+         &\xrightarrow{\mathsf{debit}_{c_1}}(0,1)\\
+         &\xrightarrow{\mathsf{debit}_{c_2}}(0,2).
   \end{aligned}
   \label{eq:act-last-credit-interleaving}
 \end{equation}
-截断扣减使最终余额保持为 $0$，累计准入次数却达到 $2$。
-该坏前缀的后端调用计数仍为 $0$，反例定位于准入阶段。
+两次扣减后的余额为 $0$，累计准入达到 $2$。
+这一反例前缀的后端调用计数为 $0$，准入上限已失效。
 
 % Evidence: output/analysis/qmax-20261020/results.json and probe_qmax.py.
-受控原生方法实验独立观察到了同类交错引起的额外后端调用。
+原生方法级受控实验进一步观察到该交错引起的额外后端调用。
 初始额度为 $50$ 时，串行提交 $51$ 条请求产生 $50$ 次计数后端调用，余额为 $0$。
 先串行处理 $49$ 条，再以线程屏障使两个连接均通过剩余一次额度的原生检查，
 随后释放线程继续执行，可得到累计 $51$ 次后端调用，余额仍为 $0$。
 三次受控重复记录了相同结果。
-实验保留原生身份校验、令牌处理与额度扣减，使用本地证书发现、替代传输和计数后端组织执行。
-有限状态反例定位了准入上限的失效步骤，方法实验则在原生执行中观察了相同检查与扣减交错的后续调用结果。
+实验保留原生身份校验、令牌处理与额度扣减，采用本地证书材料、替代字节传输和计数后端。
+
+超额准入源于检查与扣减之间的原子性缺口。
+\texttt{token\_is\_valid()} 持锁检查令牌与剩余额度，函数返回后释放锁。
+\texttt{receive\_conversation()} 随后重新获取同一把锁进行截断扣减，扣减前未再次要求余额为正~\cite{sagaReferenceImpl2026}。
+两个连接因此可在任一扣减发生前通过检查，随后各自进入处理路径。
+将检查与额度消耗合并为一次原子准入决策，可阻断上述两个连接均通过末次额度检查的交错。
