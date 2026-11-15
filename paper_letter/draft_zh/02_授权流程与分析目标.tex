@@ -25,8 +25,8 @@ Provider 维护的身份级 OTK 发放额度与接收方维护的 OTK 消费状�
 
 \begin{figure*}[t]
   \centering
-  \input{figures/saga_authorization_sequence.tikz}
-  \caption{SAGA authorization after registration over authenticated TLS. The Provider applies the receiver's policy and decrements the initiator's OTK issuance budget $c_{A,B}$. The receiver consumes an OTK to establish an ACT bound to $\mathsf{PAC}_B$, then checks the ACT and decrements its request quota $q_A[t]$ on each admission. Messages follow the full specification, with local policy and state checks from the reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
+  \input{figures/saga_authorization_overview.tikz}
+  \caption{SAGA authorization overview after registration over authenticated TLS. Issuance credit at $P$ and consumption state at $A$ are maintained separately. ACT validity checking and quota debit are distinct implementation steps~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
   \label{fig:saga-authorization-sequence}
 \end{figure*}
 
