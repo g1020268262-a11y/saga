@@ -50,7 +50,7 @@
   \draw[msg] (133,-53) --
     node[wire,above] {Encrypted ACT $t$} (80,-53);
   \node[fill=white,align=center,inner sep=0.4mm] at (80,-56.5)
-    {Decrypt and store $t$};
+    {Decrypt $t$, retain ciphertext};
 
   \node[phase,text width=104mm] at (54,-61)
     {ACT request admission (repeat per request)};

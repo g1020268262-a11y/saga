@@ -5,17 +5,17 @@
 \section{引言}
 \label{sec:introduction}
 
-代理间安全通信需要身份认证、联系授权以及已授权通信的资源使用控制。
-SAGA 通过接触策略、一次性公钥（One-Time Key，OTK）和访问控制令牌（Access Control Token，ACT）实现分阶段通信授权~\cite{syros2025sagaV2}。
+代理间安全通信需要身份认证、联系授权以及已授权通信的资源使用控制~\cite{lampson1992authentication}。
+SAGA 通过接触策略、一次性公钥（One-Time Key，OTK）和访问控制令牌（Access Control Token，ACT）实现分阶段通信授权~\cite{syros2025saga}。
 Provider 根据策略与领取额度发放 OTK，接收方检查本地策略并消费 OTK，为实际连接者签发 ACT，以令牌额度控制后续请求。
 其授权保证依赖身份与凭证核验、策略决策及额度约束的正确执行。
 
-已有授权策略分析能够检查规则组合是否产生非预期许可，以及策略变更如何影响访问结果~\cite{fisler2005margrave}。
-在 SAGA 中，策略判定的结果进一步影响 OTK 发放、ACT 建立及后续请求准入。
-Provider 按领取身份维护 OTK 发放额度，接收方依据实际连接身份、本地策略及 OTK 未消费状态签发 ACT，并在多个连接之间共享同一令牌的剩余额度~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
-跨主体、跨阶段的状态维护因此要求检查规则选择是否符合预期优先语义、按身份领取额度能否限制同一身份取得新 ACT 的次数，以及并发检查与扣减能否维持累计准入上限。
+SAGA 原始研究已采用 ProVerif~\cite{blanchet2016proverif} 验证代理与 Provider 之间通信的认证、代理间通信的认证以及 ACT 机密性~\cite{syros2025saga}。
+这些认证与机密性性质不能直接推出接触策略求值符合预期规则优先语义、OTK 发放身份与实际使用身份对应，或并发请求下 ACT 累计准入不超过初始额度。
+相应的授权执行保证还依赖规则选择、消费阶段的领取者核验以及共享额度更新。
+本文据所采用的协议版本与固定参考实现~\cite{syros2025sagaV2,sagaReferenceImpl2026}补充检查这些执行性质，其中 OTK 同人使用对应是额外提出的更强目标。
 
-分析方法依据各项性质所依赖的执行特征确定。
+分析方法依据各项性质所依赖的执行特征确定，符号分析结果结合模型假设与具体查询解释~\cite{kobeissi2026analyzers}。
 策略一致性要求实际预算符合规则优先语义，适合以独立参考求值对照原生匹配函数，受控消费者执行进一步追踪错误决策向 ACT 签发的传播。
 OTK 的发放与使用涉及多个身份及两端独立维护的资源状态，因而以 Tamarin~\cite{meier2013tamarin} 追踪发放、主动转交与成功使用的事件对应，检查领取者与使用者是否一致。
 ACT 的累计准入取决于多个连接对共享额度的并发操作，因此以 TLA$^{+}$~\cite{lamport2002specifying} 建模检查与扣减的交错，用 TLC 检查累计准入不变量，并以原生方法级受控实验观察后端调用次数。
