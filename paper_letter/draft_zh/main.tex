@@ -32,6 +32,13 @@
 
 \begin{document}
 \pagestyle{plain}
+\begin{summary}
+SAGA 是一种面向 AI Agent 系统的安全架构，其现有安全分析主要关注通信认证与令牌机密性。本文结合形式化分析与实现层面的实验，研究 SAGA 授权机制的安全性，发现三个问题：策略匹配错误导致非预期授权；OTK 发放与使用之间缺乏领取者身份绑定，使代理能够获取超过自身领取额度的新 ACT；ACT 有效性检查与额度扣减之间的原子性缺口导致并发请求超额准入。
+\end{summary}
+\begin{keywords}
+AI Agent，SAGA，形式化分析，访问控制，协议安全
+\end{keywords}
+
 \input{01_引言}
 \input{02_授权流程与分析目标}
 \input{03_形式化建模与验证设置}
