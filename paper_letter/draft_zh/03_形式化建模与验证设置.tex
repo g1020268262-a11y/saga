@@ -2,18 +2,15 @@
 % !TeX program = xelatex
 % Definitions are tied to the archived inputs identified in the source comments.
 
-\section{形式化建模与验证设置}
+\section{形式化模型的构建}
 \label{sec:formal-modeling-analysis-setup}
 
-针对第二章提出的三项授权目标，依据 SAGA 的协议规定与参考实现建立相应的分析模型。
-策略部分以独立参考计算对照实际预算，OTK 部分追踪发放、转交与消费中的身份关系，
-ACT 部分刻画共享额度检查与扣减的并发交错。
-各部分进一步给出模型假设、源码映射、待检查性质及验证配置。
+SAGA 的接触策略、OTK 和 ACT 分别涉及规则求值、密钥发放与使用以及请求额度控制。接触策略通过参考求值与实际函数对照，并利用 ProVerif 分析授权差异对后续通信的影响；OTK 采用 Tamarin 检查发放与使用的身份关系；ACT 采用 TLA$^{+}$ 检查多个连接共享令牌额度时的并发行为。
 
-\subsection{建模方法与抽象原则}
+\subsection{建模方法与范围}
 \label{subsec:modeling-approach-abstractions}
 
-协议规定与参考实现分别提供预期授权语义和实际执行结构的建模依据。
+SAGA 的协议说明和参考实现是三项分析的主要依据。协议说明给出预期的授权规则，参考实现则提供实际的规则匹配、OTK 发放与消费以及 ACT 额度更新过程。
 策略规则的优先关系根据协议说明与匹配器文档确定，
 Provider 的按身份发放、接收方的 OTK 消费及 ACT 额度更新则从固定版本的代码提取~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 由此，策略返回值、凭证使用身份和共享余额更新成为各项目标的直接检查对象。
@@ -31,88 +28,88 @@ OTK 模型假设理想化密码操作与带身份的信道，其实现精化与�
 revision \texttt{13455bb6}.
 OTK 和 ACT 工件分别位于 \texttt{proofs/otk\_transfer} 与 \texttt{proofs/quota\_validation}。}。
 
-\subsection{策略求值模型}
+\subsection{接触策略模型}
 \label{subsec:policy-evaluation-model}
 
-策略求值的一致性通过独立参考预算与实际函数返回值的对照检查。
-对接触策略 $CP_A$ 与发送方身份 $s$，参考端按协议及匹配器文档的最具体规则优先要求，
-依据参考实现的评分定义独立完成匹配、评分与规则选择~\cite{sagaReferenceImpl2026}。
-这一计算不依赖原始 \texttt{match()} 的遍历结果。
-对照限定于参考求值器支持的精确小写 ASCII 身份、固定 UID 的名称通配（\texttt{uid:*}）与全通配规则，
-并要求存在唯一最高评分匹配规则，以该规则的预算作为参考结果。
-这一范围使预算的选择依据保持确定，语法外规则或并列最高匹配由参考端标记为不支持。
+接触策略分析以有序规则集和发送方身份为输入，检查实际预算计算是否符合 SAGA 规定的规则匹配与优先级语义。为独立确定预期求值结果，本文实现参考求值器，不调用生产匹配函数，也不依赖 Python 的 \texttt{fnmatch}。参考求值器依据匹配器文档中的评分定义，对支持的规则进行匹配与选择~\cite{sagaReferenceImpl2026}。其规则语法限定为全通配规则（\texttt{*}）、精确小写 ASCII AID 以及固定 UID 的名称通配规则（\texttt{uid:*}）。三类规则的评分分别为 $0$、UID 长度的四倍与名称长度的八倍之和，以及 UID 长度的四倍加 $2$。对于匹配规则，选择评分最高的唯一规则，并以其预算作为求值结果；不存在匹配规则时返回预算 $0$。对于不支持的规则语法或最高评分并列的情况，参考求值器不产生决策。预算为正数时表示允许，零或负数表示拒绝。
 
-一致性性质要求相同输入下的实际预算符合上述参考语义。
-记实际函数与参考求值的结果分别为 $\operatorname{Eval}_{\mathrm{impl}}$ 与 $\operatorname{Eval}_{\mathrm{ref}}$，检查
-\begin{equation}
-  \operatorname{Eval}_{\mathrm{impl}}(CP_A,s)
-  =\operatorname{Eval}_{\mathrm{ref}}(CP_A,s).
-  \label{eq:policy-evaluation-consistency}
-\end{equation}
-对照保留相同身份和规则集合，比较所选规则排列下原始 \texttt{match()} 的返回值与参考预算。
-Provider 与接收方均调用该匹配函数，受控消费者执行进一步记录两端决策及 ACT 的签发与存储，
-并使用发送方密钥核对解密结果，检查决策差异在授权链中的传播。
+实现侧结果取自生产匹配函数在相同身份及有序规则集下的实际执行观测。对照过程核验观测记录与输入身份、规则内容及排列顺序的一致性，并检查其对应的源码版本，以确保参考求值结果与实现侧观测针对相同输入。该检查限定于上述规则语法、固定策略及唯一最高评分匹配规则，不扩展为对完整 Python 通配符语义或动态策略的普遍正确性证明。
 
-% Reference evaluator: proofs/decision_bridge/bridge.py:49--93.
-% Consumer: proofs/consumer_validation/harness.py:102--113.
+为分析授权决策差异在协议层的影响，本文采用 ProVerif 对既有通信协议模型进行场景化分析。对于规范侧拒绝而实现侧允许的场景，决策适配器将两侧结果映射为模型预定义的 \texttt{ScenarioSpecDeny} 和 \texttt{ScenarioImplAllow} 表事实，并据此生成派生模型。除场景输入外，协议过程及查询保持不变。模型通过以下原生查询检查应用请求接受事件与令牌签发事件之间的对应关系，以及应用请求接受事件的可达性：
+
+\noindent\begin{minipage}{\linewidth}
+\renewcommand{\verbatimsize}{\small}
+\begin{verbatim}
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+    event(ChatAccept(receiver, sender, tok, msg))
+    ==> event(TokenIssue(receiver, sender, tok)).
+
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+    event(ChatAccept(receiver, sender, tok, msg)).
+\end{verbatim}
+\end{minipage}
+
+此外，通过受控消费者执行考察策略决策在实际授权流程中的传播。实验在 Provider 和接收方配置相同的身份及有序策略，分别记录两端生产匹配函数的输入与返回值，并执行 Provider 的 \texttt{/access} 路由及接收方连接处理。验证检查包括 OTK 发放、ACT 签发与存储，以及发送方对返回令牌的解密和令牌元数据核对。实验设置一致允许、一致拒绝及规范侧拒绝而实现侧允许三类对照场景。执行环境采用本地凭证和内存连接替代真实注册及 TLS 握手，并在进入应用消息处理前截断 \texttt{Agent.receive\_conversation()}。因此，消费者验证范围限定于 OTK 发放及 ACT 签发与存储，不涉及应用消息接受、LLM 或工具调用。
 
 \subsection{OTK 发放与使用模型}
 \label{subsec:otk-issuance-use-model}
 
-OTK 发放与使用的对应关系需要同时追踪领取身份、材料持有及最终建立 ACT 的主体。
-模型固定 Provider $P$、接收方 $A$ 和身份独立的发送方 $B,C$，
-设置两枚 OTK，以及每个发送方一次不可补充的领取额度。
-\texttt{UniqueSetup} 将初始化限制为至多一次，使领取预算与密钥资源具有固定来源。
+OTK 的领取额度由 Provider 维护，而 OTK 的消费状态由接收方维护。Tamarin 模型分别记录两端状态，检查成功使用 OTK 的发送方是否与此前领取该 OTK 的身份一致。初始化由 \texttt{UniqueSetup} 限制为至多执行一次。
 
-Provider 发放与接收方消费由两组独立的线性资源表示，以保留两端不同的状态更新位置。
-\texttt{ProviderCredit} 表示领取机会，\texttt{Provider\allowbreak UnusedOTK} 表示池中待发放的 OTK。
-发放规则同时消费这两项资源并返回公钥材料，接收方对应的 \texttt{Receiver\allowbreak UnusedOTK} 记录继续保留。
-收到材料后，发送方通过持久事实 \texttt{HeldOTK} 保存公钥，允许重复提出令牌申请。
-接收方的 ACT 签发规则核对当前连接者的本地许可，并消费匹配的 \texttt{Receiver\allowbreak UnusedOTK}。
-这一划分保留了 Provider 发放完成后、接收方尚未消费 OTK 的中间状态，
-并将后续成功签发约束于本地密钥的单次消费。
+模型使用线性事实分别表示 Provider 的领取额度、待发放 OTK 及接收方尚未消费的 OTK。其中，\texttt{ProviderCredit} 和 \texttt{ProviderUnusedOTK} 在发放时被消耗，\texttt{ReceiverUnusedOTK} 则在接收方签发 ACT 时被消耗；发送方通过持久事实 \texttt{HeldOTK} 保存已获得的 OTK 公钥。该状态划分保留了 Provider 发放与接收方消费之间的独立性。身份与访问控制公钥（PAC）的绑定通过持久事实表示，TLS 信道抽象为带端点身份的私有消息。密码学部分采用 DH 等式理论、带域标签的哈希 KDF 和理想对称加密，ACT 密文包含发送方 PAC，以表示令牌与身份的绑定。
 
-% Source map: proofs/otk_transfer/SOURCE_MAP.zh-CN.md.
-% Rules: proofs/otk_transfer/saga_otk_transfer.spthy.
-为将 OTK 使用关联到实际连接者，模型保留登记身份、公钥与解密所需的私钥依赖。
-登记身份与 PAC 的绑定由持久事实表示，TLS 以带端点身份的私有消息事实表示。
-接收方使用 OTK 私钥与连接者 PAC 派生密钥，并签发绑定该 PAC 的 ACT。
-发送方使用自身私钥和所持 OTK 执行对应计算，正确解密返回密文后才能提交应用请求。
-DH 使用内建等式理论，KDF 以带域标签的哈希项表示，
-ACT 以包含新鲜标识及 PAC 的理想对称密文表示。
+威胁模型允许发送方 $B$ 将已领取的 OTK 公钥主动转交给 $C$，由 $C$ 使用自身登记身份、PAC 及私钥继续申请 ACT。转交通过独立规则建模，每枚 OTK 至多转交一次。主配置中，$B$ 和 $C$ 均获 Provider 与接收方许可；模型不假设长期私钥泄露，也不将注册和 TLS 握手过程纳入分析，而将身份绑定及认证信道作为初始条件。
 
-主动转交行为用于检查另一发送方获得并使用已发放 OTK 后，接收方的消费约束与实际使用身份之间的对应关系。
-转交规则允许 $B$ 将已领取的 OTK 公钥发送给 $C$，由 $C$ 以自己的登记身份、公钥和私钥继续协议。
-主配置中，两发送方均获 $P$ 与 $A$ 的策略允许，长期私钥保持保密。
-每枚由 $B$ 领取的 OTK 至多触发一次转交，访问与令牌申请规则可以重复执行，成功发放和签发次数由线性资源约束。
+模型通过 Tamarin 事件记录 OTK 发放、ACT 签发、客户端解密及应用请求接受。每个 ACT 在模型中仅对应一次应用请求接受事件。围绕上述过程，检查原有的 OTK 发放次数约束，以及进一步提出的身份对应和使用数量性质。以下为三项性质的原生定义：
 
-% Archive: proofs/otk_transfer/evidence/run-20261025T033815645931Z/.
-发放事件记录 OTK 的领取者，准入事件记录实际使用者，两者通过接收方身份与密钥关联。
-记 $I_{A,s}$ 为执行前缀中 $P$ 向获准身份 $s$ 发放 $A$ 的 OTK 的次数，
-$\beta_{A,s}$ 为其预算，原有发放约束为 $I_{A,s}\leq\beta_{A,s}$，当前配置中 $\beta_{A,s}=1$。
-$\mathsf{Issue}(A,s,k)$ 表示向 $s$ 发放 $k$ 的事件。
-将每枚 ACT 的首次应用请求准入事件投影为 $\mathsf{Use}(A,s,k)$，其前置规则要求匹配的新 ACT 已签发且由 $s$ 正确解密。
-对任意 $s,k$ 和位置 $i$，额外检查
-\begin{equation}
-  \begin{aligned}
-    &\mathsf{Use}(A,s,k)@i\\
-    &\quad\Rightarrow\exists j<i.\ \mathsf{Issue}(A,s,k)@j.
-  \end{aligned}
-  \label{eq:otk-same-sender-correspondence}
-\end{equation}
-该对应关系要求每次成功使用均能追溯到向同一身份的先前发放，
-是将领取预算进一步解释为按身份限制新 ACT 取得次数时的更强目标。
-检查同时保留每枚 OTK 至多发放一次，以及至多用于一次 ACT 签发的资源性质。
+\begingroup
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+lemma provider_per_sender_issuance_limit:
+  "All a s k1 k2 #i #j.
+     ProviderIssue(a, s, k1) @i
+     & ProviderIssue(a, s, k2) @j
+     ==> #i = #j"
+\end{verbatim}
+\end{minipage}
+\par\smallskip
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+lemma successful_use_requires_issue_to_same_sender:
+  "All a s k t pac #i.
+     RequestAccepted(a, s, k, t, pac) @i
+     ==> (Ex #j.
+       ProviderIssue(a, s, k) @j & j < i)"
+\end{verbatim}
+\end{minipage}
+\par\smallskip
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+lemma sender_uses_at_most_one_distinct_OTK:
+  "All a s k1 k2 t1 t2 p1 p2 #i #j.
+     RequestAccepted(a, s, k1, t1, p1) @i
+     & RequestAccepted(a, s, k2, t2, p2) @j
+     ==> k1 = k2"
+\end{verbatim}
+\end{minipage}
+\par
+\endgroup
 
-验证采用 Tamarin 1.12.0 与 Maude 3.5.1，在上述固定实体与资源下比较允许转交、关闭转交及两端拒绝 $C$ 三种配置。
-另以存在性查询检查发送方依次领取 OTK、解密 ACT 并完成首次准入的正常路径，作为安全性质的可达性对照。
+其中，第一项检查固定预算为一时每个发送方的 OTK 发放次数；第二项要求成功接受的请求能够追溯到向同一发送方发放相应 OTK 的先前事件；第三项检查同一发送方成功使用的不同 OTK 是否至多为一枚。辅助引理进一步保证请求接受事件具有对应的 ACT 签发与客户端解密事件。
 
-\subsection{ACT 并发配额模型}
+验证采用 Tamarin 1.12.0 和 Maude 3.5.1，分别检查允许 OTK 转交、禁止转交（\texttt{NO\_FORWARD}）及两端明确拒绝 $C$（\texttt{DENY\_C}）三种配置。通过安全性质引理和存在性查询检查协议行为及相应执行路径。
+
+\subsection{ACT 模型}
 \label{subsec:act-quota-model}
 
 ACT 准入上限的检查需要同时表示接收方的共享余额与各连接的执行进度。
-模型从同一有效 ACT 已在双端保存后开始，以 \texttt{receiverRemaining} 记录接收方余额 $r$，
+模型从同一有效 ACT 已在双端保存后开始，以 \texttt{receiverRemaining} 记录接收方余额，
 以每个连接的局部位置区分请求已解析、已检查及已扣减等状态。
+连接入口检查由 \texttt{AEnter} 抽象，仅检查令牌元数据及接收方剩余额度，不预留或扣减额度。
 发送方余额与消息交付状态则保留双端提交和接收请求的执行条件。
 这种表示使多个连接能够访问同一额度，并分别推进各自的处理过程。
 
@@ -120,21 +117,45 @@ ACT 准入上限的检查需要同时表示接收方的共享余额与各连接�
 \texttt{ACheck} 抽象 \texttt{token\_is\_valid()} 的检查，核对令牌元数据与正余额，使连接从已解析推进到已检查位置。
 \texttt{ADebit} 对应 \texttt{receive\_conversation()} 中重新持锁的额度更新，
 仅以连接已通过检查为使能条件。
-该动作不再要求当前共享余额为正，直接将其更新为 $\max(0,r-1)$，并推进到已扣减位置。
-两个动作之间允许其他连接交错执行。
+该动作不再要求当前共享余额为正，而是通过 \texttt{Clamp} 将余额更新为非负值，并推进到已扣减位置。
+两个动作之间允许其他连接交错执行。其原生定义如下：
+
+\noindent\begin{minipage}{\linewidth}
+\renewcommand{\verbatimsize}{\fontsize{7.5}{9}\selectfont}
+\setlength{\verbatimbaselineskip}{9pt}
+\begin{verbatim}
+Clamp(n) == IF n < 0 THEN 0 ELSE n
+
+ADebit(c) ==
+    /\ apc[c] = "Checked"
+    /\ receiverRemaining' = Clamp(receiverRemaining - 1)
+    /\ counts' = [counts EXCEPT ![c].admits = @ + 1]
+    /\ apc' = [apc EXCEPT ![c] = "Debited"]
+    /\ UNCHANGED <<senderRemaining, bpc, link, faultCount>>
+\end{verbatim}
+\end{minipage}
 
 % Model: proofs/quota_validation/SagaQuotaDelivery.tla:132--160,290.
 % Config: proofs/quota_validation/evidence/delivery-20261024T150331844425Z/inputs/delivery_configs/concurrent_race.cfg.
-准入计数对应普通请求通过令牌检查并执行额度更新后进入处理路径的位置。
-模型在 \texttt{ADebit} 中增加各连接的准入计数，观测算子 \texttt{Accepted} 对这些计数求和，
-后续后端调用则由独立动作 \texttt{ABackend} 记录。
-对初始额度为 $Q(t)$ 的令牌 $t$，记累计准入为 $N_{\mathrm{adm}}(t)$，检查
-\begin{equation}
-  N_{\mathrm{adm}}(t)\leq Q(t).
-  \label{eq:act-admission-bound}
-\end{equation}
-$N_{\mathrm{adm}}(t)$ 对应 \texttt{Accepted}。
+准入计数对应普通请求通过令牌检查并执行额度扣减的次数。
+模型在 \texttt{ADebit} 中增加各连接的准入计数，观测算子 \texttt{Accepted} 对各连接的计数求和，
+后端调用则由独立动作 \texttt{ABackend} 记录。模型中的准入计数及其安全性质定义如下：
 
-TLC 2.19 用于检查式~\eqref{eq:act-admission-bound}~的可达状态不变量。
+\noindent\begin{minipage}{\linewidth}
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
+\begin{verbatim}
+Accepted ==
+    SumOn([c \in Connections |-> counts[c].admits],
+          Connections)
+
+ReceiverQuotaSafety == Accepted <= InitialQuota
+\end{verbatim}
+\end{minipage}
+
+其中，\texttt{Accepted} 表示接收方通过检查并执行额度扣减的请求总数，
+不等同于后端调用次数。TLC 2.19 用于检查
+\texttt{ReceiverQuotaSafety} 这一可达状态不变量，
+并同时检查 \texttt{TypeOK} 和 \texttt{SourceAccounting}。
 有限配置将双端初始余额均设为 $1$，包含两个连接，每个连接至多提交一个普通非终止请求。
-非配额元数据固定有效且故障数为零，使状态探索聚焦于共享额度的检查、扣减及其交错。
+非配额元数据固定有效，且不启用连接故障注入，使状态探索聚焦于共享额度的检查、扣减及其交错。
