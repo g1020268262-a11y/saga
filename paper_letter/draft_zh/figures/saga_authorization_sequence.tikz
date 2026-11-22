@@ -33,10 +33,10 @@
     node[wire,above] {Request OTK}
     node[wire,below] {$\langle\mathrm{aid}_B,\mathrm{aid}_A\rangle$} (25,-20);
   \node[check] at (25,-32) {
-    Authenticate $B$, require $CP_A(B)>0$.\\
-    Set $c_{A,B}=CP_A(B)$ on first request.\\
-    Require $c_{A,B}>0$ and an available $k_i$.\\
-    Remove $k_i$ from pool, decrement $c_{A,B}$.
+    Authenticate $B$; check contact policy.\\
+    Initialize OTK quota on first request.\\
+    Require positive quota and available $k_i$.\\
+    Remove $k_i$; reduce $B$'s quota by one.
   };
   \draw[msg] (25,-46) --
     node[wire,above] {Return signed OTK}
@@ -70,7 +70,7 @@
     $m_t=\langle N,T_{\rm issued},T_{\rm expire},$\\
     $Q_{\max},\mathsf{PAC}_B\rangle$\\
     $t=\operatorname{Enc}_K(m_t)$\\
-    Store $t$, initialize $q_A[t]=Q_{\max}$.
+    Store $t$; initialize its request quota.
   };
   \draw[msg] (147,-129) --
     node[wire,above] {Return encrypted ACT}
@@ -81,18 +81,21 @@
   \draw[draw=black!45,rounded corners=1mm,line width=0.4pt]
     (59,-142) rectangle (173,-185);
   \node[phase,text width=112mm] at (59,-145)
-    {ACT-based request admission (repeat for each request)};
+    {ACT request processing (repeat for each request)};
   \draw[msg] (86,-155) --
     node[wire,above] {Submit request}
     node[wire,below] {$\langle t,\mathrm{msg}\rangle$} (147,-155);
   \node[check] at (147,-166) {
-    Check active $t$, bound $\mathsf{PAC}_B$,\\
-    expiry and $q_A[t]>0$.
+    Check active ACT, bound $\mathsf{PAC}_B$,\\
+    expiry and remaining request quota.
   };
   \node[check] at (147,-178) {
-    $q_A[t]\gets\max(0,q_A[t]-1)$\\
-    Admit and process the request.
+    Reduce request quota by one;\\
+    process the request.
   };
+  \node[fill=white,align=center,text width=54mm,inner sep=0.5mm,
+    font=\fontsize{7.6}{9.2}\selectfont] at (88,-173)
+    {Validity check and quota debit\\are not one atomic operation.};
 
   \node[draw=black!35,fill=black!2,rounded corners=0.6mm,
     text width=46mm,align=left,inner sep=1.5mm,
@@ -111,11 +114,11 @@
     $\operatorname{Sign}_{\mathrm{SK}_{U_A}}(\langle\mathrm{aid}_A,k_i\rangle)$\\[1mm]
     $\mathrm{SK}_{U_A}$ is $U_A$'s signing key.\\
     $\sigma_B^P$ is $P$'s signature on $B$'s registration material.\\[1mm]
-    \textbf{Budgets and token fields}\\[0.7mm]
+    \textbf{Quotas and token fields}\\[0.7mm]
     ACT is an access-control token.\\
-    $CP_A(B)$ is $A$'s policy budget for $B$.\\
-    $c_{A,B}$ is the remaining \textbf{OTK issuance budget} for $B$ at $P$.\\
-    $q_A[t]$ is the remaining \textbf{ACT request quota} for $t$ at $A$.\\
+    $P$ maintains OTK issuance quota for each sending identity.\\
+    $A$ maintains each ACT's request quota and sets its initial value.\\
+    Connections using the same ACT share its request quota.\\
     $Q_{\max}$ is the initial ACT request quota.\\
     $N$ is a fresh token nonce.\\
     $T_{\rm issued},T_{\rm expire}$ are issue and expiration times.
