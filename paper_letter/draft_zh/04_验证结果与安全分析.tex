@@ -5,125 +5,43 @@
 \section{验证结果与安全分析}
 \label{sec:results}
 
-验证结果显示，SAGA 在接触策略匹配、OTK 发放与使用身份对应以及 ACT 并发额度控制方面存在三个不同的问题。以下分别给出验证结果、具体反例及其产生原因。
+对 SAGA 授权过程的分析发现了三个问题：接触策略匹配错误、OTK 发放与使用身份不一致，以及多个连接并发使用同一 ACT 时可能超过其额度。以下分别给出验证结果、具体反例及问题产生的原因。
 
 \subsection{策略求值不一致}
+\label{subsec:policy-evaluation-consistency}
 
-接触策略匹配器未正确执行最具体规则优先的要求，使预期拒绝的发送方可能获得通信许可。
+接触策略匹配函数的结果受到规则排列顺序影响，使本应被拒绝的发送方可能获得通信许可。对于身份 \texttt{alice@example.com:agent}，规则 \texttt{alice@example.com:*} 的预算为 $-1$，通配规则 \texttt{*} 的预算为 $10$，两者的具体性评分分别为 $70$ 和 $0$。按照最具体规则优先的要求，两种排列下的预期预算均为 $-1$。然而，当具体规则位于通配规则之前时，原始匹配函数返回 $10$；交换规则顺序后则返回 $-1$。
 
-对于身份 \texttt{alice@example.com:agent}，考虑规则
-\texttt{alice@example.com:*}（预算为 $-1$）和通配规则
-\texttt{*}（预算为 $10$）。根据最具体匹配规则的选择语义，
-前者应当决定最终预算，因此预期结果为 $-1$。
-然而，当具体规则排列在通配规则之前时，原始匹配函数返回 $10$；
-交换两条规则的顺序后，返回结果为 $-1$。
+该错误源于匹配函数未正确更新当前最佳匹配规则。\texttt{best\_pattern} 初始化为 \texttt{None}，对应的初始评分为 $-1$。匹配到具体规则时，函数更新了预算，却未同步更新最佳匹配规则。因此，后续通配规则的评分 $0$ 仍与初始评分 $-1$ 比较，最终将预算覆盖为 $10$~\cite{sagaReferenceImpl2026}。
 
-该差异源于匹配函数未正确更新当前最佳匹配规则。
-函数将 \texttt{best\_pattern} 初始化为 \texttt{None}，
-但在匹配规则时仅更新预算，未同步更新最佳匹配规则。
-因此，后续规则仍与初始匹配状态进行比较，
-使通配规则能够覆盖此前具体规则的预算。
+在参考求值器返回拒绝、实际匹配函数返回允许的场景中，ProVerif 对 \texttt{ChatAccept} 不可达性的查询返回 \texttt{false}，表明该事件存在可达执行路径；请求接受与令牌签发的对应查询返回 \texttt{true}，表明每个请求接受事件均对应相同接收方、发送方及令牌的先前签发事件。因此，存在令牌签发后应用请求被接受的执行路径。
 
-在此决策差异对应的 ProVerif 场景中，
-将规范侧拒绝与实现侧许可作为固定场景输入，
-对消息接受的可达性及其与令牌签发之间的对应关系进行验证。
-ProVerif 的可达性查询
-\texttt{not event(ChatAccept(...))}
-返回 \texttt{false}，
-表明 \texttt{ChatAccept} 事件存在可达执行路径。
-事件对应查询
-\texttt{event(ChatAccept(...)) ==> event(TokenIssue(...))}
-返回 \texttt{true}，
-表明每个消息接受事件均对应相同接收方、发送方及令牌的先前签发事件。
-这说明，在该符号场景中，尽管规范侧记录了拒绝决策，
-实现侧许可仍可使协议执行到消息接受阶段，
-而令牌签发与使用之间的对应关系仍然成立。
+基于参考实现的验证实验进一步检查了该错误对实际授权流程的影响。在参考求值拒绝、实际实现允许（D/A）场景中，Provider 与接收方的匹配函数均返回预算 $10$。Provider 的 \texttt{/access} 请求返回 HTTP 200 并发放 OTK，接收方随后完成 OTK 消费及 ACT 签发与存储。发送方成功解密返回的 ACT，其内容与接收方保存的记录一致。在双方均拒绝（D/D）场景中，Provider 返回预算 $-1$，请求以 HTTP 403 拒绝；双方均允许（A/A）场景则正常完成 ACT 签发与存储。
 
-进一步通过受控消费者执行检查该决策差异能否传播至实际令牌处理流程。
-在 D/A 场景中，Provider 与接收方的匹配结果均为 $10$，
-Provider 的 \texttt{/access} 请求返回 HTTP 200 并发放 OTK，
-随后接收方完成令牌处理，ACT 被生成、发送并存储。
-在 D/D 对照场景中，Provider 返回预算 $-1$，
-请求以 HTTP 403 拒绝，且未发生 OTK 发放或令牌状态变化。
-A/A 场景则作为正常许可路径对照，同样到达令牌发送与存储阶段。
-上述结果表明，策略匹配偏差能够传播至生产消费者的 ACT 签发与存储。
-需要指出的是，该实验未执行应用消息处理：
-测试边界在原始消息处理函数执行前进行了拦截。
+Provider 和接收方使用相同的匹配函数，导致两端均未正确执行最具体规则优先的要求，最终使本应被拒绝的发送方获得 ACT。
 
 \subsection{OTK 发放与使用身份不对应}
+\label{subsec:otk-issuance-use}
 
-在允许 OTK 主动转交且 Provider 与接收方均许可 C 的配置下，
-Tamarin 找到了 C 在耗尽自身 OTK 领取额度后，
-继续使用其他发送方 OTK 建立通信的执行轨迹。
-设 C 初始领取的 OTK 为 $k_C$，
-B 领取后转交给 C 的另一枚 OTK 为 $k_B$。
-在该轨迹中，C 首先使用 $k_C$ 完成 ACT 签发、解密及请求接受。
-随后，Provider 因 C 的领取额度耗尽而拒绝其再次领取。
-B 将尚未消费的 $k_B$ 转交给 C，
-C 继续以自身身份及对应的访问控制公钥建立新的 ACT，
-并完成解密与请求接受。两次成功使用涉及不同的 OTK。
+Tamarin 发现，发送方在耗尽自身 OTK 领取额度后，仍可使用其他身份领取的 OTK 建立新的 ACT。在允许 OTK 转交且 Provider 与接收方均允许 $B,C$ 通信的配置中，Provider 分别向 $B$ 和 $C$ 发放一枚 OTK。
 
-\begingroup
-\raggedright
-\setlength{\parindent}{2em}
-Tamarin 的验证结果表明，
-\texttt{transfer\_\allowbreak after\_\allowbreak C\_\allowbreak exhaustion\_\allowbreak completes}
-这一存在性查询返回 \texttt{verified}，
-确认上述执行轨迹可达。
-全轨迹性质
-\texttt{provider\_\allowbreak per\_\allowbreak sender\_\allowbreak issuance\_\allowbreak limit}、
-\texttt{provider\_\allowbreak issues\_\allowbreak each\_\allowbreak OTK\_\allowbreak once}、
-\texttt{receiver\_\allowbreak consumes\_\allowbreak each\_\allowbreak OTK\_\allowbreak once}
-以及
-\texttt{accepted\_\allowbreak request\_\allowbreak has\_\allowbreak matching\_\allowbreak token\_\allowbreak and\_\allowbreak decryption}
-均返回 \texttt{verified}。
-相比之下，
-\texttt{successful\_\allowbreak use\_\allowbreak requires\_\allowbreak issue\_\allowbreak to\_\allowbreak same\_\allowbreak sender}
-和
-\texttt{sender\_\allowbreak uses\_\allowbreak at\_\allowbreak most\_\allowbreak one\_\allowbreak distinct\_\allowbreak OTK}
-均返回 \texttt{falsified}，
-Tamarin 为两项性质生成了相应反例。
-\par
-\endgroup
+$C$ 首先使用 Provider 发放给自己的 OTK 完成 ACT 签发、解密及首次应用请求接受。随后，Provider 因 $C$ 的领取额度耗尽而拒绝再次发放。$B$ 将自己领取且尚未消费的另一枚 OTK 转交给 $C$，$C$ 使用自身登记身份、访问控制公钥及私钥再次申请 ACT，并成功解密令牌。接收方随后接受了该 ACT 对应的首次应用请求。由此，Provider 向 $C$ 发放了 $1$ 枚 OTK，而 $C$ 成功使用了 $2$ 枚不同的 OTK。
 
-进一步在关闭 OTK 转交和明确拒绝 C 的对照配置中，
-上述转交完成轨迹均不可达，
-两项性质也均返回 \texttt{verified}。
-这些结果表明，原有的按发送方 OTK 发放限制、
-单枚 OTK 的唯一发放及唯一消费约束仍然成立。
-问题在于，接收方签发 ACT 时未核对所使用 OTK 的原始领取身份，
-因此，发送方可以使用其他身份转交的 OTK 获得新的 ACT。
+Tamarin 的存在性查询返回 \texttt{verified}，确认上述执行轨迹可达。全轨迹验证中，Provider 按发送方限制 OTK 发放次数、单枚 OTK 的唯一发放与消费，以及请求接受与此前 ACT 签发、客户端解密之间的对应性质均返回 \texttt{verified}。
 
-\subsection{ACT 并发准入超额}
+进一步检查 OTK 发放身份与实际使用者身份的一致性时，Tamarin 返回 \texttt{falsified}，表明存在使用其他发送方领取的 OTK 成功建立通信的执行轨迹。同时，在领取额度为 $1$ 的配置下，同一发送方至多成功使用一枚不同 OTK 的性质也返回 \texttt{falsified}。上述结果表明，Provider 原有的按发送方限制 OTK 发放次数的机制仍然成立，但该限制无法阻止发送方使用其他身份领取的 OTK 获得新的 ACT。
 
-同一 ACT 被多个连接并发使用时，TLC 找到了累计请求次数超过初始额度的反例。在初始额度为 $1$、包含两个连接且每个连接最多提交一个请求的配置下，\texttt{ReceiverQuotaSafety} 不变量被违反，TLC 生成了包含 13 个状态的反例轨迹。
+在禁止 OTK 转交的配置中，$B,C$ 的正常通信路径均可达，两项新增安全性质返回 \texttt{verified}。当 Provider 与接收方均拒绝 $C$ 时，$C$ 的通信及 OTK 转交路径不可达，而 $B$ 的正常通信仍可达，两项性质同样返回 \texttt{verified}。
 
-在该轨迹的第 11 个状态中，
-两个连接均已执行 \texttt{ACheck}，
-其接收方处理阶段均处于 \texttt{Checked}，
-而 \texttt{receiverRemaining} 仍为 $1$。
-随后，连接 $c_1$ 执行 \texttt{ADebit}，
-剩余额度变为 $0$，其准入计数增加为 $1$。
-连接 $c_2$ 随后执行相同动作，
-其准入计数也增加为 $1$。
-此时，\texttt{receiverRemaining} 保持为 $0$，
-但两个连接的 \texttt{counts[c].admits} 均为 $1$，
-累计准入次数达到 $2$，超过初始额度。
-因此，TLC 报告 \texttt{ReceiverQuotaSafety} 被违反。
+问题产生于 OTK 发放与 ACT 签发采用不同的身份检查条件。Provider 按领取者身份限制 OTK 发放次数，而接收方根据当前连接者的身份、本地接触许可及 OTK 的未消费状态决定是否签发 ACT，却未核对该 OTK 最初发放给哪个发送方。因此，$C$ 即使耗尽自身的 OTK 领取额度，仍可使用 $B$ 转交的 OTK，以自身身份申请并获得新的 ACT。
 
-该反例表明，两个连接能够在共享额度尚未扣减时分别通过检查，
-并在后续独立执行扣减。
-其根因在于令牌有效性检查与额度扣减分属两个独立的持锁临界区：
-\texttt{token\_is\_valid()} 完成检查后释放锁，
-而 \texttt{receive\_conversation()} 随后重新获取锁执行额度扣减，
-扣减阶段未再次检查剩余额度。
-因此，多个连接可以基于相同的剩余额度通过检查，
-并分别推进后续处理。
+\subsection{ACT 并发配额超额}
+\label{subsec:act-concurrent-quota}
 
-需要区分模型中的准入计数与后端调用次数。
-在上述 TLC 反例终止状态中，
-两个连接的后端调用计数仍为 $0$，
-因为状态不变量在第二次 \texttt{ADebit} 后已经被违反，
-尚未执行后续的后端调用动作。
-因此，该结果直接表明累计准入次数超过初始额度，
-而不表示该轨迹已经产生了超额后端调用。
+多个连接并发使用同一 ACT 时，累计完成额度扣减的请求数可能超过令牌的初始额度。TLC 在初始额度为 $1$、包含两个连接且每个连接各提交一个请求的配置下，发现 \texttt{ReceiverQuotaSafety} 不变量被违反，并生成包含 $13$ 个状态的反例轨迹。
+
+在第 $11$ 个状态中，连接 $c_1$ 和 $c_2$ 均已完成令牌检查，接收方剩余额度仍为 $1$。随后，$c_1$ 执行 \texttt{ADebit}，剩余额度变为 $0$，累计完成额度扣减的请求数增加至 $1$。$c_2$ 随后执行相同动作，剩余额度仍为 $0$，但累计完成额度扣减的请求数增加至 $2$，超过初始额度。因此，TLC 报告配额安全不变量被违反。
+
+基于参考实现的并发实验进一步观察到了超额后端调用。初始额度为 $50$ 时，串行提交 $51$ 条请求产生 $50$ 次后端调用。随后，先串行处理 $49$ 条请求，再通过线程屏障使两个连接均通过剩余一次额度的检查，并继续执行额度扣减操作。实验最终记录了 $51$ 次后端调用，剩余额度为 $0$，三次重复实验均得到相同结果。
+
+问题产生于令牌有效性检查与额度扣减分开执行。\texttt{token\_is\_valid()} 持锁检查令牌及剩余额度，完成后释放锁；\texttt{receive\_conversation()} 随后重新获取锁执行额度扣减，但扣减时不再检查剩余额度。两个连接因此可以在任一扣减发生前分别通过检查，随后各自执行扣减并进入后续处理流程。由于扣减后的余额被限制为非负值，即使累计完成额度扣减的请求数已经超过初始额度，剩余额度仍保持为 $0$。
