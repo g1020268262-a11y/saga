@@ -1,0 +1,9 @@
+maude tool: 'maude'
+ checking version: 3.5.1. OK.
+ checking installation: OK.
+[Theory Saga_ACP_reverse] Theory loaded
+[Theory Saga_ACP_reverse] Theory translated
+[Theory Saga_ACP_reverse] Derivation checks started
+[Theory Saga_ACP_reverse] Derivation checks ended
+[Theory Saga_ACP_reverse] Theory closed
+quit-on-warning mode selected - aborting on wellformedness errors.

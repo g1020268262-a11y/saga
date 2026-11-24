@@ -1,0 +1,20 @@
+{
+  "tamarin-prover": {
+    "command": [
+      "tamarin-prover",
+      "--version"
+    ],
+    "executed": false,
+    "error": "[Errno 2] No such file or directory: 'tamarin-prover'"
+  },
+  "maude": {
+    "command": [
+      "maude",
+      "--version"
+    ],
+    "executed": false,
+    "error": "[Errno 2] No such file or directory: 'maude'"
+  },
+  "native_proof_executed": false,
+  "reason": "Tamarin and Maude executables not found; release download failed in this environment."
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "tamarin-prover",
+    "--quit-on-warning",
+    "--derivcheck-timeout=30",
+    "--stop-on-trace=BFS",
+    "--prove=evaluation_reachable",
+    "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/audit/bfs-probe/proof.spthy",
+    "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105749966670Z/models/da.spthy",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "elapsed_seconds": 45.159,
+  "exit_code": -9,
+  "timeout": true
+}

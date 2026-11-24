@@ -1,0 +1,11 @@
+{
+  "native_complete": false,
+  "reason": "Stopped after recursive-search diagnostic; no verdict inferred. Finite position encoding will preserve all original lemmas and reachable transitions.",
+  "stopped": [
+    {
+      "native_pid": 543,
+      "runner_pid": 427
+    }
+  ],
+  "time_unix": 1795518729.457179
+}

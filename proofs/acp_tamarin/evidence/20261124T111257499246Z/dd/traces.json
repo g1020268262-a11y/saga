@@ -1,0 +1,2125 @@
+{
+    "graphs": [
+        {
+            "jgAbbrevs": [
+                {
+                    "jgaAbbrev": {
+                        "jgnConst": "PR1"
+                    },
+                    "jgaExpansion": {
+                        "jgnConst": "'provider_eval'"
+                    },
+                    "jgaTerm": {
+                        "jgnConst": "'provider_eval'"
+                    }
+                }
+            ],
+            "jgClusters": [],
+            "jgDirected": true,
+            "jgEdges": [
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#i:c0",
+                    "jgeTarget": "#vr.3:p0"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c1",
+                    "jgeTarget": "#vr.3:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c4",
+                    "jgeTarget": "#vr.3:p1"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr:c5",
+                    "jgeTarget": "#vr.1:p0"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c6",
+                    "jgeTarget": "#vr.1:p1"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c7",
+                    "jgeTarget": "#vr.2:p1"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c9",
+                    "jgeTarget": "#vr.1:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c9",
+                    "jgeTarget": "#vr.2:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr:c15",
+                    "jgeTarget": "#i:p1"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.1:c0",
+                    "jgeTarget": "#i:p0"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.2:c0",
+                    "jgeTarget": "#j:p0"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.3:c0",
+                    "jgeTarget": "#vr.2:p0"
+                }
+            ],
+            "jgLabel": "trace_Saga_ACP_dd_SL2-AS0-CL0-A1-C1-NB_evaluation_reachable-Setup-Spec_Select_Better_0-Impl_Select_Better_0_case_1-Spec_Select_Better_0",
+            "jgNodes": [
+                {
+                    "jgnId": "#i",
+                    "jgnLabel": "Spec_Finish",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SpecDecision",
+                                "jgnFactShow": "SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#i:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessReady",
+                                "jgnFactShow": "AccessReady( ~sid )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#i:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#i:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#j",
+                    "jgnLabel": "Provider_Finish",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderBudget",
+                                "jgnFactShow": "ProviderBudget( ~sid, 'A', 'B', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#j:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderResult",
+                                "jgnFactShow": "ProviderResult( ~sid, 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#j:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr",
+                    "jgnLabel": "Setup",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Setup",
+                                "jgnFactShow": "Setup( )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": []
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr:c0",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Client",
+                                "jgnFactShow": "!Client( ~sid, 'B', ~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "~bsk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Registered",
+                                "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c2",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderUnusedOTK",
+                                "jgnFactShow": "ProviderUnusedOTK( ~sid, 'A', 'g'^~osk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~osk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~osk)"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c3",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ReceiverUnusedOTK",
+                                "jgnFactShow": "ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~osk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~osk)"
+                                    },
+                                    {
+                                        "jgnConst": "~osk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c4",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Rules",
+                                "jgnFactShow": "!Rules( ~sid, <<'r0', 'bneg1'>, 'end'> )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnFunct": "pair",
+                                        "jgnParams": [
+                                            {
+                                                "jgnFunct": "pair",
+                                                "jgnParams": [
+                                                    {
+                                                        "jgnConst": "'r0'"
+                                                    },
+                                                    {
+                                                        "jgnConst": "'bneg1'"
+                                                    }
+                                                ],
+                                                "jgnShow": "pair('r0','bneg1')"
+                                            },
+                                            {
+                                                "jgnConst": "'end'"
+                                            }
+                                        ],
+                                        "jgnShow": "pair(pair('r0','bneg1'),'end')"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c5",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c6",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!SpecMode",
+                                "jgnFactShow": "!SpecMode( 'spec' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'spec'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c7",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'provider_eval' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c8",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'receiver' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'receiver'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c9",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c10",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r0', 'r0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c11",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r0', 'r70' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'r70'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c12",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c13",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r70', 'r0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c14",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r70', 'r70' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'r70'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c15",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c16",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverDenies",
+                                "jgnFactShow": "!ReceiverDenies( 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c17",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'b0', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b0'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c18",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverAllows",
+                                "jgnFactShow": "!ReceiverAllows( 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c19",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'b10', 'allow' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    },
+                                    {
+                                        "jgnConst": "'allow'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c20",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverAllows",
+                                "jgnFactShow": "!ReceiverAllows( 'b10' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c21",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Debit",
+                                "jgnFactShow": "!Debit( 'b10', 'b9' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    },
+                                    {
+                                        "jgnConst": "'b9'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:c22",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Out",
+                                "jgnFactShow": "Out( 'g'^~bsk )",
+                                "jgnFactTag": "OutFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~sid )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:p1",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~bsk )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~bsk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr:p2",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~osk )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~osk"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.1",
+                    "jgnLabel": "Spec_Select_Better_0",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SelectRule",
+                                "jgnFactShow": "SelectRule( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.1:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.1:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!SpecMode",
+                                "jgnFactShow": "!SpecMode( 'spec' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'spec'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.2",
+                    "jgnLabel": "Impl_Select_Better_0",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SelectRule",
+                                "jgnFactShow": "SelectRule( ~sid, 'provider_eval', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.2:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.2:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.2:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'provider_eval' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.2:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.3",
+                    "jgnLabel": "Provider_Start",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessRequested",
+                                "jgnFactShow": "AccessRequested( ~sid, 'A', 'B' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.3:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.3:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessReady",
+                                "jgnFactShow": "AccessReady( ~sid )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.3:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Rules",
+                                "jgnFactShow": "!Rules( ~sid, <<'r0', 'bneg1'>, 'end'> )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnFunct": "pair",
+                                        "jgnParams": [
+                                            {
+                                                "jgnFunct": "pair",
+                                                "jgnParams": [
+                                                    {
+                                                        "jgnConst": "'r0'"
+                                                    },
+                                                    {
+                                                        "jgnConst": "'bneg1'"
+                                                    }
+                                                ],
+                                                "jgnShow": "pair('r0','bneg1')"
+                                            },
+                                            {
+                                                "jgnConst": "'end'"
+                                            }
+                                        ],
+                                        "jgnShow": "pair(pair('r0','bneg1'),'end')"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.3:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Registered",
+                                "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                }
+            ],
+            "jgType": "Tamarin prover constraint system"
+        },
+        {
+            "jgAbbrevs": [
+                {
+                    "jgaAbbrev": {
+                        "jgnConst": "PR1"
+                    },
+                    "jgaExpansion": {
+                        "jgnConst": "'provider_eval'"
+                    },
+                    "jgaTerm": {
+                        "jgnConst": "'provider_eval'"
+                    }
+                }
+            ],
+            "jgClusters": [],
+            "jgDirected": true,
+            "jgEdges": [
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr:c0",
+                    "jgeTarget": "#i:p0"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c1",
+                    "jgeTarget": "#vr.3:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c4",
+                    "jgeTarget": "#vr.3:p1"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.1:c5",
+                    "jgeTarget": "#vr.5:p0"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c6",
+                    "jgeTarget": "#vr.5:p1"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c7",
+                    "jgeTarget": "#vr.2:p1"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c9",
+                    "jgeTarget": "#vr.2:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c9",
+                    "jgeTarget": "#vr.5:p2"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c15",
+                    "jgeTarget": "#i:p1"
+                },
+                {
+                    "jgeRelation": "PersistentFact",
+                    "jgeSource": "#vr.1:c15",
+                    "jgeTarget": "#vr.4:p1"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.2:c0",
+                    "jgeTarget": "#vr:p0"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.3:c0",
+                    "jgeTarget": "#vr.2:p0"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.4:c0",
+                    "jgeTarget": "#vr.3:p0"
+                },
+                {
+                    "jgeRelation": "ProtoFact",
+                    "jgeSource": "#vr.5:c0",
+                    "jgeTarget": "#vr.4:p0"
+                }
+            ],
+            "jgLabel": "trace_Saga_ACP_dd_SL2-AS0-CL0-A1-C1-NB_provider_rejection_reachable-Provider_Finish-Setup_case_1-Impl_Select_Better_0_case_1-Spec_Select_Better_0",
+            "jgNodes": [
+                {
+                    "jgnId": "#i",
+                    "jgnLabel": "Provider_Reject",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderReject",
+                                "jgnFactShow": "ProviderReject( ~sid, 'A', 'B', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#i:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderResult",
+                                "jgnFactShow": "ProviderResult( ~sid, 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#i:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr",
+                    "jgnLabel": "Provider_Finish",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderBudget",
+                                "jgnFactShow": "ProviderBudget( ~sid, 'A', 'B', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderResult",
+                                "jgnFactShow": "ProviderResult( ~sid, 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.1",
+                    "jgnLabel": "Setup",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Setup",
+                                "jgnFactShow": "Setup( )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": []
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.1:c0",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Client",
+                                "jgnFactShow": "!Client( ~sid, 'B', ~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "~bsk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Registered",
+                                "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c2",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ProviderUnusedOTK",
+                                "jgnFactShow": "ProviderUnusedOTK( ~sid, 'A', 'g'^~osk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~osk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~osk)"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c3",
+                                "jgnFactMult": "",
+                                "jgnFactName": "ReceiverUnusedOTK",
+                                "jgnFactShow": "ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~osk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~osk)"
+                                    },
+                                    {
+                                        "jgnConst": "~osk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c4",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Rules",
+                                "jgnFactShow": "!Rules( ~sid, <<'r0', 'bneg1'>, 'end'> )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnFunct": "pair",
+                                        "jgnParams": [
+                                            {
+                                                "jgnFunct": "pair",
+                                                "jgnParams": [
+                                                    {
+                                                        "jgnConst": "'r0'"
+                                                    },
+                                                    {
+                                                        "jgnConst": "'bneg1'"
+                                                    }
+                                                ],
+                                                "jgnShow": "pair('r0','bneg1')"
+                                            },
+                                            {
+                                                "jgnConst": "'end'"
+                                            }
+                                        ],
+                                        "jgnShow": "pair(pair('r0','bneg1'),'end')"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c5",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c6",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!SpecMode",
+                                "jgnFactShow": "!SpecMode( 'spec' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'spec'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c7",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'provider_eval' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c8",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'receiver' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'receiver'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c9",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c10",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r0', 'r0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c11",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r0', 'r70' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'r70'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c12",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c13",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r70', 'r0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c14",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!NotHigher",
+                                "jgnFactShow": "!NotHigher( 'r70', 'r70' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r70'"
+                                    },
+                                    {
+                                        "jgnConst": "'r70'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c15",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c16",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverDenies",
+                                "jgnFactShow": "!ReceiverDenies( 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c17",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'b0', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b0'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c18",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverAllows",
+                                "jgnFactShow": "!ReceiverAllows( 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c19",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'b10', 'allow' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    },
+                                    {
+                                        "jgnConst": "'allow'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c20",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ReceiverAllows",
+                                "jgnFactShow": "!ReceiverAllows( 'b10' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c21",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Debit",
+                                "jgnFactShow": "!Debit( 'b10', 'b9' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'b10'"
+                                    },
+                                    {
+                                        "jgnConst": "'b9'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:c22",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Out",
+                                "jgnFactShow": "Out( 'g'^~bsk )",
+                                "jgnFactTag": "OutFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.1:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~sid )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:p1",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~bsk )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~bsk"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.1:p2",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Fr",
+                                "jgnFactShow": "Fr( ~osk )",
+                                "jgnFactTag": "FreshFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~osk"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.2",
+                    "jgnLabel": "Impl_Select_Better_0",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SelectRule",
+                                "jgnFactShow": "SelectRule( ~sid, 'provider_eval', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.2:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.2:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.2:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!ImplMode",
+                                "jgnFactShow": "!ImplMode( 'provider_eval' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.2:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.3",
+                    "jgnLabel": "Provider_Start",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessRequested",
+                                "jgnFactShow": "AccessRequested( ~sid, 'A', 'B' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.3:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'provider_eval'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.3:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessReady",
+                                "jgnFactShow": "AccessReady( ~sid )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.3:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Rules",
+                                "jgnFactShow": "!Rules( ~sid, <<'r0', 'bneg1'>, 'end'> )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnFunct": "pair",
+                                        "jgnParams": [
+                                            {
+                                                "jgnFunct": "pair",
+                                                "jgnParams": [
+                                                    {
+                                                        "jgnConst": "'r0'"
+                                                    },
+                                                    {
+                                                        "jgnConst": "'bneg1'"
+                                                    }
+                                                ],
+                                                "jgnShow": "pair('r0','bneg1')"
+                                            },
+                                            {
+                                                "jgnConst": "'end'"
+                                            }
+                                        ],
+                                        "jgnShow": "pair(pair('r0','bneg1'),'end')"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.3:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Registered",
+                                "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnFunct": "exp",
+                                        "jgnParams": [
+                                            {
+                                                "jgnConst": "'g'"
+                                            },
+                                            {
+                                                "jgnConst": "~bsk"
+                                            }
+                                        ],
+                                        "jgnShow": "exp('g',~bsk)"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.4",
+                    "jgnLabel": "Spec_Finish",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SpecDecision",
+                                "jgnFactShow": "SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'A'"
+                                    },
+                                    {
+                                        "jgnConst": "'B'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.4:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "AccessReady",
+                                "jgnFactShow": "AccessReady( ~sid )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.4:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.4:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Decision",
+                                "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    },
+                                    {
+                                        "jgnConst": "'deny'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                },
+                {
+                    "jgnId": "#vr.5",
+                    "jgnLabel": "Spec_Select_Better_0",
+                    "jgnMetadata": {
+                        "jgnActs": [
+                            {
+                                "jgnFactId": "action",
+                                "jgnFactMult": "",
+                                "jgnFactName": "SelectRule",
+                                "jgnFactShow": "SelectRule( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnConcs": [
+                            {
+                                "jgnFactId": "#vr.5:c0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan1",
+                                "jgnFactShow": "Scan1( ~sid, 'spec', 'r0', 'bneg1' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'bneg1'"
+                                    }
+                                ]
+                            }
+                        ],
+                        "jgnPrems": [
+                            {
+                                "jgnFactId": "#vr.5:p0",
+                                "jgnFactMult": "",
+                                "jgnFactName": "Scan0",
+                                "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "~sid"
+                                    },
+                                    {
+                                        "jgnConst": "'spec'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    },
+                                    {
+                                        "jgnConst": "'b0'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.5:p1",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!SpecMode",
+                                "jgnFactShow": "!SpecMode( 'spec' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'spec'"
+                                    }
+                                ]
+                            },
+                            {
+                                "jgnFactId": "#vr.5:p2",
+                                "jgnFactMult": "!",
+                                "jgnFactName": "!Higher",
+                                "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+                                "jgnFactTag": "ProtoFact",
+                                "jgnFactTerms": [
+                                    {
+                                        "jgnConst": "'r0'"
+                                    },
+                                    {
+                                        "jgnConst": "'rinit'"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "jgnType": "isProtocolRule"
+                }
+            ],
+            "jgType": "Tamarin prover constraint system"
+        }
+    ]
+}

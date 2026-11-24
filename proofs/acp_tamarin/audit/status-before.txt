@@ -1,0 +1,12 @@
+ M paper_letter/draft_zh/01_引言.tex
+ M paper_letter/draft_zh/02_授权流程与分析目标.tex
+ M paper_letter/draft_zh/03_形式化建模与验证设置.tex
+ M paper_letter/draft_zh/04_验证结果与安全分析.tex
+ M paper_letter/draft_zh/05_讨论与结论.tex
+ M paper_letter/draft_zh/figures/saga_authorization_overview.png
+ M paper_letter/draft_zh/figures/saga_authorization_overview.tikz
+ M paper_letter/draft_zh/figures/saga_authorization_sequence.png
+ M paper_letter/draft_zh/figures/saga_authorization_sequence.tikz
+ M paper_letter/draft_zh/main.tex
+?? paper_letter/draft_en/
+?? proofs/acp_tamarin/

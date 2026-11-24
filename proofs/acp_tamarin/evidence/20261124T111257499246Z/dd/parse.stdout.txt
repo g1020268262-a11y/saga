@@ -1,0 +1,395 @@
+theory Saga_ACP_dd
+
+begin
+
+// Function signature and definition of the equational theory E
+
+builtins: diffie-hellman
+functions: fst/1, h/1, pair/2, sdec/2, senc/2, snd/1
+equations:
+    fst(<x.1, x.2>) = x.1,
+    sdec(senc(x.1, x.2), x.2) = x.1,
+    snd(<x.1, x.2>) = x.2
+
+builtin  diffie-hellman
+
+builtin  symmetric-encryption
+
+builtin  hashing
+
+restriction UniqueSetup:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  // safety formula
+
+rule (modulo E) Setup:
+   [ Fr( ~sid ), Fr( ~bsk ), Fr( ~osk ) ]
+  --[ Setup( ) ]->
+   [
+   !Client( ~sid, 'B', ~bsk ), !Registered( ~sid, 'B', 'g'^~bsk ),
+   ProviderUnusedOTK( ~sid, 'A', 'g'^~osk ),
+   ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk ),
+   !Rules( ~sid, <<'r0', 'bneg1'>, 'end'> ),
+   Scan0( ~sid, 'spec', 'rinit', 'b0' ), !SpecMode( 'spec' ),
+   !ImplMode( 'provider_eval' ), !ImplMode( 'receiver' ),
+   !Higher( 'r0', 'rinit' ), !NotHigher( 'r0', 'r0' ),
+   !NotHigher( 'r0', 'r70' ), !Higher( 'r70', 'rinit' ),
+   !Higher( 'r70', 'r0' ), !NotHigher( 'r70', 'r70' ),
+   !Decision( 'bneg1', 'deny' ), !ReceiverDenies( 'bneg1' ),
+   !Decision( 'b0', 'deny' ), !ReceiverAllows( 'b0' ),
+   !Decision( 'b10', 'allow' ), !ReceiverAllows( 'b10' ),
+   !Debit( 'b10', 'b9' ), Out( 'g'^~bsk )
+   ]
+
+rule (modulo E) Spec_Select_Better_0:
+   [
+   Scan0( sid, stage, best, current ), !SpecMode( stage ),
+   !Higher( 'r0', best )
+   ]
+  --[ SelectRule( sid, stage, 'r0', 'bneg1' ) ]->
+   [ Scan1( sid, stage, 'r0', 'bneg1' ) ]
+
+rule (modulo E) Impl_Select_Better_0:
+   [
+   Scan0( sid, stage, best, current ), !ImplMode( stage ),
+   !Higher( 'r0', best )
+   ]
+  --[ SelectRule( sid, stage, 'r0', 'bneg1' ) ]->
+   [ Scan1( sid, stage, best, 'bneg1' ) ]
+
+rule (modulo E) Skip_Rule_0:
+   [ Scan0( sid, stage, best, current ), !NotHigher( 'r0', best ) ]
+  --[ SkipRule( sid, stage, 'r0', 'bneg1' ) ]->
+   [ Scan1( sid, stage, best, current ) ]
+
+rule (modulo E) Spec_Finish:
+   [ Scan1( sid, 'spec', best, budget ), !Decision( budget, decision ) ]
+  --[ SpecDecision( sid, 'A', 'B', budget, decision ) ]->
+   [ AccessReady( sid ) ]
+
+rule (modulo E) Provider_Start:
+   [ AccessReady( sid ), !Rules( sid, rules ), !Registered( sid, 'B', pac )
+   ]
+  --[ AccessRequested( sid, 'A', 'B' ) ]->
+   [ Scan0( sid, 'provider_eval', 'rinit', 'b0' ) ]
+
+rule (modulo E) Provider_Finish:
+   [ Scan1( sid, 'provider_eval', best, budget ) ]
+  --[ ProviderBudget( sid, 'A', 'B', budget ) ]->
+   [ ProviderResult( sid, budget ) ]
+
+rule (modulo E) Provider_Release:
+   [
+   ProviderResult( sid, budget ), !Debit( budget, remaining ),
+   ProviderUnusedOTK( sid, 'A', otk )
+   ]
+  --[
+  ProviderIssue( sid, 'A', 'B', otk ),
+  ProviderDebit( sid, 'A', 'B', budget, remaining )
+  ]->
+   [
+   TLSOTKResponse( sid, 'Provider', 'B', 'A', otk ),
+   ProviderRemaining( sid, 'A', 'B', remaining )
+   ]
+
+rule (modulo E) Provider_Reject:
+   [ ProviderResult( sid, budget ), !Decision( budget, 'deny' ) ]
+  --[ ProviderReject( sid, 'A', 'B', budget ) ]->
+   [ ]
+
+rule (modulo E) Sender_Request_Token:
+   [
+   TLSOTKResponse( sid, 'Provider', 'B', 'A', otk ), !Client( sid, 'B', sk )
+   ]
+  --[ TokenRequest( sid, 'A', 'B', otk ) ]->
+   [
+   TLSTokenRequest( sid, 'B', 'A', otk, 'g'^sk ),
+   WaitingForToken( sid, 'A', 'B', otk, sk )
+   ]
+
+rule (modulo E) Receiver_Start:
+   [
+   TLSTokenRequest( sid, 'B', 'A', otk, pac ), !Registered( sid, 'B', pac ),
+   !Rules( sid, rules )
+   ]
+  --[ ReceiverCheckStarted( sid, 'A', 'B' ) ]->
+   [ PendingToken( sid, otk, pac ), Scan0( sid, 'receiver', 'rinit', 'b0' )
+   ]
+
+rule (modulo E) Receiver_Finish:
+   [ Scan1( sid, 'receiver', best, budget ) ]
+  --[ ReceiverBudget( sid, 'A', 'B', budget ) ]->
+   [ ReceiverResult( sid, budget ) ]
+
+rule (modulo E) Receiver_Reject:
+   [
+   ReceiverResult( sid, budget ), PendingToken( sid, otk, pac ),
+   !ReceiverDenies( budget )
+   ]
+  --[ ReceiverReject( sid, 'A', 'B', budget ) ]->
+   [ ]
+
+rule (modulo E) Receiver_Issue_Token:
+   [
+   ReceiverResult( sid, budget ), !ReceiverAllows( budget ),
+   PendingToken( sid, otk, pac ), !Registered( sid, 'B', pac ),
+   ReceiverUnusedOTK( sid, 'A', otk, osk ), Fr( ~token )
+   ]
+  --[
+  TokenIssue( sid, 'A', 'B',
+              senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>))
+  )
+  ]->
+   [
+   TLSTokenResponse( sid, 'A', 'B',
+                     senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>))
+   ),
+   ActiveToken( sid, 'A', 'B',
+                senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>)),
+                pac
+   )
+   ]
+
+rule (modulo E) Sender_Decrypt_Token:
+   [
+   WaitingForToken( sid, 'A', 'B', otk, sk ),
+   TLSTokenResponse( sid, 'A', 'B',
+                     senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+  --[
+  TokenReceive( sid, 'A', 'B',
+                senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+  )
+  ]->
+   [
+   ReadyForChat( sid, 'A', 'B',
+                 senc(<'ACT', token, 'g'^sk>,
+                      h(<'access-control-shdk-exchange', otk^sk>)),
+                 'g'^sk
+   )
+   ]
+
+rule (modulo E) Sender_Send_Chat:
+   [ ReadyForChat( sid, 'A', 'B', cipher, pac ), Fr( ~msg ) ]
+  --[ ChatSend( sid, 'A', 'B', cipher, ~msg ) ]->
+   [ TLSChat( sid, 'B', 'A', cipher, pac, ~msg ) ]
+
+rule (modulo E) Receiver_Accept_Chat:
+   [
+   TLSChat( sid, 'B', 'A', cipher, pac, msg ), !Registered( sid, 'B', pac ),
+   ActiveToken( sid, 'A', 'B', cipher, pac )
+   ]
+  --[ ChatAccept( sid, 'A', 'B', cipher, msg ) ]->
+   [ ]
+
+lemma evaluation_reachable:
+  exists-trace
+  "∃ sid #i #j.
+    ((SpecDecision( sid, 'A', 'B', 'bneg1', 'deny' ) @ #i) ∧
+     (ProviderBudget( sid, 'A', 'B', 'bneg1' ) @ #j)) ∧
+    (#i < #j)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid #i #j.
+  (SpecDecision( sid, 'A', 'B', 'bneg1', 'deny' ) @ #i) ∧
+  (ProviderBudget( sid, 'A', 'B', 'bneg1' ) @ #j)
+ ∧
+  #i < #j"
+*/
+by sorry
+
+lemma spec_matches_reference:
+  all-traces
+  "∀ sid a b budget decision #i.
+    (SpecDecision( sid, a, b, budget, decision ) @ #i) ⇒
+    ((budget = 'bneg1') ∧ (decision = 'deny'))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget decision #i.
+  (SpecDecision( sid, a, b, budget, decision ) @ #i)
+ ∧
+  ((¬(budget = 'bneg1')) ∨ (¬(decision = 'deny')))"
+*/
+by sorry
+
+lemma provider_matches_observation:
+  all-traces
+  "∀ sid a b budget #i.
+    (ProviderBudget( sid, a, b, budget ) @ #i) ⇒ (budget = 'bneg1')"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget #i.
+  (ProviderBudget( sid, a, b, budget ) @ #i) ∧ ¬(budget = 'bneg1')"
+*/
+by sorry
+
+lemma receiver_matches_observation:
+  all-traces
+  "∀ sid a b budget #i.
+    (ReceiverBudget( sid, a, b, budget ) @ #i) ⇒ (budget = 'bneg1')"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget #i.
+  (ReceiverBudget( sid, a, b, budget ) @ #i) ∧ ¬(budget = 'bneg1')"
+*/
+by sorry
+
+lemma policy_budget_agreement:
+  all-traces
+  "∀ sid a b expected actual decision #i #j.
+    ((SpecDecision( sid, a, b, expected, decision ) @ #i) ∧
+     (ProviderBudget( sid, a, b, actual ) @ #j)) ⇒
+    (expected = actual)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b expected actual decision #i #j.
+  (SpecDecision( sid, a, b, expected, decision ) @ #i) ∧
+  (ProviderBudget( sid, a, b, actual ) @ #j)
+ ∧
+  ¬(expected = actual)"
+*/
+by sorry
+
+lemma provider_issue_requires_policy_allow:
+  all-traces
+  "∀ sid a b otk #i.
+    (ProviderIssue( sid, a, b, otk ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b otk #i.
+  (ProviderIssue( sid, a, b, otk ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+by sorry
+
+lemma token_issue_requires_policy_allow:
+  all-traces
+  "∀ sid a b tok #i.
+    (TokenIssue( sid, a, b, tok ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok #i.
+  (TokenIssue( sid, a, b, tok ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+by sorry
+
+lemma chat_requires_policy_allow:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+by sorry
+
+lemma chat_requires_token_issue:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ #j. (TokenIssue( sid, a, b, tok ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ #j. (TokenIssue( sid, a, b, tok ) @ #j) ⇒ ¬(#j < #i)"
+*/
+by sorry
+
+lemma chat_requires_decryption:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ #j #k.
+      (((TokenIssue( sid, a, b, tok ) @ #j) ∧
+        (TokenReceive( sid, a, b, tok ) @ #k)) ∧
+       (#j < #k)) ∧
+      (#k < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ #j #k.
+   (TokenIssue( sid, a, b, tok ) @ #j) ∧
+   (TokenReceive( sid, a, b, tok ) @ #k)
+  ⇒
+   ((¬(#j < #k)) ∨ (¬(#k < #i)))"
+*/
+by sorry
+
+lemma provider_rejection_reachable:
+  exists-trace
+  "∃ sid a b budget #i. ProviderReject( sid, a, b, budget ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b budget #i. (ProviderReject( sid, a, b, budget ) @ #i)"
+*/
+by sorry
+
+lemma receiver_evaluation_reachable:
+  exists-trace "∃ sid #i. ReceiverBudget( sid, 'A', 'B', 'bneg1' ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid #i. (ReceiverBudget( sid, 'A', 'B', 'bneg1' ) @ #i)"
+*/
+by sorry
+
+lemma provider_release_reachable:
+  exists-trace "∃ sid a b otk #i. ProviderIssue( sid, a, b, otk ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b otk #i. (ProviderIssue( sid, a, b, otk ) @ #i)"
+*/
+by sorry
+
+lemma token_issue_reachable:
+  exists-trace "∃ sid a b tok #i. TokenIssue( sid, a, b, tok ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b tok #i. (TokenIssue( sid, a, b, tok ) @ #i)"
+*/
+by sorry
+
+lemma chat_accept_reachable:
+  exists-trace
+  "∃ sid a b tok msg #i. ChatAccept( sid, a, b, tok, msg ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b tok msg #i. (ChatAccept( sid, a, b, tok, msg ) @ #i)"
+*/
+by sorry
+
+lemma denied_chat_reachable:
+  exists-trace
+  "∃ sid a b budget tok msg #i #j.
+    ((SpecDecision( sid, a, b, budget, 'deny' ) @ #i) ∧
+     (ChatAccept( sid, a, b, tok, msg ) @ #j)) ∧
+    (#i < #j)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b budget tok msg #i #j.
+  (SpecDecision( sid, a, b, budget, 'deny' ) @ #i) ∧
+  (ChatAccept( sid, a, b, tok, msg ) @ #j)
+ ∧
+  #i < #j"
+*/
+by sorry
+
+end

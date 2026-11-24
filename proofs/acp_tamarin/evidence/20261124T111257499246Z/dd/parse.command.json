@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+    "--quit-on-warning",
+    "--derivcheck-timeout=30",
+    "--parse-only",
+    "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/dd.spthy",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "elapsed_seconds": 0.13,
+  "exit_code": 0,
+  "timeout": false
+}

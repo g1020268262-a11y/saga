@@ -1,0 +1,13 @@
+{
+  "repository": "g1020268262-a11y/saga",
+  "revision": "cf15d0ae79d2a2a47d74fa66e75ccfc98bcda9c6",
+  "source_blob": "1a472ea3fc4a4c7cd41b62dda33c13513150c00b",
+  "source_path": "saga/common/contact_policy.py",
+  "aid": "alice@example.com:agent",
+  "cases": {
+    "da": {"rules": [{"pattern": "alice@example.com:*", "budget": -1}, {"pattern": "*", "budget": 10}], "spec": -1, "observed": 10, "path": "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json", "blob": "fa16fb3f69e8ace66ebc36bc1c3e0ffba5e76cec", "format": "stage1", "field": "actual_specific_deny_then_wildcard_allow"},
+    "reverse": {"rules": [{"pattern": "*", "budget": 10}, {"pattern": "alice@example.com:*", "budget": -1}], "spec": -1, "observed": -1, "path": "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json", "blob": "fa16fb3f69e8ace66ebc36bc1c3e0ffba5e76cec", "format": "stage1", "field": "actual_wildcard_allow_then_specific_deny"},
+    "aa": {"rules": [{"pattern": "*", "budget": 10}], "spec": 10, "observed": 10, "path": "proofs/decision_bridge/observations/20260922T064049858703Z/allow.json", "blob": "41a396847413bacbe5ec92e84d534f45ba24a578", "format": "bridge-observation-v1"},
+    "dd": {"rules": [{"pattern": "*", "budget": -1}], "spec": -1, "observed": -1, "path": "proofs/decision_bridge/observations/20260922T064049858703Z/deny.json", "blob": "4da8454fcb6fab9caedcc595f29a0b0925d21724", "format": "bridge-observation-v1"}
+  }
+}

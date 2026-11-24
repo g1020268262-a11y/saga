@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/run_model.py", line 217, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/run_model.py", line 166, in main
+    provenance=None if args.offline_preview else validate_repo(root)
+                                                 ~~~~~~~~~~~~~^^^^^^
+  File "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/run_model.py", line 51, in validate_repo
+    raise ValueError(f'{name}: archived bytes do not match the audited Git blob')
+ValueError: da: archived bytes do not match the audited Git blob

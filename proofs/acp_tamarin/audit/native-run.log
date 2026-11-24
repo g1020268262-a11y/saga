@@ -1,0 +1,16 @@
+da: reference=-1, provider=10, receiver=10, chat=True
+reverse: reference=-1, provider=-1, receiver=None, chat=False
+aa: reference=10, provider=10, receiver=10, chat=True
+dd: reference=-1, provider=-1, receiver=None, chat=False
+[20261124T105628539389Z] tamarin-version
+[20261124T105628539389Z] maude-version
+[da] parse
+[da] verify
+[reverse] parse
+[reverse] verify
+[aa] parse
+[aa] verify
+[dd] parse
+[dd] verify
+Archive: /mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z
+NATIVE INCOMPLETE

@@ -1,0 +1,10 @@
+maude tool: 'maude'
+ checking version: 3.5.1. OK.
+ checking installation: OK.
+[Theory Saga_ACP_da] Theory loaded
+[Theory Saga_ACP_da] Theory translated
+[Theory Saga_ACP_da] Derivation checks started
+[Theory Saga_ACP_da] Derivation checks ended
+[Theory Saga_ACP_da] Theory closed
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done

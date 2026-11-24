@@ -1,0 +1,1440 @@
+theory Saga_ACP_reverse
+
+begin
+
+// Function signature and definition of the equational theory E
+
+builtins: diffie-hellman
+functions: fst/1, h/1, pair/2, sdec/2, senc/2, snd/1
+equations:
+    fst(<x.1, x.2>) = x.1,
+    sdec(senc(x.1, x.2), x.2) = x.1,
+    snd(<x.1, x.2>) = x.2
+
+restriction UniqueSetup:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  // safety formula
+
+  /*
+  expanded formula:
+  "∀ #i #j. ((Setup( ) @ #i) ∧ (Setup( ) @ #j)) ⇒ (#i = #j)"
+  */
+
+rule (modulo E) Setup:
+   [ Fr( ~sid ), Fr( ~bsk ), Fr( ~osk ) ]
+  --[ Setup( ) ]->
+   [
+   !Client( ~sid, 'B', ~bsk ), !Registered( ~sid, 'B', 'g'^~bsk ),
+   ProviderUnusedOTK( ~sid, 'A', 'g'^~osk ),
+   ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk ),
+   !Rules( ~sid, <<'r0', 'b10'>, <'r70', 'bneg1'>, 'end'> ),
+   Scan0( ~sid, 'spec', 'rinit', 'b0' ), !SpecMode( 'spec' ),
+   !ImplMode( 'provider_eval' ), !ImplMode( 'receiver' ),
+   !Higher( 'r0', 'rinit' ), !NotHigher( 'r0', 'r0' ),
+   !NotHigher( 'r0', 'r70' ), !Higher( 'r70', 'rinit' ),
+   !Higher( 'r70', 'r0' ), !NotHigher( 'r70', 'r70' ),
+   !Decision( 'bneg1', 'deny' ), !ReceiverDenies( 'bneg1' ),
+   !Decision( 'b0', 'deny' ), !ReceiverAllows( 'b0' ),
+   !Decision( 'b10', 'allow' ), !ReceiverAllows( 'b10' ),
+   !Debit( 'b10', 'b9' ), Out( 'g'^~bsk )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Spec_Select_Better_0:
+   [
+   Scan0( sid, stage, best, current ), !SpecMode( stage ),
+   !Higher( 'r0', best )
+   ]
+  --[ SelectRule( sid, stage, 'r0', 'b10' ) ]->
+   [ Scan1( sid, stage, 'r0', 'b10' ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Impl_Select_Better_0:
+   [
+   Scan0( sid, stage, best, current ), !ImplMode( stage ),
+   !Higher( 'r0', best )
+   ]
+  --[ SelectRule( sid, stage, 'r0', 'b10' ) ]->
+   [ Scan1( sid, stage, best, 'b10' ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Skip_Rule_0:
+   [ Scan0( sid, stage, best, current ), !NotHigher( 'r0', best ) ]
+  --[ SkipRule( sid, stage, 'r0', 'b10' ) ]->
+   [ Scan1( sid, stage, best, current ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Spec_Select_Better_1:
+   [
+   Scan1( sid, stage, best, current ), !SpecMode( stage ),
+   !Higher( 'r70', best )
+   ]
+  --[ SelectRule( sid, stage, 'r70', 'bneg1' ) ]->
+   [ Scan2( sid, stage, 'r70', 'bneg1' ) ]
+
+  // loop breaker: [0]
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Impl_Select_Better_1:
+   [
+   Scan1( sid, stage, best, current ), !ImplMode( stage ),
+   !Higher( 'r70', best )
+   ]
+  --[ SelectRule( sid, stage, 'r70', 'bneg1' ) ]->
+   [ Scan2( sid, stage, best, 'bneg1' ) ]
+
+  // loop breaker: [0]
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Skip_Rule_1:
+   [ Scan1( sid, stage, best, current ), !NotHigher( 'r70', best ) ]
+  --[ SkipRule( sid, stage, 'r70', 'bneg1' ) ]->
+   [ Scan2( sid, stage, best, current ) ]
+
+  // loop breaker: [0]
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Spec_Finish:
+   [ Scan2( sid, 'spec', best, budget ), !Decision( budget, decision ) ]
+  --[ SpecDecision( sid, 'A', 'B', budget, decision ) ]->
+   [ AccessReady( sid ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Start:
+   [ AccessReady( sid ), !Rules( sid, rules ), !Registered( sid, 'B', pac )
+   ]
+  --[ AccessRequested( sid, 'A', 'B' ) ]->
+   [ Scan0( sid, 'provider_eval', 'rinit', 'b0' ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Finish:
+   [ Scan2( sid, 'provider_eval', best, budget ) ]
+  --[ ProviderBudget( sid, 'A', 'B', budget ) ]->
+   [ ProviderResult( sid, budget ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Release:
+   [
+   ProviderResult( sid, budget ), !Debit( budget, remaining ),
+   ProviderUnusedOTK( sid, 'A', otk )
+   ]
+  --[
+  ProviderIssue( sid, 'A', 'B', otk ),
+  ProviderDebit( sid, 'A', 'B', budget, remaining )
+  ]->
+   [
+   TLSOTKResponse( sid, 'Provider', 'B', 'A', otk ),
+   ProviderRemaining( sid, 'A', 'B', remaining )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Provider_Reject:
+   [ ProviderResult( sid, budget ), !Decision( budget, 'deny' ) ]
+  --[ ProviderReject( sid, 'A', 'B', budget ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Sender_Request_Token:
+   [
+   TLSOTKResponse( sid, 'Provider', 'B', 'A', otk ), !Client( sid, 'B', sk )
+   ]
+  --[ TokenRequest( sid, 'A', 'B', otk ) ]->
+   [
+   TLSTokenRequest( sid, 'B', 'A', otk, 'g'^sk ),
+   WaitingForToken( sid, 'A', 'B', otk, sk )
+   ]
+
+  /*
+  rule (modulo AC) Sender_Request_Token:
+     [
+     TLSOTKResponse( sid, 'Provider', 'B', 'A', otk ), !Client( sid, 'B', sk )
+     ]
+    --[ TokenRequest( sid, 'A', 'B', otk ) ]->
+     [
+     TLSTokenRequest( sid, 'B', 'A', otk, z ),
+     WaitingForToken( sid, 'A', 'B', otk, sk )
+     ]
+    variants (modulo AC)
+    1. sk    = sk.9
+       z     = 'g'^sk.9
+    
+    2. sk    = one
+       z     = 'g'
+  */
+
+rule (modulo E) Receiver_Start:
+   [
+   TLSTokenRequest( sid, 'B', 'A', otk, pac ), !Registered( sid, 'B', pac ),
+   !Rules( sid, rules )
+   ]
+  --[ ReceiverCheckStarted( sid, 'A', 'B' ) ]->
+   [ PendingToken( sid, otk, pac ), Scan0( sid, 'receiver', 'rinit', 'b0' )
+   ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Receiver_Finish:
+   [ Scan2( sid, 'receiver', best, budget ) ]
+  --[ ReceiverBudget( sid, 'A', 'B', budget ) ]->
+   [ ReceiverResult( sid, budget ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Receiver_Reject:
+   [
+   ReceiverResult( sid, budget ), PendingToken( sid, otk, pac ),
+   !ReceiverDenies( budget )
+   ]
+  --[ ReceiverReject( sid, 'A', 'B', budget ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Receiver_Issue_Token:
+   [
+   ReceiverResult( sid, budget ), !ReceiverAllows( budget ),
+   PendingToken( sid, otk, pac ), !Registered( sid, 'B', pac ),
+   ReceiverUnusedOTK( sid, 'A', otk, osk ), Fr( ~token )
+   ]
+  --[
+  TokenIssue( sid, 'A', 'B',
+              senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>))
+  )
+  ]->
+   [
+   TLSTokenResponse( sid, 'A', 'B',
+                     senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>))
+   ),
+   ActiveToken( sid, 'A', 'B',
+                senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', pac^osk>)),
+                pac
+   )
+   ]
+
+  /*
+  rule (modulo AC) Receiver_Issue_Token:
+     [
+     ReceiverResult( sid, budget ), !ReceiverAllows( budget ),
+     PendingToken( sid, otk, pac ), !Registered( sid, 'B', pac ),
+     ReceiverUnusedOTK( sid, 'A', otk, osk ), Fr( ~token )
+     ]
+    --[
+    TokenIssue( sid, 'A', 'B',
+                senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', z>))
+    )
+    ]->
+     [
+     TLSTokenResponse( sid, 'A', 'B',
+                       senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', z>))
+     ),
+     ActiveToken( sid, 'A', 'B',
+                  senc(<'ACT', ~token, pac>, h(<'access-control-shdk-exchange', z>)), pac
+     )
+     ]
+    variants (modulo AC)
+     1. osk   = osk.15
+        pac   = pac.17
+        z     = pac.17^osk.15
+    
+     2. osk   = osk.21
+        pac   = z.29^inv(osk.21)
+        z     = z.29
+    
+     3. osk   = osk.41
+        pac   = x.77^x.78
+        z     = x.77^(osk.41*x.78)
+    
+     4. osk   = osk.43
+        pac   = x.81^inv((osk.43*x.82))
+        z     = x.81^inv(x.82)
+    
+     5. osk   = osk.43
+        pac   = x.81^(x.82*inv(osk.43))
+        z     = x.81^x.82
+    
+     6. osk   = osk.44
+        pac   = x.82^(x.83*inv((osk.44*x.84)))
+        z     = x.82^(x.83*inv(x.84))
+    
+     7. osk   = inv(x.16)
+        pac   = x.18^inv(x.19)
+        z     = x.18^inv((x.16*x.19))
+    
+     8. osk   = inv(x.16)
+        pac   = x.18^(x.16*x.19)
+        z     = x.18^x.19
+    
+     9. osk   = inv(x.17)
+        pac   = x.19^(x.20*inv(x.21))
+        z     = x.19^(x.20*inv((x.17*x.21)))
+    
+    10. osk   = inv(x.20)
+        pac   = z.16^x.20
+        z     = z.16
+    
+    11. osk   = inv((x.16*x.17))
+        pac   = x.19^x.17
+        z     = x.19^inv(x.16)
+    
+    12. osk   = inv((x.17*x.18))
+        pac   = x.20^(x.17*x.21)
+        z     = x.20^(x.21*inv(x.18))
+    
+    13. osk   = inv((x.17*x.18))
+        pac   = x.20^(x.17*inv(x.21))
+        z     = x.20^inv((x.18*x.21))
+    
+    14. osk   = inv((x.18*x.19))
+        pac   = x.21^(x.18*x.22*inv(x.23))
+        z     = x.21^(x.22*inv((x.19*x.23)))
+    
+    15. osk   = one
+        pac   = pac.13
+        z     = pac.13
+    
+    16. osk   = (x.16*x.17)
+        pac   = x.19^inv(x.16)
+        z     = x.19^x.17
+    
+    17. osk   = (x.16*inv(x.17))
+        pac   = x.19^x.17
+        z     = x.19^x.16
+    
+    18. osk   = (x.17*x.18)
+        pac   = x.20^inv((x.17*x.21))
+        z     = x.20^(x.18*inv(x.21))
+    
+    19. osk   = (x.17*x.18)
+        pac   = x.20^(x.21*inv(x.17))
+        z     = x.20^(x.18*x.21)
+    
+    20. osk   = (x.17*x.18*inv(x.19))
+        pac   = x.21^(x.19*inv(x.17))
+        z     = x.21^x.18
+    
+    21. osk   = (x.17*inv(x.18))
+        pac   = x.20^inv(x.21)
+        z     = x.20^(x.17*inv((x.18*x.21)))
+    
+    22. osk   = (x.17*inv(x.18))
+        pac   = x.20^inv((x.17*x.21))
+        z     = x.20^inv((x.18*x.21))
+    
+    23. osk   = (x.17*inv(x.18))
+        pac   = x.20^(x.18*x.21)
+        z     = x.20^(x.17*x.21)
+    
+    24. osk   = (x.17*inv(x.18))
+        pac   = x.20^(x.18*x.21*inv(x.17))
+        z     = x.20^x.21
+    
+    25. osk   = (x.17*inv(x.18))
+        pac   = x.20^(x.18*inv((x.17*x.21)))
+        z     = x.20^inv(x.21)
+    
+    26. osk   = (x.17*inv((x.18*x.19)))
+        pac   = x.21^x.19
+        z     = x.21^(x.17*inv(x.18))
+    
+    27. osk   = (x.17*inv((x.18*x.19)))
+        pac   = x.21^(x.19*inv(x.17))
+        z     = x.21^inv(x.18)
+    
+    28. osk   = (x.18*x.19)
+        pac   = x.21^(x.22*inv((x.18*x.23)))
+        z     = x.21^(x.19*x.22*inv(x.23))
+    
+    29. osk   = (x.18*x.19*inv(x.20))
+        pac   = x.22^inv((x.19*x.23))
+        z     = x.22^(x.18*inv((x.20*x.23)))
+    
+    30. osk   = (x.18*x.19*inv(x.20))
+        pac   = x.22^(x.20*x.23*inv(x.18))
+        z     = x.22^(x.19*x.23)
+    
+    31. osk   = (x.18*x.19*inv(x.20))
+        pac   = x.22^(x.20*inv((x.18*x.23)))
+        z     = x.22^(x.19*inv(x.23))
+    
+    32. osk   = (x.18*x.19*inv((x.20*x.21)))
+        pac   = x.23^(x.21*inv(x.19))
+        z     = x.23^(x.18*inv(x.20))
+    
+    33. osk   = (x.18*inv(x.19))
+        pac   = x.21^(x.19*x.22*inv((x.18*x.23)))
+        z     = x.21^(x.22*inv(x.23))
+    
+    34. osk   = (x.18*inv(x.19))
+        pac   = x.21^(x.22*inv(x.23))
+        z     = x.21^(x.18*x.22*inv((x.19*x.23)))
+    
+    35. osk   = (x.18*inv(x.19))
+        pac   = x.21^(x.22*inv((x.18*x.23)))
+        z     = x.21^(x.22*inv((x.19*x.23)))
+    
+    36. osk   = (x.18*inv((x.19*x.20)))
+        pac   = x.22^(x.19*x.23)
+        z     = x.22^(x.18*x.23*inv(x.20))
+    
+    37. osk   = (x.18*inv((x.19*x.20)))
+        pac   = x.22^(x.19*x.23*inv(x.18))
+        z     = x.22^(x.23*inv(x.20))
+    
+    38. osk   = (x.18*inv((x.19*x.20)))
+        pac   = x.22^(x.19*inv(x.23))
+        z     = x.22^(x.18*inv((x.20*x.23)))
+    
+    39. osk   = (x.18*inv((x.19*x.20)))
+        pac   = x.22^(x.19*inv((x.18*x.23)))
+        z     = x.22^inv((x.20*x.23))
+    
+    40. osk   = (x.19*x.20*inv(x.21))
+        pac   = x.23^(x.21*x.24*inv((x.19*x.25)))
+        z     = x.23^(x.20*x.24*inv(x.25))
+    
+    41. osk   = (x.19*x.20*inv(x.21))
+        pac   = x.23^(x.24*inv((x.19*x.25)))
+        z     = x.23^(x.20*x.24*inv((x.21*x.25)))
+    
+    42. osk   = (x.19*x.20*inv((x.21*x.22)))
+        pac   = x.24^(x.21*x.25*inv(x.19))
+        z     = x.24^(x.20*x.25*inv(x.22))
+    
+    43. osk   = (x.19*x.20*inv((x.21*x.22)))
+        pac   = x.24^(x.21*inv((x.19*x.25)))
+        z     = x.24^(x.20*inv((x.22*x.25)))
+    
+    44. osk   = (x.19*inv((x.20*x.21)))
+        pac   = x.23^(x.20*x.24*inv(x.25))
+        z     = x.23^(x.19*x.24*inv((x.21*x.25)))
+    
+    45. osk   = (x.19*inv((x.20*x.21)))
+        pac   = x.23^(x.20*x.24*inv((x.19*x.25)))
+        z     = x.23^(x.24*inv((x.21*x.25)))
+    
+    46. osk   = (x.20*x.21*inv((x.22*x.23)))
+        pac   = x.25^(x.22*x.26*inv((x.20*x.27)))
+        z     = x.25^(x.21*x.26*inv((x.23*x.27)))
+    
+    47. osk   = (x.21*inv(x.22))
+        pac   = z.17^(x.22*inv(x.21))
+        z     = z.17
+    
+    48. pac   = DH_neutral
+        z     = DH_neutral
+  */
+
+rule (modulo E) Sender_Decrypt_Token:
+   [
+   WaitingForToken( sid, 'A', 'B', otk, sk ),
+   TLSTokenResponse( sid, 'A', 'B',
+                     senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+   )
+   ]
+  --[
+  TokenReceive( sid, 'A', 'B',
+                senc(<'ACT', token, 'g'^sk>, h(<'access-control-shdk-exchange', otk^sk>))
+  )
+  ]->
+   [
+   ReadyForChat( sid, 'A', 'B',
+                 senc(<'ACT', token, 'g'^sk>,
+                      h(<'access-control-shdk-exchange', otk^sk>)),
+                 'g'^sk
+   )
+   ]
+
+  /*
+  rule (modulo AC) Sender_Decrypt_Token:
+     [
+     WaitingForToken( sid, 'A', 'B', otk, sk ),
+     TLSTokenResponse( sid, 'A', 'B',
+                       senc(<'ACT', token, z>, h(<'access-control-shdk-exchange', z.1>))
+     )
+     ]
+    --[
+    TokenReceive( sid, 'A', 'B',
+                  senc(<'ACT', token, z>, h(<'access-control-shdk-exchange', z.1>))
+    )
+    ]->
+     [
+     ReadyForChat( sid, 'A', 'B',
+                   senc(<'ACT', token, z>, h(<'access-control-shdk-exchange', z.1>)), z
+     )
+     ]
+    variants (modulo AC)
+     1. otk   = otk.12
+        sk    = one
+        z     = 'g'
+        z.1   = otk.12
+    
+     2. otk   = otk.14
+        sk    = sk.16
+        z     = 'g'^sk.16
+        z.1   = otk.14^sk.16
+    
+     3. otk   = DH_neutral
+        sk    = sk.12
+        z     = 'g'^sk.12
+        z.1   = DH_neutral
+    
+     4. otk   = x.14^(x.15*x.16)
+        sk    = inv(x.15)
+        z     = 'g'^inv(x.15)
+        z.1   = x.14^x.16
+    
+     5. otk   = x.15^x.16
+        sk    = inv((x.16*x.18))
+        z     = 'g'^inv((x.16*x.18))
+        z.1   = x.15^inv(x.18)
+    
+     6. otk   = x.15^x.16
+        sk    = (x.18*inv(x.16))
+        z     = 'g'^(x.18*inv(x.16))
+        z.1   = x.15^x.18
+    
+     7. otk   = x.15^inv(x.16)
+        sk    = inv(x.18)
+        z     = 'g'^inv(x.18)
+        z.1   = x.15^inv((x.16*x.18))
+    
+     8. otk   = x.15^inv(x.16)
+        sk    = (x.16*x.18)
+        z     = 'g'^(x.16*x.18)
+        z.1   = x.15^x.18
+    
+     9. otk   = x.15^(x.16*x.17*inv(x.18))
+        sk    = (x.18*inv(x.17))
+        z     = 'g'^(x.18*inv(x.17))
+        z.1   = x.15^x.16
+    
+    10. otk   = x.15^(x.16*inv((x.17*x.18)))
+        sk    = (x.18*inv(x.16))
+        z     = 'g'^(x.18*inv(x.16))
+        z.1   = x.15^inv(x.17)
+    
+    11. otk   = x.16^x.17
+        sk    = (x.19*inv((x.17*x.20)))
+        z     = 'g'^(x.19*inv((x.17*x.20)))
+        z.1   = x.16^(x.19*inv(x.20))
+    
+    12. otk   = x.16^inv(x.17)
+        sk    = (x.19*inv(x.20))
+        z     = 'g'^(x.19*inv(x.20))
+        z.1   = x.16^(x.19*inv((x.17*x.20)))
+    
+    13. otk   = x.16^inv((x.17*x.18))
+        sk    = (x.17*x.20)
+        z     = 'g'^(x.17*x.20)
+        z.1   = x.16^(x.20*inv(x.18))
+    
+    14. otk   = x.16^inv((x.17*x.18))
+        sk    = (x.17*inv(x.20))
+        z     = 'g'^(x.17*inv(x.20))
+        z.1   = x.16^inv((x.18*x.20))
+    
+    15. otk   = x.16^(x.17*x.18)
+        sk    = inv((x.17*x.20))
+        z     = 'g'^inv((x.17*x.20))
+        z.1   = x.16^(x.18*inv(x.20))
+    
+    16. otk   = x.16^(x.17*x.18)
+        sk    = (x.20*inv(x.17))
+        z     = 'g'^(x.20*inv(x.17))
+        z.1   = x.16^(x.18*x.20)
+    
+    17. otk   = x.16^(x.17*x.18*inv((x.19*x.20)))
+        sk    = (x.20*inv(x.18))
+        z     = 'g'^(x.20*inv(x.18))
+        z.1   = x.16^(x.17*inv(x.19))
+    
+    18. otk   = x.16^(x.17*inv(x.18))
+        sk    = inv(x.20)
+        z     = 'g'^inv(x.20)
+        z.1   = x.16^(x.17*inv((x.18*x.20)))
+    
+    19. otk   = x.16^(x.17*inv(x.18))
+        sk    = inv((x.17*x.20))
+        z     = 'g'^inv((x.17*x.20))
+        z.1   = x.16^inv((x.18*x.20))
+    
+    20. otk   = x.16^(x.17*inv(x.18))
+        sk    = (x.18*x.20)
+        z     = 'g'^(x.18*x.20)
+        z.1   = x.16^(x.17*x.20)
+    
+    21. otk   = x.16^(x.17*inv(x.18))
+        sk    = (x.18*x.20*inv(x.17))
+        z     = 'g'^(x.18*x.20*inv(x.17))
+        z.1   = x.16^x.20
+    
+    22. otk   = x.16^(x.17*inv(x.18))
+        sk    = (x.18*inv((x.17*x.20)))
+        z     = 'g'^(x.18*inv((x.17*x.20)))
+        z.1   = x.16^inv(x.20)
+    
+    23. otk   = z.16^x.21
+        sk    = inv(x.21)
+        z     = 'g'^inv(x.21)
+        z.1   = z.16
+    
+    24. otk   = x.17^inv((x.18*x.19))
+        sk    = (x.18*x.21*inv(x.22))
+        z     = 'g'^(x.18*x.21*inv(x.22))
+        z.1   = x.17^(x.21*inv((x.19*x.22)))
+    
+    25. otk   = x.17^(x.18*x.19)
+        sk    = (x.21*inv((x.18*x.22)))
+        z     = 'g'^(x.21*inv((x.18*x.22)))
+        z.1   = x.17^(x.19*x.21*inv(x.22))
+    
+    26. otk   = x.17^(x.18*x.19*inv(x.20))
+        sk    = inv((x.19*x.22))
+        z     = 'g'^inv((x.19*x.22))
+        z.1   = x.17^(x.18*inv((x.20*x.22)))
+    
+    27. otk   = x.17^(x.18*x.19*inv(x.20))
+        sk    = (x.20*x.22*inv(x.18))
+        z     = 'g'^(x.20*x.22*inv(x.18))
+        z.1   = x.17^(x.19*x.22)
+    
+    28. otk   = x.17^(x.18*x.19*inv(x.20))
+        sk    = (x.20*inv((x.18*x.22)))
+        z     = 'g'^(x.20*inv((x.18*x.22)))
+        z.1   = x.17^(x.19*inv(x.22))
+    
+    29. otk   = x.17^(x.18*inv(x.19))
+        sk    = (x.19*x.21*inv((x.18*x.22)))
+        z     = 'g'^(x.19*x.21*inv((x.18*x.22)))
+        z.1   = x.17^(x.21*inv(x.22))
+    
+    30. otk   = x.17^(x.18*inv(x.19))
+        sk    = (x.21*inv(x.22))
+        z     = 'g'^(x.21*inv(x.22))
+        z.1   = x.17^(x.18*x.21*inv((x.19*x.22)))
+    
+    31. otk   = x.17^(x.18*inv(x.19))
+        sk    = (x.21*inv((x.18*x.22)))
+        z     = 'g'^(x.21*inv((x.18*x.22)))
+        z.1   = x.17^(x.21*inv((x.19*x.22)))
+    
+    32. otk   = x.17^(x.18*inv((x.19*x.20)))
+        sk    = (x.19*x.22)
+        z     = 'g'^(x.19*x.22)
+        z.1   = x.17^(x.18*x.22*inv(x.20))
+    
+    33. otk   = x.17^(x.18*inv((x.19*x.20)))
+        sk    = (x.19*x.22*inv(x.18))
+        z     = 'g'^(x.19*x.22*inv(x.18))
+        z.1   = x.17^(x.22*inv(x.20))
+    
+    34. otk   = x.17^(x.18*inv((x.19*x.20)))
+        sk    = (x.19*inv(x.22))
+        z     = 'g'^(x.19*inv(x.22))
+        z.1   = x.17^(x.18*inv((x.20*x.22)))
+    
+    35. otk   = x.17^(x.18*inv((x.19*x.20)))
+        sk    = (x.19*inv((x.18*x.22)))
+        z     = 'g'^(x.19*inv((x.18*x.22)))
+        z.1   = x.17^inv((x.20*x.22))
+    
+    36. otk   = z.17^(x.22*inv(x.23))
+        sk    = (x.23*inv(x.22))
+        z     = 'g'^(x.23*inv(x.22))
+        z.1   = z.17
+    
+    37. otk   = x.18^(x.19*x.20*inv(x.21))
+        sk    = (x.21*x.23*inv((x.19*x.24)))
+        z     = 'g'^(x.21*x.23*inv((x.19*x.24)))
+        z.1   = x.18^(x.20*x.23*inv(x.24))
+    
+    38. otk   = x.18^(x.19*x.20*inv(x.21))
+        sk    = (x.23*inv((x.19*x.24)))
+        z     = 'g'^(x.23*inv((x.19*x.24)))
+        z.1   = x.18^(x.20*x.23*inv((x.21*x.24)))
+    
+    39. otk   = x.18^(x.19*x.20*inv((x.21*x.22)))
+        sk    = (x.21*x.24*inv(x.19))
+        z     = 'g'^(x.21*x.24*inv(x.19))
+        z.1   = x.18^(x.20*x.24*inv(x.22))
+    
+    40. otk   = x.18^(x.19*x.20*inv((x.21*x.22)))
+        sk    = (x.21*inv((x.19*x.24)))
+        z     = 'g'^(x.21*inv((x.19*x.24)))
+        z.1   = x.18^(x.20*inv((x.22*x.24)))
+    
+    41. otk   = x.18^(x.19*inv((x.20*x.21)))
+        sk    = (x.20*x.23*inv(x.24))
+        z     = 'g'^(x.20*x.23*inv(x.24))
+        z.1   = x.18^(x.19*x.23*inv((x.21*x.24)))
+    
+    42. otk   = x.18^(x.19*inv((x.20*x.21)))
+        sk    = (x.20*x.23*inv((x.19*x.24)))
+        z     = 'g'^(x.20*x.23*inv((x.19*x.24)))
+        z.1   = x.18^(x.23*inv((x.21*x.24)))
+    
+    43. otk   = x.19^(x.20*x.21*inv((x.22*x.23)))
+        sk    = (x.22*x.25*inv((x.20*x.26)))
+        z     = 'g'^(x.22*x.25*inv((x.20*x.26)))
+        z.1   = x.19^(x.21*x.25*inv((x.23*x.26)))
+    
+    44. otk   = z.26^inv(sk.19)
+        sk    = sk.19
+        z     = 'g'^sk.19
+        z.1   = z.26
+    
+    45. otk   = x.69^x.70
+        sk    = sk.37
+        z     = 'g'^sk.37
+        z.1   = x.69^(sk.37*x.70)
+    
+    46. otk   = x.69^inv((sk.37*x.70))
+        sk    = sk.37
+        z     = 'g'^sk.37
+        z.1   = x.69^inv(x.70)
+    
+    47. otk   = x.69^(x.70*inv(sk.37))
+        sk    = sk.37
+        z     = 'g'^sk.37
+        z.1   = x.69^x.70
+    
+    48. otk   = x.70^(x.71*inv((sk.38*x.72)))
+        sk    = sk.38
+        z     = 'g'^sk.38
+        z.1   = x.70^(x.71*inv(x.72))
+  */
+
+rule (modulo E) Sender_Send_Chat:
+   [ ReadyForChat( sid, 'A', 'B', cipher, pac ), Fr( ~msg ) ]
+  --[ ChatSend( sid, 'A', 'B', cipher, ~msg ) ]->
+   [ TLSChat( sid, 'B', 'A', cipher, pac, ~msg ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Receiver_Accept_Chat:
+   [
+   TLSChat( sid, 'B', 'A', cipher, pac, msg ), !Registered( sid, 'B', pac ),
+   ActiveToken( sid, 'A', 'B', cipher, pac )
+   ]
+  --[ ChatAccept( sid, 'A', 'B', cipher, msg ) ]->
+   [ ]
+
+  /* has exactly the trivial AC variant */
+
+lemma evaluation_reachable:
+  exists-trace
+  "∃ sid #i #j.
+    ((SpecDecision( sid, 'A', 'B', 'bneg1', 'deny' ) @ #i) ∧
+     (ProviderBudget( sid, 'A', 'B', 'bneg1' ) @ #j)) ∧
+    (#i < #j)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid #i #j.
+  (SpecDecision( sid, 'A', 'B', 'bneg1', 'deny' ) @ #i) ∧
+  (ProviderBudget( sid, 'A', 'B', 'bneg1' ) @ #j)
+ ∧
+  #i < #j"
+*/
+simplify
+solve( Scan2( sid, 'spec', best, 'bneg1' ) ▶₀ #i )
+  case Spec_Select_Better_1_case_2
+  solve( !Decision( 'bneg1', 'deny' ) ▶₁ #i )
+    case Setup
+    solve( Scan2( sid, 'provider_eval', best, 'bneg1' ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      solve( Scan1( sid, 'spec', 'r0', current ) ▶₀ #vr )
+        case Spec_Select_Better_0
+        solve( Scan1( ~sid, 'provider_eval', 'rinit', current ) ▶₀ #vr.2 )
+          case Impl_Select_Better_0_case_2
+          solve( Scan1( ~sid, 'spec', 'r0', current ) ▶₀ #vr.7 )
+            case Spec_Select_Better_0
+            SOLVED // trace found
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma spec_matches_reference:
+  all-traces
+  "∀ sid a b budget decision #i.
+    (SpecDecision( sid, a, b, budget, decision ) @ #i) ⇒
+    ((budget = 'bneg1') ∧ (decision = 'deny'))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget decision #i.
+  (SpecDecision( sid, a, b, budget, decision ) @ #i)
+ ∧
+  ((¬(budget = 'bneg1')) ∨ (¬(decision = 'deny')))"
+*/
+simplify
+solve( (¬(budget = 'bneg1'))  ∥ (¬(decision = 'deny')) )
+  case case_1
+  solve( Scan2( sid, 'spec', best, budget ) ▶₀ #i )
+    case Skip_Rule_1
+    solve( !Decision( budget, decision ) ▶₁ #i )
+      case Setup_case_1
+      by contradiction /* from formulas */
+    next
+      case Setup_case_2
+      by solve( Scan1( sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+    next
+      case Setup_case_3
+      by solve( Scan1( sid, 'spec', 'r70', 'b10' ) ▶₀ #vr )
+    qed
+  next
+    case Spec_Select_Better_1_case_1
+    by contradiction /* from formulas */
+  next
+    case Spec_Select_Better_1_case_2
+    by contradiction /* from formulas */
+  qed
+next
+  case case_2
+  solve( Scan2( sid, 'spec', best, budget ) ▶₀ #i )
+    case Skip_Rule_1
+    solve( !Decision( budget, decision ) ▶₁ #i )
+      case Setup_case_1
+      by contradiction /* from formulas */
+    next
+      case Setup_case_2
+      by contradiction /* from formulas */
+    next
+      case Setup_case_3
+      by solve( Scan1( sid, 'spec', 'r70', 'b10' ) ▶₀ #vr )
+    qed
+  next
+    case Spec_Select_Better_1_case_1
+    solve( !Decision( 'bneg1', decision ) ▶₁ #i )
+      case Setup
+      by contradiction /* from formulas */
+    qed
+  next
+    case Spec_Select_Better_1_case_2
+    solve( !Decision( 'bneg1', decision ) ▶₁ #i )
+      case Setup
+      by contradiction /* from formulas */
+    qed
+  qed
+qed
+
+lemma provider_matches_observation:
+  all-traces
+  "∀ sid a b budget #i.
+    (ProviderBudget( sid, a, b, budget ) @ #i) ⇒ (budget = 'bneg1')"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget #i.
+  (ProviderBudget( sid, a, b, budget ) @ #i) ∧ ¬(budget = 'bneg1')"
+*/
+simplify
+solve( Scan2( sid, 'provider_eval', best, budget ) ▶₀ #i )
+  case Impl_Select_Better_1_case_1
+  by contradiction /* from formulas */
+next
+  case Impl_Select_Better_1_case_2
+  by contradiction /* from formulas */
+next
+  case Skip_Rule_1
+  by solve( Scan1( sid, 'provider_eval', 'r70', budget ) ▶₀ #vr )
+qed
+
+lemma receiver_matches_observation:
+  all-traces
+  "∀ sid a b budget #i.
+    (ReceiverBudget( sid, a, b, budget ) @ #i) ⇒ (budget = 'bneg1')"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b budget #i.
+  (ReceiverBudget( sid, a, b, budget ) @ #i) ∧ ¬(budget = 'bneg1')"
+*/
+simplify
+solve( Scan2( sid, 'receiver', best, budget ) ▶₀ #i )
+  case Impl_Select_Better_1_case_1
+  by contradiction /* from formulas */
+next
+  case Impl_Select_Better_1_case_2
+  by contradiction /* from formulas */
+next
+  case Skip_Rule_1
+  by solve( Scan1( sid, 'receiver', 'r70', budget ) ▶₀ #vr )
+qed
+
+lemma policy_budget_agreement:
+  all-traces
+  "∀ sid a b expected actual decision #i #j.
+    ((SpecDecision( sid, a, b, expected, decision ) @ #i) ∧
+     (ProviderBudget( sid, a, b, actual ) @ #j)) ⇒
+    (expected = actual)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b expected actual decision #i #j.
+  (SpecDecision( sid, a, b, expected, decision ) @ #i) ∧
+  (ProviderBudget( sid, a, b, actual ) @ #j)
+ ∧
+  ¬(expected = actual)"
+*/
+simplify
+solve( Scan2( sid, 'spec', best, expected ) ▶₀ #i )
+  case Skip_Rule_1
+  solve( !Decision( expected, decision ) ▶₁ #i )
+    case Setup_case_1
+    solve( Scan2( sid, 'provider_eval', best, actual ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      by contradiction /* from formulas */
+    next
+      case Impl_Select_Better_1_case_2
+      by contradiction /* from formulas */
+    next
+      case Skip_Rule_1
+      by solve( Scan1( sid, 'spec', 'r70', 'bneg1' ) ▶₀ #vr )
+    qed
+  next
+    case Setup_case_2
+    solve( Scan2( sid, 'provider_eval', best, actual ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      by solve( Scan1( sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+    next
+      case Impl_Select_Better_1_case_2
+      by solve( Scan1( sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+    next
+      case Skip_Rule_1
+      by solve( Scan1( sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+    qed
+  next
+    case Setup_case_3
+    solve( Scan2( sid, 'provider_eval', best, actual ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      by solve( Scan1( sid, 'spec', 'r70', 'b10' ) ▶₀ #vr )
+    next
+      case Impl_Select_Better_1_case_2
+      by solve( Scan1( sid, 'spec', 'r70', 'b10' ) ▶₀ #vr )
+    next
+      case Skip_Rule_1
+      by solve( Scan1( sid, 'spec', 'r70', 'b10' ) ▶₀ #vr )
+    qed
+  qed
+next
+  case Spec_Select_Better_1_case_1
+  solve( !Decision( 'bneg1', decision ) ▶₁ #i )
+    case Setup
+    solve( Scan2( sid, 'provider_eval', best, actual ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      by contradiction /* from formulas */
+    next
+      case Impl_Select_Better_1_case_2
+      by contradiction /* from formulas */
+    next
+      case Skip_Rule_1
+      by solve( Scan1( sid, 'spec', 'rinit', current ) ▶₀ #vr )
+    qed
+  qed
+next
+  case Spec_Select_Better_1_case_2
+  solve( !Decision( 'bneg1', decision ) ▶₁ #i )
+    case Setup
+    solve( Scan2( sid, 'provider_eval', best, actual ) ▶₀ #j )
+      case Impl_Select_Better_1_case_1
+      by contradiction /* from formulas */
+    next
+      case Impl_Select_Better_1_case_2
+      by contradiction /* from formulas */
+    next
+      case Skip_Rule_1
+      solve( Scan1( sid, 'spec', 'r0', current ) ▶₀ #vr )
+        case Spec_Select_Better_0
+        by solve( Scan1( ~sid, 'provider_eval', 'r70', actual ) ▶₀ #vr.2 )
+      qed
+    qed
+  qed
+qed
+
+lemma provider_issue_requires_policy_allow:
+  all-traces
+  "∀ sid a b otk #i.
+    (ProviderIssue( sid, a, b, otk ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b otk #i.
+  (ProviderIssue( sid, a, b, otk ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+simplify
+solve( ProviderResult( sid, budget ) ▶₀ #i )
+  case Provider_Finish_case_1
+  by solve( !Debit( 'bneg1', remaining ) ▶₁ #i )
+next
+  case Provider_Finish_case_2
+  by solve( !Debit( 'bneg1', remaining ) ▶₁ #i )
+next
+  case Provider_Finish_case_3
+  solve( !Debit( budget, remaining ) ▶₁ #i )
+    case Setup
+    solve( ProviderUnusedOTK( sid, 'A', otk ) ▶₂ #i )
+      case Setup
+      by solve( Scan1( ~sid, 'provider_eval', 'r70', 'b10' ) ▶₀ #vr.1 )
+    qed
+  qed
+qed
+
+lemma token_issue_requires_policy_allow:
+  all-traces
+  "∀ sid a b tok #i.
+    (TokenIssue( sid, a, b, tok ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok #i.
+  (TokenIssue( sid, a, b, tok ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+simplify
+solve( ReceiverResult( sid, budget ) ▶₀ #i )
+  case Receiver_Finish_case_1
+  by solve( !ReceiverAllows( 'bneg1' ) ▶₁ #i )
+next
+  case Receiver_Finish_case_2
+  by solve( !ReceiverAllows( 'bneg1' ) ▶₁ #i )
+next
+  case Receiver_Finish_case_3
+  solve( !ReceiverAllows( budget ) ▶₁ #i )
+    case Setup_case_1
+    solve( PendingToken( sid, otk, pac ) ▶₂ #i )
+      case Receiver_Start
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₃ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, osk.1 ) ▶₄ #i )
+          case Setup
+          by solve( Scan1( ~sid, 'receiver', 'r70', 'b0' ) ▶₀ #vr.1 )
+        qed
+      qed
+    qed
+  next
+    case Setup_case_2
+    solve( PendingToken( sid, otk, pac ) ▶₂ #i )
+      case Receiver_Start
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₃ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, osk.1 ) ▶₄ #i )
+          case Setup
+          by solve( Scan1( ~sid, 'receiver', 'r70', 'b10' ) ▶₀ #vr.1 )
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma chat_requires_policy_allow:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ budget #j.
+      (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ budget #j.
+   (SpecDecision( sid, a, b, budget, 'allow' ) @ #j) ⇒ ¬(#j < #i)"
+*/
+simplify
+solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #i )
+  case Sender_Send_Chat_case_1
+  solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( ~sid, 'A', 'B',
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                        'g'^~bsk
+           ) ▶₂ #i )
+      case Receiver_Issue_Token
+      by solve( Scan1( ~sid, 'receiver', 'r70', 'b0' ) ▶₀ #vr.9 )
+    qed
+  qed
+next
+  case Sender_Send_Chat_case_2
+  solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( ~sid, 'A', 'B',
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                        'g'^~bsk
+           ) ▶₂ #i )
+      case Receiver_Issue_Token
+      by solve( Scan1( ~sid, 'receiver', 'r70', 'b10' ) ▶₀ #vr.9 )
+    qed
+  qed
+qed
+
+lemma chat_requires_token_issue:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ #j. (TokenIssue( sid, a, b, tok ) @ #j) ∧ (#j < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ #j. (TokenIssue( sid, a, b, tok ) @ #j) ⇒ ¬(#j < #i)"
+*/
+simplify
+solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #i )
+  case Sender_Send_Chat_case_1
+  by contradiction /* from formulas */
+next
+  case Sender_Send_Chat_case_2
+  by contradiction /* from formulas */
+qed
+
+lemma chat_requires_decryption:
+  all-traces
+  "∀ sid a b tok msg #i.
+    (ChatAccept( sid, a, b, tok, msg ) @ #i) ⇒
+    (∃ #j #k.
+      (((TokenIssue( sid, a, b, tok ) @ #j) ∧
+        (TokenReceive( sid, a, b, tok ) @ #k)) ∧
+       (#j < #k)) ∧
+      (#k < #i))"
+/*
+guarded formula characterizing all counter-examples:
+"∃ sid a b tok msg #i.
+  (ChatAccept( sid, a, b, tok, msg ) @ #i)
+ ∧
+  ∀ #j #k.
+   (TokenIssue( sid, a, b, tok ) @ #j) ∧
+   (TokenReceive( sid, a, b, tok ) @ #k)
+  ⇒
+   ((¬(#j < #k)) ∨ (¬(#k < #i)))"
+*/
+simplify
+solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #i )
+  case Sender_Send_Chat_case_1
+  by contradiction /* from formulas */
+next
+  case Sender_Send_Chat_case_2
+  by contradiction /* from formulas */
+qed
+
+lemma provider_rejection_reachable:
+  exists-trace
+  "∃ sid a b budget #i. ProviderReject( sid, a, b, budget ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b budget #i. (ProviderReject( sid, a, b, budget ) @ #i)"
+*/
+simplify
+solve( ProviderResult( sid, budget ) ▶₀ #i )
+  case Provider_Finish_case_1
+  solve( !Decision( 'bneg1', 'deny' ) ▶₁ #i )
+    case Setup
+    solve( Scan1( sid, 'provider_eval', 'rinit', current ) ▶₀ #vr.1 )
+      case Impl_Select_Better_0_case_2
+      solve( Scan1( ~sid, 'spec', 'r0', current ) ▶₀ #vr.6 )
+        case Spec_Select_Better_0
+        SOLVED // trace found
+      qed
+    qed
+  qed
+qed
+
+lemma receiver_evaluation_reachable:
+  exists-trace "∃ sid #i. ReceiverBudget( sid, 'A', 'B', 'bneg1' ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid #i. (ReceiverBudget( sid, 'A', 'B', 'bneg1' ) @ #i)"
+*/
+simplify
+solve( Scan2( sid, 'receiver', best, 'bneg1' ) ▶₀ #i )
+  case Impl_Select_Better_1_case_1
+  solve( Scan1( sid, 'receiver', 'rinit', current ) ▶₀ #vr )
+    case Impl_Select_Better_0
+    by solve( Scan1( ~sid, 'provider_eval', 'r70', 'b10' ) ▶₀ #vr.7 )
+  qed
+next
+  case Impl_Select_Better_1_case_2
+  by solve( Scan1( sid, 'receiver', 'r0', current ) ▶₀ #vr )
+next
+  case Skip_Rule_1
+  by solve( Scan1( sid, 'receiver', 'r70', 'bneg1' ) ▶₀ #vr )
+qed
+
+lemma provider_release_reachable:
+  exists-trace "∃ sid a b otk #i. ProviderIssue( sid, a, b, otk ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b otk #i. (ProviderIssue( sid, a, b, otk ) @ #i)"
+*/
+simplify
+solve( ProviderResult( sid, budget ) ▶₀ #i )
+  case Provider_Finish_case_1
+  by solve( !Debit( 'bneg1', remaining ) ▶₁ #i )
+next
+  case Provider_Finish_case_2
+  by solve( !Debit( 'bneg1', remaining ) ▶₁ #i )
+next
+  case Provider_Finish_case_3
+  solve( !Debit( budget, remaining ) ▶₁ #i )
+    case Setup
+    solve( ProviderUnusedOTK( sid, 'A', otk ) ▶₂ #i )
+      case Setup
+      by solve( Scan1( ~sid, 'provider_eval', 'r70', 'b10' ) ▶₀ #vr.1 )
+    qed
+  qed
+qed
+
+lemma token_issue_reachable:
+  exists-trace "∃ sid a b tok #i. TokenIssue( sid, a, b, tok ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b tok #i. (TokenIssue( sid, a, b, tok ) @ #i)"
+*/
+simplify
+solve( ReceiverResult( sid, budget ) ▶₀ #i )
+  case Receiver_Finish_case_1
+  by solve( !ReceiverAllows( 'bneg1' ) ▶₁ #i )
+next
+  case Receiver_Finish_case_2
+  by solve( !ReceiverAllows( 'bneg1' ) ▶₁ #i )
+next
+  case Receiver_Finish_case_3
+  solve( !ReceiverAllows( budget ) ▶₁ #i )
+    case Setup_case_1
+    solve( PendingToken( sid, otk, pac ) ▶₂ #i )
+      case Receiver_Start
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₃ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, osk.1 ) ▶₄ #i )
+          case Setup
+          by solve( Scan1( ~sid, 'receiver', 'r70', 'b0' ) ▶₀ #vr.1 )
+        qed
+      qed
+    qed
+  next
+    case Setup_case_2
+    solve( PendingToken( sid, otk, pac ) ▶₂ #i )
+      case Receiver_Start
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₃ #i )
+        case Setup
+        solve( ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, osk.1 ) ▶₄ #i )
+          case Setup
+          by solve( Scan1( ~sid, 'receiver', 'r70', 'b10' ) ▶₀ #vr.1 )
+        qed
+      qed
+    qed
+  qed
+qed
+
+lemma chat_accept_reachable:
+  exists-trace
+  "∃ sid a b tok msg #i. ChatAccept( sid, a, b, tok, msg ) @ #i"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b tok msg #i. (ChatAccept( sid, a, b, tok, msg ) @ #i)"
+*/
+simplify
+solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #i )
+  case Sender_Send_Chat_case_1
+  solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( ~sid, 'A', 'B',
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                        'g'^~bsk
+           ) ▶₂ #i )
+      case Receiver_Issue_Token
+      by solve( Scan1( ~sid, 'receiver', 'r70', 'b0' ) ▶₀ #vr.9 )
+    qed
+  qed
+next
+  case Sender_Send_Chat_case_2
+  solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #i )
+    case Setup
+    solve( ActiveToken( ~sid, 'A', 'B',
+                        senc(<'ACT', ~token, 'g'^~bsk>,
+                             h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                        'g'^~bsk
+           ) ▶₂ #i )
+      case Receiver_Issue_Token
+      by solve( Scan1( ~sid, 'receiver', 'r70', 'b10' ) ▶₀ #vr.9 )
+    qed
+  qed
+qed
+
+lemma denied_chat_reachable:
+  exists-trace
+  "∃ sid a b budget tok msg #i #j.
+    ((SpecDecision( sid, a, b, budget, 'deny' ) @ #i) ∧
+     (ChatAccept( sid, a, b, tok, msg ) @ #j)) ∧
+    (#i < #j)"
+/*
+guarded formula characterizing all satisfying traces:
+"∃ sid a b budget tok msg #i #j.
+  (SpecDecision( sid, a, b, budget, 'deny' ) @ #i) ∧
+  (ChatAccept( sid, a, b, tok, msg ) @ #j)
+ ∧
+  #i < #j"
+*/
+simplify
+solve( Scan2( sid, 'spec', best, budget ) ▶₀ #i )
+  case Skip_Rule_1
+  solve( !Decision( budget, 'deny' ) ▶₁ #i )
+    case Setup_case_1
+    solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #j )
+      case Sender_Send_Chat_case_1
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'r70', 'bneg1' ) ▶₀ #vr )
+        qed
+      qed
+    next
+      case Sender_Send_Chat_case_2
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'r70', 'bneg1' ) ▶₀ #vr )
+        qed
+      qed
+    qed
+  next
+    case Setup_case_2
+    solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #j )
+      case Sender_Send_Chat_case_1
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+        qed
+      qed
+    next
+      case Sender_Send_Chat_case_2
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'r70', 'b0' ) ▶₀ #vr )
+        qed
+      qed
+    qed
+  qed
+next
+  case Spec_Select_Better_1_case_1
+  solve( !Decision( 'bneg1', 'deny' ) ▶₁ #i )
+    case Setup
+    solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #j )
+      case Sender_Send_Chat_case_1
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'rinit', current ) ▶₀ #vr )
+        qed
+      qed
+    next
+      case Sender_Send_Chat_case_2
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          by solve( Scan1( ~sid, 'spec', 'rinit', current ) ▶₀ #vr )
+        qed
+      qed
+    qed
+  qed
+next
+  case Spec_Select_Better_1_case_2
+  solve( !Decision( 'bneg1', 'deny' ) ▶₁ #i )
+    case Setup
+    solve( TLSChat( sid, 'B', 'A', tok, pac, msg ) ▶₀ #j )
+      case Sender_Send_Chat_case_1
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          solve( Scan1( ~sid, 'spec', 'r0', current ) ▶₀ #vr )
+            case Spec_Select_Better_0
+            by solve( Scan1( ~sid, 'receiver', 'r70', 'b0' ) ▶₀ #vr.10 )
+          qed
+        qed
+      qed
+    next
+      case Sender_Send_Chat_case_2
+      solve( !Registered( ~sid, 'B', 'g'^~bsk ) ▶₁ #j )
+        case Setup
+        solve( ActiveToken( ~sid, 'A', 'B',
+                            senc(<'ACT', ~token, 'g'^~bsk>,
+                                 h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)),
+                            'g'^~bsk
+               ) ▶₂ #j )
+          case Receiver_Issue_Token
+          solve( Scan1( ~sid, 'spec', 'r0', current ) ▶₀ #vr )
+            case Spec_Select_Better_0
+            by solve( Scan1( ~sid, 'receiver', 'r70', 'b10' ) ▶₀ #vr.10 )
+          qed
+        qed
+      qed
+    qed
+  qed
+qed
+
+/* All wellformedness checks were successful. */
+
+/*
+Generated from:
+Tamarin version 1.12.0
+Maude version 3.5.1
+Git revision: UNKNOWN, branch: UNKNOWN
+Compiled at: 2026-03-08 10:05:47.616272992 UTC
+*/
+
+end

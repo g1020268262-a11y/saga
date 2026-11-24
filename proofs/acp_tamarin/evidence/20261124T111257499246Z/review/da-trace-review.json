@@ -1,0 +1,3401 @@
+{
+  "kind": "topological_linearization_of_native_tamarin_counterexample",
+  "source": "../da/traces.json",
+  "source_sha256": "2c314fdfc0590681ff23d4c01b2df51a8eea7510fb53d615465b1099b338ec6f",
+  "native_graph_label": "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_chat_requires_policy_allow-Sender_Send_Chat_case_07-Setup-Receiver_Issue_Token-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0",
+  "steps": [
+    {
+      "step": 1,
+      "native_node": "#vr.5",
+      "rule": "Setup",
+      "premises": [
+        {
+          "jgnFactId": "#vr.5:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Fr",
+          "jgnFactShow": "Fr( ~sid )",
+          "jgnFactTag": "FreshFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:p1",
+          "jgnFactMult": "",
+          "jgnFactName": "Fr",
+          "jgnFactShow": "Fr( ~bsk )",
+          "jgnFactTag": "FreshFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~bsk"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:p2",
+          "jgnFactMult": "",
+          "jgnFactName": "Fr",
+          "jgnFactShow": "Fr( ~osk )",
+          "jgnFactTag": "FreshFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~osk"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "Setup",
+          "jgnFactShow": "Setup( )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": []
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.5:c0",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Client",
+          "jgnFactShow": "!Client( ~sid, 'B', ~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "~bsk"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Registered",
+          "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c2",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderUnusedOTK",
+          "jgnFactShow": "ProviderUnusedOTK( ~sid, 'A', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c3",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverUnusedOTK",
+          "jgnFactShow": "ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnConst": "~osk"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c4",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Rules",
+          "jgnFactShow": "!Rules( ~sid, <<'r70', 'bneg1'>, <'r0', 'b10'>, 'end'> )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnFunct": "pair",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'r70'"
+                    },
+                    {
+                      "jgnConst": "'bneg1'"
+                    }
+                  ],
+                  "jgnShow": "pair('r70','bneg1')"
+                },
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'r0'"
+                        },
+                        {
+                          "jgnConst": "'b10'"
+                        }
+                      ],
+                      "jgnShow": "pair('r0','b10')"
+                    },
+                    {
+                      "jgnConst": "'end'"
+                    }
+                  ],
+                  "jgnShow": "pair(pair('r0','b10'),'end')"
+                }
+              ],
+              "jgnShow": "pair(pair('r70','bneg1'),pair(pair('r0','b10'),'end'))"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c5",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c6",
+          "jgnFactMult": "!",
+          "jgnFactName": "!SpecMode",
+          "jgnFactShow": "!SpecMode( 'spec' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'spec'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c7",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'provider_eval' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'provider_eval'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c8",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'receiver' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'receiver'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c9",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c10",
+          "jgnFactMult": "!",
+          "jgnFactName": "!NotHigher",
+          "jgnFactShow": "!NotHigher( 'r0', 'r0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'r0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c11",
+          "jgnFactMult": "!",
+          "jgnFactName": "!NotHigher",
+          "jgnFactShow": "!NotHigher( 'r0', 'r70' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'r70'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c12",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c13",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r70', 'r0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'r0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c14",
+          "jgnFactMult": "!",
+          "jgnFactName": "!NotHigher",
+          "jgnFactShow": "!NotHigher( 'r70', 'r70' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'r70'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c15",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Decision",
+          "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'bneg1'"
+            },
+            {
+              "jgnConst": "'deny'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c16",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ReceiverDenies",
+          "jgnFactShow": "!ReceiverDenies( 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c17",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Decision",
+          "jgnFactShow": "!Decision( 'b0', 'deny' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b0'"
+            },
+            {
+              "jgnConst": "'deny'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c18",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ReceiverAllows",
+          "jgnFactShow": "!ReceiverAllows( 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c19",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Decision",
+          "jgnFactShow": "!Decision( 'b10', 'allow' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b10'"
+            },
+            {
+              "jgnConst": "'allow'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c20",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ReceiverAllows",
+          "jgnFactShow": "!ReceiverAllows( 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c21",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Debit",
+          "jgnFactShow": "!Debit( 'b10', 'b9' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b10'"
+            },
+            {
+              "jgnConst": "'b9'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.5:c22",
+          "jgnFactMult": "",
+          "jgnFactName": "Out",
+          "jgnFactShow": "Out( 'g'^~bsk )",
+          "jgnFactTag": "OutFact",
+          "jgnFactTerms": [
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "native_node": "#vr.16",
+      "rule": "Spec_Select_Better_0",
+      "premises": [
+        {
+          "jgnFactId": "#vr.16:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'spec', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.16:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!SpecMode",
+          "jgnFactShow": "!SpecMode( 'spec' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'spec'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.16:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SelectRule",
+          "jgnFactShow": "SelectRule( ~sid, 'spec', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.16:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'spec', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "native_node": "#vr.15",
+      "rule": "Skip_Rule_1",
+      "premises": [
+        {
+          "jgnFactId": "#vr.15:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'spec', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.15:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!NotHigher",
+          "jgnFactShow": "!NotHigher( 'r0', 'r70' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'r70'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SkipRule",
+          "jgnFactShow": "SkipRule( ~sid, 'spec', 'r0', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.15:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'spec', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "native_node": "#vr.14",
+      "rule": "Spec_Finish",
+      "premises": [
+        {
+          "jgnFactId": "#vr.14:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'spec', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'spec'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.14:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Decision",
+          "jgnFactShow": "!Decision( 'bneg1', 'deny' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'bneg1'"
+            },
+            {
+              "jgnConst": "'deny'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SpecDecision",
+          "jgnFactShow": "SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            },
+            {
+              "jgnConst": "'deny'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.14:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "AccessReady",
+          "jgnFactShow": "AccessReady( ~sid )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "native_node": "#vr.13",
+      "rule": "Provider_Start",
+      "premises": [
+        {
+          "jgnFactId": "#vr.13:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "AccessReady",
+          "jgnFactShow": "AccessReady( ~sid )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.13:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Rules",
+          "jgnFactShow": "!Rules( ~sid, <<'r70', 'bneg1'>, <'r0', 'b10'>, 'end'> )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnFunct": "pair",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'r70'"
+                    },
+                    {
+                      "jgnConst": "'bneg1'"
+                    }
+                  ],
+                  "jgnShow": "pair('r70','bneg1')"
+                },
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'r0'"
+                        },
+                        {
+                          "jgnConst": "'b10'"
+                        }
+                      ],
+                      "jgnShow": "pair('r0','b10')"
+                    },
+                    {
+                      "jgnConst": "'end'"
+                    }
+                  ],
+                  "jgnShow": "pair(pair('r0','b10'),'end')"
+                }
+              ],
+              "jgnShow": "pair(pair('r70','bneg1'),pair(pair('r0','b10'),'end'))"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.13:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Registered",
+          "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "AccessRequested",
+          "jgnFactShow": "AccessRequested( ~sid, 'A', 'B' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.13:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "native_node": "#vr.12",
+      "rule": "Impl_Select_Better_0",
+      "premises": [
+        {
+          "jgnFactId": "#vr.12:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'provider_eval', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.12:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'provider_eval' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'provider_eval'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.12:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SelectRule",
+          "jgnFactShow": "SelectRule( ~sid, 'provider_eval', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.12:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "native_node": "#vr.10",
+      "rule": "Impl_Select_Better_1",
+      "premises": [
+        {
+          "jgnFactId": "#vr.10:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'provider_eval', 'rinit', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.10:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'provider_eval' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'provider_eval'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.10:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SelectRule",
+          "jgnFactShow": "SelectRule( ~sid, 'provider_eval', 'r0', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.10:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'provider_eval', 'rinit', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "native_node": "#vr.8",
+      "rule": "Provider_Finish",
+      "premises": [
+        {
+          "jgnFactId": "#vr.8:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'provider_eval', 'rinit', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'provider_eval'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderBudget",
+          "jgnFactShow": "ProviderBudget( ~sid, 'A', 'B', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.8:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderResult",
+          "jgnFactShow": "ProviderResult( ~sid, 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 9,
+      "native_node": "#vr.4",
+      "rule": "Provider_Release",
+      "premises": [
+        {
+          "jgnFactId": "#vr.4:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderResult",
+          "jgnFactShow": "ProviderResult( ~sid, 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.4:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Debit",
+          "jgnFactShow": "!Debit( 'b10', 'b9' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b10'"
+            },
+            {
+              "jgnConst": "'b9'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.4:p2",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderUnusedOTK",
+          "jgnFactShow": "ProviderUnusedOTK( ~sid, 'A', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderIssue",
+          "jgnFactShow": "ProviderIssue( ~sid, 'A', 'B', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderDebit",
+          "jgnFactShow": "ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'b10'"
+            },
+            {
+              "jgnConst": "'b9'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.4:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSOTKResponse",
+          "jgnFactShow": "TLSOTKResponse( ~sid, 'Provider', 'B', 'A', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'Provider'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.4:c1",
+          "jgnFactMult": "",
+          "jgnFactName": "ProviderRemaining",
+          "jgnFactShow": "ProviderRemaining( ~sid, 'A', 'B', 'b9' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'b9'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 10,
+      "native_node": "#vr.2",
+      "rule": "Sender_Request_Token",
+      "premises": [
+        {
+          "jgnFactId": "#vr.2:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSOTKResponse",
+          "jgnFactShow": "TLSOTKResponse( ~sid, 'Provider', 'B', 'A', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'Provider'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.2:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Client",
+          "jgnFactShow": "!Client( ~sid, 'B', ~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "~bsk"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "TokenRequest",
+          "jgnFactShow": "TokenRequest( ~sid, 'A', 'B', 'g'^~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.2:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSTokenRequest",
+          "jgnFactShow": "TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk, 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.2:c1",
+          "jgnFactMult": "",
+          "jgnFactName": "WaitingForToken",
+          "jgnFactShow": "WaitingForToken( ~sid, 'A', 'B', 'g'^~osk, ~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnConst": "~bsk"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 11,
+      "native_node": "#vr.7",
+      "rule": "Receiver_Start",
+      "premises": [
+        {
+          "jgnFactId": "#vr.7:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSTokenRequest",
+          "jgnFactShow": "TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk, 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.7:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Registered",
+          "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.7:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Rules",
+          "jgnFactShow": "!Rules( ~sid, <<'r70', 'bneg1'>, <'r0', 'b10'>, 'end'> )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnFunct": "pair",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'r70'"
+                    },
+                    {
+                      "jgnConst": "'bneg1'"
+                    }
+                  ],
+                  "jgnShow": "pair('r70','bneg1')"
+                },
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'r0'"
+                        },
+                        {
+                          "jgnConst": "'b10'"
+                        }
+                      ],
+                      "jgnShow": "pair('r0','b10')"
+                    },
+                    {
+                      "jgnConst": "'end'"
+                    }
+                  ],
+                  "jgnShow": "pair(pair('r0','b10'),'end')"
+                }
+              ],
+              "jgnShow": "pair(pair('r70','bneg1'),pair(pair('r0','b10'),'end'))"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverCheckStarted",
+          "jgnFactShow": "ReceiverCheckStarted( ~sid, 'A', 'B' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.7:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "PendingToken",
+          "jgnFactShow": "PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.7:c1",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'receiver', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 12,
+      "native_node": "#vr.11",
+      "rule": "Impl_Select_Better_0",
+      "premises": [
+        {
+          "jgnFactId": "#vr.11:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan0",
+          "jgnFactShow": "Scan0( ~sid, 'receiver', 'rinit', 'b0' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b0'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.11:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'receiver' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'receiver'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.11:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r70', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SelectRule",
+          "jgnFactShow": "SelectRule( ~sid, 'receiver', 'r70', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'r70'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.11:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'receiver', 'rinit', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 13,
+      "native_node": "#vr.9",
+      "rule": "Impl_Select_Better_1",
+      "premises": [
+        {
+          "jgnFactId": "#vr.9:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan1",
+          "jgnFactShow": "Scan1( ~sid, 'receiver', 'rinit', 'bneg1' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'bneg1'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.9:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ImplMode",
+          "jgnFactShow": "!ImplMode( 'receiver' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'receiver'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.9:p2",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Higher",
+          "jgnFactShow": "!Higher( 'r0', 'rinit' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "SelectRule",
+          "jgnFactShow": "SelectRule( ~sid, 'receiver', 'r0', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'r0'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.9:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'receiver', 'rinit', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 14,
+      "native_node": "#vr.6",
+      "rule": "Receiver_Finish",
+      "premises": [
+        {
+          "jgnFactId": "#vr.6:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "Scan2",
+          "jgnFactShow": "Scan2( ~sid, 'receiver', 'rinit', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'receiver'"
+            },
+            {
+              "jgnConst": "'rinit'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverBudget",
+          "jgnFactShow": "ReceiverBudget( ~sid, 'A', 'B', 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.6:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverResult",
+          "jgnFactShow": "ReceiverResult( ~sid, 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 15,
+      "native_node": "#vr.3",
+      "rule": "Receiver_Issue_Token",
+      "premises": [
+        {
+          "jgnFactId": "#vr.3:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverResult",
+          "jgnFactShow": "ReceiverResult( ~sid, 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!ReceiverAllows",
+          "jgnFactShow": "!ReceiverAllows( 'b10' )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "'b10'"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:p2",
+          "jgnFactMult": "",
+          "jgnFactName": "PendingToken",
+          "jgnFactShow": "PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:p3",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Registered",
+          "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:p4",
+          "jgnFactMult": "",
+          "jgnFactName": "ReceiverUnusedOTK",
+          "jgnFactShow": "ReceiverUnusedOTK( ~sid, 'A', 'g'^~osk, ~osk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnConst": "~osk"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:p5",
+          "jgnFactMult": "",
+          "jgnFactName": "Fr",
+          "jgnFactShow": "Fr( ~token )",
+          "jgnFactTag": "FreshFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~token"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "TokenIssue",
+          "jgnFactShow": "TokenIssue( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)))",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.3:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSTokenResponse",
+          "jgnFactShow": "TLSTokenResponse( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)))",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.3:c1",
+          "jgnFactMult": "",
+          "jgnFactName": "ActiveToken",
+          "jgnFactShow": "ActiveToken( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 16,
+      "native_node": "#vr.1",
+      "rule": "Sender_Decrypt_Token",
+      "premises": [
+        {
+          "jgnFactId": "#vr.1:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "WaitingForToken",
+          "jgnFactShow": "WaitingForToken( ~sid, 'A', 'B', 'g'^~osk, ~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~osk"
+                }
+              ],
+              "jgnShow": "exp('g',~osk)"
+            },
+            {
+              "jgnConst": "~bsk"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr.1:p1",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSTokenResponse",
+          "jgnFactShow": "TLSTokenResponse( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)))",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "TokenReceive",
+          "jgnFactShow": "TokenReceive( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)))",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr.1:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "ReadyForChat",
+          "jgnFactShow": "ReadyForChat( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 17,
+      "native_node": "#vr",
+      "rule": "Sender_Send_Chat",
+      "premises": [
+        {
+          "jgnFactId": "#vr:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "ReadyForChat",
+          "jgnFactShow": "ReadyForChat( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#vr:p1",
+          "jgnFactMult": "",
+          "jgnFactName": "Fr",
+          "jgnFactShow": "Fr( ~msg )",
+          "jgnFactTag": "FreshFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~msg"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ChatSend",
+          "jgnFactShow": "ChatSend( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), ~msg)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnConst": "~msg"
+            }
+          ]
+        }
+      ],
+      "conclusions": [
+        {
+          "jgnFactId": "#vr:c0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSChat",
+          "jgnFactShow": "TLSChat( ~sid, 'B', 'A', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk, ~msg)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            },
+            {
+              "jgnConst": "~msg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 18,
+      "native_node": "#i",
+      "rule": "Receiver_Accept_Chat",
+      "premises": [
+        {
+          "jgnFactId": "#i:p0",
+          "jgnFactMult": "",
+          "jgnFactName": "TLSChat",
+          "jgnFactShow": "TLSChat( ~sid, 'B', 'A', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk, ~msg)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            },
+            {
+              "jgnConst": "~msg"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#i:p1",
+          "jgnFactMult": "!",
+          "jgnFactName": "!Registered",
+          "jgnFactShow": "!Registered( ~sid, 'B', 'g'^~bsk )",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        },
+        {
+          "jgnFactId": "#i:p2",
+          "jgnFactMult": "",
+          "jgnFactName": "ActiveToken",
+          "jgnFactShow": "ActiveToken( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), 'g'^~bsk)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnFunct": "exp",
+              "jgnParams": [
+                {
+                  "jgnConst": "'g'"
+                },
+                {
+                  "jgnConst": "~bsk"
+                }
+              ],
+              "jgnShow": "exp('g',~bsk)"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "jgnFactId": "action",
+          "jgnFactMult": "",
+          "jgnFactName": "ChatAccept",
+          "jgnFactShow": "ChatAccept( ~sid, 'A', 'B', senc(<'ACT', ~token, 'g'^~bsk>, h(<'access-control-shdk-exchange', 'g'^(~bsk*~osk)>)), ~msg)",
+          "jgnFactTag": "ProtoFact",
+          "jgnFactTerms": [
+            {
+              "jgnConst": "~sid"
+            },
+            {
+              "jgnConst": "'A'"
+            },
+            {
+              "jgnConst": "'B'"
+            },
+            {
+              "jgnFunct": "senc",
+              "jgnParams": [
+                {
+                  "jgnFunct": "pair",
+                  "jgnParams": [
+                    {
+                      "jgnConst": "'ACT'"
+                    },
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "~token"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnConst": "~bsk"
+                            }
+                          ],
+                          "jgnShow": "exp('g',~bsk)"
+                        }
+                      ],
+                      "jgnShow": "pair(~token,exp('g',~bsk))"
+                    }
+                  ],
+                  "jgnShow": "pair('ACT',pair(~token,exp('g',~bsk)))"
+                },
+                {
+                  "jgnFunct": "h",
+                  "jgnParams": [
+                    {
+                      "jgnFunct": "pair",
+                      "jgnParams": [
+                        {
+                          "jgnConst": "'access-control-shdk-exchange'"
+                        },
+                        {
+                          "jgnFunct": "exp",
+                          "jgnParams": [
+                            {
+                              "jgnConst": "'g'"
+                            },
+                            {
+                              "jgnFunct": "Mult",
+                              "jgnParams": [
+                                {
+                                  "jgnConst": "~bsk"
+                                },
+                                {
+                                  "jgnConst": "~osk"
+                                }
+                              ],
+                              "jgnShow": "Mult(~bsk,~osk)"
+                            }
+                          ],
+                          "jgnShow": "exp('g',Mult(~bsk,~osk))"
+                        }
+                      ],
+                      "jgnShow": "pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))"
+                    }
+                  ],
+                  "jgnShow": "h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk))))"
+                }
+              ],
+              "jgnShow": "senc(pair('ACT',pair(~token,exp('g',~bsk))),h(pair('access-control-shdk-exchange',exp('g',Mult(~bsk,~osk)))))"
+            },
+            {
+              "jgnConst": "~msg"
+            }
+          ]
+        }
+      ],
+      "conclusions": []
+    }
+  ],
+  "checks": {
+    "complete_18_step_execution": true,
+    "both_implementation_scans_overwrite_deny": true,
+    "spec_denies": true,
+    "provider_debit_10_to_9": true,
+    "same_OTK_issued_and_consumed": true,
+    "same_session_identity_and_ciphertext_issued_decrypted_accepted": true
+  }
+}

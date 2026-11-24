@@ -1,0 +1,6 @@
+{
+  "native_complete": false,
+  "reason": "Runner ended without final summary; WSL exit 15 is in audit/final-native-run.log. No matching PID was found by the diagnostic stop probe, so that probe killed no process. No verdict inferred from this incomplete run.",
+  "stopped": [],
+  "time_unix": 1795518653.0658638
+}

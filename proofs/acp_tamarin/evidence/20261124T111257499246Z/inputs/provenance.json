@@ -1,0 +1,268 @@
+{
+  "data": {
+    "bridge_sha256": "ba1dcb24fe3b914eccad203ea2045a36f7be8033958f8af68c96e862cd838569",
+    "checked_decision_pairs": {
+      "aa": {
+        "byte_binding": {
+          "git_blob_sha1": "41a396847413bacbe5ec92e84d534f45ba24a578",
+          "git_bytes_sha256": "f7c4237de82d17bfa76a9a44c95bd2f973140c2d996a3731f17d4a25c03814b8",
+          "verified_encoding": "git-blob-raw",
+          "working_bytes_sha256": "f7c4237de82d17bfa76a9a44c95bd2f973140c2d996a3731f17d4a25c03814b8"
+        },
+        "checked_pair": {
+          "context": {
+            "initiator": "alice@example.com:agent",
+            "policy_hash": "93045abb5b828028f7e245f47f22b98d80002a854831d9833c95c6fc6aa6ca90",
+            "policy_id": "acp-aa",
+            "policy_version": "1",
+            "receiver": "aid_A",
+            "receiver_binding": "symbolic policy owner; not recorded by matcher",
+            "rules": [
+              {
+                "budget": 10,
+                "id": "r0",
+                "pattern": "*",
+                "position": 0
+              }
+            ],
+            "source": "saga/common/contact_policy.py",
+            "source_commit": "b5d0a6365d40fdeff240e54cce5ef7572f01808a",
+            "source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+            "target": "alice@example.com:agent"
+          },
+          "divergence": false,
+          "evaluation_fingerprint": "e1d6c0f0687c644162274411c0692417ed6aa441a77ac99b7c7eee4b65d84069",
+          "generator_version": "decision-bridge-1.1.1",
+          "impl_observed": {
+            "budget": 10,
+            "budget_class": "Positive",
+            "decision": "Allow",
+            "historical_source": {
+              "archived_source_byte_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+              "historical_git_blob_matches_normalized_source": true,
+              "historical_git_blob_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "historical_normalized_lf_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "source_commit": "b5d0a6365d40fdeff240e54cce5ef7572f01808a",
+              "source_path": "saga/common/contact_policy.py",
+              "verified_byte_encoding": "uniform-CRLF"
+            },
+            "observation": {
+              "format": "bridge-observation-v1",
+              "path": "proofs/decision_bridge/observations/20260922T064049858703Z/allow.json",
+              "sha256": "f7c4237de82d17bfa76a9a44c95bd2f973140c2d996a3731f17d4a25c03814b8"
+            }
+          },
+          "spec": {
+            "budget": 10,
+            "budget_class": "Positive",
+            "decision": "Allow",
+            "specificity": 0,
+            "status": "OK",
+            "winning_rule": "r0"
+          },
+          "status": "OK"
+        }
+      },
+      "da": {
+        "byte_binding": {
+          "git_blob_sha1": "fa16fb3f69e8ace66ebc36bc1c3e0ffba5e76cec",
+          "git_bytes_sha256": "5b2527135c76737bbdef6d4f90f648ecba1089102c3d73f2321be9b08bb4450f",
+          "verified_encoding": "uniform-CRLF",
+          "working_bytes_sha256": "b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d"
+        },
+        "checked_pair": {
+          "context": {
+            "initiator": "alice@example.com:agent",
+            "policy_hash": "23cfaf931100d7e47702e962a38b99bd8c837e0b15624438658b9b8f4ca5138c",
+            "policy_id": "acp-da",
+            "policy_version": "1",
+            "receiver": "aid_A",
+            "receiver_binding": "symbolic policy owner; not recorded by matcher",
+            "rules": [
+              {
+                "budget": -1,
+                "id": "r0",
+                "pattern": "alice@example.com:*",
+                "position": 0
+              },
+              {
+                "budget": 10,
+                "id": "r1",
+                "pattern": "*",
+                "position": 1
+              }
+            ],
+            "source": "saga/common/contact_policy.py",
+            "source_commit": "7372111bea150e32cee390a616849316d2780bfc",
+            "source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+            "target": "alice@example.com:agent"
+          },
+          "divergence": true,
+          "evaluation_fingerprint": "551332822487f8df29d604b2d72a429a2be0a082a00e88822a2a4c6cf4ef6d7b",
+          "generator_version": "decision-bridge-1.1.1",
+          "impl_observed": {
+            "budget": 10,
+            "budget_class": "Positive",
+            "decision": "Allow",
+            "historical_source": {
+              "archived_source_byte_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+              "historical_git_blob_matches_normalized_source": true,
+              "historical_git_blob_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "historical_normalized_lf_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "source_commit": "7372111bea150e32cee390a616849316d2780bfc",
+              "source_path": "saga/common/contact_policy.py",
+              "verified_byte_encoding": "uniform-CRLF"
+            },
+            "observation": {
+              "field": "actual_specific_deny_then_wildcard_allow",
+              "format": "stage1",
+              "path": "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json",
+              "sha256": "b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d"
+            }
+          },
+          "spec": {
+            "budget": -1,
+            "budget_class": "Negative",
+            "decision": "Deny",
+            "specificity": 70,
+            "status": "OK",
+            "winning_rule": "r0"
+          },
+          "status": "OK"
+        }
+      },
+      "dd": {
+        "byte_binding": {
+          "git_blob_sha1": "4da8454fcb6fab9caedcc595f29a0b0925d21724",
+          "git_bytes_sha256": "c63c55027569112cbb81ec3eaf3f28a3b5c09d5221908a50c2f1848175e64807",
+          "verified_encoding": "git-blob-raw",
+          "working_bytes_sha256": "c63c55027569112cbb81ec3eaf3f28a3b5c09d5221908a50c2f1848175e64807"
+        },
+        "checked_pair": {
+          "context": {
+            "initiator": "alice@example.com:agent",
+            "policy_hash": "d13aaf1b6f07aaba7cdf6a58aa2bed1153887d5d89b83d3074c7739b516d27da",
+            "policy_id": "acp-dd",
+            "policy_version": "1",
+            "receiver": "aid_A",
+            "receiver_binding": "symbolic policy owner; not recorded by matcher",
+            "rules": [
+              {
+                "budget": -1,
+                "id": "r0",
+                "pattern": "*",
+                "position": 0
+              }
+            ],
+            "source": "saga/common/contact_policy.py",
+            "source_commit": "b5d0a6365d40fdeff240e54cce5ef7572f01808a",
+            "source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+            "target": "alice@example.com:agent"
+          },
+          "divergence": false,
+          "evaluation_fingerprint": "7418a363592f3130bf0c4f87eb988f9da12bb5fae4601d96193dd3982f669e44",
+          "generator_version": "decision-bridge-1.1.1",
+          "impl_observed": {
+            "budget": -1,
+            "budget_class": "Negative",
+            "decision": "Deny",
+            "historical_source": {
+              "archived_source_byte_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+              "historical_git_blob_matches_normalized_source": true,
+              "historical_git_blob_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "historical_normalized_lf_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "source_commit": "b5d0a6365d40fdeff240e54cce5ef7572f01808a",
+              "source_path": "saga/common/contact_policy.py",
+              "verified_byte_encoding": "uniform-CRLF"
+            },
+            "observation": {
+              "format": "bridge-observation-v1",
+              "path": "proofs/decision_bridge/observations/20260922T064049858703Z/deny.json",
+              "sha256": "c63c55027569112cbb81ec3eaf3f28a3b5c09d5221908a50c2f1848175e64807"
+            }
+          },
+          "spec": {
+            "budget": -1,
+            "budget_class": "Negative",
+            "decision": "Deny",
+            "specificity": 0,
+            "status": "OK",
+            "winning_rule": "r0"
+          },
+          "status": "OK"
+        }
+      },
+      "reverse": {
+        "byte_binding": {
+          "git_blob_sha1": "fa16fb3f69e8ace66ebc36bc1c3e0ffba5e76cec",
+          "git_bytes_sha256": "5b2527135c76737bbdef6d4f90f648ecba1089102c3d73f2321be9b08bb4450f",
+          "verified_encoding": "uniform-CRLF",
+          "working_bytes_sha256": "b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d"
+        },
+        "checked_pair": {
+          "context": {
+            "initiator": "alice@example.com:agent",
+            "policy_hash": "83c7318f8f944bd4e759384b88431254c7ac0e1676bd157d946ead77219adaa0",
+            "policy_id": "acp-reverse",
+            "policy_version": "1",
+            "receiver": "aid_A",
+            "receiver_binding": "symbolic policy owner; not recorded by matcher",
+            "rules": [
+              {
+                "budget": 10,
+                "id": "r0",
+                "pattern": "*",
+                "position": 0
+              },
+              {
+                "budget": -1,
+                "id": "r1",
+                "pattern": "alice@example.com:*",
+                "position": 1
+              }
+            ],
+            "source": "saga/common/contact_policy.py",
+            "source_commit": "7372111bea150e32cee390a616849316d2780bfc",
+            "source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+            "target": "alice@example.com:agent"
+          },
+          "divergence": false,
+          "evaluation_fingerprint": "d1a07fe83018558b963c0f62043236af791a370c6c965901991fa44fd620386b",
+          "generator_version": "decision-bridge-1.1.1",
+          "impl_observed": {
+            "budget": -1,
+            "budget_class": "Negative",
+            "decision": "Deny",
+            "historical_source": {
+              "archived_source_byte_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97",
+              "historical_git_blob_matches_normalized_source": true,
+              "historical_git_blob_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "historical_normalized_lf_sha256": "c95b91e2d9bfa99d562423c4356e8e2532b202fe33e4d84da4b8059abe8e60b5",
+              "source_commit": "7372111bea150e32cee390a616849316d2780bfc",
+              "source_path": "saga/common/contact_policy.py",
+              "verified_byte_encoding": "uniform-CRLF"
+            },
+            "observation": {
+              "field": "actual_wildcard_allow_then_specific_deny",
+              "format": "stage1",
+              "path": "proofs/evidence/authz-stage1-20260916T123834944479Z/policy-matcher-sanity.json",
+              "sha256": "b1148bdb2e2b450ca318b28266deb2dcd30d74af1ccec405ff855bf43c7fc56d"
+            }
+          },
+          "spec": {
+            "budget": -1,
+            "budget_class": "Negative",
+            "decision": "Deny",
+            "specificity": 70,
+            "status": "OK",
+            "winning_rule": "r1"
+          },
+          "status": "OK"
+        }
+      }
+    },
+    "repository_head": "cf15d0ae79d2a2a47d74fa66e75ccfc98bcda9c6",
+    "source_sha256": "2e37f59651acc31ed9fad8436462faabcb49c52ab3032eccd1529cd72870aa97"
+  },
+  "mode": "checked_repository_bridge"
+}

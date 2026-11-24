@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+    "--quit-on-warning",
+    "--derivcheck-timeout=30",
+    "--prove",
+    "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111056242084Z/da/proof.spthy",
+    "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111056242084Z/da/traces.json",
+    "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111056242084Z/da/traces.dot",
+    "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111056242084Z/models/da.spthy",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "elapsed_seconds": 40.246,
+  "exit_code": 0,
+  "timeout": false
+}

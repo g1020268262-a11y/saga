@@ -1,0 +1,27 @@
+
+==============================================================================
+summary of summaries:
+
+analyzed: /mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/aa.spthy
+
+  output:          /mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/aa/proof.spthy
+  processing time: 8.79s
+  
+  evaluation_reachable (exists-trace): verified (6 steps)
+  spec_matches_reference (all-traces): verified (10 steps)
+  provider_matches_observation (all-traces): verified (5 steps)
+  receiver_matches_observation (all-traces): verified (3 steps)
+  policy_budget_agreement (all-traces): verified (9 steps)
+  provider_issue_requires_policy_allow (all-traces): verified (8 steps)
+  token_issue_requires_policy_allow (all-traces): verified (10 steps)
+  chat_requires_policy_allow (all-traces): verified (8 steps)
+  chat_requires_token_issue (all-traces): verified (3 steps)
+  chat_requires_decryption (all-traces): verified (3 steps)
+  provider_rejection_reachable (exists-trace): falsified - no trace found (5 steps)
+  receiver_evaluation_reachable (exists-trace): verified (5 steps)
+  provider_release_reachable (exists-trace): verified (7 steps)
+  token_issue_reachable (exists-trace): verified (9 steps)
+  chat_accept_reachable (exists-trace): verified (7 steps)
+  denied_chat_reachable (exists-trace): falsified - no trace found (10 steps)
+
+==============================================================================

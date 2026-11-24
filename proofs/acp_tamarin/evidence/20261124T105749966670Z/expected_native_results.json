@@ -1,0 +1,266 @@
+{
+  "aa": {
+    "chat_accept_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "chat_requires_decryption": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_token_issue": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "denied_chat_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "policy_budget_agreement": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_rejection_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "provider_release_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "receiver_evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "receiver_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "spec_matches_reference": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "token_issue_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "token_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    }
+  },
+  "da": {
+    "chat_accept_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "chat_requires_decryption": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_policy_allow": {
+      "expected": "falsified",
+      "type": "all-traces"
+    },
+    "chat_requires_token_issue": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "denied_chat_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "policy_budget_agreement": {
+      "expected": "falsified",
+      "type": "all-traces"
+    },
+    "provider_issue_requires_policy_allow": {
+      "expected": "falsified",
+      "type": "all-traces"
+    },
+    "provider_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_rejection_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "provider_release_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "receiver_evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "receiver_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "spec_matches_reference": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "token_issue_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "token_issue_requires_policy_allow": {
+      "expected": "falsified",
+      "type": "all-traces"
+    }
+  },
+  "dd": {
+    "chat_accept_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "chat_requires_decryption": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_token_issue": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "denied_chat_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "policy_budget_agreement": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_rejection_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "provider_release_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "receiver_evaluation_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "receiver_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "spec_matches_reference": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "token_issue_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "token_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    }
+  },
+  "reverse": {
+    "chat_accept_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "chat_requires_decryption": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "chat_requires_token_issue": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "denied_chat_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "evaluation_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "policy_budget_agreement": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "provider_rejection_reachable": {
+      "expected": "verified",
+      "type": "exists-trace"
+    },
+    "provider_release_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "receiver_evaluation_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "receiver_matches_observation": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "spec_matches_reference": {
+      "expected": "verified",
+      "type": "all-traces"
+    },
+    "token_issue_reachable": {
+      "expected": "falsified",
+      "type": "exists-trace"
+    },
+    "token_issue_requires_policy_allow": {
+      "expected": "verified",
+      "type": "all-traces"
+    }
+  }
+}

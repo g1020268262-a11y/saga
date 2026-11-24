@@ -1,0 +1,602 @@
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_evaluation_reachable-Skip_Rule_1_case_2-Setup-Impl_Select_Better_1-Spec_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n4[shape="record",label="{{<n0> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n1> !Decision( 'bneg1', 'deny' )}|{<n2> #i : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n3> AccessReady( ~sid )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n8[shape="record",label="{{<n5> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n6> #j : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n7> ProviderResult( ~sid, 'b10' )}}",fillcolor="#ced997",style="filled",fontcolor="black",role="Undefined"];
+n13[shape="record",label="{{<n9> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n10> !NotHigher( 'r0', 'r70' )}|{<n11> #vr : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n12> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#c7d998",style="filled",fontcolor="black",role="Undefined"];
+n41[shape="record",label="{{<n14> Fr( ~sid )|<n15> Fr( ~bsk )|<n16> Fr( ~osk )}|{<n17> #vr.1 : Setup[Setup( )]}|{<n18> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n19> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n20> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n21> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n22> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n23> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n24> !SpecMode( 'spec' )|<n25> !ImplMode( PR1 )|<n26> !ImplMode( 'receiver'\l)\l|<n27> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n28> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n29> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n30> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n31> !Higher( 'r70', 'r0'\l)\l|<n32> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n33> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n34> !ReceiverDenies( 'bneg1'\l)\l|<n35> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n36> !ReceiverAllows( 'b0'\l)\l|<n37> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n38> !ReceiverAllows( 'b10'\l)\l|<n39> !Debit( 'b10', 'b9'\l)\l|<n40> Out( 'g'^~bsk )}}",fillcolor="#c1da98",style="filled",fontcolor="black",role="Undefined"];
+n47[shape="record",label="{{<n42> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n43> !ImplMode( PR1 )|<n44> !Higher( 'r0', 'rinit' )}|{<n45> #vr.2 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n46> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n53[shape="record",label="{{<n48> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n49> !SpecMode( 'spec' )|<n50> !Higher( 'r70', 'rinit' )}|{<n51> #vr.3 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n52> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#b3db99",style="filled",fontcolor="black",role="Undefined"];
+n59[shape="record",label="{{<n54> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n55> !ImplMode( PR1 )|<n56> !Higher( 'r70', 'rinit' )}|{<n57> #vr.4 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n58> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#acdc9a",style="filled",fontcolor="black",role="Undefined"];
+n65[shape="record",label="{{<n60> AccessReady( ~sid )|<n61> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n62> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n63> #vr.5 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n64> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#a5dd9a",style="filled",fontcolor="black",role="Undefined"];
+n4:n3 -> n65:n60[style="bold",weight="10.0"];
+n13:n12 -> n4:n0[style="bold",weight="10.0"];
+n41:n19 -> n65:n62[style="bold",weight="10.0",color="gray50"];
+n41:n22 -> n65:n61[style="bold",weight="10.0",color="gray50"];
+n41:n23 -> n53:n48[style="bold",weight="10.0"];
+n41:n24 -> n53:n49[style="bold",weight="10.0",color="gray50"];
+n41:n25 -> n47:n43[style="bold",weight="10.0",color="gray50"];
+n41:n25 -> n59:n55[style="bold",weight="10.0",color="gray50"];
+n41:n27 -> n47:n44[style="bold",weight="10.0",color="gray50"];
+n41:n29 -> n13:n10[style="bold",weight="10.0",color="gray50"];
+n41:n30 -> n53:n50[style="bold",weight="10.0",color="gray50"];
+n41:n30 -> n59:n56[style="bold",weight="10.0",color="gray50"];
+n41:n33 -> n4:n1[style="bold",weight="10.0",color="gray50"];
+n47:n46 -> n8:n5[style="bold",weight="10.0"];
+n53:n52 -> n13:n9[style="bold",weight="10.0"];
+n59:n58 -> n47:n42[style="bold",weight="10.0"];
+n65:n64 -> n59:n54[style="bold",weight="10.0"];
+{
+rank="sink";
+n66[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR></TABLE>>];
+
+}
+n8:n6 -> n66[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_policy_budget_agreement-Skip_Rule_1_case_2-Setup_case_1-Impl_Select_Better_1-Spec_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n4[shape="record",label="{{<n0> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n1> !Decision( 'bneg1', 'deny' )}|{<n2> #i : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n3> AccessReady( ~sid )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n8[shape="record",label="{{<n5> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n6> #j : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n7> ProviderResult( ~sid, 'b10' )}}",fillcolor="#ced997",style="filled",fontcolor="black",role="Undefined"];
+n13[shape="record",label="{{<n9> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n10> !NotHigher( 'r0', 'r70' )}|{<n11> #vr : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n12> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#c7d998",style="filled",fontcolor="black",role="Undefined"];
+n41[shape="record",label="{{<n14> Fr( ~sid )|<n15> Fr( ~bsk )|<n16> Fr( ~osk )}|{<n17> #vr.1 : Setup[Setup( )]}|{<n18> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n19> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n20> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n21> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n22> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n23> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n24> !SpecMode( 'spec' )|<n25> !ImplMode( PR1 )|<n26> !ImplMode( 'receiver'\l)\l|<n27> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n28> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n29> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n30> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n31> !Higher( 'r70', 'r0'\l)\l|<n32> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n33> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n34> !ReceiverDenies( 'bneg1'\l)\l|<n35> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n36> !ReceiverAllows( 'b0'\l)\l|<n37> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n38> !ReceiverAllows( 'b10'\l)\l|<n39> !Debit( 'b10', 'b9'\l)\l|<n40> Out( 'g'^~bsk )}}",fillcolor="#c1da98",style="filled",fontcolor="black",role="Undefined"];
+n47[shape="record",label="{{<n42> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n43> !ImplMode( PR1 )|<n44> !Higher( 'r0', 'rinit' )}|{<n45> #vr.2 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n46> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n53[shape="record",label="{{<n48> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n49> !SpecMode( 'spec' )|<n50> !Higher( 'r70', 'rinit' )}|{<n51> #vr.3 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n52> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#b3db99",style="filled",fontcolor="black",role="Undefined"];
+n59[shape="record",label="{{<n54> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n55> !ImplMode( PR1 )|<n56> !Higher( 'r70', 'rinit' )}|{<n57> #vr.4 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n58> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#acdc9a",style="filled",fontcolor="black",role="Undefined"];
+n65[shape="record",label="{{<n60> AccessReady( ~sid )|<n61> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n62> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n63> #vr.5 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n64> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#a5dd9a",style="filled",fontcolor="black",role="Undefined"];
+n4:n3 -> n65:n60[style="bold",weight="10.0"];
+n13:n12 -> n4:n0[style="bold",weight="10.0"];
+n41:n19 -> n65:n62[style="bold",weight="10.0",color="gray50"];
+n41:n22 -> n65:n61[style="bold",weight="10.0",color="gray50"];
+n41:n23 -> n53:n48[style="bold",weight="10.0"];
+n41:n24 -> n53:n49[style="bold",weight="10.0",color="gray50"];
+n41:n25 -> n47:n43[style="bold",weight="10.0",color="gray50"];
+n41:n25 -> n59:n55[style="bold",weight="10.0",color="gray50"];
+n41:n27 -> n47:n44[style="bold",weight="10.0",color="gray50"];
+n41:n29 -> n13:n10[style="bold",weight="10.0",color="gray50"];
+n41:n30 -> n53:n50[style="bold",weight="10.0",color="gray50"];
+n41:n30 -> n59:n56[style="bold",weight="10.0",color="gray50"];
+n41:n33 -> n4:n1[style="bold",weight="10.0",color="gray50"];
+n47:n46 -> n8:n5[style="bold",weight="10.0"];
+n53:n52 -> n13:n9[style="bold",weight="10.0"];
+n59:n58 -> n47:n42[style="bold",weight="10.0"];
+n65:n64 -> n59:n54[style="bold",weight="10.0"];
+{
+rank="sink";
+n66[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR></TABLE>>];
+
+}
+n8:n6 -> n66[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_provider_issue_requires_policy_allow-Provider_Finish_case_1-Setup-Setup-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n6[shape="record",label="{{<n0> ProviderResult( ~sid, 'b10'\l)\l|<n1> !Debit( 'b10', 'b9'\l)\l|<n2> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n3> #i : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n4> TLSOTKResponse( ~sid, 'Provider', 'B', 'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n5> ProviderRemaining( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b9'\l)\l}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n10[shape="record",label="{{<n7> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n8> #vr : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n9> ProviderResult( ~sid, 'b10' )}}",fillcolor="#cfd897",style="filled",fontcolor="black",role="Undefined"];
+n16[shape="record",label="{{<n11> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n12> !ImplMode( PR1 )|<n13> !Higher( 'r0', 'rinit' )}|{<n14> #vr.1 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n15> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#c9d998",style="filled",fontcolor="black",role="Undefined"];
+n44[shape="record",label="{{<n17> Fr( ~sid )|<n18> Fr( ~bsk )|<n19> Fr( ~osk )}|{<n20> #vr.2 : Setup[Setup( )]}|{<n21> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n22> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n23> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n24> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n25> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n26> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n27> !SpecMode( 'spec' )|<n28> !ImplMode( PR1 )|<n29> !ImplMode( 'receiver'\l)\l|<n30> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n31> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n32> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n33> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n34> !Higher( 'r70', 'r0'\l)\l|<n35> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n36> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n37> !ReceiverDenies( 'bneg1'\l)\l|<n38> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n39> !ReceiverAllows( 'b0'\l)\l|<n40> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n41> !ReceiverAllows( 'b10'\l)\l|<n42> !Debit( 'b10', 'b9'\l)\l|<n43> Out( 'g'^~bsk )}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n50[shape="record",label="{{<n45> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n46> !ImplMode( PR1 )|<n47> !Higher( 'r70', 'rinit' )}|{<n48> #vr.3 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n49> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#bdda99",style="filled",fontcolor="black",role="Undefined"];
+n56[shape="record",label="{{<n51> AccessReady( ~sid )|<n52> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n53> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n54> #vr.4 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n55> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#b7db99",style="filled",fontcolor="black",role="Undefined"];
+n61[shape="record",label="{{<n57> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n58> !Decision( 'bneg1', 'deny' )}|{<n59> #vr.5 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n60> AccessReady( ~sid )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n66[shape="record",label="{{<n62> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n63> !NotHigher( 'r0', 'r70' )}|{<n64> #vr.6 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n65> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#abdc9a",style="filled",fontcolor="black",role="Undefined"];
+n72[shape="record",label="{{<n67> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n68> !SpecMode( 'spec' )|<n69> !Higher( 'r70', 'rinit' )}|{<n70> #vr.7 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n71> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n10:n9 -> n6:n0[style="bold",weight="10.0"];
+n16:n15 -> n10:n7[style="bold",weight="10.0"];
+n44:n22 -> n56:n53[style="bold",weight="10.0",color="gray50"];
+n44:n23 -> n6:n2[style="bold",weight="10.0"];
+n44:n25 -> n56:n52[style="bold",weight="10.0",color="gray50"];
+n44:n26 -> n72:n67[style="bold",weight="10.0"];
+n44:n27 -> n72:n68[style="bold",weight="10.0",color="gray50"];
+n44:n28 -> n16:n12[style="bold",weight="10.0",color="gray50"];
+n44:n28 -> n50:n46[style="bold",weight="10.0",color="gray50"];
+n44:n30 -> n16:n13[style="bold",weight="10.0",color="gray50"];
+n44:n32 -> n66:n63[style="bold",weight="10.0",color="gray50"];
+n44:n33 -> n50:n47[style="bold",weight="10.0",color="gray50"];
+n44:n33 -> n72:n69[style="bold",weight="10.0",color="gray50"];
+n44:n36 -> n61:n58[style="bold",weight="10.0",color="gray50"];
+n44:n42 -> n6:n1[style="bold",weight="10.0",color="gray50"];
+n50:n49 -> n16:n11[style="bold",weight="10.0"];
+n56:n55 -> n50:n45[style="bold",weight="10.0"];
+n61:n60 -> n56:n51[style="bold",weight="10.0"];
+n66:n65 -> n61:n57[style="bold",weight="10.0"];
+n72:n71 -> n66:n62[style="bold",weight="10.0"];
+{
+rank="sink";
+n73[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR></TABLE>>];
+
+}
+n6:n3 -> n73[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_token_issue_requires_policy_allow-Receiver_Finish_case_1-Setup-Receiver_Start_case_1-Setup-Setup-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n9[shape="record",label="{{<n0> ReceiverResult( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b10'\l)\l|<n1> !ReceiverAllows( 'b10'\l)\l|<n2> PendingToken( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n3> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n4> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n5> Fr( ~token )}|{<n6> #i : Receiver_Issue_Token[TokenIssue( ~sid, 'A', 'B', SE1 )]}|{<n7> TLSTokenResponse( ~sid, 'A', 'B', SE1 )|<n8> ActiveToken( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n13[shape="record",label="{{<n10> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n11> #vr : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n12> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#d1d897",style="filled",fontcolor="black",role="Undefined"];
+n19[shape="record",label="{{<n14> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n15> !ImplMode( RE1 )|<n16> !Higher( 'r0', 'rinit' )}|{<n17> #vr.1 : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n18> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#b8db99",style="filled",fontcolor="black",role="Undefined"];
+n47[shape="record",label="{{<n20> Fr( ~sid )|<n21> Fr( ~bsk )|<n22> Fr( ~osk )}|{<n23> #vr.2 : Setup[Setup( )]}|{<n24> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n25> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n26> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n27> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n28> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n29> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n30> !SpecMode( 'spec' )|<n31> !ImplMode( PR1 )|<n32> !ImplMode( RE1 )|<n33> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n34> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n35> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n36> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n37> !Higher( 'r70', 'r0'\l)\l|<n38> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n39> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n40> !ReceiverDenies( 'bneg1'\l)\l|<n41> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n42> !ReceiverAllows( 'b0'\l)\l|<n43> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n44> !ReceiverAllows( 'b10'\l)\l|<n45> !Debit( 'b10', 'b9'\l)\l|<n46> Out( 'g'^~bsk )}}",fillcolor="#cad998",style="filled",fontcolor="black",role="Undefined"];
+n54[shape="record",label="{{<n48> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n49> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n50> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n51> #vr.3 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n52> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n53> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#c6d998",style="filled",fontcolor="black",role="Undefined"];
+n60[shape="record",label="{{<n55> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n56> !Client( ~sid, 'B', ~bsk )}|{<n57> #vr.4 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n58> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n59> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n67[shape="record",label="{{<n61> ProviderResult( ~sid, 'b10'\l)\l|<n62> !Debit( 'b10', 'b9'\l)\l|<n63> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n64> #vr.5 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n65> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n66> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#bfda99",style="filled",fontcolor="black",role="Undefined"];
+n71[shape="record",label="{{<n68> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n69> #vr.6 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n70> ProviderResult( ~sid, 'b10' )}}",fillcolor="#bcdb99",style="filled",fontcolor="black",role="Undefined"];
+n77[shape="record",label="{{<n72> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n73> !ImplMode( PR1 )|<n74> !Higher( 'r0', 'rinit' )}|{<n75> #vr.7 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n76> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#b8db99",style="filled",fontcolor="black",role="Undefined"];
+n83[shape="record",label="{{<n78> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n79> !ImplMode( RE1 )|<n80> !Higher( 'r70', 'rinit' )}|{<n81> #vr.8 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n82> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n89[shape="record",label="{{<n84> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n85> !ImplMode( PR1 )|<n86> !Higher( 'r70', 'rinit' )}|{<n87> #vr.9 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n88> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n95[shape="record",label="{{<n90> AccessReady( ~sid )|<n91> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n92> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n93> #vr.10 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n94> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#addc9a",style="filled",fontcolor="black",role="Undefined"];
+n100[shape="record",label="{{<n96> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n97> !Decision( 'bneg1', 'deny' )}|{<n98> #vr.11 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n99> AccessReady( ~sid )}}",fillcolor="#a9dc9a",style="filled",fontcolor="black",role="Undefined"];
+n105[shape="record",label="{{<n101> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n102> !NotHigher( 'r0', 'r70' )}|{<n103> #vr.12 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n104> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a6dd9a",style="filled",fontcolor="black",role="Undefined"];
+n111[shape="record",label="{{<n106> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n107> !SpecMode( 'spec' )|<n108> !Higher( 'r70', 'rinit' )}|{<n109> #vr.13 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n110> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a2dd9b",style="filled",fontcolor="black",role="Undefined"];
+n13:n12 -> n9:n0[style="bold",weight="10.0"];
+n19:n18 -> n13:n10[style="bold",weight="10.0"];
+n47:n24 -> n60:n56[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n9:n3[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n54:n49[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n95:n92[style="bold",weight="10.0",color="gray50"];
+n47:n26 -> n67:n63[style="bold",weight="10.0"];
+n47:n27 -> n9:n4[style="bold",weight="10.0"];
+n47:n28 -> n54:n50[style="bold",weight="10.0",color="gray50"];
+n47:n28 -> n95:n91[style="bold",weight="10.0",color="gray50"];
+n47:n29 -> n111:n106[style="bold",weight="10.0"];
+n47:n30 -> n111:n107[style="bold",weight="10.0",color="gray50"];
+n47:n31 -> n77:n73[style="bold",weight="10.0",color="gray50"];
+n47:n31 -> n89:n85[style="bold",weight="10.0",color="gray50"];
+n47:n32 -> n19:n15[style="bold",weight="10.0",color="gray50"];
+n47:n32 -> n83:n79[style="bold",weight="10.0",color="gray50"];
+n47:n33 -> n19:n16[style="bold",weight="10.0",color="gray50"];
+n47:n33 -> n77:n74[style="bold",weight="10.0",color="gray50"];
+n47:n35 -> n105:n102[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n83:n80[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n89:n86[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n111:n108[style="bold",weight="10.0",color="gray50"];
+n47:n39 -> n100:n97[style="bold",weight="10.0",color="gray50"];
+n47:n44 -> n9:n1[style="bold",weight="10.0",color="gray50"];
+n47:n45 -> n67:n62[style="bold",weight="10.0",color="gray50"];
+n54:n52 -> n9:n2[style="bold",weight="10.0"];
+n54:n53 -> n83:n78[style="bold",weight="10.0"];
+n60:n58 -> n54:n48[style="bold",weight="10.0"];
+n67:n65 -> n60:n55[style="bold",weight="10.0"];
+n71:n70 -> n67:n61[style="bold",weight="10.0"];
+n77:n76 -> n71:n68[style="bold",weight="10.0"];
+n83:n82 -> n19:n14[style="bold",weight="10.0"];
+n89:n88 -> n77:n72[style="bold",weight="10.0"];
+n95:n94 -> n89:n84[style="bold",weight="10.0"];
+n100:n99 -> n95:n90[style="bold",weight="10.0"];
+n105:n104 -> n100:n96[style="bold",weight="10.0"];
+n111:n110 -> n105:n101[style="bold",weight="10.0"];
+{
+rank="sink";
+n112[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">H1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">h(&lt;'access-control-shdk-exchange', 'g'^(~bsk*~osk)&gt;)</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">SE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">senc(&lt;'ACT', ~token, 'g'^~bsk&gt;, H1)</TD></TR></TABLE>>];
+
+}
+n9:n6 -> n112[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_chat_requires_policy_allow-Sender_Send_Chat_case_07-Setup-Receiver_Issue_Token-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n4[shape="record",label="{{<n0> TLSChat( ~sid, 'B', 'A', SE1,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk, ~msg\l)\l|<n1> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n2> ActiveToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SE1, 'g'^~bsk\l)\l}|{<n3> #i : Receiver_Accept_Chat[ChatAccept( ~sid, 'A', 'B', SE1, ~msg )]}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n9[shape="record",label="{{<n5> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )|<n6> Fr( ~msg )}|{<n7> #vr : Sender_Send_Chat[ChatSend( ~sid, 'A', 'B', SE1, ~msg )]}|{<n8> TLSChat( ~sid, 'B', 'A', SE1, 'g'^~bsk, ~msg )}}",fillcolor="#d2d897",style="filled",fontcolor="black",role="Undefined"];
+n14[shape="record",label="{{<n10> WaitingForToken( ~sid, 'A', 'B', 'g'^~osk, ~bsk\l)\l|<n11> TLSTokenResponse( ~sid, 'A', 'B', SE1 )}|{<n12> #vr.1 : Sender_Decrypt_Token[TokenReceive( ~sid, 'A', 'B', SE1 )]}|{<n13> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#cfd897",style="filled",fontcolor="black",role="Undefined"];
+n20[shape="record",label="{{<n15> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n16> !Client( ~sid, 'B', ~bsk )}|{<n17> #vr.2 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n18> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n19> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#ccd998",style="filled",fontcolor="black",role="Undefined"];
+n30[shape="record",label="{{<n21> ReceiverResult( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b10'\l)\l|<n22> !ReceiverAllows( 'b10'\l)\l|<n23> PendingToken( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n24> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n25> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n26> Fr( ~token )}|{<n27> #vr.3 : Receiver_Issue_Token[TokenIssue( ~sid, 'A', 'B', SE1 )]}|{<n28> TLSTokenResponse( ~sid, 'A', 'B', SE1 )|<n29> ActiveToken( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#c9d998",style="filled",fontcolor="black",role="Undefined"];
+n37[shape="record",label="{{<n31> ProviderResult( ~sid, 'b10'\l)\l|<n32> !Debit( 'b10', 'b9'\l)\l|<n33> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n34> #vr.4 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n35> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n36> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#c6d998",style="filled",fontcolor="black",role="Undefined"];
+n65[shape="record",label="{{<n38> Fr( ~sid )|<n39> Fr( ~bsk )|<n40> Fr( ~osk )}|{<n41> #vr.5 : Setup[Setup( )]}|{<n42> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n43> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n44> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n45> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n46> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n47> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n48> !SpecMode( 'spec' )|<n49> !ImplMode( PR1 )|<n50> !ImplMode( RE1 )|<n51> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n52> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n53> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n54> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n55> !Higher( 'r70', 'r0'\l)\l|<n56> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n57> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n58> !ReceiverDenies( 'bneg1'\l)\l|<n59> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n60> !ReceiverAllows( 'b0'\l)\l|<n61> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n62> !ReceiverAllows( 'b10'\l)\l|<n63> !Debit( 'b10', 'b9'\l)\l|<n64> Out( 'g'^~bsk )}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n69[shape="record",label="{{<n66> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n67> #vr.6 : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n68> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#c0da98",style="filled",fontcolor="black",role="Undefined"];
+n76[shape="record",label="{{<n70> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n71> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n72> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n73> #vr.7 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n74> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n75> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#bdda99",style="filled",fontcolor="black",role="Undefined"];
+n80[shape="record",label="{{<n77> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n78> #vr.8 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n79> ProviderResult( ~sid, 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n86[shape="record",label="{{<n81> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n82> !ImplMode( RE1 )|<n83> !Higher( 'r0', 'rinit' )}|{<n84> #vr.9 : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n85> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#b4db99",style="filled",fontcolor="black",role="Undefined"];
+n92[shape="record",label="{{<n87> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n88> !ImplMode( PR1 )|<n89> !Higher( 'r0', 'rinit' )}|{<n90> #vr.10 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n91> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#b4db99",style="filled",fontcolor="black",role="Undefined"];
+n98[shape="record",label="{{<n93> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n94> !ImplMode( RE1 )|<n95> !Higher( 'r70', 'rinit' )}|{<n96> #vr.11 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n97> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n104[shape="record",label="{{<n99> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n100> !ImplMode( PR1 )|<n101> !Higher( 'r70', 'rinit' )}|{<n102> #vr.12 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n103> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n110[shape="record",label="{{<n105> AccessReady( ~sid )|<n106> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n107> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n108> #vr.13 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n109> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#abdc9a",style="filled",fontcolor="black",role="Undefined"];
+n115[shape="record",label="{{<n111> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n112> !Decision( 'bneg1', 'deny' )}|{<n113> #vr.14 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n114> AccessReady( ~sid )}}",fillcolor="#a7dd9a",style="filled",fontcolor="black",role="Undefined"];
+n120[shape="record",label="{{<n116> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n117> !NotHigher( 'r0', 'r70' )}|{<n118> #vr.15 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n119> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n126[shape="record",label="{{<n121> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n122> !SpecMode( 'spec' )|<n123> !Higher( 'r70', 'rinit' )}|{<n124> #vr.16 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n125> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a1dd9b",style="filled",fontcolor="black",role="Undefined"];
+n9:n8 -> n4:n0[style="bold",weight="10.0"];
+n14:n13 -> n9:n5[style="bold",weight="10.0"];
+n20:n18 -> n76:n70[style="bold",weight="10.0"];
+n20:n19 -> n14:n10[style="bold",weight="10.0"];
+n30:n28 -> n14:n11[style="bold",weight="10.0"];
+n30:n29 -> n4:n2[style="bold",weight="10.0"];
+n37:n35 -> n20:n15[style="bold",weight="10.0"];
+n65:n42 -> n20:n16[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n4:n1[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n30:n24[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n76:n71[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n110:n107[style="bold",weight="10.0",color="gray50"];
+n65:n44 -> n37:n33[style="bold",weight="10.0"];
+n65:n45 -> n30:n25[style="bold",weight="10.0"];
+n65:n46 -> n76:n72[style="bold",weight="10.0",color="gray50"];
+n65:n46 -> n110:n106[style="bold",weight="10.0",color="gray50"];
+n65:n47 -> n126:n121[style="bold",weight="10.0"];
+n65:n48 -> n126:n122[style="bold",weight="10.0",color="gray50"];
+n65:n49 -> n92:n88[style="bold",weight="10.0",color="gray50"];
+n65:n49 -> n104:n100[style="bold",weight="10.0",color="gray50"];
+n65:n50 -> n86:n82[style="bold",weight="10.0",color="gray50"];
+n65:n50 -> n98:n94[style="bold",weight="10.0",color="gray50"];
+n65:n51 -> n86:n83[style="bold",weight="10.0",color="gray50"];
+n65:n51 -> n92:n89[style="bold",weight="10.0",color="gray50"];
+n65:n53 -> n120:n117[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n98:n95[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n104:n101[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n126:n123[style="bold",weight="10.0",color="gray50"];
+n65:n57 -> n115:n112[style="bold",weight="10.0",color="gray50"];
+n65:n62 -> n30:n22[style="bold",weight="10.0",color="gray50"];
+n65:n63 -> n37:n32[style="bold",weight="10.0",color="gray50"];
+n69:n68 -> n30:n21[style="bold",weight="10.0"];
+n76:n74 -> n30:n23[style="bold",weight="10.0"];
+n76:n75 -> n98:n93[style="bold",weight="10.0"];
+n80:n79 -> n37:n31[style="bold",weight="10.0"];
+n86:n85 -> n69:n66[style="bold",weight="10.0"];
+n92:n91 -> n80:n77[style="bold",weight="10.0"];
+n98:n97 -> n86:n81[style="bold",weight="10.0"];
+n104:n103 -> n92:n87[style="bold",weight="10.0"];
+n110:n109 -> n104:n99[style="bold",weight="10.0"];
+n115:n114 -> n110:n105[style="bold",weight="10.0"];
+n120:n119 -> n115:n111[style="bold",weight="10.0"];
+n126:n125 -> n120:n116[style="bold",weight="10.0"];
+{
+rank="sink";
+n127[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">H1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">h(&lt;'access-control-shdk-exchange', 'g'^(~bsk*~osk)&gt;)</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">SE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">senc(&lt;'ACT', ~token, 'g'^~bsk&gt;, H1)</TD></TR></TABLE>>];
+
+}
+n4:n3 -> n127[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_receiver_evaluation_reachable-Impl_Select_Better_1-Impl_Select_Better_0_case_1-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n3[shape="record",label="{{<n0> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n1> #i : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n2> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n9[shape="record",label="{{<n4> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n5> !ImplMode( RE1 )|<n6> !Higher( 'r0', 'rinit' )}|{<n7> #vr : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n8> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#b6db99",style="filled",fontcolor="black",role="Undefined"];
+n37[shape="record",label="{{<n10> Fr( ~sid )|<n11> Fr( ~bsk )|<n12> Fr( ~osk )}|{<n13> #vr.1 : Setup[Setup( )]}|{<n14> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n15> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n16> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n17> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n18> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n19> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n20> !SpecMode( 'spec' )|<n21> !ImplMode( PR1 )|<n22> !ImplMode( RE1 )|<n23> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n24> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n25> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n26> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n27> !Higher( 'r70', 'r0'\l)\l|<n28> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n29> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n30> !ReceiverDenies( 'bneg1'\l)\l|<n31> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n32> !ReceiverAllows( 'b0'\l)\l|<n33> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n34> !ReceiverAllows( 'b10'\l)\l|<n35> !Debit( 'b10', 'b9'\l)\l|<n36> Out( 'g'^~bsk )}}",fillcolor="#cdd998",style="filled",fontcolor="black",role="Undefined"];
+n43[shape="record",label="{{<n38> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n39> !ImplMode( RE1 )|<n40> !Higher( 'r70', 'rinit' )}|{<n41> #vr.2 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n42> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#b2dc9a",style="filled",fontcolor="black",role="Undefined"];
+n50[shape="record",label="{{<n44> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n45> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n46> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n47> #vr.3 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n48> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n49> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#c5d998",style="filled",fontcolor="black",role="Undefined"];
+n56[shape="record",label="{{<n51> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n52> !Client( ~sid, 'B', ~bsk )}|{<n53> #vr.4 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n54> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n55> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#c1da98",style="filled",fontcolor="black",role="Undefined"];
+n63[shape="record",label="{{<n57> ProviderResult( ~sid, 'b10'\l)\l|<n58> !Debit( 'b10', 'b9'\l)\l|<n59> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n60> #vr.5 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n61> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n62> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#beda99",style="filled",fontcolor="black",role="Undefined"];
+n67[shape="record",label="{{<n64> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n65> #vr.6 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n66> ProviderResult( ~sid, 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n73[shape="record",label="{{<n68> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n69> !ImplMode( PR1 )|<n70> !Higher( 'r0', 'rinit' )}|{<n71> #vr.7 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n72> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#b6db99",style="filled",fontcolor="black",role="Undefined"];
+n79[shape="record",label="{{<n74> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n75> !ImplMode( PR1 )|<n76> !Higher( 'r70', 'rinit' )}|{<n77> #vr.8 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n78> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#b2dc9a",style="filled",fontcolor="black",role="Undefined"];
+n85[shape="record",label="{{<n80> AccessReady( ~sid )|<n81> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n82> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n83> #vr.9 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n84> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n90[shape="record",label="{{<n86> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n87> !Decision( 'bneg1', 'deny' )}|{<n88> #vr.10 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n89> AccessReady( ~sid )}}",fillcolor="#aadc9a",style="filled",fontcolor="black",role="Undefined"];
+n95[shape="record",label="{{<n91> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n92> !NotHigher( 'r0', 'r70' )}|{<n93> #vr.11 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n94> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a6dd9a",style="filled",fontcolor="black",role="Undefined"];
+n101[shape="record",label="{{<n96> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n97> !SpecMode( 'spec' )|<n98> !Higher( 'r70', 'rinit' )}|{<n99> #vr.12 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n100> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a2dd9b",style="filled",fontcolor="black",role="Undefined"];
+n9:n8 -> n3:n0[style="bold",weight="10.0"];
+n37:n14 -> n56:n52[style="bold",weight="10.0",color="gray50"];
+n37:n15 -> n50:n45[style="bold",weight="10.0",color="gray50"];
+n37:n15 -> n85:n82[style="bold",weight="10.0",color="gray50"];
+n37:n16 -> n63:n59[style="bold",weight="10.0"];
+n37:n18 -> n50:n46[style="bold",weight="10.0",color="gray50"];
+n37:n18 -> n85:n81[style="bold",weight="10.0",color="gray50"];
+n37:n19 -> n101:n96[style="bold",weight="10.0"];
+n37:n20 -> n101:n97[style="bold",weight="10.0",color="gray50"];
+n37:n21 -> n73:n69[style="bold",weight="10.0",color="gray50"];
+n37:n21 -> n79:n75[style="bold",weight="10.0",color="gray50"];
+n37:n22 -> n9:n5[style="bold",weight="10.0",color="gray50"];
+n37:n22 -> n43:n39[style="bold",weight="10.0",color="gray50"];
+n37:n23 -> n9:n6[style="bold",weight="10.0",color="gray50"];
+n37:n23 -> n73:n70[style="bold",weight="10.0",color="gray50"];
+n37:n25 -> n95:n92[style="bold",weight="10.0",color="gray50"];
+n37:n26 -> n43:n40[style="bold",weight="10.0",color="gray50"];
+n37:n26 -> n79:n76[style="bold",weight="10.0",color="gray50"];
+n37:n26 -> n101:n98[style="bold",weight="10.0",color="gray50"];
+n37:n29 -> n90:n87[style="bold",weight="10.0",color="gray50"];
+n37:n35 -> n63:n58[style="bold",weight="10.0",color="gray50"];
+n43:n42 -> n9:n4[style="bold",weight="10.0"];
+n50:n49 -> n43:n38[style="bold",weight="10.0"];
+n56:n54 -> n50:n44[style="bold",weight="10.0"];
+n63:n61 -> n56:n51[style="bold",weight="10.0"];
+n67:n66 -> n63:n57[style="bold",weight="10.0"];
+n73:n72 -> n67:n64[style="bold",weight="10.0"];
+n79:n78 -> n73:n68[style="bold",weight="10.0"];
+n85:n84 -> n79:n74[style="bold",weight="10.0"];
+n90:n89 -> n85:n80[style="bold",weight="10.0"];
+n95:n94 -> n90:n86[style="bold",weight="10.0"];
+n101:n100 -> n95:n91[style="bold",weight="10.0"];
+{
+rank="sink";
+n102[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR></TABLE>>];
+
+}
+n3:n1 -> n102[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_provider_release_reachable-Provider_Finish_case_1-Setup-Setup-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n6[shape="record",label="{{<n0> ProviderResult( ~sid, 'b10'\l)\l|<n1> !Debit( 'b10', 'b9'\l)\l|<n2> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n3> #i : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n4> TLSOTKResponse( ~sid, 'Provider', 'B', 'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n5> ProviderRemaining( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b9'\l)\l}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n10[shape="record",label="{{<n7> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n8> #vr : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n9> ProviderResult( ~sid, 'b10' )}}",fillcolor="#cfd897",style="filled",fontcolor="black",role="Undefined"];
+n16[shape="record",label="{{<n11> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n12> !ImplMode( PR1 )|<n13> !Higher( 'r0', 'rinit' )}|{<n14> #vr.1 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n15> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#c9d998",style="filled",fontcolor="black",role="Undefined"];
+n44[shape="record",label="{{<n17> Fr( ~sid )|<n18> Fr( ~bsk )|<n19> Fr( ~osk )}|{<n20> #vr.2 : Setup[Setup( )]}|{<n21> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n22> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n23> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n24> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n25> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n26> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n27> !SpecMode( 'spec' )|<n28> !ImplMode( PR1 )|<n29> !ImplMode( 'receiver'\l)\l|<n30> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n31> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n32> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n33> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n34> !Higher( 'r70', 'r0'\l)\l|<n35> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n36> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n37> !ReceiverDenies( 'bneg1'\l)\l|<n38> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n39> !ReceiverAllows( 'b0'\l)\l|<n40> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n41> !ReceiverAllows( 'b10'\l)\l|<n42> !Debit( 'b10', 'b9'\l)\l|<n43> Out( 'g'^~bsk )}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n50[shape="record",label="{{<n45> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n46> !ImplMode( PR1 )|<n47> !Higher( 'r70', 'rinit' )}|{<n48> #vr.3 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n49> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#bdda99",style="filled",fontcolor="black",role="Undefined"];
+n56[shape="record",label="{{<n51> AccessReady( ~sid )|<n52> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n53> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n54> #vr.4 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n55> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#b7db99",style="filled",fontcolor="black",role="Undefined"];
+n61[shape="record",label="{{<n57> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n58> !Decision( 'bneg1', 'deny' )}|{<n59> #vr.5 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n60> AccessReady( ~sid )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n66[shape="record",label="{{<n62> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n63> !NotHigher( 'r0', 'r70' )}|{<n64> #vr.6 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n65> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#abdc9a",style="filled",fontcolor="black",role="Undefined"];
+n72[shape="record",label="{{<n67> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n68> !SpecMode( 'spec' )|<n69> !Higher( 'r70', 'rinit' )}|{<n70> #vr.7 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n71> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n10:n9 -> n6:n0[style="bold",weight="10.0"];
+n16:n15 -> n10:n7[style="bold",weight="10.0"];
+n44:n22 -> n56:n53[style="bold",weight="10.0",color="gray50"];
+n44:n23 -> n6:n2[style="bold",weight="10.0"];
+n44:n25 -> n56:n52[style="bold",weight="10.0",color="gray50"];
+n44:n26 -> n72:n67[style="bold",weight="10.0"];
+n44:n27 -> n72:n68[style="bold",weight="10.0",color="gray50"];
+n44:n28 -> n16:n12[style="bold",weight="10.0",color="gray50"];
+n44:n28 -> n50:n46[style="bold",weight="10.0",color="gray50"];
+n44:n30 -> n16:n13[style="bold",weight="10.0",color="gray50"];
+n44:n32 -> n66:n63[style="bold",weight="10.0",color="gray50"];
+n44:n33 -> n50:n47[style="bold",weight="10.0",color="gray50"];
+n44:n33 -> n72:n69[style="bold",weight="10.0",color="gray50"];
+n44:n36 -> n61:n58[style="bold",weight="10.0",color="gray50"];
+n44:n42 -> n6:n1[style="bold",weight="10.0",color="gray50"];
+n50:n49 -> n16:n11[style="bold",weight="10.0"];
+n56:n55 -> n50:n45[style="bold",weight="10.0"];
+n61:n60 -> n56:n51[style="bold",weight="10.0"];
+n66:n65 -> n61:n57[style="bold",weight="10.0"];
+n72:n71 -> n66:n62[style="bold",weight="10.0"];
+{
+rank="sink";
+n73[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR></TABLE>>];
+
+}
+n6:n3 -> n73[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_token_issue_reachable-Receiver_Finish_case_1-Setup-Receiver_Start_case_1-Setup-Setup-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n9[shape="record",label="{{<n0> ReceiverResult( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b10'\l)\l|<n1> !ReceiverAllows( 'b10'\l)\l|<n2> PendingToken( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n3> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n4> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n5> Fr( ~token )}|{<n6> #i : Receiver_Issue_Token[TokenIssue( ~sid, 'A', 'B', SE1 )]}|{<n7> TLSTokenResponse( ~sid, 'A', 'B', SE1 )|<n8> ActiveToken( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n13[shape="record",label="{{<n10> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n11> #vr : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n12> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#d1d897",style="filled",fontcolor="black",role="Undefined"];
+n19[shape="record",label="{{<n14> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n15> !ImplMode( RE1 )|<n16> !Higher( 'r0', 'rinit' )}|{<n17> #vr.1 : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n18> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#b8db99",style="filled",fontcolor="black",role="Undefined"];
+n47[shape="record",label="{{<n20> Fr( ~sid )|<n21> Fr( ~bsk )|<n22> Fr( ~osk )}|{<n23> #vr.2 : Setup[Setup( )]}|{<n24> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n25> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n26> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n27> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n28> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n29> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n30> !SpecMode( 'spec' )|<n31> !ImplMode( PR1 )|<n32> !ImplMode( RE1 )|<n33> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n34> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n35> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n36> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n37> !Higher( 'r70', 'r0'\l)\l|<n38> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n39> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n40> !ReceiverDenies( 'bneg1'\l)\l|<n41> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n42> !ReceiverAllows( 'b0'\l)\l|<n43> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n44> !ReceiverAllows( 'b10'\l)\l|<n45> !Debit( 'b10', 'b9'\l)\l|<n46> Out( 'g'^~bsk )}}",fillcolor="#cad998",style="filled",fontcolor="black",role="Undefined"];
+n54[shape="record",label="{{<n48> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n49> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n50> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n51> #vr.3 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n52> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n53> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#c6d998",style="filled",fontcolor="black",role="Undefined"];
+n60[shape="record",label="{{<n55> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n56> !Client( ~sid, 'B', ~bsk )}|{<n57> #vr.4 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n58> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n59> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n67[shape="record",label="{{<n61> ProviderResult( ~sid, 'b10'\l)\l|<n62> !Debit( 'b10', 'b9'\l)\l|<n63> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n64> #vr.5 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n65> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n66> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#bfda99",style="filled",fontcolor="black",role="Undefined"];
+n71[shape="record",label="{{<n68> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n69> #vr.6 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n70> ProviderResult( ~sid, 'b10' )}}",fillcolor="#bcdb99",style="filled",fontcolor="black",role="Undefined"];
+n77[shape="record",label="{{<n72> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n73> !ImplMode( PR1 )|<n74> !Higher( 'r0', 'rinit' )}|{<n75> #vr.7 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n76> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#b8db99",style="filled",fontcolor="black",role="Undefined"];
+n83[shape="record",label="{{<n78> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n79> !ImplMode( RE1 )|<n80> !Higher( 'r70', 'rinit' )}|{<n81> #vr.8 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n82> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n89[shape="record",label="{{<n84> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n85> !ImplMode( PR1 )|<n86> !Higher( 'r70', 'rinit' )}|{<n87> #vr.9 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n88> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#b1dc9a",style="filled",fontcolor="black",role="Undefined"];
+n95[shape="record",label="{{<n90> AccessReady( ~sid )|<n91> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n92> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n93> #vr.10 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n94> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#addc9a",style="filled",fontcolor="black",role="Undefined"];
+n100[shape="record",label="{{<n96> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n97> !Decision( 'bneg1', 'deny' )}|{<n98> #vr.11 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n99> AccessReady( ~sid )}}",fillcolor="#a9dc9a",style="filled",fontcolor="black",role="Undefined"];
+n105[shape="record",label="{{<n101> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n102> !NotHigher( 'r0', 'r70' )}|{<n103> #vr.12 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n104> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a6dd9a",style="filled",fontcolor="black",role="Undefined"];
+n111[shape="record",label="{{<n106> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n107> !SpecMode( 'spec' )|<n108> !Higher( 'r70', 'rinit' )}|{<n109> #vr.13 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n110> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a2dd9b",style="filled",fontcolor="black",role="Undefined"];
+n13:n12 -> n9:n0[style="bold",weight="10.0"];
+n19:n18 -> n13:n10[style="bold",weight="10.0"];
+n47:n24 -> n60:n56[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n9:n3[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n54:n49[style="bold",weight="10.0",color="gray50"];
+n47:n25 -> n95:n92[style="bold",weight="10.0",color="gray50"];
+n47:n26 -> n67:n63[style="bold",weight="10.0"];
+n47:n27 -> n9:n4[style="bold",weight="10.0"];
+n47:n28 -> n54:n50[style="bold",weight="10.0",color="gray50"];
+n47:n28 -> n95:n91[style="bold",weight="10.0",color="gray50"];
+n47:n29 -> n111:n106[style="bold",weight="10.0"];
+n47:n30 -> n111:n107[style="bold",weight="10.0",color="gray50"];
+n47:n31 -> n77:n73[style="bold",weight="10.0",color="gray50"];
+n47:n31 -> n89:n85[style="bold",weight="10.0",color="gray50"];
+n47:n32 -> n19:n15[style="bold",weight="10.0",color="gray50"];
+n47:n32 -> n83:n79[style="bold",weight="10.0",color="gray50"];
+n47:n33 -> n19:n16[style="bold",weight="10.0",color="gray50"];
+n47:n33 -> n77:n74[style="bold",weight="10.0",color="gray50"];
+n47:n35 -> n105:n102[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n83:n80[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n89:n86[style="bold",weight="10.0",color="gray50"];
+n47:n36 -> n111:n108[style="bold",weight="10.0",color="gray50"];
+n47:n39 -> n100:n97[style="bold",weight="10.0",color="gray50"];
+n47:n44 -> n9:n1[style="bold",weight="10.0",color="gray50"];
+n47:n45 -> n67:n62[style="bold",weight="10.0",color="gray50"];
+n54:n52 -> n9:n2[style="bold",weight="10.0"];
+n54:n53 -> n83:n78[style="bold",weight="10.0"];
+n60:n58 -> n54:n48[style="bold",weight="10.0"];
+n67:n65 -> n60:n55[style="bold",weight="10.0"];
+n71:n70 -> n67:n61[style="bold",weight="10.0"];
+n77:n76 -> n71:n68[style="bold",weight="10.0"];
+n83:n82 -> n19:n14[style="bold",weight="10.0"];
+n89:n88 -> n77:n72[style="bold",weight="10.0"];
+n95:n94 -> n89:n84[style="bold",weight="10.0"];
+n100:n99 -> n95:n90[style="bold",weight="10.0"];
+n105:n104 -> n100:n96[style="bold",weight="10.0"];
+n111:n110 -> n105:n101[style="bold",weight="10.0"];
+{
+rank="sink";
+n112[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">H1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">h(&lt;'access-control-shdk-exchange', 'g'^(~bsk*~osk)&gt;)</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">SE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">senc(&lt;'ACT', ~token, 'g'^~bsk&gt;, H1)</TD></TR></TABLE>>];
+
+}
+n9:n6 -> n112[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_chat_accept_reachable-Sender_Send_Chat_case_07-Setup-Receiver_Issue_Token-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n4[shape="record",label="{{<n0> TLSChat( ~sid, 'B', 'A', SE1,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk, ~msg\l)\l|<n1> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n2> ActiveToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SE1, 'g'^~bsk\l)\l}|{<n3> #i : Receiver_Accept_Chat[ChatAccept( ~sid, 'A', 'B', SE1, ~msg )]}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n9[shape="record",label="{{<n5> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )|<n6> Fr( ~msg )}|{<n7> #vr : Sender_Send_Chat[ChatSend( ~sid, 'A', 'B', SE1, ~msg )]}|{<n8> TLSChat( ~sid, 'B', 'A', SE1, 'g'^~bsk, ~msg )}}",fillcolor="#d2d897",style="filled",fontcolor="black",role="Undefined"];
+n14[shape="record",label="{{<n10> WaitingForToken( ~sid, 'A', 'B', 'g'^~osk, ~bsk\l)\l|<n11> TLSTokenResponse( ~sid, 'A', 'B', SE1 )}|{<n12> #vr.1 : Sender_Decrypt_Token[TokenReceive( ~sid, 'A', 'B', SE1 )]}|{<n13> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#cfd897",style="filled",fontcolor="black",role="Undefined"];
+n20[shape="record",label="{{<n15> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n16> !Client( ~sid, 'B', ~bsk )}|{<n17> #vr.2 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n18> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n19> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#ccd998",style="filled",fontcolor="black",role="Undefined"];
+n30[shape="record",label="{{<n21> ReceiverResult( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b10'\l)\l|<n22> !ReceiverAllows( 'b10'\l)\l|<n23> PendingToken( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n24> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n25> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n26> Fr( ~token )}|{<n27> #vr.3 : Receiver_Issue_Token[TokenIssue( ~sid, 'A', 'B', SE1 )]}|{<n28> TLSTokenResponse( ~sid, 'A', 'B', SE1 )|<n29> ActiveToken( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#c9d998",style="filled",fontcolor="black",role="Undefined"];
+n37[shape="record",label="{{<n31> ProviderResult( ~sid, 'b10'\l)\l|<n32> !Debit( 'b10', 'b9'\l)\l|<n33> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n34> #vr.4 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n35> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n36> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#c6d998",style="filled",fontcolor="black",role="Undefined"];
+n65[shape="record",label="{{<n38> Fr( ~sid )|<n39> Fr( ~bsk )|<n40> Fr( ~osk )}|{<n41> #vr.5 : Setup[Setup( )]}|{<n42> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n43> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n44> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n45> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n46> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n47> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n48> !SpecMode( 'spec' )|<n49> !ImplMode( PR1 )|<n50> !ImplMode( RE1 )|<n51> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n52> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n53> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n54> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n55> !Higher( 'r70', 'r0'\l)\l|<n56> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n57> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n58> !ReceiverDenies( 'bneg1'\l)\l|<n59> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n60> !ReceiverAllows( 'b0'\l)\l|<n61> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n62> !ReceiverAllows( 'b10'\l)\l|<n63> !Debit( 'b10', 'b9'\l)\l|<n64> Out( 'g'^~bsk )}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n69[shape="record",label="{{<n66> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n67> #vr.6 : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n68> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#c0da98",style="filled",fontcolor="black",role="Undefined"];
+n76[shape="record",label="{{<n70> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n71> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n72> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n73> #vr.7 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n74> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n75> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#bdda99",style="filled",fontcolor="black",role="Undefined"];
+n80[shape="record",label="{{<n77> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n78> #vr.8 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n79> ProviderResult( ~sid, 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n86[shape="record",label="{{<n81> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n82> !ImplMode( RE1 )|<n83> !Higher( 'r0', 'rinit' )}|{<n84> #vr.9 : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n85> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#b4db99",style="filled",fontcolor="black",role="Undefined"];
+n92[shape="record",label="{{<n87> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n88> !ImplMode( PR1 )|<n89> !Higher( 'r0', 'rinit' )}|{<n90> #vr.10 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n91> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#b4db99",style="filled",fontcolor="black",role="Undefined"];
+n98[shape="record",label="{{<n93> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n94> !ImplMode( RE1 )|<n95> !Higher( 'r70', 'rinit' )}|{<n96> #vr.11 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n97> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n104[shape="record",label="{{<n99> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n100> !ImplMode( PR1 )|<n101> !Higher( 'r70', 'rinit' )}|{<n102> #vr.12 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n103> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n110[shape="record",label="{{<n105> AccessReady( ~sid )|<n106> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n107> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n108> #vr.13 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n109> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#abdc9a",style="filled",fontcolor="black",role="Undefined"];
+n115[shape="record",label="{{<n111> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n112> !Decision( 'bneg1', 'deny' )}|{<n113> #vr.14 : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n114> AccessReady( ~sid )}}",fillcolor="#a7dd9a",style="filled",fontcolor="black",role="Undefined"];
+n120[shape="record",label="{{<n116> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n117> !NotHigher( 'r0', 'r70' )}|{<n118> #vr.15 : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n119> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n126[shape="record",label="{{<n121> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n122> !SpecMode( 'spec' )|<n123> !Higher( 'r70', 'rinit' )}|{<n124> #vr.16 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n125> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#a1dd9b",style="filled",fontcolor="black",role="Undefined"];
+n9:n8 -> n4:n0[style="bold",weight="10.0"];
+n14:n13 -> n9:n5[style="bold",weight="10.0"];
+n20:n18 -> n76:n70[style="bold",weight="10.0"];
+n20:n19 -> n14:n10[style="bold",weight="10.0"];
+n30:n28 -> n14:n11[style="bold",weight="10.0"];
+n30:n29 -> n4:n2[style="bold",weight="10.0"];
+n37:n35 -> n20:n15[style="bold",weight="10.0"];
+n65:n42 -> n20:n16[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n4:n1[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n30:n24[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n76:n71[style="bold",weight="10.0",color="gray50"];
+n65:n43 -> n110:n107[style="bold",weight="10.0",color="gray50"];
+n65:n44 -> n37:n33[style="bold",weight="10.0"];
+n65:n45 -> n30:n25[style="bold",weight="10.0"];
+n65:n46 -> n76:n72[style="bold",weight="10.0",color="gray50"];
+n65:n46 -> n110:n106[style="bold",weight="10.0",color="gray50"];
+n65:n47 -> n126:n121[style="bold",weight="10.0"];
+n65:n48 -> n126:n122[style="bold",weight="10.0",color="gray50"];
+n65:n49 -> n92:n88[style="bold",weight="10.0",color="gray50"];
+n65:n49 -> n104:n100[style="bold",weight="10.0",color="gray50"];
+n65:n50 -> n86:n82[style="bold",weight="10.0",color="gray50"];
+n65:n50 -> n98:n94[style="bold",weight="10.0",color="gray50"];
+n65:n51 -> n86:n83[style="bold",weight="10.0",color="gray50"];
+n65:n51 -> n92:n89[style="bold",weight="10.0",color="gray50"];
+n65:n53 -> n120:n117[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n98:n95[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n104:n101[style="bold",weight="10.0",color="gray50"];
+n65:n54 -> n126:n123[style="bold",weight="10.0",color="gray50"];
+n65:n57 -> n115:n112[style="bold",weight="10.0",color="gray50"];
+n65:n62 -> n30:n22[style="bold",weight="10.0",color="gray50"];
+n65:n63 -> n37:n32[style="bold",weight="10.0",color="gray50"];
+n69:n68 -> n30:n21[style="bold",weight="10.0"];
+n76:n74 -> n30:n23[style="bold",weight="10.0"];
+n76:n75 -> n98:n93[style="bold",weight="10.0"];
+n80:n79 -> n37:n31[style="bold",weight="10.0"];
+n86:n85 -> n69:n66[style="bold",weight="10.0"];
+n92:n91 -> n80:n77[style="bold",weight="10.0"];
+n98:n97 -> n86:n81[style="bold",weight="10.0"];
+n104:n103 -> n92:n87[style="bold",weight="10.0"];
+n110:n109 -> n104:n99[style="bold",weight="10.0"];
+n115:n114 -> n110:n105[style="bold",weight="10.0"];
+n120:n119 -> n115:n111[style="bold",weight="10.0"];
+n126:n125 -> n120:n116[style="bold",weight="10.0"];
+{
+rank="sink";
+n127[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">H1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">h(&lt;'access-control-shdk-exchange', 'g'^(~bsk*~osk)&gt;)</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">SE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">senc(&lt;'ACT', ~token, 'g'^~bsk&gt;, H1)</TD></TR></TABLE>>];
+
+}
+n4:n3 -> n127[style="invis"];
+
+}
+
+digraph "trace_Saga_ACP_da_SL2-AS0-CL0-A1-C1-NB_denied_chat_reachable-Skip_Rule_1_case_2-Setup_case_1-Sender_Send_Chat_case_07-Setup-Receiver_Issue_Token-Spec_Select_Better_0-Impl_Select_Better_0-Impl_Select_Better_0_case_3-Spec_Select_Better_0" {
+nodesep="0.3";
+ranksep="0.3";
+node[fontsize="8",fontname="Helvetica",width="0.3",height="0.2"];
+edge[fontsize="8",fontname="Helvetica"];
+n4[shape="record",label="{{<n0> Scan2( ~sid, 'spec', 'r70', 'bneg1' )|<n1> !Decision( 'bneg1', 'deny' )}|{<n2> #i : Spec_Finish[SpecDecision( ~sid, 'A', 'B', 'bneg1', 'deny' )]}|{<n3> AccessReady( ~sid )}}",fillcolor="#d5d897",style="filled",fontcolor="black",role="Undefined"];
+n9[shape="record",label="{{<n5> TLSChat( ~sid, 'B', 'A', SE1,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk, ~msg\l)\l|<n6> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n7> ActiveToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SE1, 'g'^~bsk\l)\l}|{<n8> #j : Receiver_Accept_Chat[ChatAccept( ~sid, 'A', 'B', SE1, ~msg )]}}",fillcolor="#d2d897",style="filled",fontcolor="black",role="Undefined"];
+n14[shape="record",label="{{<n10> Scan1( ~sid, 'spec', 'r70', 'bneg1' )|<n11> !NotHigher( 'r0', 'r70' )}|{<n12> #vr : Skip_Rule_1[SkipRule( ~sid, 'spec', 'r0', 'b10' )]}|{<n13> Scan2( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#cfd897",style="filled",fontcolor="black",role="Undefined"];
+n42[shape="record",label="{{<n15> Fr( ~sid )|<n16> Fr( ~bsk )|<n17> Fr( ~osk )}|{<n18> #vr.1 : Setup[Setup( )]}|{<n19> !Client( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~bsk\l)\l|<n20> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n21> ProviderUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk\l)\l|<n22> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n23> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<'r0', 'b10'\>, 'end'\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\>\l)\l|<n24> Scan0( ~sid, 'spec',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit', 'b0'\l)\l|<n25> !SpecMode( 'spec' )|<n26> !ImplMode( PR1 )|<n27> !ImplMode( RE1 )|<n28> !Higher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n29> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r0'\l)\l|<n30> !NotHigher( 'r0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n31> !Higher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'rinit'\l)\l|<n32> !Higher( 'r70', 'r0'\l)\l|<n33> !NotHigher( 'r70',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'r70'\l)\l|<n34> !Decision( 'bneg1',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n35> !ReceiverDenies( 'bneg1'\l)\l|<n36> !Decision( 'b0',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'deny'\l)\l|<n37> !ReceiverAllows( 'b0'\l)\l|<n38> !Decision( 'b10',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'allow'\l)\l|<n39> !ReceiverAllows( 'b10'\l)\l|<n40> !Debit( 'b10', 'b9'\l)\l|<n41> Out( 'g'^~bsk )}}",fillcolor="#ccd998",style="filled",fontcolor="black",role="Undefined"];
+n47[shape="record",label="{{<n43> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )|<n44> Fr( ~msg )}|{<n45> #vr.2 : Sender_Send_Chat[ChatSend( ~sid, 'A', 'B', SE1, ~msg )]}|{<n46> TLSChat( ~sid, 'B', 'A', SE1, 'g'^~bsk, ~msg )}}",fillcolor="#c9d998",style="filled",fontcolor="black",role="Undefined"];
+n52[shape="record",label="{{<n48> WaitingForToken( ~sid, 'A', 'B', 'g'^~osk, ~bsk\l)\l|<n49> TLSTokenResponse( ~sid, 'A', 'B', SE1 )}|{<n50> #vr.3 : Sender_Decrypt_Token[TokenReceive( ~sid, 'A', 'B', SE1 )]}|{<n51> ReadyForChat( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#c6d998",style="filled",fontcolor="black",role="Undefined"];
+n58[shape="record",label="{{<n53> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk )|<n54> !Client( ~sid, 'B', ~bsk )}|{<n55> #vr.4 : Sender_Request_Token[TokenRequest( ~sid, 'A', 'B', 'g'^~osk )]}|{<n56> TLSTokenRequest( ~sid, 'B', 'A', 'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n57> WaitingForToken( ~sid, 'A', 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk, ~bsk\l)\l}}",fillcolor="#c3da98",style="filled",fontcolor="black",role="Undefined"];
+n68[shape="record",label="{{<n59> ReceiverResult( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'b10'\l)\l|<n60> !ReceiverAllows( 'b10'\l)\l|<n61> PendingToken( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l|<n62> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n63> ReceiverUnusedOTK( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~osk,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~osk\l)\l|<n64> Fr( ~token )}|{<n65> #vr.5 : Receiver_Issue_Token[TokenIssue( ~sid, 'A', 'B', SE1 )]}|{<n66> TLSTokenResponse( ~sid, 'A', 'B', SE1 )|<n67> ActiveToken( ~sid, 'A', 'B', SE1, 'g'^~bsk )}}",fillcolor="#c0da98",style="filled",fontcolor="black",role="Undefined"];
+n75[shape="record",label="{{<n69> ProviderResult( ~sid, 'b10'\l)\l|<n70> !Debit( 'b10', 'b9'\l)\l|<n71> ProviderUnusedOTK( ~sid, 'A', 'g'^~osk\l)\l}|{<n72> #vr.6 : Provider_Release[ProviderIssue( ~sid, 'A', 'B', 'g'^~osk ),\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ProviderDebit( ~sid, 'A', 'B', 'b10', 'b9' )]\l}|{<n73> TLSOTKResponse( ~sid, PR2, 'B', 'A', 'g'^~osk\l)\l|<n74> ProviderRemaining( ~sid, 'A', 'B', 'b9' )}}",fillcolor="#bdda99",style="filled",fontcolor="black",role="Undefined"];
+n79[shape="record",label="{{<n76> Scan2( ~sid, RE1, 'rinit', 'b10' )}|{<n77> #vr.7 : Receiver_Finish[ReceiverBudget( ~sid, 'A', 'B', 'b10' )]}|{<n78> ReceiverResult( ~sid, 'b10' )}}",fillcolor="#badb99",style="filled",fontcolor="black",role="Undefined"];
+n86[shape="record",label="{{<n80> TLSTokenRequest( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A', 'g'^~osk, 'g'^~bsk\l)\l|<n81> !Registered( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B', 'g'^~bsk\l)\l|<n82> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, \l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'end'\>\l)\l}|{<n83> #vr.8 : Receiver_Start[ReceiverCheckStarted( ~sid, 'A', 'B' )]}|{<n84> PendingToken( ~sid, 'g'^~osk, 'g'^~bsk )|<n85> Scan0( ~sid, RE1, 'rinit', 'b0' )}}",fillcolor="#b7db99",style="filled",fontcolor="black",role="Undefined"];
+n90[shape="record",label="{{<n87> Scan2( ~sid, PR1, 'rinit', 'b10' )}|{<n88> #vr.9 : Provider_Finish[ProviderBudget( ~sid, 'A', 'B', 'b10' )]}|{<n89> ProviderResult( ~sid, 'b10' )}}",fillcolor="#b4db99",style="filled",fontcolor="black",role="Undefined"];
+n96[shape="record",label="{{<n91> Scan1( ~sid, RE1, 'rinit', 'bneg1' )|<n92> !ImplMode( RE1 )|<n93> !Higher( 'r0', 'rinit' )}|{<n94> #vr.10 : Impl_Select_Better_1[SelectRule( ~sid, RE1, 'r0', 'b10' )]}|{<n95> Scan2( ~sid, RE1, 'rinit', 'b10' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n102[shape="record",label="{{<n97> Scan1( ~sid, PR1, 'rinit', 'bneg1' )|<n98> !ImplMode( PR1 )|<n99> !Higher( 'r0', 'rinit' )}|{<n100> #vr.11 : Impl_Select_Better_1[SelectRule( ~sid, PR1, 'r0', 'b10' )]}|{<n101> Scan2( ~sid, PR1, 'rinit', 'b10' )}}",fillcolor="#aedc9a",style="filled",fontcolor="black",role="Undefined"];
+n108[shape="record",label="{{<n103> Scan0( ~sid, 'spec', 'rinit', 'b0' )|<n104> !SpecMode( 'spec' )|<n105> !Higher( 'r70', 'rinit' )}|{<n106> #vr.12 : Spec_Select_Better_0[SelectRule( ~sid, 'spec', 'r70', 'bneg1' )]}|{<n107> Scan1( ~sid, 'spec', 'r70', 'bneg1' )}}",fillcolor="#abdc9a",style="filled",fontcolor="black",role="Undefined"];
+n114[shape="record",label="{{<n109> Scan0( ~sid, RE1, 'rinit', 'b0' )|<n110> !ImplMode( RE1 )|<n111> !Higher( 'r70', 'rinit' )}|{<n112> #vr.13 : Impl_Select_Better_0[SelectRule( ~sid, RE1, 'r70', 'bneg1' )]}|{<n113> Scan1( ~sid, RE1, 'rinit', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n120[shape="record",label="{{<n115> Scan0( ~sid, PR1, 'rinit', 'b0' )|<n116> !ImplMode( PR1 )|<n117> !Higher( 'r70', 'rinit' )}|{<n118> #vr.14 : Impl_Select_Better_0[SelectRule( ~sid, PR1, 'r70', 'bneg1' )]}|{<n119> Scan1( ~sid, PR1, 'rinit', 'bneg1' )}}",fillcolor="#a4dd9b",style="filled",fontcolor="black",role="Undefined"];
+n126[shape="record",label="{{<n121> AccessReady( ~sid )|<n122> !Rules( ~sid,\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<\<'r70', 'bneg1'\>, \<'r0', 'b10'\>, 'end'\>\l)\l|<n123> !Registered( ~sid, 'B',\l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'g'^~bsk\l)\l}|{<n124> #vr.15 : Provider_Start[AccessRequested( ~sid, 'A', 'B' )]}|{<n125> Scan0( ~sid, PR1, 'rinit', 'b0' )}}",fillcolor="#a1dd9b",style="filled",fontcolor="black",role="Undefined"];
+n4:n3 -> n126:n121[style="bold",weight="10.0"];
+n14:n13 -> n4:n0[style="bold",weight="10.0"];
+n42:n19 -> n58:n54[style="bold",weight="10.0",color="gray50"];
+n42:n20 -> n9:n6[style="bold",weight="10.0",color="gray50"];
+n42:n20 -> n68:n62[style="bold",weight="10.0",color="gray50"];
+n42:n20 -> n86:n81[style="bold",weight="10.0",color="gray50"];
+n42:n20 -> n126:n123[style="bold",weight="10.0",color="gray50"];
+n42:n21 -> n75:n71[style="bold",weight="10.0"];
+n42:n22 -> n68:n63[style="bold",weight="10.0"];
+n42:n23 -> n86:n82[style="bold",weight="10.0",color="gray50"];
+n42:n23 -> n126:n122[style="bold",weight="10.0",color="gray50"];
+n42:n24 -> n108:n103[style="bold",weight="10.0"];
+n42:n25 -> n108:n104[style="bold",weight="10.0",color="gray50"];
+n42:n26 -> n102:n98[style="bold",weight="10.0",color="gray50"];
+n42:n26 -> n120:n116[style="bold",weight="10.0",color="gray50"];
+n42:n27 -> n96:n92[style="bold",weight="10.0",color="gray50"];
+n42:n27 -> n114:n110[style="bold",weight="10.0",color="gray50"];
+n42:n28 -> n96:n93[style="bold",weight="10.0",color="gray50"];
+n42:n28 -> n102:n99[style="bold",weight="10.0",color="gray50"];
+n42:n30 -> n14:n11[style="bold",weight="10.0",color="gray50"];
+n42:n31 -> n108:n105[style="bold",weight="10.0",color="gray50"];
+n42:n31 -> n114:n111[style="bold",weight="10.0",color="gray50"];
+n42:n31 -> n120:n117[style="bold",weight="10.0",color="gray50"];
+n42:n34 -> n4:n1[style="bold",weight="10.0",color="gray50"];
+n42:n39 -> n68:n60[style="bold",weight="10.0",color="gray50"];
+n42:n40 -> n75:n70[style="bold",weight="10.0",color="gray50"];
+n47:n46 -> n9:n5[style="bold",weight="10.0"];
+n52:n51 -> n47:n43[style="bold",weight="10.0"];
+n58:n56 -> n86:n80[style="bold",weight="10.0"];
+n58:n57 -> n52:n48[style="bold",weight="10.0"];
+n68:n66 -> n52:n49[style="bold",weight="10.0"];
+n68:n67 -> n9:n7[style="bold",weight="10.0"];
+n75:n73 -> n58:n53[style="bold",weight="10.0"];
+n79:n78 -> n68:n59[style="bold",weight="10.0"];
+n86:n84 -> n68:n61[style="bold",weight="10.0"];
+n86:n85 -> n114:n109[style="bold",weight="10.0"];
+n90:n89 -> n75:n69[style="bold",weight="10.0"];
+n96:n95 -> n79:n76[style="bold",weight="10.0"];
+n102:n101 -> n90:n87[style="bold",weight="10.0"];
+n108:n107 -> n14:n10[style="bold",weight="10.0"];
+n114:n113 -> n96:n91[style="bold",weight="10.0"];
+n120:n119 -> n102:n97[style="bold",weight="10.0"];
+n126:n125 -> n120:n115[style="bold",weight="10.0"];
+{
+rank="sink";
+n127[shape="plain",label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" CELLPADDING="1"><TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">H1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">h(&lt;'access-control-shdk-exchange', 'g'^(~bsk*~osk)&gt;)</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'provider_eval'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">PR2</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'Provider'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">RE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">'receiver'</TD></TR>
+                                                                 <TR><TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#000000">SE1</FONT></TD> <TD ALIGN="LEFT" VALIGN="TOP">=</TD> <TD ALIGN="LEFT" VALIGN="TOP">senc(&lt;'ACT', ~token, 'g'^~bsk&gt;, H1)</TD></TR></TABLE>>];
+
+}
+n9:n8 -> n127[style="invis"];
+
+}

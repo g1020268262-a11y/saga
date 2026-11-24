@@ -1,0 +1,9 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/maude",
+    "--version"
+  ],
+  "elapsed_seconds": 0.016,
+  "exit_code": 0,
+  "timeout": false
+}

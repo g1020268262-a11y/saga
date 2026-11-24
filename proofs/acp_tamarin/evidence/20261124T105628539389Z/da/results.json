@@ -1,0 +1,36 @@
+{
+  "parse": {
+    "command": [
+      "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+      "--quit-on-warning",
+      "--derivcheck-timeout=30",
+      "--parse-only",
+      "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z/models/da.spthy",
+      "+RTS",
+      "-N2",
+      "-RTS"
+    ],
+    "elapsed_seconds": 0.132,
+    "exit_code": 0,
+    "timeout": false
+  },
+  "proof": {
+    "command": [
+      "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+      "--quit-on-warning",
+      "--derivcheck-timeout=30",
+      "--prove",
+      "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z/da/proof.spthy",
+      "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z/da/traces.json",
+      "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z/da/traces.dot",
+      "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T105628539389Z/models/da.spthy",
+      "+RTS",
+      "-N2",
+      "-RTS"
+    ],
+    "elapsed_seconds": 6.016,
+    "exit_code": 1,
+    "timeout": false
+  },
+  "results": {}
+}

@@ -1,0 +1,295 @@
+{
+  "aa": {
+    "chat_accepted": true,
+    "events": [
+      {
+        "best_after": 0,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "spec"
+      },
+      {
+        "budget": 10,
+        "decision": "allow",
+        "event": "SpecDecision"
+      },
+      {
+        "event": "AccessRequested"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "provider"
+      },
+      {
+        "budget": 10,
+        "event": "ProviderBudget"
+      },
+      {
+        "event": "ProviderIssue",
+        "otk": "k1"
+      },
+      {
+        "after": 9,
+        "before": 10,
+        "event": "ProviderDebit"
+      },
+      {
+        "event": "TokenRequest",
+        "otk": "k1"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "receiver"
+      },
+      {
+        "budget": 10,
+        "event": "ReceiverBudget"
+      },
+      {
+        "event": "TokenIssue",
+        "token": "t1"
+      },
+      {
+        "event": "TokenReceive",
+        "token": "t1"
+      },
+      {
+        "event": "ChatSend",
+        "token": "t1"
+      },
+      {
+        "event": "ChatAccept",
+        "token": "t1"
+      }
+    ],
+    "kind": "finite_concrete_replay_not_tamarin",
+    "provider_budget": 10,
+    "receiver_budget": 10,
+    "spec_budget": 10
+  },
+  "da": {
+    "chat_accepted": true,
+    "events": [
+      {
+        "best_after": 70,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 70,
+        "result_budget": -1,
+        "stage": "spec"
+      },
+      {
+        "best_after": 70,
+        "best_before": 70,
+        "budget": 10,
+        "event": "SkipRule",
+        "rank": 0,
+        "result_budget": -1,
+        "stage": "spec"
+      },
+      {
+        "budget": -1,
+        "decision": "deny",
+        "event": "SpecDecision"
+      },
+      {
+        "event": "AccessRequested"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 70,
+        "result_budget": -1,
+        "stage": "provider"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "provider"
+      },
+      {
+        "budget": 10,
+        "event": "ProviderBudget"
+      },
+      {
+        "event": "ProviderIssue",
+        "otk": "k1"
+      },
+      {
+        "after": 9,
+        "before": 10,
+        "event": "ProviderDebit"
+      },
+      {
+        "event": "TokenRequest",
+        "otk": "k1"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 70,
+        "result_budget": -1,
+        "stage": "receiver"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "receiver"
+      },
+      {
+        "budget": 10,
+        "event": "ReceiverBudget"
+      },
+      {
+        "event": "TokenIssue",
+        "token": "t1"
+      },
+      {
+        "event": "TokenReceive",
+        "token": "t1"
+      },
+      {
+        "event": "ChatSend",
+        "token": "t1"
+      },
+      {
+        "event": "ChatAccept",
+        "token": "t1"
+      }
+    ],
+    "kind": "finite_concrete_replay_not_tamarin",
+    "provider_budget": 10,
+    "receiver_budget": 10,
+    "spec_budget": -1
+  },
+  "dd": {
+    "chat_accepted": false,
+    "events": [
+      {
+        "best_after": 0,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": -1,
+        "stage": "spec"
+      },
+      {
+        "budget": -1,
+        "decision": "deny",
+        "event": "SpecDecision"
+      },
+      {
+        "event": "AccessRequested"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": -1,
+        "stage": "provider"
+      },
+      {
+        "budget": -1,
+        "event": "ProviderBudget"
+      },
+      {
+        "budget": -1,
+        "event": "ProviderReject"
+      }
+    ],
+    "kind": "finite_concrete_replay_not_tamarin",
+    "provider_budget": -1,
+    "receiver_budget": null,
+    "spec_budget": -1
+  },
+  "reverse": {
+    "chat_accepted": false,
+    "events": [
+      {
+        "best_after": 0,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "spec"
+      },
+      {
+        "best_after": 70,
+        "best_before": 0,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 70,
+        "result_budget": -1,
+        "stage": "spec"
+      },
+      {
+        "budget": -1,
+        "decision": "deny",
+        "event": "SpecDecision"
+      },
+      {
+        "event": "AccessRequested"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": 10,
+        "event": "SelectRule",
+        "rank": 0,
+        "result_budget": 10,
+        "stage": "provider"
+      },
+      {
+        "best_after": -1,
+        "best_before": -1,
+        "budget": -1,
+        "event": "SelectRule",
+        "rank": 70,
+        "result_budget": -1,
+        "stage": "provider"
+      },
+      {
+        "budget": -1,
+        "event": "ProviderBudget"
+      },
+      {
+        "budget": -1,
+        "event": "ProviderReject"
+      }
+    ],
+    "kind": "finite_concrete_replay_not_tamarin",
+    "provider_budget": -1,
+    "receiver_budget": null,
+    "spec_budget": -1
+  }
+}

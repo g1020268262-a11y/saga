@@ -1,0 +1,489 @@
+{
+  "cases": {
+    "aa": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/aa.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 0.129,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/aa/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/aa/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/aa/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/aa.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 8.924,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "results": {
+        "chat_accept_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "chat_requires_decryption": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_token_issue": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "denied_chat_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "policy_budget_agreement": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_rejection_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "provider_release_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "spec_matches_reference": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "token_issue_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "token_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        }
+      }
+    },
+    "da": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/da.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 0.125,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/da/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/da/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/da/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/da.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 33.174,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "results": {
+        "chat_accept_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "chat_requires_decryption": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_policy_allow": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_token_issue": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "denied_chat_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "policy_budget_agreement": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_issue_requires_policy_allow": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_rejection_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "provider_release_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "spec_matches_reference": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "token_issue_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "token_issue_requires_policy_allow": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "all-traces"
+        }
+      }
+    },
+    "dd": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/dd.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 0.13,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/dd/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/dd/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/dd/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/dd.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 6.971,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "results": {
+        "chat_accept_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "chat_requires_decryption": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_token_issue": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "denied_chat_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "policy_budget_agreement": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_rejection_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "provider_release_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_evaluation_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "spec_matches_reference": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "token_issue_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "token_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        }
+      }
+    },
+    "reverse": {
+      "parse": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--parse-only",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/reverse.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 0.123,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "proof": {
+        "command": [
+          "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+          "--quit-on-warning",
+          "--derivcheck-timeout=30",
+          "--prove",
+          "--output=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/reverse/proof.spthy",
+          "--output-json=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/reverse/traces.json",
+          "--output-dot=/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/reverse/traces.dot",
+          "/mnt/d/Users/10202/Desktop/saga/proofs/acp_tamarin/evidence/20261124T111257499246Z/models/reverse.spthy",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "elapsed_seconds": 9.422,
+        "exit_code": 0,
+        "timeout": false
+      },
+      "results": {
+        "chat_accept_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "chat_requires_decryption": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "chat_requires_token_issue": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "denied_chat_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "evaluation_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "policy_budget_agreement": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "provider_rejection_reachable": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "provider_release_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_evaluation_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "receiver_matches_observation": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "spec_matches_reference": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        },
+        "token_issue_reachable": {
+          "actual": "falsified",
+          "matches_expected": true,
+          "type": "exists-trace"
+        },
+        "token_issue_requires_policy_allow": {
+          "actual": "verified",
+          "matches_expected": true,
+          "type": "all-traces"
+        }
+      }
+    }
+  },
+  "native_complete": true,
+  "native_executed": true,
+  "problems": [],
+  "toolchain": {
+    "maude_path": "/home/linuxbrew/.linuxbrew/Cellar/maude/3.5.1_1/bin/maude",
+    "maude_sha256": "1362b392b7b9e1671ed81bec7a9dd3ca4361e1d5adaca0c0d40abb8fbe7c33cb",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.14.5 (main, May 10 2026, 10:21:34) [GCC 12.3.0]",
+    "rts": [
+      "+RTS",
+      "-N2",
+      "-RTS"
+    ],
+    "tamarin_path": "/home/linuxbrew/.linuxbrew/Cellar/tamarin-prover/1.12.0/bin/tamarin-prover",
+    "tamarin_sha256": "feb4a9edfc53dca19474aea24bc051e0620f60fe27a86f06e8cc99b8b482b419",
+    "wsl_distribution": "TamarinVerify"
+  }
+}

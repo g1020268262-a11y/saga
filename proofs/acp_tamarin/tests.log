@@ -1,0 +1,9 @@
+test_all_models (test_models.ModelInputs.test_all_models) ... ok
+test_controls (test_models.ModelInputs.test_controls) ... ok
+test_da_counterexample_preview (test_models.ModelInputs.test_da_counterexample_preview) ... ok
+test_matching_order_and_scores (test_models.ModelInputs.test_matching_order_and_scores) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK

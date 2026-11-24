@@ -1,0 +1,12 @@
+test_all_models (test_models.ModelInputs.test_all_models) ... ok
+test_controls (test_models.ModelInputs.test_controls) ... ok
+test_da_counterexample_preview (test_models.ModelInputs.test_da_counterexample_preview) ... ok
+test_matching_order_and_scores (test_models.ModelInputs.test_matching_order_and_scores) ... ok
+test_observed_and_expected_values_do_not_enable_rules (test_models.ModelInputs.test_observed_and_expected_values_do_not_enable_rules) ... ok
+test_original_security_properties_preserved (test_models.ModelInputs.test_original_security_properties_preserved) ... ok
+test_pinned_byte_encoding_fails_closed (test_models.ModelInputs.test_pinned_byte_encoding_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.074s
+
+OK

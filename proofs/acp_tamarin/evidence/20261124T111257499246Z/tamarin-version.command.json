@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/home/linuxbrew/.linuxbrew/bin/tamarin-prover",
+    "--version",
+    "+RTS",
+    "-N2",
+    "-RTS"
+  ],
+  "elapsed_seconds": 0.179,
+  "exit_code": 0,
+  "timeout": false
+}
