@@ -66,9 +66,6 @@
     Reduce request quota by one;\\
     process the request.
   };
-  \node[fill=white,align=center,text width=48mm,inner sep=0.5mm,
-    font=\fontsize{7.5}{9}\selectfont] at (80,-78)
-    {Check and debit are not\\one atomic operation.};
 
   \node[draw=black!35,fill=black!2,rounded corners=0.5mm,
     line width=0.35pt,text width=46mm,align=left,

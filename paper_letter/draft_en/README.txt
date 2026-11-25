@@ -1,7 +1,8 @@
 SAGA English manuscript in the complete IEICE Letter template
-Date: 2026-11-24
+Date: 2026-11-25
 
 Source: ../draft_zh
+Source revision: 8ead3a866b2c60f68638ad5dfcd02ae86742cc0a
 Main source: main.tex
 Preview: main.pdf
 Layout: bundled official IEICE Transactions v2.3 class, with the letter option.
@@ -18,6 +19,13 @@ Build from the repository root in PowerShell:
   & './paper_letter/draft_en/build.ps1'
 
 The build reuses ../ieice_template and ../references.bib.
-The figures are copied into this folder. Formal definitions and numerical results are retained.
-This template integration changes only main.tex and this README; the existing English body is retained.
-It does not synchronize the later Chinese second-round prose revisions.
+The summary and all five sections are translated from the current Chinese source.
+The updated ACP Tamarin analysis and the second-stage Chinese revisions are included.
+Both figures are synchronized with the current Chinese draft; their labels are already English.
+Native lemmas, TLA+ actions, identifiers, numerical results, citations, and cross-reference labels are retained.
+The complete title/author/affiliation block and the template's default typography and margins are retained.
+No content is removed to force a four-page count.
+Chinese sources, the reference implementation, formal models, and historical evidence are unchanged.
+
+Translation source hashes and structural verification:
+  build/translation_20261125/translation-check.json
