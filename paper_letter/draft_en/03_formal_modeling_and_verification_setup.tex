@@ -9,20 +9,14 @@ We construct separate Tamarin symbolic models for contact-policy matching and OT
 
 Both Tamarin models establish the correspondence between a sender's identity and its PAC as initial facts and use private facts containing the identities of both communicating parties to represent authenticated TLS communication. The cryptographic operations use the Diffie--Hellman (DH) equational theory, a hash-based key derivation function (KDF) with a domain-separation tag, and ideal symmetric encryption. The ACT ciphertext contains the sender's PAC to represent the binding between the token and the sender's public access-control key.
 
-\subsection{Contact-Policy Evaluation and Verification}
+\subsection{Contact-Policy Matching Model}
 \label{subsec:policy-evaluation-model}
 
-A contact policy computes a budget from the sender's AID and an ordered rule set. To independently examine the matching function in the reference implementation, we implement an independent policy evaluator that selects the best-matching rule according to SAGA's rule priorities. The evaluator supports three rule types: the universal wildcard rule (\texttt{*}), exact lowercase ASCII AIDs, and name-wildcard rules with a fixed user identifier (UID) (\texttt{uid:*}). The universal wildcard rule has a score of $0$; the score of an exact AID rule is four times the number of UID characters plus eight times the number of agent-name characters; and the score of a name-wildcard rule with a fixed UID is four times the number of UID characters plus $2$. Among matching rules, the evaluator selects the rule with the highest score and returns its budget. If no rule matches, it returns a budget of $0$. It produces no evaluation result if a rule falls outside the supported syntax or if the highest score is tied.
+A contact policy determines a budget from the sender's AID and an ordered rule set. When several rules match, the highest-scoring rule should be selected~\cite{syros2025sagaV2,sagaReferenceImpl2026}. The model generator identifies matching rules and encodes their order, budgets, and score comparisons as Tamarin inputs.
 
-The independent policy evaluator treats a budget greater than $0$ as permission and a budget less than or equal to $0$ as denial. In the reference implementation, the Provider's \texttt{/access} interface rejects OTK issuance when the budget is less than or equal to $0$, whereas the receiver's local policy check rejects only when the budget is less than $0$~\cite{sagaReferenceImpl2026}.
+Linear facts record the traversal position, recorded best score, and current budget. We model rule selection according to the required rule priorities and the state-update logic of the reference matching function, respectively. Each step selects or skips a rule according to the score comparison and advances to the next position. The modeled Provider and receiver separately execute the implementation's rule-selection logic. Results from an independent policy evaluator and the reference matching function on identical inputs cross-check the expected and implementation-side evaluations, respectively.
 
-The independent policy evaluator computes the expected budget, while the matching function in the reference implementation provides observations of the actual budget. Both use the same sender AID and ordered rule set. The rule contents, order, and implementation version are recorded to cross-check the evaluation results of the Tamarin model.
-
-The model generator computes the matching rules and their scores, preserves their original order, and encodes their budgets and score-comparison relations as model inputs. Tamarin uses linear facts to record the rule-traversal position, the currently recorded best-matching rule score, and the current budget. The expected rule-selection process follows the rule-priority requirements, while a second rule-selection process follows the state-update logic of the matching function in the reference implementation. Each step compares the current rule's score with the best score recorded in the state, selects or skips the current rule, and advances to the next traversal position. The Provider and receiver in the model independently perform rule selection according to the reference implementation's matching logic.
-
-The model includes Provider $P$, receiver $A$, and sender $B$, and is initialized with one OTK. It examines the first OTK retrieval and the submission of the first application request using the resulting ACT. Linear facts separately represent OTKs awaiting issuance at the Provider and OTKs not yet consumed by the receiver. The Provider and receiver perform OTK issuance and ACT issuance according to their respective policy-evaluation results and authorization conditions. After decrypting the ACT, the sender submits an application request, which the receiver checks against its stored token and the bound PAC.
-
-The verification configurations include both orderings of a name-wildcard denial rule with a fixed UID and a universal wildcard permission rule, as well as configurations containing only one universal wildcard permission rule or one universal wildcard denial rule. Events record the expected budget, the budgets computed at the Provider and receiver, and the subsequent authorization operations. The model checks budget agreement at the Provider and whether application-request acceptance complies with the expected authorization decision. The core Tamarin lemmas are as follows:
+The model considers initial communication authorization between a fixed pair of agents. Following the reference implementation, the Provider requires a positive budget, whereas the receiver rejects only negative budgets~\cite{sagaReferenceImpl2026}. The following Tamarin lemma checks budget agreement:
 
 \begingroup
 \renewcommand{\verbatimsize}{\footnotesize}
@@ -34,20 +28,13 @@ lemma policy_budget_agreement:
     SpecDecision(sid,a,b,expected,decision) @i
     & ProviderBudget(sid,a,b,actual) @j
     ==> expected = actual"
-
-lemma chat_requires_policy_allow:
-  "All sid a b tok msg #i.
-    ChatAccept(sid,a,b,tok,msg) @i
-    ==> (Ex budget #j.
-      SpecDecision(sid,a,b,budget,'allow') @j
-      & j < i)"
 \end{verbatim}
 \end{minipage}
 \endgroup
 
-Here, \texttt{SpecDecision} denotes expected policy evaluation, \texttt{ProviderBudget} denotes policy evaluation at the Provider, and \texttt{ChatAccept} denotes application-request acceptance. The variable $sid$ identifies a model execution; $a,b$ denote the receiver and sender, respectively; $tok$ and $msg$ denote the ACT ciphertext and application message, respectively; and $\#i$ and $\#j$ denote event timepoints. The first lemma requires the budget computed at the Provider to agree with the expected budget for the same receiver and sender in the same execution. The second requires every application-request acceptance event to have a corresponding prior expected permission decision for the same execution, receiver, and sender. The model also checks whether OTK issuance and ACT issuance comply with the expected authorization decision, the correspondence of request acceptance with prior ACT issuance and decryption, and the reachability of application-request acceptance.
+\texttt{SpecDecision} and \texttt{ProviderBudget} record expected and Provider policy evaluations, respectively. The lemma requires their budgets to agree for the same execution and communicating parties. We also check whether OTK issuance, ACT issuance, and request acceptance have corresponding prior expected allow decisions, whether request acceptance is reachable despite expected denial, and whether acceptance corresponds to prior ACT issuance and decryption.
 
-The reference-implementation experiments use three scenarios, A/A, D/D, and D/A: both the independent policy evaluator and the matching function in the reference implementation allow access; both deny access; or the former denies access while the latter allows it. The A/A scenario uses two matching permission rules. The D/A scenario places the name-wildcard denial rule with a fixed UID before the universal wildcard permission rule, while D/D reverses these two rules. The experiments record the Provider's \texttt{/access} response and the policy-matching results actually produced at each executed stage. They check OTK issuance and consumption, ACT issuance and storage, and agreement between the token decrypted by the sender and the receiver's stored record.
+Verification covers both orderings of a fixed-UID name-wildcard deny rule and a universal wildcard allow rule, and single universal wildcard allow and deny rules. Reference-implementation experiments cover expected/actual decisions of allow/allow (A/A), deny/deny (D/D), and deny/allow (D/A). A/A uses two matching allow rules; D/A and D/D use the two opposing rules in the respective deny--allow and allow--deny orders. We record policy evaluations, \texttt{/access} responses, and subsequent authorization outcomes (OTK issuance and consumption, ACT issuance, storage, and decryption).
 
 \subsection{OTK Issuance and Use Model}
 \label{subsec:otk-issuance-use-model}

@@ -8,16 +8,7 @@
 \subsection{Authorization Workflow}
 \label{subsec:authorization-workflow}
 
-SAGA authorizes communication in three stages: contact-policy matching and OTK issuance, OTK consumption and ACT establishment, and ACT request processing, as shown in Fig.~\ref{fig:saga-authorization-overview}. Let $P$ denote the Provider, and let $A$ and $B$ denote the receiving and sending agents, respectively. Both agents have completed registration and identity binding.
-
-\begin{figure*}[t]
-  \centering
-  \input{figures/saga_authorization_overview.tikz}
-  \caption{SAGA authorization overview. Provider maintains
-the OTK issuance quota, while the receiving agent
-maintains OTK consumption state~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
-  \label{fig:saga-authorization-overview}
-\end{figure*}
+SAGA authorizes communication in three stages: contact-policy matching and OTK issuance, OTK consumption and ACT establishment, and ACT request processing. Let $P$ denote the Provider, and let $A$ and $B$ denote the receiving and sending agents, respectively. Both agents have completed registration and identity binding.
 
 The user configures an Agent Contact Policy (ACP) for $A$. Each rule contains a matching pattern for an agent identifier (AID) and a budget value. When several rules match the same identity, the budget associated with the best-matching rule should be used~\cite{syros2025sagaV2,sagaReferenceImpl2026}. Agent $A$ generates OTKs in advance, submits signed public-key material to $P$, and stores the corresponding private keys locally. When $B$ requests communication material, $P$ checks its registered identity and TLS client certificate, determines its initial retrieval quota from the contact policy, and checks the remaining quota. If these checks pass and an OTK is available, $P$ issues one OTK, debits $B$'s retrieval quota, and removes the OTK from the available pool. Thus, $P$ maintains OTK retrieval quotas by sending identity, whereas $A$ independently maintains OTK consumption state.
 
