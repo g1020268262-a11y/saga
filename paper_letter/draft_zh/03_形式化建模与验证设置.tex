@@ -5,7 +5,7 @@
 \section{形式化建模与验证设置}
 \label{sec:formal-modeling-analysis-setup}
 
-SAGA 的授权过程涉及接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制。针对这三个环节，分别建立独立策略求值程序、Tamarin 符号模型和 TLA$^{+}$ 额度模型，并结合 ProVerif 与 TLA$^{+}$ 模型检查器 TLC 检查相应的安全性质。
+SAGA 的授权过程涉及接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制。针对接触策略匹配和 OTK 发放与使用分别建立 Tamarin 符号模型，针对 ACT 请求额度控制建立 TLA$^{+}$ 额度模型，并利用 Tamarin 与 TLA$^{+}$ 模型检查器 TLC 检查相应的安全性质。
 
 \subsection{接触策略求值与验证}
 \label{subsec:policy-evaluation-model}
@@ -14,25 +14,38 @@ SAGA 的授权过程涉及接触策略匹配、OTK 发放与使用以及 ACT 请
 
 独立策略求值程序将预算大于 $0$ 判为允许，小于等于 $0$ 判为拒绝。参考实现中的 Provider \texttt{/access} 接口在预算小于等于 $0$ 时拒绝发放 OTK，接收方的本地策略检查则仅在预算小于 $0$ 时拒绝~\cite{sagaReferenceImpl2026}。
 
-独立策略求值程序的结果作为预期结果，参考实现中匹配函数的实际返回值作为实现侧结果。比较时保持发送方 AID 和有序规则集一致，并记录输入内容、规则顺序及对应的实现版本，以检查两者在规则选择和预算返回方面是否一致。
+独立策略求值程序的结果作为预期结果，参考实现中匹配函数的实际返回值作为实现侧观测结果。比较时保持发送方 AID 和有序规则集一致，并记录输入内容、规则顺序及对应的实现版本，用于核对 Tamarin 模型的求值结果。
 
-为分析策略决策差异对后续通信的影响，将独立策略求值程序判定为拒绝、而参考实现中的匹配函数判定为允许的结果作为 ProVerif 模型的场景输入。利用原有通信协议模型检查请求接受事件与此前令牌签发事件之间的对应关系，并检查请求接受事件是否可达。相应的 ProVerif 查询如下：
+模型生成程序根据发送方 AID 和有序规则集计算匹配规则及其分值，将匹配规则的顺序、预算和分值比较关系作为 Tamarin 模型的输入。Tamarin 使用线性事实记录规则遍历位置、当前最佳规则的分值及预算，分别依据最匹配的规则优先要求和参考实现中的匹配函数定义规则选择过程。每一步根据分值比较结果选择或跳过当前规则，并进入下一遍历位置。Provider 与接收方分别执行实际匹配过程。
 
+模型包含 Provider $P$、接收方 $A$ 和发送方 $B$，初始化一枚 OTK，考察首次领取 OTK 及使用所得 ACT 提交首次应用请求的过程。身份、TLS 通信及密码学操作采用与第~\ref{subsec:otk-issuance-use-model}~节相同的建模方式。Provider 和接收方分别维护待发放和尚未消费的 OTK，按照各自的策略求值结果及相应授权条件执行 OTK 发放、ACT 签发、发送方解密和应用请求接受。
+
+验证设置包括具体规则与全通配规则的两种排列顺序，以及仅含一条全通配允许规则或拒绝规则的两种配置。通过事件记录预期预算、Provider 与接收方的实际预算及后续授权操作，检查预算一致性以及请求接受与预期允许决策的对应关系。核心 Tamarin 引理如下：
+
+\begingroup
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
 \noindent\begin{minipage}{\linewidth}
-\renewcommand{\verbatimsize}{\small}
 \begin{verbatim}
-query receiver: bitstring, sender: bitstring,
-      tok: bitstring, msg: bitstring;
-    event(ChatAccept(receiver, sender, tok, msg))
-    ==> event(TokenIssue(receiver, sender, tok)).
+lemma policy_budget_agreement:
+  "All sid a b expected actual decision #i #j.
+    SpecDecision(sid,a,b,expected,decision) @i
+    & ProviderBudget(sid,a,b,actual) @j
+    ==> expected = actual"
 
-query receiver: bitstring, sender: bitstring,
-      tok: bitstring, msg: bitstring;
-    event(ChatAccept(receiver, sender, tok, msg)).
+lemma chat_requires_policy_allow:
+  "All sid a b tok msg #i.
+    ChatAccept(sid,a,b,tok,msg) @i
+    ==> (Ex budget #j.
+      SpecDecision(sid,a,b,budget,'allow') @j
+      & j < i)"
 \end{verbatim}
 \end{minipage}
+\endgroup
 
-基于参考实现的实验进一步检查策略判定结果对实际授权流程的影响。实验包括双方均允许（A/A）、双方均拒绝（D/D），以及独立策略求值程序拒绝而参考实现允许（D/A）三种场景。执行过程中记录 Provider 和接收方的策略匹配结果及 Provider 的 \texttt{/access} 响应，并检查 OTK 发放、接收方对 OTK 的处理、ACT 签发与存储，以及发送方对返回 ACT 的解密和元数据核对。
+其中，\texttt{SpecDecision} 表示预期策略求值事件，\texttt{ProviderBudget} 表示 Provider 的实际策略求值事件，\texttt{ChatAccept} 表示接收方接受应用请求的事件。$sid$ 为模型执行标识，$a,b$ 分别表示接收方与发送方。第一项引理要求同一执行中的预期预算与实际预算一致；第二项引理要求每个请求接受事件均具有对应的先前预期允许决策。模型进一步检查 OTK 发放和 ACT 签发是否符合预期决策、请求接受与此前 ACT 签发和解密的对应关系，以及应用请求接受事件的可达性。
+
+基于参考实现的实验进一步检查策略判定结果对实际授权流程的影响。实验包括独立策略求值程序与参考实现的匹配函数均判定允许（A/A）、均判定拒绝（D/D），以及前者拒绝而后者允许（D/A）三种场景。执行过程中记录 Provider 和接收方的策略匹配结果及 Provider 的 \texttt{/access} 响应，并检查 OTK 发放、接收方对 OTK 的处理、ACT 签发与存储，以及发送方对返回 ACT 的解密和元数据核对。
 
 \subsection{OTK 发放与使用模型}
 \label{subsec:otk-issuance-use-model}
