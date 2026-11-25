@@ -1,0 +1,56 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% English translation in the complete IEICE Letter template.
+% Working title; author details are reused from ../main.tex.
+% Compile from this directory, or run build.ps1 from any directory.
+\RequirePackage{iftex}
+\RequireXeTeX
+\makeatletter
+\def\input@path{{../ieice_template/}}
+\makeatother
+\documentclass[letter]{ieice}
+
+\usepackage{graphicx,xcolor}
+\usepackage[fleqn]{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{newtxtext}
+\usepackage[varg]{newtxmath}
+
+\usepackage[noadjust]{cite}
+\renewcommand{\citepunct}{],\,\allowbreak[}
+\renewcommand{\citedash}{]--\allowbreak[}
+\makeatletter
+\let\hyper@nopatch@caption\@empty
+\makeatother
+\usepackage[hidelinks,hyperfootnotes=false]{hyperref}
+
+\setcounter{page}{1}
+\field{A}
+\title{Formal and Empirical Analysis of SAGA's Authorization Mechanism}
+\authorlist{%
+ \authorentry[1020268262@qq.com]{Anchen GAN}{n}{scnu}\MembershipNumber{}
+ \authorentry{Libin WANG}{n}{scnu}\MembershipNumber{}
+}
+\affiliate[scnu]{The authors are with the School of Computer Science,
+South China Normal University, Guangzhou 510631, China.}
+% Manuscript dates and publication metadata are supplied by the journal.
+
+\begin{document}
+\maketitle
+\begin{summary}
+SAGA is a security architecture for AI agent systems. Existing formal analyses of SAGA primarily address communication authentication and ACT confidentiality. Combining formal modeling with experiments on the reference implementation, we analyze SAGA's authorization mechanism and identify three issues: the contact-policy matcher fails to select the best-matching rule, potentially allowing a sender that should be denied to obtain an ACT; OTKs are not bound to the identities of the senders that retrieved them, allowing other senders to establish new ACTs using OTKs they did not retrieve; and ACT validity checking and quota debit are not performed as a single atomic operation, allowing the cumulative quota-debit count of concurrent requests to exceed the token's initial quota.
+\end{summary}
+\begin{keywords}
+AI agents, SAGA, formal analysis, access control, protocol security
+\end{keywords}
+
+\input{01_introduction}
+\input{02_authorization_workflow_and_objectives}
+\input{03_formal_modeling_and_verification_setup}
+\input{04_results_and_security_analysis}
+\input{05_discussion_and_conclusion}
+
+\bibliographystyle{../ieice_template/ieicetr}
+\bibliography{../references}
+\end{document}

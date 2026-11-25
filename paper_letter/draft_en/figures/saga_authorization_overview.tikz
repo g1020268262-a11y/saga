@@ -1,0 +1,85 @@
+% !TeX root = saga_authorization_overview.tex
+% Compact body figure. The detailed sequence remains in
+% saga_authorization_sequence.tikz.
+% Messages follow SAGA arXiv:2504.21034v2, Sections IV-D2 and IV-E.
+% Local checks and separate debit follow reference implementation 7372111.
+\begin{tikzpicture}[
+  x=1mm,y=1mm,
+  font=\fontsize{8}{9.4}\selectfont,
+  actor/.style={draw=black!70,fill=black!7,rounded corners=0.5mm,
+    minimum width=47mm,minimum height=5mm,
+    font=\bfseries\fontsize{8.5}{10}\selectfont},
+  life/.style={draw=black!45,densely dashed,line width=0.35pt},
+  msg/.style={-{Latex[length=1.5mm,width=1mm]},line width=0.5pt},
+  check/.style={draw=black!55,fill=white,rounded corners=0.4mm,
+    text width=49mm,align=center,inner xsep=0.6mm,inner ysep=0.6mm,
+    line width=0.35pt},
+  wire/.style={fill=white,inner sep=0.4mm},
+  phase/.style={draw=black!35,fill=black!7,line width=0.35pt,
+    anchor=west,align=left,inner xsep=0.8mm,inner ysep=0.6mm,
+    font=\bfseries\fontsize{8}{9.4}\selectfont}
+]
+  \path[use as bounding box] (0,3) rectangle (160,-86);
+  \node[actor] at (27,0) {Provider $P$};
+  \node[actor] at (80,0) {Initiating agent $B$};
+  \node[actor] at (133,0) {Receiving agent $A$};
+  \draw[life] (27,-2.5) -- (27,-28);
+  \draw[life] (80,-2.5) -- (80,-85.5);
+  \draw[life] (133,-2.5) -- (133,-85.5);
+
+  \node[phase,text width=158mm] at (0,-6)
+    {Policy evaluation and OTK issuance};
+  \draw[msg] (80,-12) --
+    node[wire,above] {Request OTK for $A$} (27,-12);
+  \node[check] at (27,-18.5) {
+    Check policy and remaining OTK quota.\\
+    Require available OTK $k$.\\
+    Remove $k$; reduce $B$'s quota by one.
+  };
+  \draw[msg] (27,-27.5) --
+    node[wire,above] {Signed OTK $k$} (80,-27.5);
+
+  \node[phase,text width=104mm] at (54,-30)
+    {OTK consumption and ACT establishment};
+  \draw[msg] (80,-36) --
+    node[wire,above] {Request ACT with $k$} (133,-36);
+  \node[check] at (133,-43) {
+    Local policy permits $B$; $k$ unused.\\
+    Consume $k$; bind ACT to $\mathsf{PAC}_B$.\\
+    Store ACT; set its initial request quota.
+  };
+  \draw[msg] (133,-53) --
+    node[wire,above] {Encrypted ACT $t$} (80,-53);
+  \node[fill=white,align=center,inner sep=0.4mm] at (80,-56.5)
+    {Decrypt $t$, retain ciphertext};
+
+  \node[phase,text width=104mm] at (54,-61)
+    {ACT request processing (repeat for each request)};
+  \draw[msg] (80,-67) --
+    node[wire,above] {Request $\langle t,\mathrm{msg}\rangle$} (133,-67);
+  \node[check] at (133,-73.5) {
+    Check ACT validity, bound PAC,\\
+    expiry and remaining request quota.
+  };
+  \draw[msg] (133,-77.2) -- (133,-78.3);
+  \node[check] at (133,-82) {
+    Reduce request quota by one;\\
+    process the request.
+  };
+  \node[fill=white,align=center,text width=48mm,inner sep=0.5mm,
+    font=\fontsize{7.5}{9}\selectfont] at (80,-78)
+    {Check and debit are not\\one atomic operation.};
+
+  \node[draw=black!35,fill=black!2,rounded corners=0.5mm,
+    line width=0.35pt,text width=46mm,align=left,
+    inner sep=1mm,anchor=north,
+    font=\fontsize{7.6}{9.1}\selectfont]
+    at (27,-33) {
+    \textbf{OTK and ACT quotas}\\[0.5mm]
+    $k$ is $A$'s OTK public key.\\[0.5mm]
+    $P$ maintains OTK issuance quota for each sending identity.\\[0.5mm]
+    $A$ maintains a request quota for each ACT,
+    shared by connections using it.\\[0.5mm]
+    $A$ sets the initial ACT request quota.
+  };
+\end{tikzpicture}

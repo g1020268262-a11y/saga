@@ -1,0 +1,10 @@
+% !TeX root = main.tex
+% !TeX program = xelatex
+% English translation of the current Chinese discussion and conclusion.
+
+\section{Discussion and Conclusion}
+\label{sec:discussion-conclusion}
+
+This study analyzes SAGA's authorization process and identifies three issues. First, the contact-policy matching function fails to update the current best-matching rule correctly while traversing the rules. Its result consequently depends on rule order, potentially allowing a sender that should be denied to obtain an ACT. Second, OTKs are not bound to the identities of the senders that retrieved them, allowing a sender that has exhausted its own OTK retrieval quota to establish new ACTs using OTKs retrieved by other senders. Finally, ACT validity checking and quota debit are not completed within the same atomic operation. Multiple concurrent requests can therefore pass checking against the same remaining quota, causing the cumulative quota-debit count to exceed the ACT's initial quota.
+
+The ProVerif analysis demonstrates the effect of incorrect policy matching on subsequent request acceptance. Tamarin provides reachable traces in which OTKs retrieved by other senders are transferred and used, while the TLA$^{+}$ model and reference-implementation experiments confirm the concurrent execution that exceeds the ACT quota. These results indicate that SAGA's authorization security depends not only on communication authentication and ACT confidentiality, but also on correct contact-policy matching, binding OTKs to the identities of the senders that retrieved them, and performing ACT validity checking and quota debit within the same atomic operation.

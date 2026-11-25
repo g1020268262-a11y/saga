@@ -1,0 +1,47 @@
+% !TeX root = main.tex
+% !TeX program = xelatex
+% English translation of the current Chinese results chapter.
+
+\section{Verification Results and Security Analysis}
+\label{sec:results}
+
+The analysis of SAGA's authorization process identifies three issues: the contact-policy matcher fails to select the best-matching rule, OTKs are not bound to the identities of the senders that retrieved them, and concurrent ACT requests can exceed their quotas. The following subsections present the verification results, concrete counterexamples, and causes of these issues.
+
+\subsection{Incorrect Contact-Policy Matching}
+\label{subsec:policy-evaluation-consistency}
+
+The value returned by the contact-policy matching function depends on rule order, potentially allowing a sender that should be denied to obtain communication permission. For the identity \texttt{alice@example.com:agent}, the rule \texttt{alice@example.com:*} has a budget of $-1$, whereas the wildcard rule \texttt{*} has a budget of $10$. Under the best-matching-rule priority requirement, the specific rule should be selected and a budget of $-1$ returned regardless of the order of these two rules. However, when the specific rule precedes the wildcard rule, the matching function in the reference implementation returns $10$; reversing their order yields $-1$.
+
+This error arises because the matching function fails to update the current best-matching rule correctly. When the function matches the specific rule, it updates the budget but does not update \texttt{best\_pattern}. Consequently, the subsequent wildcard rule's score of $0$ is still compared with the initial best score of $-1$, ultimately overwriting the budget with $10$~\cite{sagaReferenceImpl2026}.
+
+In the scenario where the independent policy evaluation program returns denial and the actual matching function returns permission, ProVerif returns \texttt{false} for the \texttt{ChatAccept} event reachability query, indicating an execution path that triggers this event. The correspondence query between request acceptance and token issuance returns \texttt{true}, indicating that every request-acceptance event is preceded by a token-issuance event for the same receiving agent, sending agent, and token. Thus, an execution path exists in which an application request is accepted after token issuance.
+
+Experiments based on the reference implementation further examine the effect of this error on the actual authorization process. In the scenario where the independent policy evaluation program denies access but the reference implementation allows it (D/A), the matching functions at both the Provider and the receiving agent return a budget of $10$. The Provider returns HTTP 200 for the \texttt{/access} request and issues an OTK, after which the receiving agent consumes the OTK and issues and stores an ACT. The sending agent successfully decrypts the returned ACT, whose contents match the record stored by the receiving agent. In the scenario where both sides deny access (D/D), the Provider returns a budget of $-1$ and rejects the request with HTTP 403. When both sides allow access (A/A), ACT issuance and storage complete normally.
+
+The Provider and the receiving agent use the same matching function, causing both sides to fail to enforce the best-matching-rule priority requirement and ultimately allowing a sender that should be denied to obtain an ACT.
+
+\subsection{OTKs Are Not Bound to Their Requesters}
+\label{subsec:otk-issuance-use}
+
+Tamarin finds that, after exhausting its own OTK retrieval quota, a sending agent can still establish a new ACT using an OTK retrieved by another identity. In the configuration that permits OTK transfer and in which both the Provider and the receiving agent allow $B,C$ to communicate, the Provider issues one OTK to $B$ and one to $C$.
+
+$C$ first uses the OTK issued to it by the Provider to complete ACT issuance, decryption, and acceptance of the first application request. The Provider then refuses further issuance because $C$ has exhausted its retrieval quota. $B$ transfers its own retrieved but unconsumed OTK to $C$, which requests another ACT using its own registered identity, access-control public key, and private key, and successfully decrypts the token. The receiving agent subsequently accepts the first application request associated with this ACT. Thus, the Provider has issued $1$ OTK to $C$, whereas $C$ has successfully used $2$ distinct OTKs.
+
+Tamarin returns \texttt{verified} for the existential query, confirming that this execution trace is reachable. For the remaining properties, Tamarin returns \texttt{verified} for the Provider's per-sender limit on OTK issuance, unique issuance and consumption of each OTK, and the correspondence between request acceptance and preceding ACT issuance and client decryption.
+
+When checking consistency between the identity to which an OTK was issued and the identity that actually uses it, Tamarin returns \texttt{falsified}, indicating an execution trace in which communication is successfully established using an OTK retrieved by another sender. In the configuration with a retrieval quota of $1$, the property that a sender successfully uses at most one distinct OTK also returns \texttt{falsified}. These results show that the Provider's original per-sender limit on OTK issuance still holds, but this limit does not prevent a sender from obtaining new ACTs using OTKs retrieved by other identities.
+
+When OTK transfer is disabled, the normal communication paths of $B,C$ remain reachable, and the two additional security properties return \texttt{verified}. When both the Provider and the receiving agent deny $C$, the communication and OTK-transfer paths for $C$ are unreachable, whereas normal communication by $B$ remains reachable; both properties again return \texttt{verified}.
+
+The issue is that the Provider maintains OTK retrieval quotas by sender identity, but an issued OTK is not itself bound to the identity of the sender that retrieved it. When issuing an ACT, the receiving agent checks the current connection's identity, local contact permission, and whether the OTK has been consumed. However, because the OTK carries no binding information associated with the identity that retrieved it, these checks cannot determine whether the current sender retrieved that OTK. Consequently, even after exhausting its own OTK retrieval quota, $C$ can still use an OTK transferred by $B$ to request and obtain a new ACT under its own identity.
+
+\subsection{ACT Request Quota Exceeded under Concurrency}
+\label{subsec:act-concurrent-quota}
+
+When multiple connections concurrently use the same ACT, the cumulative quota-debit count can exceed the token's initial quota. For a configuration with an initial quota of $1$, two connections, and one request submitted by each connection, TLC detects a violation of the \texttt{ReceiverQuotaSafety} invariant and generates a counterexample trace containing $13$ states.
+
+In state $11$, connections $c_1$ and $c_2$ have both completed token checking, while the receiving agent's remaining quota is still $1$. Connection $c_1$ then executes \texttt{ADebit}, reducing the remaining quota to $0$ and increasing the cumulative quota-debit count to $1$. Connection $c_2$ subsequently executes the same action. The remaining quota stays at $0$, but the cumulative quota-debit count increases to $2$, exceeding the initial quota. TLC therefore reports a violation of the quota-safety invariant.
+
+Concurrent experiments based on the reference implementation further observe backend-call counts exceeding the ACT's initial request quota. With an initial quota of $50$, submitting $51$ requests sequentially produces $50$ backend calls. For the concurrent execution, $49$ requests are first processed sequentially. A thread barrier then ensures that two connections both pass the check against the single remaining unit of quota before continuing with quota debit. The experiment records $51$ backend calls and a remaining quota of $0$, with the same result in three repetitions.
+
+ACT validity checking and quota debit are not completed within the same atomic operation. The function \texttt{token\_is\_valid()} checks the token and remaining quota while holding a lock, then releases the lock. The function \texttt{receive\_conversation()} subsequently reacquires the lock and debits the quota, but does not check the current remaining quota again. Two connections can therefore pass validity checking before either debit occurs, then each complete a quota debit and proceed to subsequent request processing. Because \texttt{Clamp} keeps the debit result nonnegative, the balance cannot fall below zero, but the cumulative quota-debit count can still exceed the ACT's initial quota.

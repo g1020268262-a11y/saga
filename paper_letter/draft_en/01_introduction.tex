@@ -1,0 +1,18 @@
+% !TeX root = main.tex
+% !TeX program = xelatex
+% English translation of draft_zh/01_引言.tex.
+
+\section{Introduction}
+\label{sec:introduction}
+
+In multi-agent systems, communication between agents requires verification of both parties' identities to control communication establishment and the execution of subsequent requests. SAGA~\cite{syros2025saga} is a security architecture for AI agent systems. It uses contact policies to determine whether a sender may obtain a receiving agent's one-time public key (OTK), which is then used to establish an Access Control Token (ACT). Subsequent requests are controlled by the ACT's identity binding, validity period, and remaining request quota.
+
+The original SAGA study used ProVerif~\cite{blanchet2016proverif} to formally analyze authentication of agent--Provider communication, authentication of inter-agent communication, and ACT confidentiality~\cite{syros2025saga}. However, communication authentication and ACT confidentiality do not suffice to ensure correct enforcement of authorization. Authorization outcomes also depend on whether contact policies select the best-matching rule, whether an OTK is bound to the identity of the sender that retrieved it, and whether the ACT request quota is correctly enforced. These questions require further analysis.
+
+Based on SAGA's protocol specification and reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}, this study analyzes contact-policy matching, OTK issuance and use, and ACT request-quota enforcement. For contact policies, we compare the expected budget produced by an independent policy evaluation program with the matching function's actual return value in the reference implementation, and use ProVerif to analyze how differences in policy decisions affect subsequent communication. For OTKs, we use Tamarin~\cite{meier2013tamarin} to construct a symbolic model of issuance and use and examine the binding between an OTK and the identity of the sender that retrieved it. For ACTs, we construct a quota-enforcement model in TLA$^{+}$~\cite{lamport2002specifying} and combine it with reference-implementation experiments to examine validity checking and quota debit.
+
+(1) The contact-policy matcher fails to select the best-matching rule correctly, allowing a sender that should be denied to obtain an ACT.
+
+(2) An OTK is not bound to the identity of the sender that retrieved it, allowing a sender to establish a new ACT using an OTK retrieved by another sender.
+
+(3) ACT validity checking and quota debit are not performed as one atomic operation, allowing the cumulative quota-debit count under concurrent requests to exceed the token's initial quota.

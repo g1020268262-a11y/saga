@@ -11,7 +11,7 @@ SAGA 原有研究采用 ProVerif~\cite{blanchet2016proverif} 对代理与 Provid
 
 本文依据 SAGA 的协议规范与参考实现~\cite{syros2025sagaV2,sagaReferenceImpl2026}，从接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制三个方面开展安全分析。针对接触策略，比较独立求值程序给出的预期预算与参考实现中匹配函数的实际返回值，并利用 ProVerif 分析策略判定差异对后续通信的影响；针对 OTK，利用 Tamarin~\cite{meier2013tamarin} 建立发放与使用过程的符号模型，检查 OTK 与领取者身份之间的绑定关系；针对 ACT，采用 TLA$^{+}$~\cite{lamport2002specifying} 建立额度控制模型，并结合参考实现实验检查有效性检查与额度扣减的执行情况。
 
-（1）接触策略匹配器未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT。
+（1）接触策略匹配函数未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT。
 
 （2）OTK 未与领取者身份绑定，使发送方能够使用其他发送方领取的 OTK 建立新的 ACT。
 

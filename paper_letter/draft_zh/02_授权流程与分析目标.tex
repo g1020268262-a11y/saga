@@ -17,23 +17,25 @@ SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT �
 \begin{figure*}[t]
   \centering
   \input{figures/saga_authorization_overview.tikz}
-  \caption{SAGA authorization overview. Provider maintains the OTK issuance quota, while the receiving agent maintains OTK consumption state. ACT validity checking and quota debit are not performed as one atomic operation~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
+  \caption{SAGA authorization overview. Provider maintains
+the OTK issuance quota, while the receiving agent
+maintains OTK consumption state~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
   \label{fig:saga-authorization-overview}
 \end{figure*}
 
-用户为 $A$ 配置接触策略，每条规则包含代理身份模式及对应的 OTK 领取额度。当多条规则匹配同一身份时，应采用最匹配规则对应的预算~\cite{syros2025sagaV2,sagaReferenceImpl2026}。$A$ 预先生成 OTK，将签名后的公钥材料提交给 $P$，并在本地保存对应私钥。$B$ 请求通信材料时，$P$ 核验其登记身份与 TLS 客户端证书，根据接触策略确定其初始领取额度，并检查剩余额度。检查通过且 OTK 可用时，$P$ 发放一枚 OTK，扣减 $B$ 的领取额度，并将该 OTK 从可发放集合中移除。$P$ 按发送方身份维护 OTK 领取额度，$A$ 则独立维护 OTK 的消费状态。
+用户为 $A$ 配置接触策略，每条规则包含代理身份模式及对应的预算值。当多条规则匹配同一身份时，应采用最匹配的规则对应的预算~\cite{syros2025sagaV2,sagaReferenceImpl2026}。$A$ 预先生成 OTK，将签名后的公钥材料提交给 $P$，并在本地保存对应私钥。$B$ 请求通信材料时，$P$ 核验其登记身份与 TLS 客户端证书，根据接触策略确定其初始领取额度，并检查剩余额度。检查通过且 OTK 可用时，$P$ 发放一枚 OTK，扣减 $B$ 的领取额度，并将该 OTK 从可发放集合中移除。$P$ 按发送方身份维护 OTK 领取额度，$A$ 则独立维护 OTK 的消费状态。
 
 $B$ 验证取得的通信材料后，与 $A$ 建立 TLS 连接并提交身份材料和 OTK。$A$ 验证当前连接者的身份与本地接触许可，确认提交的 OTK 尚未消费后，将其从本地尚未消费的 OTK 集合中移除。随后，$A$ 使用对应的 OTK 私钥与 $B$ 的访问控制公钥派生共享密钥，生成绑定该公钥、包含有效期与初始请求额度的 ACT，并保存其活动记录。ACT 经共享密钥加密后返回，$B$ 利用自身访问控制私钥与 OTK 派生相同密钥，解密并保存 ACT~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 
-后续通信中，$B$ 携带 ACT 提交请求，$A$ 核验令牌绑定的访问控制公钥、有效期及剩余请求额度，通过后扣减额度并处理请求。ACT 可以在不同连接中复用，同一令牌的剩余额度由 $A$ 统一维护，其初始额度由 $A$ 设置，与 $P$ 维护的 OTK 领取额度相互独立。参考实现通过独立线程处理不同连接，ACT 有效性检查与额度扣减未在同一原子操作内完成~\cite{sagaReferenceImpl2026}。
+后续通信中，$B$ 携带 ACT 提交请求，$A$ 核验令牌绑定的访问控制公钥、有效期及剩余请求额度，通过后扣减额度并处理请求。ACT 可以在不同连接中复用，同一令牌的剩余额度由 $A$ 统一维护，其初始额度由 $A$ 设置，与 $P$ 维护的 OTK 领取额度相互独立。参考实现通过独立线程处理不同连接，分别执行 ACT 有效性检查与额度扣减~\cite{sagaReferenceImpl2026}。
 
 \subsection{分析目标}
 \label{subsec:analysis-objectives-assumptions}
 
-针对接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制，分别考察策略匹配结果是否符合规则优先级、OTK 是否与领取者身份绑定，以及 ACT 的实际使用是否可能不受其初始请求额度的限制。
+SAGA 的通信授权涉及接触策略判定、OTK 发放与使用以及 ACT 请求处理三个阶段。分别从策略匹配的正确性、OTK 发放与使用的安全性，以及 ACT 对后续请求的访问控制三个方面开展分析。
 
-\textbf{ACP:} Agent Contact Policy 根据发送方 AID 与策略规则确定其通信许可和 OTK 领取额度。当多条规则同时匹配同一 AID 时，应按照规则优先级选择最匹配的规则，并以该规则对应的预算作为策略求值结果。分析重点是检查实际匹配函数是否正确返回该预算~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
+\textbf{ACP:} Agent Contact Policy 根据发送方身份及策略规则确定通信许可和 OTK 领取额度。分析策略规则的匹配与选择过程，考察规则优先级的执行以及授权结果是否符合策略配置~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 
-\textbf{OTK:} OTK 参与通信材料的分发及后续 ACT 的建立，其发放和消费分别由 Provider 与接收方执行。SAGA 通过按身份维护领取额度限制 OTK 发放次数。除原有发放上限外，本文进一步考察 OTK 的领取者与实际使用者之间的身份对应关系，即成功使用某枚 OTK 的发送方，应能够追溯到 Provider 向同一身份发放该 OTK 的先前事件。该对应关系作为额外的安全性质进行分析，其中成功使用以新 ACT 建立、解密及首次应用请求被接收方接受为判定依据。
+\textbf{OTK:} OTK 由 Provider 发放，并由接收方在建立 ACT 时消费。分析 OTK 发放、使用及 ACT 签发过程中的身份与授权条件，考察 OTK 发放次数和一次性使用等要求在通信过程中的执行情况。
 
-\textbf{ACT:} ACT 对已授权通信中的后续请求实施访问控制，其有效性受到身份绑定、有效期及请求额度等条件约束。本研究重点考察是否存在 ACT 的实际使用不受其初始请求额度限制的情况。
+\textbf{ACT:} ACT 用于控制已建立通信中的后续请求，其使用受到身份绑定、有效期及请求额度等条件约束。分析 ACT 有效性检查、请求处理和额度更新过程，考察请求额度控制的正确性。

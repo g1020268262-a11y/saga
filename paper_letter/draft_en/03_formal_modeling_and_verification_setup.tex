@@ -1,0 +1,106 @@
+% !TeX root = main.tex
+% !TeX program = xelatex
+% Definitions are tied to the archived inputs identified in the source comments.
+
+\section{Formal Modeling and Verification Setup}
+\label{sec:formal-modeling-analysis-setup}
+
+Authorization in SAGA involves contact-policy matching, OTK issuance and use, and ACT request-quota control. For these three stages, we construct an independent policy evaluation program, a Tamarin symbolic model, and a TLA$^{+}$ quota model, respectively, and use ProVerif and TLC to examine the corresponding security properties.
+
+\subsection{Contact-Policy Evaluation and Verification}
+\label{subsec:policy-evaluation-model}
+
+A contact policy determines the OTK retrieval quota from the sender's AID and an ordered rule set. To independently examine the matching function in the reference implementation, we implement a separate policy evaluation program that selects the best-matching rule according to SAGA's rule priorities. The program supports three rule types: the universal wildcard rule (\texttt{*}), exact lowercase ASCII AIDs, and name-wildcard rules with a fixed UID (\texttt{uid:*}). Their scores are $0$, $4|UID|+8|name|$, and $4|UID|+2$, respectively. Among matching rules, the program selects the rule with the highest score and returns its budget; if no rule matches, it returns a budget of $0$. It produces no evaluation result if a rule falls outside the supported syntax or if the highest score is tied.
+
+The independent policy evaluation program treats a budget greater than $0$ as permission and a budget less than or equal to $0$ as denial. In the reference implementation, the Provider's \texttt{/access} interface rejects OTK issuance when the budget is less than or equal to $0$, whereas the receiver's local policy check rejects only when the budget is less than $0$~\cite{sagaReferenceImpl2026}.
+
+The independent policy evaluation program supplies the expected results, while the actual return values of the matching function in the reference implementation supply the implementation-side results. Comparisons use the same sender AID and ordered rule set. The input contents, rule order, and implementation version are recorded to check agreement in rule selection and returned budgets.
+
+To analyze how differences in policy decisions affect subsequent communication, we provide the ProVerif model with a scenario in which the independent policy evaluation program denies access but the matching function in the reference implementation permits it. The existing communication protocol model is used to check the correspondence between request-acceptance events and prior token-issuance events, as well as the reachability of request-acceptance events. The corresponding ProVerif queries are as follows:
+
+\noindent\begin{minipage}{\linewidth}
+\renewcommand{\verbatimsize}{\small}
+\begin{verbatim}
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+    event(ChatAccept(receiver, sender, tok, msg))
+    ==> event(TokenIssue(receiver, sender, tok)).
+
+query receiver: bitstring, sender: bitstring,
+      tok: bitstring, msg: bitstring;
+    event(ChatAccept(receiver, sender, tok, msg)).
+\end{verbatim}
+\end{minipage}
+
+Experiments based on the reference implementation further examine how policy decisions affect the actual authorization process. They include three scenarios: both sides allow (A/A), both sides deny (D/D), and the independent policy evaluation program denies access while the reference implementation permits it (D/A). Execution records the policy-matching results at the Provider and receiver and the Provider's \texttt{/access} response. The experiments also check OTK issuance, OTK handling at the receiver, ACT issuance and storage, and the sender's decryption and metadata checks on the returned ACT.
+
+\subsection{OTK Issuance and Use Model}
+\label{subsec:otk-issuance-use-model}
+
+The Provider maintains OTK retrieval quotas, while the receiver maintains OTK consumption state. The Tamarin model represents these two states separately and checks whether the sender that actually uses an OTK is the same sender that previously retrieved it from the Provider. The model includes Provider $P$, receiver $A$, and senders $B,C$. Initially, $A$ holds two OTKs, and $B$ and $C$ each have a nonrenewable quota for retrieving one OTK.
+
+Linear facts represent the Provider's retrieval quotas, OTKs available for issuance, and OTKs not yet consumed by the receiver. Issuing an OTK consumes the corresponding retrieval credit and available key at the Provider, while issuing an ACT consumes the corresponding OTK at the receiver. Senders retain obtained OTK public keys through persistent facts. The correspondence between each participant's identity and its public access-control key (PAC) is established as an initial fact. Private messages containing the identities of both communicating parties represent communication protected by TLS. The cryptographic abstraction uses the DH equational theory, a hash KDF with a domain-separation tag, and ideal symmetric encryption. The ACT ciphertext contains the sender's PAC to retain the binding between the token and the identity.
+
+The threat model allows $B$ to forward an OTK public key that it has retrieved to $C$. After exhausting its own OTK retrieval quota, $C$ can still use an OTK forwarded by $B$ to request an ACT with its own registered identity, PAC, and private key. Each OTK can be forwarded at most once. In the baseline configuration, both the Provider and receiver permit $B,C$. Control configurations disable OTK forwarding or have both sides deny $C$.
+
+Tamarin uses protocol events to record the execution relationships among OTK issuance, ACT issuance, client decryption, and application-request acceptance. The model first checks the original bound on OTK issuance and the unique issuance and consumption of each OTK. It additionally checks whether the identity that retrieves an OTK matches its actual user's identity and whether a sender successfully uses at most one distinct OTK. The following Tamarin lemma expresses identity correspondence between the sender that retrieved an OTK and the sender that uses it:
+
+\begingroup
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+lemma successful_use_requires_issue_to_same_sender:
+  "All a s k t pac #i.
+     RequestAccepted(a, s, k, t, pac) @i
+     ==> (Ex #j.
+       ProviderIssue(a, s, k) @j & j < i)"
+\end{verbatim}
+\end{minipage}
+\endgroup
+
+Here, \texttt{ProviderIssue} denotes an OTK-issuance event at the Provider, and \texttt{RequestAccepted} denotes an event in which the receiver accepts an application request. The property requires each successfully accepted request to be traceable to an earlier issuance of the corresponding OTK to the same sender. Auxiliary lemmas also check OTK issuance and consumption counts and whether the corresponding ACT issuance and client decryption occur before a request is accepted.
+
+\subsection{Concurrent ACT Request Quota Model}
+\label{subsec:act-quota-model}
+
+The ACT request-quota model uses TLA$^{+}$ to describe execution when multiple connections share the request quota of the same ACT. At initialization, the sender and receiver store the same ACT, and their quota states are both set to the token's initial quota. The receiver's shared balance represents the ACT's remaining request quota; each connection's state variables record its request-processing stage. The sender's balance and message-delivery state describe processing at both ends.
+
+When a connection is established, the receiver checks the token metadata and remaining quota. After parsing a request, it checks the token metadata and positive balance again, moving the connection into the checked state. The model represents token-validity checking and quota debit as two separate atomic actions, corresponding to two independently locked critical sections in the reference implementation~\cite{sagaReferenceImpl2026}. The quota-debit action requires the connection to have passed the check and updates the shared balance after the lock is reacquired, without checking whether the current balance is still positive. The debit uses \texttt{Clamp} to keep the balance nonnegative and increments the connection's count of requests for which quota debit has completed. Because checking and debiting do not form one atomic operation, other connections can execute between the two actions. The TLA$^{+}$ action is defined as follows:
+
+\begingroup
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+Clamp(n) == IF n < 0 THEN 0 ELSE n
+
+ADebit(c) ==
+    /\ apc[c] = "Checked"
+    /\ receiverRemaining' =
+        Clamp(receiverRemaining - 1)
+    /\ counts' = [counts EXCEPT ![c].admits = @ + 1]
+    /\ apc' = [apc EXCEPT ![c] = "Debited"]
+    /\ UNCHANGED
+        <<senderRemaining, bpc, link, faultCount>>
+\end{verbatim}
+\end{minipage}
+\endgroup
+
+The model sums the number of requests for which quota debit has completed across all connections and checks whether the cumulative quota-debit count exceeds the ACT's initial request quota. The quota-safety invariant is defined in TLA$^{+}$ as follows:
+
+\begingroup
+\renewcommand{\verbatimsize}{\footnotesize}
+\setlength{\verbatimbaselineskip}{10pt}
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
+Accepted ==
+    SumOn([c \in Connections |-> counts[c].admits],
+          Connections)
+
+ReceiverQuotaSafety == Accepted <= InitialQuota
+\end{verbatim}
+\end{minipage}
+\endgroup
+
+Here, \texttt{Accepted} denotes the total number of requests for which connections have completed quota debit. TLC checks this request-quota safety invariant, the model's state types, and consistency between balances and request counts. The finite-state check sets the initial request quota to $1$, uses two connections, permits each connection to submit at most one request, and keeps the token metadata valid.

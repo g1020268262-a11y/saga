@@ -1,0 +1,126 @@
+% !TeX root = saga_authorization_sequence.tex
+% Protocol messages and signatures: SAGA full version, arXiv:2504.21034v2,
+% Sections IV-D2 and IV-E. Local policy/state checks: reference implementation
+% 7372111, saga/provider/provider.py and saga/agent.py.
+\begin{tikzpicture}[
+  x=1mm,y=1mm,
+  font=\fontsize{8}{9.5}\selectfont,
+  actor/.style={draw=black!75,fill=black!7,rounded corners=0.6mm,
+    minimum width=47mm,minimum height=8mm,font=\bfseries\fontsize{8.5}{10}\selectfont},
+  life/.style={draw=black!45,densely dashed,line width=0.4pt},
+  msg/.style={-{Latex[length=1.8mm,width=1.2mm]},line width=0.55pt},
+  check/.style={draw=black!55,fill=white,rounded corners=0.5mm,
+    text width=46mm,align=center,inner sep=1.1mm,
+    font=\fontsize{7.8}{9.3}\selectfont},
+  wire/.style={fill=white,inner sep=0.5mm,font=\fontsize{8}{9.5}\selectfont},
+  phase/.style={draw=black!35,fill=black!7,line width=0.35pt,
+    anchor=west,align=left,inner xsep=1mm,inner ysep=0.9mm,
+    font=\bfseries\fontsize{8}{9.5}\selectfont}
+]
+  \node[align=center,font=\itshape\fontsize{8}{9.5}\selectfont]
+    at (86,8) {Registered agents. $P$ holds $A$'s signed OTK pool. All messages use authenticated TLS.};
+
+  \node[actor] at (25,-3) {Provider $P$};
+  \node[actor] at (86,-3) {Initiating agent $B$};
+  \node[actor] at (147,-3) {Receiving agent $A$};
+  \draw[life] (25,-7) -- (25,-50);
+  \draw[life] (86,-7) -- (86,-185);
+  \draw[life] (147,-7) -- (147,-185);
+
+  \node[phase,text width=171mm] at (0,-12)
+    {Policy evaluation and OTK issuance};
+  \draw[msg] (86,-20) --
+    node[wire,above] {Request OTK}
+    node[wire,below] {$\langle\mathrm{aid}_B,\mathrm{aid}_A\rangle$} (25,-20);
+  \node[check] at (25,-32) {
+    Authenticate $B$; check contact policy.\\
+    Initialize OTK quota on first request.\\
+    Require positive quota and available $k_i$.\\
+    Remove $k_i$; reduce $B$'s quota by one.
+  };
+  \draw[msg] (25,-46) --
+    node[wire,above] {Return signed OTK}
+    node[wire,below] {$\langle\mathcal I_A,k_i,\sigma_{k_i}^{U_A}\rangle$} (86,-46);
+
+  \node[check] at (86,-55) {
+    Verify $U_A$'s certificate,\\
+    signed metadata and $\sigma_{k_i}^{U_A}$.
+  };
+
+  \node[phase,text width=112mm] at (59,-63)
+    {OTK consumption and ACT establishment};
+  \draw[msg] (86,-73) --
+    node[wire,above] {Request ACT}
+    node[wire,below] {$\langle\mathcal I_B,\sigma_B^P,k_i\rangle$} (147,-73);
+  \node[check] at (147,-85) {
+    Verify $B$'s registration and TLS identity.\\
+    Check local contact policy.\\
+    Check $k_i$ is unused, then consume it.
+  };
+
+  \node[check] at (86,-100) {
+    Derive shared key\\
+    $K=\operatorname{KDF}(\operatorname{DH}(\mathsf{SAC}_B,k_i))$
+  };
+  \node[check] at (147,-100) {
+    Derive shared key\\
+    $K=\operatorname{KDF}(\operatorname{DH}(\mathsf{SOTK}_A^i,\mathsf{PAC}_B))$
+  };
+  \node[check] at (147,-115) {
+    $m_t=\langle N,T_{\rm issued},T_{\rm expire},$\\
+    $Q_{\max},\mathsf{PAC}_B\rangle$\\
+    $t=\operatorname{Enc}_K(m_t)$\\
+    Store $t$; initialize its request quota.
+  };
+  \draw[msg] (147,-129) --
+    node[wire,above] {Return encrypted ACT}
+    node[wire,below] {$t$} (86,-129);
+  \node[align=center,font=\fontsize{7.8}{9.3}\selectfont]
+    at (86,-136) {Decrypt $t$ with $K$, retain $t$ for requests.};
+
+  \draw[draw=black!45,rounded corners=1mm,line width=0.4pt]
+    (59,-142) rectangle (173,-185);
+  \node[phase,text width=112mm] at (59,-145)
+    {ACT request processing (repeat for each request)};
+  \draw[msg] (86,-155) --
+    node[wire,above] {Submit request}
+    node[wire,below] {$\langle t,\mathrm{msg}\rangle$} (147,-155);
+  \node[check] at (147,-166) {
+    Check active ACT, bound $\mathsf{PAC}_B$,\\
+    expiry and remaining request quota.
+  };
+  \node[check] at (147,-178) {
+    Reduce request quota by one;\\
+    process the request.
+  };
+  \node[fill=white,align=center,text width=54mm,inner sep=0.5mm,
+    font=\fontsize{7.6}{9.2}\selectfont] at (88,-173)
+    {Validity check and quota debit\\are not one atomic operation.};
+
+  \node[draw=black!35,fill=black!2,rounded corners=0.6mm,
+    text width=46mm,align=left,inner sep=1.5mm,
+    execute at begin node={\hyphenpenalty=10000},
+    font=\fontsize{7.6}{9.2}\selectfont,anchor=north]
+    at (25,-62) {
+    \textbf{Identity and keys}\\[0.7mm]
+    $\mathrm{aid}_X$ is agent $X$'s identifier.\\
+    $U_X$ is the owner of agent $X$.\\
+    $(\mathsf{SAC}_X,\mathsf{PAC}_X)$ are $X$'s private and public access-control keys.\\
+    $(\mathsf{SOTK}_A^i,k_i)$ are $A$'s private and public one-time keys, $k_i=\mathsf{OTK}_A^i$.\\[0.7mm]
+    $\mathcal I_X=\langle\mathrm{Cert}_{U_X},M_X\rangle$\\
+    $\mathrm{Cert}_{U_X}$ certifies owner $U_X$.\\
+    $M_X$ contains the agent's identifier, endpoint, TLS certificate and $\mathsf{PAC}_X$, signed by $U_X$.\\[0.7mm]
+    $\sigma_{k_i}^{U_A}=$\\
+    $\operatorname{Sign}_{\mathrm{SK}_{U_A}}(\langle\mathrm{aid}_A,k_i\rangle)$\\[1mm]
+    $\mathrm{SK}_{U_A}$ is $U_A$'s signing key.\\
+    $\sigma_B^P$ is $P$'s signature on $B$'s registration material.\\[1mm]
+    \textbf{Quotas and token fields}\\[0.7mm]
+    ACT is an access-control token.\\
+    $P$ maintains OTK issuance quota for each sending identity.\\
+    $A$ maintains each ACT's request quota and sets its initial value.\\
+    Connections using the same ACT share its request quota.\\
+    $Q_{\max}$ is the initial ACT request quota.\\
+    $N$ is a fresh token nonce.\\
+    $T_{\rm issued},T_{\rm expire}$ are issue and expiration times.
+  };
+\end{tikzpicture}
