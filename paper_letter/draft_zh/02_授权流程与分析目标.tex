@@ -10,16 +10,7 @@
 \subsection{授权流程}
 \label{subsec:authorization-workflow}
 
-SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT 建立以及 ACT 请求处理三个阶段，如图~\ref{fig:saga-authorization-overview}~所示。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
-
-\begin{figure*}[t]
-  \centering
-  \input{figures/saga_authorization_overview.tikz}
-  \caption{SAGA authorization overview. Provider maintains
-the OTK issuance quota, while the receiving agent
-maintains OTK consumption state~\cite{syros2025sagaV2,sagaReferenceImpl2026}.}
-  \label{fig:saga-authorization-overview}
-\end{figure*}
+SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT 建立以及 ACT 请求处理三个阶段。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
 
 用户为 $A$ 配置代理接触策略（Agent Contact Policy，ACP），每条规则包含代理标识符（AID）的匹配模式及对应的预算值。当多条规则匹配同一身份时，应采用最匹配的规则对应的预算~\cite{syros2025sagaV2,sagaReferenceImpl2026}。$A$ 预先生成 OTK，将签名后的公钥材料提交给 $P$，并在本地保存对应私钥。$B$ 请求通信材料时，$P$ 核验其登记身份与 TLS 客户端证书，根据接触策略确定其初始领取额度，并检查剩余额度。检查通过且 OTK 可用时，$P$ 发放一枚 OTK，扣减 $B$ 的领取额度，并将该 OTK 从可发放集合中移除。$P$ 按发送方身份维护 OTK 领取额度，$A$ 则独立维护 OTK 的消费状态。
 

@@ -21,12 +21,12 @@ Build from the repository root in PowerShell:
 The build reuses ../ieice_template and ../references.bib.
 The summary and all five sections are translated from the current Chinese source.
 The updated ACP Tamarin analysis and the second-stage Chinese revisions are included.
-The flowchart and its in-text reference are omitted from the English manuscript at the user's request. Standalone figure assets are retained; the Chinese manuscript still includes its flowchart.
+The flowchart and its in-text reference are omitted from both the Chinese and English manuscripts at the user's request. Standalone figure assets are retained.
 Subsection 3.1 follows SAGA_Letter_3.1中英文定点压缩方案.docx and displays only policy_budget_agreement; the other properties remain described in prose.
 Native formulas retained in the manuscript, TLA+ actions, identifiers, numerical results, and citations are unchanged.
 The complete title/author/affiliation block and the template's default typography and margins are retained.
 The page count reflects the requested subsection compression and English flowchart removal, with no changes to template typography or margins.
-Only subsection 3.1 is revised in the Chinese manuscript. The reference implementation, formal models, and historical evidence are unchanged.
+The reference implementation, formal models, and historical evidence are unchanged.
 
 Original translation baseline hashes and structural verification (predating the above revisions):
   build/translation_20261125/translation-check.json

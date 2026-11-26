@@ -34,7 +34,7 @@ lemma policy_budget_agreement:
 
 \texttt{SpecDecision} and \texttt{ProviderBudget} record expected and Provider policy evaluations, respectively. The lemma requires their budgets to agree for the same execution and communicating parties. We also check whether OTK issuance, ACT issuance, and request acceptance have corresponding prior expected allow decisions, whether request acceptance is reachable despite expected denial, and whether acceptance corresponds to prior ACT issuance and decryption.
 
-Verification covers both orderings of a fixed-UID name-wildcard deny rule and a universal wildcard allow rule, and single universal wildcard allow and deny rules. Reference-implementation experiments cover expected/actual decisions of allow/allow (A/A), deny/deny (D/D), and deny/allow (D/A). A/A uses two matching allow rules; D/A and D/D use the two opposing rules in the respective deny--allow and allow--deny orders. We record policy evaluations, \texttt{/access} responses, and subsequent authorization outcomes (OTK issuance and consumption, ACT issuance, storage, and decryption).
+Verification covers both orderings of a name-wildcard deny rule with a fixed user identifier (UID) and a universal wildcard allow rule, as well as single universal wildcard allow and deny rules. Experiments on the reference implementation examine the effects of policy matching on subsequent communication authorization.
 
 \subsection{OTK Issuance and Use Model}
 \label{subsec:otk-issuance-use-model}
