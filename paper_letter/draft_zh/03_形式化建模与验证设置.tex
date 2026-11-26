@@ -66,42 +66,7 @@ lemma successful_use_requires_issue_to_same_sender:
 
 ACT 请求额度模型采用 TLA$^{+}$ 描述多个连接共享同一 ACT 请求额度时的执行过程。模型初始化时，发送方与接收方均保存同一 ACT，双方的额度状态均设为令牌的初始额度。接收方的共享余额表示该 ACT 的剩余请求额度；各连接的状态变量记录请求处理阶段，发送方余额和消息交付状态用于描述双端处理过程。
 
-连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中分别获取并释放同一把锁的两个临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 要求令牌元数据有效且共享余额非零，使连接进入已检查状态。\texttt{ADebit} 以已检查状态为执行条件，更新共享余额并增加该连接完成额度扣减操作的请求计数。\texttt{Clamp} 将余额保持为非负值。两个动作之间允许其他连接交错执行。TLA$^{+}$ 动作定义如下：
-
-\begingroup
-\renewcommand{\verbatimsize}{\footnotesize}
-\setlength{\verbatimbaselineskip}{10pt}
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-Clamp(n) == IF n < 0 THEN 0 ELSE n
-\end{verbatim}
-\end{minipage}
-
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-ACheck(c) ==
-    /\ apc[c] = "Parsed"
-    /\ MetadataValid /\ receiverRemaining # 0
-    /\ apc' = [apc EXCEPT ![c] = "Checked"]
-    /\ UNCHANGED
-        <<senderRemaining, receiverRemaining, bpc,
-          link, counts, faultCount>>
-\end{verbatim}
-\end{minipage}
-
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-ADebit(c) ==
-    /\ apc[c] = "Checked"
-    /\ receiverRemaining' =
-        Clamp(receiverRemaining - 1)
-    /\ counts' = [counts EXCEPT ![c].admits = @ + 1]
-    /\ apc' = [apc EXCEPT ![c] = "Debited"]
-    /\ UNCHANGED
-        <<senderRemaining, bpc, link, faultCount>>
-\end{verbatim}
-\end{minipage}
-\endgroup
+连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将 ACT 有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中分别获取并释放同一把锁的两个临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 在令牌元数据有效且共享余额非零时将连接置为已检查状态；\texttt{ADebit} 以已检查状态为执行条件，扣减共享余额并增加请求计数，通过 \texttt{Clamp} 保持余额非负。不同连接可在两个动作之间交错执行。
 
 模型检查各连接通过 ACT 有效性检查并执行额度扣减操作的请求总数是否超过 ACT 的初始请求额度。请求额度安全不变量在 TLA$^{+}$ 中定义如下：
 
