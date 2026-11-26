@@ -8,7 +8,7 @@
 \subsection{接触策略匹配错误}
 \label{subsec:policy-evaluation-consistency}
 
-对于发送方 \texttt{alice@example.com:agent}，设置预算为 $-1$ 的规则 \texttt{alice@example.com:*} 和预算为 $10$ 的全通配规则。当拒绝规则位于允许规则之前时，Tamarin 对 Provider 预算一致性，以及 OTK 发放、ACT 签发和应用请求接受须具有先前预期允许决策的四项安全性质均返回 \texttt{falsified}；预期拒绝而应用请求被接受的存在性引理返回 \texttt{verified}。
+对于发送方 \nolinkurl{alice@example.com:agent}，设置预算为 $-1$ 的规则 \nolinkurl{alice@example.com:*} 和预算为 $10$ 的全通配规则。当拒绝规则位于允许规则之前时，Tamarin 对 Provider 预算一致性，以及 OTK 发放、ACT 签发和应用请求接受须具有先前预期允许决策的四项安全性质均返回 \texttt{falsified}；预期拒绝而应用请求被接受的存在性引理返回 \texttt{verified}。
 
 反例中，预期策略求值返回 $-1$，而 Provider 返回 $10$，发放 OTK 后将领取额度扣减至 $9$。接收方同样返回 $10$，签发 ACT，发送方成功解密令牌，其应用请求被接收方接受。请求接受与此前 ACT 签发及解密的对应性质均返回 \texttt{verified}。
 

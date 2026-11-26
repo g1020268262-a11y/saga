@@ -74,7 +74,11 @@ ACT 请求额度模型采用 TLA$^{+}$ 描述多个连接共享同一 ACT 请求
 \noindent\begin{minipage}{\linewidth}
 \begin{verbatim}
 Clamp(n) == IF n < 0 THEN 0 ELSE n
+\end{verbatim}
+\end{minipage}
 
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
 ACheck(c) ==
     /\ apc[c] = "Parsed"
     /\ MetadataValid /\ receiverRemaining # 0
@@ -82,7 +86,11 @@ ACheck(c) ==
     /\ UNCHANGED
         <<senderRemaining, receiverRemaining, bpc,
           link, counts, faultCount>>
+\end{verbatim}
+\end{minipage}
 
+\noindent\begin{minipage}{\linewidth}
+\begin{verbatim}
 ADebit(c) ==
     /\ apc[c] = "Checked"
     /\ receiverRemaining' =

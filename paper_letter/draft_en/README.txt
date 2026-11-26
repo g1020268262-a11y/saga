@@ -27,6 +27,7 @@ Native formulas retained in the manuscript, TLA+ actions, identifiers, numerical
 The complete title/author/affiliation block and the template's default typography and margins are retained.
 The current revision improves academic expression and expands abbreviations independently in the Summary and main text. It retains the template typography, margins, and native formal definitions.
 The reference implementation, formal models, and historical evidence are unchanged.
+Layout refinement: raggedbottom keeps normal heading and paragraph spacing instead of stretching it to align column bottoms. The long TLA+ display is split only between complete Clamp, ACheck, and ADebit definitions; all native code lines are retained. The xurl package permits line breaks in long AIDs without altering their characters. Column widths, fonts, font sizes, margins, and body leading are unchanged.
 
 Academic language revision report: ../academic_expression_review_20261126.txt
 
