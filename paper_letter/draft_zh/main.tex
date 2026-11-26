@@ -36,7 +36,7 @@
 % Keep natural heading and paragraph spacing; leave spare space at column bottoms.
 \raggedbottom
 \begin{summary}
-SAGA 是一种面向 AI Agent 系统的安全架构，其原有研究主要对通信认证与访问控制令牌（Access Control Token，ACT）的机密性进行形式化分析。本文采用 Tamarin 和 TLA$^{+}$ 对 SAGA 的授权机制进行形式化分析，并结合参考实现实验，发现三个安全问题：接触策略匹配函数未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT；一次性公钥（One-Time Key，OTK）未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 获得新的 ACT；ACT 有效性检查与额度扣减未在同一原子操作内完成，使同一 ACT 的并发使用可能导致接收方处理的请求数超过 ACT 的初始请求额度。
+本文结合 Tamarin、TLA$^{+}$ 形式化分析与参考实现实验，研究 AI Agent 安全架构 SAGA 的授权机制。研究发现，本应被拒绝的发送方能够获得访问控制令牌；获准通信的发送方在 OTK 领取额度耗尽后，仍可利用转交的 OTK 获取新令牌；同一令牌的并发使用可使超出授权额度的请求得到处理。
 \end{summary}
 \begin{keywords}
 AI Agent，SAGA，形式化分析，访问控制，协议安全

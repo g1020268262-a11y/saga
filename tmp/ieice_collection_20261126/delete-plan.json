@@ -1,0 +1,34 @@
+[
+  {
+    "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L09.pdf",
+    "kept_path": "paper_letter/reference_letters_20261027/01_spkse_2026.pdf",
+    "doi": "10.1587/transfun.2025DML0001",
+    "sha256": "695e8c6a13ce2a3d1fa84bfd8e1b8d19c450f7502e7f1ab0bc1e2c127849bdc0",
+    "byte_identical": true,
+    "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+  },
+  {
+    "removed_path": "paper_letter/reference_letters_20261103/fiveg_pdf.pdf",
+    "kept_path": "paper_letter/reference_letters_20261103/01_5g_authentication_vulnerability_2020.pdf",
+    "doi": "10.1587/transinf.2019FOL0001",
+    "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
+    "byte_identical": true,
+    "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+  },
+  {
+    "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L01.pdf",
+    "kept_path": "paper_letter/reference_letters_20261103/01_5g_authentication_vulnerability_2020.pdf",
+    "doi": "10.1587/transinf.2019FOL0001",
+    "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
+    "byte_identical": true,
+    "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+  },
+  {
+    "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L02.pdf",
+    "kept_path": "paper_letter/reference_letters_20261103/04_wimax_secure_handover_2008.pdf",
+    "doi": "10.1093/ietisy/e91-d.12.2875",
+    "sha256": "0f3282503e76ee2758f3d1128c21cde236e6dd5c02a3895901a61f79d67821a6",
+    "byte_identical": true,
+    "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+  }
+]

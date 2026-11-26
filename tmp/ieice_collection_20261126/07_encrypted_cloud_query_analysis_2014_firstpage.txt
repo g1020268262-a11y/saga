@@ -1,0 +1,96 @@
+                                                                                         IEICE TRANS. INF. & SYST., VOL.E97–D, NO.2 FEBRUARY 2014
+326
+
+
+LETTER
+Security Analysis of Collusion-Resistant Nearest Neighbor Query
+Scheme on Encrypted Cloud Data∗
+                                       Youwen ZHU†a) , Nonmember, Tsuyoshi TAKAGI† , Member, and Rong HU† , Nonmember
+
+
+
+SUMMARY           Recently, Yuan et al. (IEEE Infocom ’13, pp.2652–2660)       attack can be regarded as chosen-plaintext attack [7].
+proposed an eﬃcient secure nearest neighbor (SNN) search scheme on en-               It is obvious that the knowledge of level-1 (or level-2)
+crypted cloud database. Their scheme is claimed to be secure against the
+                                                                               attacker is the subset of what a higher-level attacker learns.
+collusion attack of query clients and cloud server, because the colluding
+attackers cannot infer the encryption/decryption key. In this letter, we ob-   The higher-level attack is more powerful. Wong et al. pro-
+serve that the encrypted dataset in Yuan’s scheme can be broken by the         posed an asymmetric scalar-product-preserving encryption
+collusion attack without deducing the key, and present a simple but power-     (ASPE) scheme in [1], and ASPE can support SNN query
+ful attack to their scheme. Experiment results validate the high eﬃciency      while preserving the data privacy under level-2 attack. The
+of our attacking approach. Additionally, we also indicate an upper bound
+of collusion-resistant ability of any accurate SNN query scheme.
+                                                                               work [1] also presented an enhanced ASPE which aims to
+key words: cloud computing, encrypted query, nearest neighbor, attack          achieve data privacy against the above level-3 attack. How-
+                                                                               ever, Yao et al. [2] observe that the enhanced ASPE can-
+1.        Introduction                                                         not resist level-3 attacker, and accurate SNN scheme is
+                                                                               at least as hard as order-preserving encryption (OPE) [11].
+                                                                               Because the work [11] shows that secure OPE against the
+With the prosperous development of cloud computing, more
+                                                                               chosen-plaintext attack is unachievable, then, no accurate
+and more companies and individuals are motivated to store
+                                                                               SNN scheme can be expected to be secure under the level-3
+their data in cloud server and utilize the strong computation
+                                                                               attack. The works [2]–[4] proposed three approximate SNN
+ability of cloud to query the outsourced dataset, because the
+                                                                               solution with diﬀerent security and eﬃciency. Nevertheless,
+cloud services can oﬀer nice flexibility, scalability and IT
+                                                                               the existing approaches [1]–[4] assume that query users are
+cost-reduction. Due to privacy concerns, data owner may
+                                                                               full trustworthy, and data owner shares his key for encrypt-
+prefer to encrypt their dataset before outsourcing the data
+                                                                               ing/decrypting outsourced dataset with each query user. It
+to cloud server. Nevertheless, encryption will make query
+                                                                               causes the outsourced database will be completely broken if
+challenging. As a widely-used algorithm, nearest neigh-
+                                                                               one untrusted query user disclose the key to attacker even
+bor query aims to find out a nearest point in a dataset for
+                                                                               under level-1 attack. The SNN scheme in [5] deals with the
+a given query point. Up to now, several works [1]–[6] have
+                                                                               problem that query users reveal their knowledge to attacker.
+conducted the secure nearest neighbor (SNN) query on en-
+                                                                               While the attacker learns query users’ knowledge about the
+crypted cloud dataset. For security and privacy of the out-
+                                                                               key of data owner, the scheme in [5] still can preserve data
+sourced database, SNN schemes generally consider the fol-
+                                                                               privacy against level-1 attack, comparing to be completely
+lowing three levels about the knowledge of attackers.
+                                                                               broken in [1]–[4]. As yet, [5] still cannot resist the collusion
+      • Level-1 attacker only knows the encrypted database
+                                                                               attack of cloud server and query clients in which situation
+and encrypted query points. The level-1 attack corresponds
+                                                                               the malicious colluding query clients will disclose all their
+to the ciphertext-only attack in the area of cryptography [7].
+                                                                               data to cloud server. A collusion-resistant SNN solution is
+      • Level-2 attacker learns, in addition to what level-1
+                                                                               recently put forward by Yuan et al. [6], and the approach is
+attacker knows, some plain database points, but does not
+                                                                               claimed to be secure under level-3 attack even the attacker
+know their corresponding encrypted items. This attack is
+                                                                               also learns several plain query points through colluding with
+the same as the known-sample attack in [8]–[10].
+                                                                               malicious query clients, because the collusion attack cannot
+      • Level-3 attacker is assumed to know several plain
+                                                                               figure out the key of data owner. However, we observe if
+database tuples and the corresponding encrypted items, be-
+                                                                               the attacker learns the encrypted database, some plain query
+yond level-1 attacker. The attack follows the known input-
+                                                                               points and their corresponding encrypted results, the out-
+output attack model in [8]–[10]. If the attacker can choose
+                                                                               sourced database in Yuan’s scheme [6] can be fully broken
+plaintexts to be encrypted and obtain their ciphertexts, the
+                                                                               without deducing the key of data owner.
+      Manuscript received August 22, 2013.                                           In this letter, we review the scheme by Yuan et al. [6],
+      †
+      The authors are with the Institute of Mathematics for Industry,          and present a simple but powerful attack to it by providing
+Kyushu University, Fukuoka-shi, 819–0395 Japan.                                detail attack steps and extensive experiment results on both
+    ∗
+      This work was supported in part by the Japan Society for the             synthetic and real datasets. Then, we examine the security
+Promotion of Science postdoctoral fellowship (No. P12045), the
+National Natural Science Foundation of China (No. 61370224).                   bound of collusion-resistant SNN scheme, and our results
+  a) E-mail: ywzhu@imi.kyushu-u.ac.jp                                          show that no accurate SNN solution can achieve data privacy
+      DOI: 10.1587/transinf.E97.D.326                                          against level-2 attack if the attacker simultaneously colludes
+
+                     Copyright 
+                               c 2014 The Institute of Electronics, Information and Communication Engineers
+

@@ -42,7 +42,7 @@ South China Normal University, Guangzhou 510631, China.}
 % Keep natural heading and paragraph spacing; leave spare space at column bottoms.
 \raggedbottom
 \begin{summary}
-SAGA (Security Architecture for Governing Agentic Systems) is a security architecture for AI (artificial intelligence) agent systems. Its original formal analysis focused on authentication and ACT (access control token) confidentiality. We analyze its authorization mechanism using Tamarin and TLA$^{+}$ (Temporal Logic of Actions), complemented by reference-implementation experiments. Incorrect enforcement of contact-policy rule priorities allows a sender that should be denied access to obtain an ACT. OTKs (one-time public keys) lack binding to the senders to which they are issued: an authorized sender can obtain new ACTs using OTKs issued to and forwarded by others after exhausting its own retrieval quota. Separating ACT validation from quota deduction allows the receiver to process requests beyond the token's initial quota under concurrent use.
+Using Tamarin and TLA$^{+}$ (Temporal Logic of Actions), together with reference-implementation experiments, we analyze authorization in SAGA (Security Architecture for Governing Agentic Systems), an architecture for AI (artificial intelligence) agents. A sender that should be denied access can obtain an ACT (access control token); an authorized sender can obtain new tokens using forwarded OTKs (one-time public keys) after exhausting its own OTK retrieval quota; and concurrent use of the same token can cause requests beyond its authorized quota to be processed.
 \end{summary}
 \begin{keywords}
 AI agents, SAGA, formal analysis, access control, protocol security

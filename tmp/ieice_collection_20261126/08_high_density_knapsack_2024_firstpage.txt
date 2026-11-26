@@ -1,0 +1,73 @@
+IEICE TRANS. FUNDAMENTALS, VOL.E107–A, NO.3 MARCH 2024
+                                                                                                                                                         519
+
+
+LETTER          Special Section on Information Theory and Its Applications
+
+High-Density Knapsack Cryptosystem Using Shifted-Odd and
+Super-Increasing Sequence
+     Minami SATO† , Sosuke MINAMOTO† , Nonmembers, Ryuichi SAKAI† , and Yasuyuki MURAKAMI†a) , Members
+
+
+
+SUMMARY It is proven that many public-key cryptosystems would be              eration of SOSI scheme. Moreover, we confirm the security
+broken by the quantum computer. The knapsack cryptosystem which is            against the low-density attack by computer experiment∗ .
+based on the subset sum problem has the potential to be a quantum-resistant
+cryptosystem. Murakami and Kasahara proposed a SOSI trapdoor sequence
+which is made by combining shifted-odd (SO) and super-increasing (SI)         2.     Modular Knapsack Cryptosystems
+sequence in the modular knapsack cryptosystem. This paper firstly show
+that the key generation method could not achieve a secure density against     In this section, let us explain the framework of the modular
+the low-density attack. Second, we propose a high-density key generation
+                                                                              knapsack cryptosystem.
+method and confirmed that the proposed scheme is secure against the low-
+density attack.
+key words: knapsack cryptosystem, subset sum problem, shifted-odd se-         2.1      Key Generation
+quence, super-increasing sequence, low-density attack
+                                                                              Bob generates a public key as follows:
+1.   Introduction
+                                                                                   1. Generate the secret sequence (s1, s2, . . . , sn ) which has
+It is proven that many public-key cryptosystems would be                              a trapdoor.
+broken by the quantum computer. The knapsack cryptosys-
+                                                                                   2. Choose an integer P such that P > k=1         sk .
+                                                                                                                          Ín
+tem which is based on the subset sum problem has the poten-
+tial to be a quantum-resistant cryptosystem. The knapsack                          3. Generate an integer w such that gcd(w, P) = 1.
+cryptosystem using the super-increasing sequence (SI) as
+a trapdoor was proposed by Merkle and Hellman in 1978                              4. Compute the public sequence (a1, a2, . . . , an ) such that
+[1]. Unfortunately, the private key of MH scheme can be                               ai = wsi mod P for i = 1, 2, . . . , n∗∗ .
+computed from the public-key by Shamir’s attack [2]. In
+1999, Kasahara and Murakami proposed a new trapdoor se-
+quence which consists of stepwise shifted odd numbers in                      2.2      Encryption
+the modular knapsack cryptosystem [3]. The sequence will
+be referred to as shifted-odd sequence (SO). The private key                  For a given message sequence (m1, m2, . . . , mn ) ∈ {0, 1} n ,
+can be computed from the public-key by Sakai et al.’s at-                     Alice calculates the ciphertext C as
+tack [4]. Murakami and Kasahara proposed the sequence of                                   n
+combining SO and SI as the trapdoor [5]. This scheme will
+                                                                                           Õ
+                                                                                      C=         a k mk .                                                 (1)
+be referred to as SOSI scheme. The SOSI sequence is not                                    k=1
+revealed by neither Shamir’s attack nor Sakai et al.’s attack.
+      The low-density attack was proposed by Lagarias and                     2.3      Decryption
+Odlyzko (LO attack) [6] and improved by Coster et al.
+(CJLOSS attack) [7]. In the knapsack schemes, the density                     Let the intermediate message M be
+d is defined by d = n/log2 (max ai ). The knapsack schemes
+are broken with LO attack when d < 0.6463 and are broken                                    n
+                                                                                            Õ
+with CJLOSS attack when d < 0.9408.                                                   M=          s k mk .                                                (2)
+      This paper firstly shows that the key generation of the                               k=1
+
+original SOSI (org:SOSI) could not achieve a secure den-                      Bob decrypts the message (m1, m2, . . . , mn ) from the cipher-
+sity against the low-density attack. Second, we propose the                   text C as follows:
+revised SOSI sequence (rev:SOSI) by improving the key gen-
+                                                                                   1. Calculate the intermediate message M:
+      Manuscript received February 27, 2023.
+      Manuscript revised June 25, 2023.                                                    M = w −1 C mod P.                                              (3)
+      Manuscript publicized August 4, 2023.
+    † The authors are with the Osaka Electro-Communication Uni-                   ∗ This letter is based on the presentation of ISITA2022 [9].
+                                                                                 ∗∗ Actually, a 0 , which is obtained by replacing the position of
+versity, Neyagawa-shi, 572-8530 Japan.                                                           i
+  a) E-mail: yasuyuki@osakac.ac.jp                                            the component ai , is published as a public key, i.e. ai0 = aσ(i) for
+      DOI: 10.1587/transfun.2023TAL0004                                       i = 1, 2, . . . , n, where σ is a permutation of the integers {1, 2, . . . , n}.
+
+                     Copyright © 2024 The Institute of Electronics, Information and Communication Engineers
+

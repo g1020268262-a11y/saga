@@ -66,42 +66,7 @@ The event \texttt{ProviderIssue} denotes OTK issuance by the Provider, and \text
 
 The TLA$^{+}$ model captures concurrent use of the same ACT by multiple connections. Initially, the sender and receiver store the same ACT, and both quotas are set to its initial request quota. A shared balance records the receiver's remaining quota, while per-connection state variables track request processing. The sender's balance and message-delivery state capture processing at both endpoints.
 
-At connection establishment, the receiver checks the token metadata and remaining request quota. After request parsing, validation and quota deduction are modeled as atomic actions \texttt{ACheck} and \texttt{ADebit}, corresponding to two critical sections that use separate acquisitions of the same lock in the reference implementation~\cite{sagaReferenceImpl2026}. The \texttt{ACheck} action requires valid token metadata and a nonzero shared balance, then moves the connection into the checked state. The \texttt{ADebit} action is enabled when the connection is in that state. It updates the shared balance and increments the count of requests that complete the quota deduction step. The \texttt{Clamp} operator keeps the balance nonnegative. The two actions permit interleaving across connections. The TLA$^{+}$ actions are defined as follows:
-
-\begingroup
-\renewcommand{\verbatimsize}{\footnotesize}
-\setlength{\verbatimbaselineskip}{10pt}
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-Clamp(n) == IF n < 0 THEN 0 ELSE n
-\end{verbatim}
-\end{minipage}
-
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-ACheck(c) ==
-    /\ apc[c] = "Parsed"
-    /\ MetadataValid /\ receiverRemaining # 0
-    /\ apc' = [apc EXCEPT ![c] = "Checked"]
-    /\ UNCHANGED
-        <<senderRemaining, receiverRemaining, bpc,
-          link, counts, faultCount>>
-\end{verbatim}
-\end{minipage}
-
-\noindent\begin{minipage}{\linewidth}
-\begin{verbatim}
-ADebit(c) ==
-    /\ apc[c] = "Checked"
-    /\ receiverRemaining' =
-        Clamp(receiverRemaining - 1)
-    /\ counts' = [counts EXCEPT ![c].admits = @ + 1]
-    /\ apc' = [apc EXCEPT ![c] = "Debited"]
-    /\ UNCHANGED
-        <<senderRemaining, bpc, link, faultCount>>
-\end{verbatim}
-\end{minipage}
-\endgroup
+At connection establishment, the receiver checks the token metadata and remaining request quota. After request parsing, ACT validation and quota deduction are modeled as separate atomic actions \texttt{ACheck} and \texttt{ADebit}, corresponding to two critical sections that separately acquire and release the same lock in the reference implementation~\cite{sagaReferenceImpl2026}. The \texttt{ACheck} action moves the connection into the checked state when the token metadata is valid and the shared balance is nonzero. The \texttt{ADebit} action requires that state, deducts from the shared balance, and increments the request count, using \texttt{Clamp} to keep the balance nonnegative. Different connections can interleave between these actions.
 
 The model checks whether the number of requests that pass ACT validation and complete the quota deduction step exceeds the ACT's initial request quota. The request quota safety invariant is defined as follows in TLA$^{+}$:
 

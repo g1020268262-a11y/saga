@@ -1,0 +1,68 @@
+                                                                                           IEICE TRANS. INF. & SYST., VOL.E107–D, NO.10 OCTOBER 2024
+1372
+
+
+LETTER
+Diﬀerential-Neural Cryptanalysis on AES∗
+
+
+                                            Liu ZHANG†,†† , Student Member, Zilong WANG†,†† , and Jinyu LU†††a) , Nonmembers
+
+
+
+SUMMARY Based on the framework of a multi-stage key recovery at-                 equivalent forms—underscoring the eﬀectiveness of neural
+tack for a large block cipher, 2 and 3-round diﬀerential-neural distinguishers   networks in cryptanalysis.
+were trained for AES using partial ciphertext bits. The study introduces the
+                                                                                      Most previous research has focused on ciphers with
+diﬀerential characteristics employed for the 2-round ciphertext pairs and
+explores the reasons behind the near 100% accuracy of the 2-round dif-           smaller block sizes. However, Yi Chen et al. [5] have pro-
+ferential neural distinguisher. Utilizing the trained 2-round distinguisher,     posed a multi-stage diﬀerential-neural cryptanalysis frame-
+the 3-round subkey of AES is successfully recovered through a multi-stage        work applicable to larger block ciphers, facilitating key re-
+key guessing. Additionally, a complexity analysis of the attack is provided,     covery attacks on all ciphers in the SPECK family. In this
+validating the eﬀectiveness of the proposed method.
+key words: deep learning, diﬀerential-neural distinguisher, AES, key re-
+                                                                                 study, we apply diﬀerential-neural cryptanalysis to AES, uti-
+covery attack                                                                    lizing the multi-stage key recovery framework designed for
+                                                                                 large block ciphers.
+1. Introduction                                                                  Our Contribution. We have developed a diﬀerential-neural
+                                                                                 distinguisher for AES, which was trained using various sub-
+In CRYPTO 2019, Gohr introduced the concept of                                   sets of ciphertext data, including full ciphertext, a single
+diﬀerential-neural cryptanalysis [1]. This technique enables                     row or column, two bytes, and one byte. Currently, our
+a distinguisher to diﬀerentiate between ciphertexts encrypted                    capabilities are limited to training a 3-round diﬀerential-
+from plaintexts with a specific input diﬀerence and those en-                    neural distinguisher. Our findings indicate that there is a
+crypted from random numbers. Gohr eﬀectively integrated                          proportional decrease in the true negative rate of the dis-
+this distinguisher with classical diﬀerentials, facilitating a                   tinguisher as the amount of ciphertext used for training
+12-round key recovery attack on SPECK32/64 (from a to-                           diminishes. Remarkably, using just two bytes of cipher-
+tal of 22 rounds). At EUROCRYPT 2021, Benamira [2]                               text, we have achieved a distinguisher accuracy close to
+noted that Gohr’s diﬀerential-neural distinguisher provides                      100%. We attribute this high level of accuracy to the
+a robust approximation of the cipher’s diﬀerential distribu-                     eﬀective capture of diﬀerential propagation characteristics
+tion table (DDT) and learns additional information beyond                        inherent in AES. Furthermore, we utilize the trained 2-
+the DDT. In ASIACRYPT 2022, Bao et al. [3] refined the                           round distinguisher to conduct a 3-round key recovery attack
+concept of neutral bits, extending key recovery attacks to                       on AES. The source codes for our experiments are pub-
+13 rounds for SPECK32/64 and to 16 rounds (from a to-                            licly available at https://github.com/CryptAnalystDesigner/
+tal of 32) for SIMON32/64. Further developments were                             diﬀerential-neural-cryptanalysis-on-aes.git.
+presented at ASIACRYPT 2023, where Bao et al. [4] pro-                                 The remainder of this letter is organized as follows:
+posed specific rules that, when used in conjunction with                         Sect. 2 introduces the fundamental concepts of AES, de-
+the DDT, enhance the accuracy of DDT-based distinguish-                          scribes the neural network architecture, outlines the training
+ers for SPECK32/64. Additionally, they demonstrated that                         process, and presents the results of the distinguisher trained
+combining these rules does not improve the performance                           using the full ciphertext. Section 3 details the training and
+of the diﬀerential-neural distinguisher, suggesting that the                     performance of the diﬀerential-neural distinguisher using
+distinguisher may already be leveraging these rules or their                     partial ciphertexts. The methodology and results of the key
+      Manuscript received May 8, 2024.                                           recovery attack, utilizing the distinguisher trained with par-
+      Manuscript publicized June 20, 2024.                                       tial ciphertexts, are discussed in Sect. 4. Finally, Sect. 5
+    † School of Cyber Engineering, Xidian University, Xi’an                      summarises our work.
+710126, China.
+   †† State Key Laboratory of Cryptology, P. O. Box 5159, Beijing,
+                                                                                 2. Diﬀerential-Neural Distinguisher on AES-128
+100878, China.
+  ††† College of Sciences, National University of Defense Technol-
+ogy, Hunan, Changsha 410073, China.                                              2.1   Description of AES-128
+    ∗ The work is supported by the National Natural Science Foun-
+dation of China (No. 62172319, U19B2021) and Postgraduate
+                                                                                 The AES [6] is a Substitution-Permutation network that sup-
+Scientific Research Innovation Project of Hunan Province (No.
+CX20220016).                                                                     ports key sizes of 128, 192 and 256 bits. The 128-bit plaintext
+   a) E-mail: jinyu_smile@foxmail.com                                            initializes the internal state represented by a 4 × 4 matrix of
+      DOI: 10.1587/transinf.2024EDL8044                                          bytes seen as values. Depending on the version of AES, Nr
+                      Copyright © 2024 The Institute of Electronics, Information and Communication Engineers
+

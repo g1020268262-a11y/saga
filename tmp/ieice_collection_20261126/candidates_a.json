@@ -1,0 +1,116 @@
+[
+  {
+    "id": "01_anonymous_authentication_2018",
+    "title": "How to Preserve User Anonymity in Password-Based Anonymous Authentication Scheme",
+    "authors": [
+      "SeongHan Shin",
+      "Kazukuni Kobara"
+    ],
+    "year": 2018,
+    "series": "D",
+    "volume": "E101.D",
+    "issue": 3,
+    "pages": "803-807",
+    "expected_pdf_pages": 5,
+    "doi": "10.1587/transinf.2017EDL8183",
+    "base": "https://www.jstage.jst.go.jp/article/transinf/E101.D/3/E101.D_2017EDL8183",
+    "study_note_zh": "已有认证主张、较弱攻击者反例和针对性对策的组织。",
+    "article_type": "LETTER",
+    "article_url": "https://www.jstage.jst.go.jp/article/transinf/E101.D/3/E101.D_2017EDL8183/_article/-char/en",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E101.D/3/E101.D_2017EDL8183/_pdf/-char/en",
+    "pdf_file": "01_anonymous_authentication_2018.pdf",
+    "journal": "IEICE Transactions on Information and Systems"
+  },
+  {
+    "id": "02_dynamic_id_authentication_2012",
+    "title": "On the Security of an Efficient and Secure Dynamic ID-Based Remote User Authentication Scheme",
+    "authors": [
+      "Eun-Jun Yoon",
+      "Kee-Young Yoo"
+    ],
+    "year": 2012,
+    "series": "D",
+    "volume": "E95.D",
+    "issue": 6,
+    "pages": "1684-1686",
+    "expected_pdf_pages": 3,
+    "doi": "10.1587/transinf.E95.D.1684",
+    "base": "https://www.jstage.jst.go.jp/article/transinf/E95.D/6/E95.D_1684",
+    "study_note_zh": "用很短的协议回顾和具体冒充反例支撑安全结论。",
+    "article_type": "LETTER",
+    "article_url": "https://www.jstage.jst.go.jp/article/transinf/E95.D/6/E95.D_1684/_article/-char/en",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E95.D/6/E95.D_1684/_pdf/-char/en",
+    "pdf_file": "02_dynamic_id_authentication_2012.pdf",
+    "journal": "IEICE Transactions on Information and Systems"
+  },
+  {
+    "id": "03_group_key_agreement_2011",
+    "title": "Cryptanalysis of Group Key Agreement Protocol Based on Chaotic Hash Function",
+    "authors": [
+      "Eun-Jun Yoon",
+      "Kee-Young Yoo"
+    ],
+    "year": 2011,
+    "series": "D",
+    "volume": "E94.D",
+    "issue": 11,
+    "pages": "2167-2170",
+    "expected_pdf_pages": 4,
+    "doi": "10.1587/transinf.E94.D.2167",
+    "base": "https://www.jstage.jst.go.jp/article/transinf/E94.D/11/E94.D_11_2167",
+    "study_note_zh": "在共享协议背景下分别组织多个安全问题。",
+    "article_type": "LETTER",
+    "article_url": "https://www.jstage.jst.go.jp/article/transinf/E94.D/11/E94.D_11_2167/_article/-char/en",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E94.D/11/E94.D_11_2167/_pdf/-char/en",
+    "pdf_file": "03_group_key_agreement_2011.pdf",
+    "journal": "IEICE Transactions on Information and Systems"
+  },
+  {
+    "id": "04_trust_management_p2p_2014",
+    "title": "An Elliptic Curve-Based Trust Management Protocol in Peer-to-Peer Networks",
+    "authors": [
+      "Aiguo Chen",
+      "Guangchun Luo",
+      "Jinsheng Ren"
+    ],
+    "year": 2014,
+    "series": "D",
+    "volume": "E97.D",
+    "issue": 6,
+    "pages": "1656-1660",
+    "expected_pdf_pages": 5,
+    "doi": "10.1587/transinf.E97.D.1656",
+    "base": "https://www.jstage.jst.go.jp/article/transinf/E97.D/6/E97.D_1656",
+    "study_note_zh": "多主体认证协议的必要流程与安全论证；属于方案设计。",
+    "article_type": "LETTER",
+    "article_url": "https://www.jstage.jst.go.jp/article/transinf/E97.D/6/E97.D_1656/_article/-char/en",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E97.D/6/E97.D_1656/_pdf/-char/en",
+    "pdf_file": "04_trust_management_p2p_2014.pdf",
+    "journal": "IEICE Transactions on Information and Systems"
+  },
+  {
+    "id": "05_android_unlock_patterns_2017",
+    "title": "A Visibility-Based Lower Bound for Android Unlock Patterns",
+    "authors": [
+      "Jinwoo Lee",
+      "Jae Woo Seo",
+      "Kookrae Cho",
+      "Pil Joong Lee",
+      "Dae Hyun Yum"
+    ],
+    "year": 2017,
+    "series": "D",
+    "volume": "E100.D",
+    "issue": 3,
+    "pages": "578-581",
+    "expected_pdf_pages": 4,
+    "doi": "10.1587/transinf.2016EDL8196",
+    "base": "https://www.jstage.jst.go.jp/article/transinf/E100.D/3/E100.D_2016EDL8196",
+    "study_note_zh": "安全界限定义与定量结果的短文表达；不是通信协议分析。",
+    "article_type": "LETTER",
+    "article_url": "https://www.jstage.jst.go.jp/article/transinf/E100.D/3/E100.D_2016EDL8196/_article/-char/en",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E100.D/3/E100.D_2016EDL8196/_pdf/-char/en",
+    "pdf_file": "05_android_unlock_patterns_2017.pdf",
+    "journal": "IEICE Transactions on Information and Systems"
+  }
+]

@@ -1,0 +1,79 @@
+IEICE TRANS. INF. & SYST., VOL.E94–D, NO.11 NOVEMBER 2011
+                                                                                                                                            2167
+
+
+LETTER           Special Section on Information and Communication System Security
+
+Cryptanalysis of Group Key Agreement Protocol Based on Chaotic
+Hash Function
+                                                                                     Eun-Jun YOON†a) and Kee-Young YOO††b) , Members
+
+
+
+SUMMARY            In 2010, Guo and Zhang proposed a group key agreement        susceptible to stolen-verifier attacks in which obtaining se-
+protocol based on the chaotic hash function. This letter points out that Guo-   cret data, which are stored in a server, can allow an illegiti-
+Zhang’s protocol is still vulnerable to oﬀ-line password guessing attacks,
+                                                                                mate user to login to a server as a legitimate user.
+stolen-verifier attacks and reflection attacks.
+key words: cryptanalysis, key agreement, chaotic maps, hash function,
+Chebyshev map                                                                   2.    Chaotic Map Based Hash Function
+
+1.   Introduction                                                               Conventional hash functions such as MD4, MD5 and SHA-1
+                                                                                are realized by a complicated method based on logical op-
+Chaos [1] is a universal, random-like and robust phe-                           erations or multi-round iteration of some available ciphers.
+nomenon in nonlinear systems. Over the past decades, cryp-                      However, since the conventional hash functions are success-
+tography based on chaos theory has been studied widely                          fully attacked by Wang et al. [21], the construction of a new
+to exploit the idea of using chaotic dynamical systems in                       and more secure hash function has been studied by lots of
+cryptography because of the random-like, unpredictable dy-                      researches in recent years. Chaos has been widely utilized
+namics of chaotic systems. For instance, chaotic systems                        to construct cryptographic hash function in the past decade
+have been widely used to design secure communication pro-                       for its interesting characteristics, such as sensitivity to tiny
+tocols [2]–[14], cryptographic hash functions [15], [16], and                   changes in initial conditions and parameters, mixing prop-
+secure digital image encryption schemes [17].                                   erty, ergodicity, etc. Compared with conventional hash func-
+     In 2007, Xiao et al. [8] proposed a novel key agreement                    tions, the chaotic hash function based on high-dimensional
+protocol based on chaotic maps. However, Han et al. [10]                        cat map [7], [13]–[16] not only is simple and eﬃcient, but
+pointed out that Xiao et al.’s protocol is insecure against                     also has strong diﬀusion and confusion capability, good col-
+the replay attacks. In 2010, Guo and Zhang [11] pointed                         lision resistance, extreme sensitivity to message and secret
+out that none of [8], [10], [12] can satisfy the contributory                   key (please refer to [7], [13]–[16] for more detailed informa-
+nature of key agreement, that is, the malicious server can                      tion).
+predetermine the shared secret key. They also proposed a
+secure group key agreement protocol based on the chaotic                        3.    Review of Guo-Zhang’s Protocol
+hash function [7], [13]–[16] to surmount the aforementioned
+                                                                                Figure 1 illustrates Guo-Zhang’s protocol. Before perform-
+flaws. However, this letter points out that Guo-Zhang’s pro-
+                                                                                ing the key agreement protocol, assume that user A and
+tocol is still vulnerable to oﬀ-line password guessing attacks
+                                                                                server B secretly share the password hash value h pw =
+and stolen-verifier attacks [18]–[20].
+                                                                                H(IDA , PWA ) of A’s random password PWA and identifica-
+     Guo-Zhang’s protocol uses user’s password to prove
+                                                                                tion IDA , where H(·) denotes the chaotic hash function [7],
+the security. So, the password based key agreement pro-
+                                                                                [13]–[16], and IDA and PWA are juxtaposed as the pend-
+tocols can be vulnerable to oﬀ-line password guessing at-
+                                                                                ing message from left to right. The details of Guo-Zhang’s
+tacks since users usually choose easy-to-remember pass-
+                                                                                protocol are as follows:
+words. Actually, Guo-Zhang’s protocol is vulnerable to oﬀ-
+line password guessing attacks in which an adversary can
+                                                                                3.1    Authentication Phase
+easily obtain the secret password of the legal user from the
+intercepted values. In addition, Guo-Zhang’s protocol is                        (1) A → B: AU A
+       Manuscript received February 1, 2011.                                          A generates a random number ra ∈ [−1, 1], and sends
+       Manuscript revised April 20, 2011.
+     †
+       The author is with the School of Computer Engineer-
+                                                                                      the authenticated message AU A = {IDA , ra, H(h pw , ra)}
+ing, Kyungil University, 33 Buho-Ri, Hayang-Ub, Kyungsan-Si,                          to B.
+Kyungsangpuk-Do 712–701, South Korea.
+    ††
+       The author is with the School of Computer Science and Engi-
+                                                                                (2) B → A: AU B
+neering, College of IT Engineering, Kyungpook National Univer-                        After receiving AU A , B takes out his/her own copies
+sity, 1370 Sankyuk-Dong, Buk-Gu, Daegu 702–701, South Korea.                          of h pw , computes H  (h pw , ra) and verifies whether
+   a) E-mail: ejyoon@kiu.ac.kr                                                                    ?
+   b) E-mail: yook@knu.ac.kr (Corresponding Author)                                   H(h pw , ra) = H  (h pw , ra). If not B stops here; other-
+       DOI: 10.1587/transinf.E94.D.2167                                               wise, A is authenticated and B returns a message AU B =
+
+                     Copyright 
+                               c 2011 The Institute of Electronics, Information and Communication Engineers
+

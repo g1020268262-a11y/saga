@@ -1,0 +1,63 @@
+                                                                                      IEICE TRANS. FUNDAMENTALS, VOL.E109–A, NO.7 JULY 2026
+1314
+
+
+LETTER
+Comments on “Identity-Based Group Encryption with Keyword
+Search against Keyword Guessing Attack”
+                                                               Takeshi YOSHIDA† , Nonmember and Keita EMURA†,††a) , Member
+
+
+
+SUMMARY Wang et al. (IEEE Transactions on Information Forensics
+and Security 2024) introduced Identity-Based Group Encryption with Key-   2.    Definition of IBGEKS
+word Search (IBGEKS). In this short note, we give two keyword guessing
+attacks against the IBGEKS scheme.
+key words: public key encryption with keyword search, identity-based      Let IBGEKS = (Setup, KeyGenG, Register, Enc, Trapdoor,
+group encryption with keyword search                                      Test) be an IBGEKS scheme defined as follows.
+                                                                               • Setup(1λ ): The setup algorithm takes a security param-
+1.     Introduction                                                              eter λ as input, and outputs a public parameter pp.
+                                                                               • KeyGenG (pp, ID G ): The group key generation algo-
+Keyword guessing attacks (KGAs), that reveal information                         rithm takes pp and a group identity ID G as input, and
+of keyword from a trapdoor, are inevitable in Public key                         outputs a group primary secret key skG .
+Encryption with Keyword Search (PEKS) [2]. To prevent                          • Register(pp, skG, IDi ): The registration algorithm takes
+KGAs, Public key Authenticated Encryption with Keyword                           pp, sk G , and a sender’s identity IDi ∈ ID G as input,
+Search (PAEKS) has been proposed [4], [5], where the en-                         and outputs the sender’s secret key ski .
+cryption algorithm takes a sender’s secret key (in addition to                 • Enc(pp, ski , IDi , kw): The encryption algorithm takes
+a receiver’s public key). To search an encrypted keyword,                        pp, ski , IDi , and a keyword to be encrypted kw as input,
+a trapdoor is designated not only for a keyword but also for                     and outputs a ciphertext C.
+a sender. At the expense of preventing KGAs, the search                        • Trapdoor(pp, skG, kw 0): The trapdoor generation algo-
+complexity is linear in terms of the number of senders.                          rithm takes pp, skG , and a keyword to be searched kw 0,
+     To reduce the search complexity, Wang et al. [6] in-                        and outputs a trapdoor Tkw0 .
+troduced Identity-Based Group Encryption with Keyword                          • Test(pp,Tkw0 , C): The test algorithm takes pp, Tkw0 , and
+Search (IBGEKS) where each sender belongs to a group                             C as input, and outputs 0 or 1.
+and a trapdoor is designated for a group. They proposed a
+pairing-based IBGEKS scheme, and claimed that the scheme                  Correctness. For C ← Enc(pp, ski , IDi , kw) and Tkw0 ←
+provides trapdoor privacy (i.e., no information of keyword is             Trapdoor(pp, sk G, kw 0 ), it is required that Test(pp,Tkw0 , C) =
+revealed from trapdoors) under the Computational Bilinear                 1 if kw = kw 0 and IDi ∈ ID G (i.e., ski ←
+Diffie-Hellman assumption in the random oracle model.                     Register(pp, sk G, IDi )), and Test(pp,Tkw0 , C) = 0, otherwise.
+Our Contribution. In this short note, we demonstrate that                 Trapdoor Privacy. They defined the IND-TP-CCA security
+the IBGEKS scheme does not provide trapdoor privacy by                    where TP stands for trapdoor privacy. We note that no
+giving two attacks. We point out that a trapdoor for a keyword            test oracle is defined in their security model although CCA
+can be seen as a Boneh-Lynn-Shacham (BLS) signature [3].                  security in the PEKS context means that an adversary is
+We prepare a verification key of the BLS signature scheme                 allowed to access the test oracle [1]. Thus, we refer TP as
+via a sender’s secret key (first attack) or a trapdoor (second            the model.
+attack). We generalized the first attack where it is impossible                 Let A be an adversary and C be the challenger. In
+to provide trapdoor privacy if an adversary is allowed to issue           the setup phase, C runs pp ← Setup(1λ ) and skG ←
+a register query.                                                         KeyGenG (pp, ID G ), and gives pp to A. A is allowed to ac-
+                                                                          cess the register oracle ORegister (for a sender’s identity IDi , it
+                                                                          returns ski ) the trapdoor oracle OTrapdoor (for a keyword kw 0,
+                                                                          it returns Tkw0 ← Trapdoor(pp, skG, kw 0)), and the encryp-
+                                                                          tion oracle OEnc (for a keyword kw and a sender’s identity IDi ,
+      Manuscript received November 28, 2025.
+                                                                          it returns C ← Enc(pp, ski , IDi , kw)). In the challenge phase,
+      Manuscript revised January 7, 2026.
+      Manuscript publicized January 20, 2026.                             A declares two challenge keywords kw0∗ and kw1∗ , where A
+    † Kanazawa University, Kanazawa-shi, 920-1192 Japan.                  did not send kw0∗ and kw1∗ to OTrapdoor and OEnc . C generates
+   †† National Institute of Advanced Industrial Science and Tech-         the challenge trapdoor T ∗ ← Trapdoor(pp, skG, kwβ∗ ) where
+nology (AIST), Tokyo, 135-0064 Japan.                                          $
+   a) E-mail: k-emura@se.kanazawa-u.ac.jp (Corresponding au-              β ← − {0, 1} is the challenge bit. A is allowed to access
+thor)                                                                     ORegister , OTrapdoor , and OEnc where querying kw0∗ and kw1∗
+      DOI: 10.1587/transfun.2025EAL2104                                   are prohibited. A outputs β 0 ∈ {0, 1} and wins if β = β 0.
+                    Copyright © 2026 The Institute of Electronics, Information and Communication Engineers
+

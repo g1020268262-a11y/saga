@@ -1,0 +1,69 @@
+IEICE TRANS. INF. & SYST., VOL.E101–D, NO.3 MARCH 2018
+                                                                                                                                                803
+
+
+LETTER
+How to Preserve User Anonymity in Password-Based Anonymous
+Authentication Scheme
+                                                                    SeongHan SHIN†a) , Nonmember and Kazukuni KOBARA† , Member
+
+
+
+SUMMARY          A purpose of password-based anonymous authentication           must not require any secure storage facility for usability of
+schemes is to provide not only password-based authentication but also user      the schemes. Recently, Shin et al., [16] showed that the
+anonymity. In [19], Yang et al., proposed a password-based anonymous
+                                                                                YZWB10 scheme does not provide unlinkability against a
+authentication scheme (we call it YZWB10 scheme) using the password-
+protected credentials. In this paper, we discuss user anonymity of the          malicious server.
+YZWB10 scheme [19] against a third-party attacker, who is much weaker
+than a malicious server. First, we show that a third-party attacker in the      1.1 Our Contributions
+YZWB10 scheme can specify which user actually sent the login request
+to the server. This attack also indicates that the attacker can link diﬀerent
+login requests to be sent later by the same user. Second, we give an eﬀec-
+                                                                                In Table 1, we summarize anonymity levels of password-
+tive countermeasure to this attack which does not require any security for      based anonymous authentication schemes (including the
+storing users’ password-protected credentials.                                  YZWB10 scheme [19]) which have being standardized in
+key words: password, authentication, user anonymity                             ISO/IEC 20009-4 [9]. In this paper, we discuss user
+                                                                                anonymity of the YZWB10 scheme [19] against a passive/
+1.   Introduction                                                               active third-party attacker, who is much weaker than a ma-
+                                                                                licious server. Our contributions are twofold (see also Ta-
+A main purpose of password-based anonymous authentica-                          ble 1). First, we show that a third-party attacker in the
+tion schemes is to provide not only password-based authen-                      YZWB10 scheme can specify which user actually sent the
+tication but also user anonymity. So far, several schemes                       login request to the server (Sect. 4). This attack also in-
+(e.g., [15], [17]–[19]) have been proposed in diﬀerent set-                     dicates that the attacker can link diﬀerent login requests
+tings. Some potential applications of these schemes in-                         to be sent later by the same user. From this attack, it is
+clude whistle-blowing from insiders, questionnaire to quali-                    clear that the YZWB10 scheme (both the basic and extended
+fied people, anonymous counseling, and so on.                                   schemes) [19] does not provide user anonymity against a
+      In [18], Yang et al., proposed a new password-based                       third-party attacker. Second, we give an eﬀective counter-
+anonymous authentication scheme using the password-                             measure to the attack of Sect. 4 which does not require any
+protected credentials. This scheme is constructed on                            security for storing users’ password-protected credentials
+Camenisch’s signature [6] for instantiating users’ authenti-                    (Sect. 5).
+cation credentials, and Paillier encryption [12] for server’s
+homomorphic encryption. Some elements of the authenti-                          2.   Preliminaries
+cation credential (i.e., signature on user’s identity) are en-
+crypted with user’s password, while other elements are en-                      2.1 Notations
+crypted with server’s public-key (homomorphic) encryp-
+tion. For better eﬃciency, Yang et al., [19] proposed another                   First, a ∈R S means that a is randomly chosen from S . Let
+password-based anonymous authentication scheme (we call                         G1 , G2 , GT be cyclic groups of prime q. Let g be a generator
+it YZWB10 scheme) which is based on the BBS+ sig-                               of G1 , and h be a generator of G2 . A bilinear map e : G1 ×
+nature [1] (instead of Camenisch’s signature [6]) and the                       G2 → GT has the following properties: a) Bilinear: ∀u ∈
+ElGamal encryption (instead of Paillier encryption [12]).                       G1 , v ∈ G2 and x, y ∈R Zq , e(u x , vy ) = e(u, v) xy , and b) Non-
+The main idea of [18], [19] is to restrict the signature verifi-                degenerate: e(g, h)  1.
+ability to server only via a zero-knowledge proof of knowl-
+edge protocol. As a distinguishing feature of [18], [19],                       2.2 BBS+ Signature
+Yang et al., claimed that the password-protected credentials
+                                                                                In [1], Au et al., modified the BBS group signature [3] for
+      Manuscript received August 18, 2017.                                      their dynamic k-times anonymous authentication scheme.
+      Manuscript revised November 14, 2017.                                     The modified signature (called, BBS+ signature) is a signa-
+      Manuscript publicized December 13, 2017.                                  ture scheme with eﬃcient protocols for issuing a signature
+    †
+      The authors are with the Information Technology Research
+                                                                                on a committed value, and for proving zero-knowledge of a
+Institute (ITRI), National Institute of Advanced Industrial Science
+and Technology (AIST), Tokyo, 135–0064 Japan.                                   signature on a committed value.
+   a) E-mail: seonghan.shin@aist.go.jp                                                A public key of the BBS+ signature scheme is (W =
+      DOI: 10.1587/transinf.2017EDL8183                                         hχ , h ∈ G2 , a, b, d ∈ G1 ), and a private key is (χ ∈ Zq ).
+
+                     Copyright 
+                               c 2018 The Institute of Electronics, Information and Communication Engineers
+

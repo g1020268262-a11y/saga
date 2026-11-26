@@ -1,0 +1,65 @@
+IEICE TRANS. INF. & SYST., VOL.E108–D, NO.8 AUGUST 2025
+                                                                                                                                        1033
+
+
+LETTER
+A Study of Multi-Robot Tracking Problem in One-Dimensional
+System Using Probabilistic Model Checking
+                Toshifusa SEKIZAWA†a) , Member, Naoaki YONEZAWA† , Nonmember, Kozo OKANO†† , Senior Member,
+                                                                         and Keitaro NARUSE††† , Nonmember
+
+
+
+SUMMARY This study presents an approach to one-dimensional multi-           We use probabilistic model checking to analyze multi-robot
+robot tracking problem using probabilistic model checking. Two of three     tracking problem including velocity control with probabilis-
+robots have probabilistic velocity changes that cause unsteady movements
+                                                                            tic changes. Specifically, we consider three robots’ tracking
+and potential collision. The experimental results shows qualitative and
+quantitative validation indicating applicability of model checking to de-   problem in which two of three robots have probabilistic ve-
+signing dependable robot control.                                           locity changes that cause unsteady conditions and make the
+key words: multi-robot, tracking problem, model checking, probabilistic     problem diﬃcult. For example, probability of collision oc-
+behaviors                                                                   currence depends on parameter settings of velocities. The
+                                                                            experiments show that model checking approach provides
+1. Introduction                                                             qualitative and quantitative validation for multi-robot track-
+                                                                            ing problem including behavior diﬀerences depending on
+Robots are widely used and play important roles in our soci-                parameters. The approach indicates that model checking
+ety. Designing dependable robot control is addressed impor-                 provides a diﬀerent technique to robot’s design correctness
+tant challenges to provide useful robots. Generally, simula-                or design flaws than simulation.
+tion and testing are often used to validate actions of robot.                     The layout is as follows. Section 2 introduces tracking
+Deterministic actions of robot are relatively easy to validate              problem and model checking. Section 3 describes the target
+using simulation and/or testing. However, robot’s actions in                system, our modeling, and verification results. We discuss
+the real-world are aﬀected by various probabilistic factors,                research results in Sect. 4. Section 5 concludes this study.
+such as errors of the robot’s sensor/actuator, disturbance,
+and communication failure. It is diﬃcult to analyze such af-                2. Preliminaries
+fected actions, since probabilistic factors causes uncertainty
+in the behavior of the robot which makes complexity. For ex-                This section introduces the multi-robot tracking problem and
+ample, parameter setting is important but becomes diﬃcult                   model checking.
+with uncertainty. Another conceivable approach for valida-
+tion is formal verification, especially in design phase. Model              2.1   Multi-Robot Tracking Problem
+checking is one of formal verification techniques based on
+exhaustive searching to ensure/analyze correctness of the                   The robot tracking problem is a fundamental problem on
+system. The technique has been successfully applied to ana-                 robotics. This paper addresses the multi-robot tracking prob-
+lyze various systems [1]. However, the application of model                 lem where a group of mobile robots move while maintaining
+checking is not suﬃcient. Generally in robotics, validation                 a distance between other robots. In multi-robot tracking
+using model checking has not fully applied.                                 problem, multiple robots are allocated in a field. The field
+      This study aims to present applicability of probabilis-               is a one-dimensional system, specifically a half-line, in this
+tic model checking for designing robot’s control. We fo-                    study. Real-world robot acts in three or two dimension. Be-
+cus on multi-robot tracking problem in a one-dimensional                    havior analysis of two/three-dimensional linear actions can
+system with probabilistic factors. One-dimensional system                   be analyzed as composition of the one-dimensional system
+has wide application and can be fundamental to analyze                      for each axis.
+real-world robot acting in two/three dimensional systems.                         Every robot is assumed to move along the half-line.
+      Manuscript received January 6, 2025.                                  Here, assume that n robots are allocated, and each robot
+      Manuscript publicized February 12, 2025.                              is denoted as ri , 0 ≤ i ≤ n − 1. There are two types of
+    † Department of Computer Science, College of Engineering,               robot roles, leader and follower. The leader does not fol-
+Nihon University, Koriyama-shi, 963–8642 Japan.                             low other robots and acts independently, while the follower
+   †† Department of Electrical and Computer Engineering, Faculty
+                                                                            follows other robots. Every robot repeatedly acts observa-
+of Engineering, Shinshu University, Nagano-shi, 380–8553 Japan.             tion and movement to achieve tracking. As an observation,
+  ††† Department of Computer Science and Engineering, Division
+                                                                            we assume that robots have synchronous connection to no-
+of Information Systems, The University of Aizu, Aizuwakamatsu-
+shi, 965–8580 Japan.                                                        tify their positions and control each velocity. Each robot
+   a) E-mail: sekizawa.toshifusa@nihon-u.ac.jp                              changes its position according to its velocity as a movement.
+      DOI: 10.1587/transinf.2025EDL8001                                     Let xi (t) and vi (t) be the coordinate and the velocity of robot
+                    Copyright © 2025 The Institute of Electronics, Information and Communication Engineers
+

@@ -1,0 +1,76 @@
+                                                                                             IEICE TRANS. INF. & SYST., VOL.E100–D, NO.3 MARCH 2017
+578
+
+
+LETTER
+A Visibility-Based Lower Bound for Android Unlock Patterns∗
+
+
+                                                   Jinwoo LEE† , Jae Woo SEO†† , Kookrae CHO††† , Pil Joong LEE† , Nonmembers,
+                                                                                            and Dae Hyun YUM††††a) , Member
+
+
+
+SUMMARY            The Android pattern unlock is a widely adopted graphical
+password system that requires a user to draw a secret pattern connecting
+points arranged in a grid. The theoretical security of pattern unlock can be
+defined by the number of possible patterns. However, only upper bounds of
+the number of patterns have been known except for 3 × 3 and 4 × 4 grids for
+which the exact number of patterns was found by brute-force enumeration.
+In this letter, we present the first lower bound by computing the minimum
+number of visible points from each point in various subgrids.
+key words: user authentication, graphical password, Android unlock pat-
+terns, lower bound
+
+                                                                                 Fig. 1   The Cartesian coordinates and an N-shaped pattern in G3×3 .
+1.    Introduction
+
+The Android pattern unlock is a graphical password system                      minimum security level of pattern unlock. To answer ques-
+that was introduced on Android version 1.0 as an alternative                   tions such as “what size of grid should be used for 280 se-
+to traditional text-based password systems. A pattern pass-                    curity level?”, a lower bound is required. In this letter, we
+word consists of a sequence of four or more contact points                     provide the first lower bound for Android unlock patterns by
+arranged in a grid and the security level of the pattern pass-                 calculating the minimum visibility of each point in subgrids
+word is determined by the size of the pattern space. While                     where already-visited points are removed.
+CyanLockScreen [1] provides grids from 3 × 3 to 6 × 6 and
+Security Lock Screen [2] up to 25 × 25, the total number of                    2.   Visibility-Based Lower Bound
+possible patterns is only known for 3 × 3 and 4 × 4 grids that
+was obtained by brute-force enumeration; there are 389,112                     2.1 Derivation of Lower Bound
+(≃ 219 ) patterns in a 3×3 grid and 4,350,069,823,024 (≃ 242 )
+patterns in a 4 × 4 grids [3], [4]. The brute-force enumera-                   In the Android pattern unlock system, a user can select a
+tion is not a candidate method for counting the number of                      secret pattern according to the following rules [7]:
+patterns in a large grid because the number of pattern grows                     (i) At least four points must be chosen,
+too fast.                                                                       (ii) No point can be used twice,
+      For grids of large size, only upper bounds are known                     (iii) Only straight lines are allowed, and
+for the number of patterns: permutation-based upper                            (iv) One cannot jump over points not visited before.
+bound [5] and visibility-based upper bound [6]. Upper
+                                                                               Let G be a grid that is a set of points in the plane with integer
+bounds enable people to avoid exaggerating the security of
+                                                                               coordinates and Gα×β be a grid with α rows and β columns.
+pattern unlock but it is a lower bound that guarantees the
+                                                                               We use the Cartesian coordinate system to denote a pat-
+       Manuscript received September 22, 2016.                                 tern p as a sequence of points (x1 , y1 ), (x2 , y2 ), . . . where
+       Manuscript revised November 6, 2016.                                    the origin is the point at the lower left corner. For exam-
+       Manuscript publicized December 1, 2016.                                 ple, the N-shaped pattern in Fig. 1 can be expressed by the
+     †
+       The authors are with the Department of Electrical Engineer-             sequence (0, 0), (0, 1), (0, 2), (1, 1), (2, 0), (2, 1), (2, 2). The
+ing, POSTECH, Pohang, Gyeongbuk, 37673, Republic of Korea.
+    ††
+       The author is with the Software R&D Center, Samsung Elec-               number of points in a grid G is denoted by |G|. The length
+tronics Co., Seoul, 06765, Republic of Korea.                                  of a pattern p is the number of points in p and denoted by
+   †††
+       The author is with the IoT and Robotics Research Division,              |p|.
+DGIST, Daegu, 42988, Republic of Korea.                                              For a grid G, let N(G) be the number of patterns and
+  ††††
+       The author is with the Department of Information and Com-               Nk (G) the number of patterns of length k. Since a pattern
+munication Engineering, Myongji University, Yongin, Gyeonggi-                  should be a sequence of four or more points by rule (i), we
+do, 17058, Republic of Korea.
+     ∗
+       This work was supported by the DGIST R&D Program of the                 have
+Ministry of Science, ICT and Future Planning (16-IT-04).                                       
+                                                                                               |G|
+   a) E-mail: dhyum@mju.ac.kr                                                        N(G) =          Nk (G).                                        (1)
+       DOI: 10.1587/transinf.2016EDL8196                                                       k=4
+
+                     Copyright 
+                               c 2017 The Institute of Electronics, Information and Communication Engineers
+

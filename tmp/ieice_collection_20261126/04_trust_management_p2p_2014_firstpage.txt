@@ -1,0 +1,70 @@
+                                                                                               IEICE TRANS. INF. & SYST., VOL.E97–D, NO.6 JUNE 2014
+1656
+
+
+LETTER
+An Elliptic Curve-Based Trust Management Protocol in
+Peer-to-Peer Networks
+                                   Aiguo CHEN†a) , Nonmember, Guangchun LUO† , Member, and Jinsheng REN† , Nonmember
+
+
+
+SUMMARY           Establishing trust measurements among peer-to-peer            one THA could manipulate the other peers’ reports to pro-
+(P2P) networks is fast becoming a de-facto standard, and a fair amount          vide misleading information. Additionally, the major draw-
+of work has been done in the area of trust aggregation and calculation al-
+                                                                                back of P2Prep and TrustMe is the risk of peers’ privacy dis-
+gorithms. However, the area of developing secure underlying protocols to
+distribute and access the trust ratings in the overlay network has been rel-    closure. Both of them realize confidentiality and authentic-
+atively unexplored. We propose an elliptic curve-based trust management         ity by using peers’ secret key to encrypt messages directly.
+protocol for P2P systems, which is designed to provide authentication and       Pseudo Trust [13] provides a zero-knowledge authentication
+signature functions to protect the processes of trust value query and rating    protocol and can be employed in trust management system.
+report. Additionally, instead of using single identities, the protocol gen-
+erates two verifiable pseudonyms, one is used for transaction, the other
+                                                                                But it focuses on the anonymous feature of authentication,
+is applied when the peer acts as a trust holding peer. A security analysis      and does not provide the completed protocol for trust man-
+shows that the proposed protocol is extremely secure in the face of a variety   agement. ReP [8] focuses particularly on fairness, liveliness
+of possible attacks.                                                            and privacy while rating, but it uses centralized trust man-
+key words: peer-to-peer, authentication, trust, trust management
+                                                                                agement mechanism.
+                                                                                      In this paper, we present an elliptic curve-based trust
+1.     Introduction                                                             management protocol which focuses on the security of trust
+                                                                                value distribution and access. A light weight authentication
+In recent years, peer-to-peer (P2P) networks have gained                        function is provided for trust querying, and an interaction
+significant acceptance [1]–[3]. Despite the demand of ro-                       prove function is employed for trust reporting. Our protocol
+bustness and scalability of P2P systems, the anonymous and                      satisfies the following features:
+dynamic nature of peer activities make the systems vulner-                      (1) The trust value of each peer is stored at other peers in
+able to abuses by selfish and malicious peers [4], [5]. To                          the network. This decentralized method enhances se-
+encourage resource sharing among peers and combat ma-                               curity and reliability of the trust management system.
+licious peer behaviors, trust management is essential for                       (2) Two kinds of pseudo identities are used to protect these
+peers to assess the trustworthiness of others and to selec-                         trust holding peers from targeted attacks. And any ma-
+tively interact with the more reputable ones. There are two                         licious peer trying to manipulate trust ratings should be
+important issues in trust management: (1) what trust met-                           identifiable.
+rics and aggregation algorithms are eﬀective for comput-                        (3) In query phase, the trust holding peer’s identity is au-
+ing the reputation-based trust. And (2) how to distribute,                          thenticated by the trust querying peer to ensure that
+store, and access the trust value of peers securely [6]–[8].                        anybody querying for a trust value gets the true trust
+A fair amount of work has been done related to the first is-                        value. The THA peer’s authentication approach is a
+sue [9]–[11]. However, The research in developing secure                            three-step and elliptic curve-based.
+mechanisms of distribution and access trust value related                       (4) An elliptic curve-based signature is used to generate
+to the second issue is scanty. To the best of our knowl-                            the interaction proof to confirm that transaction has ac-
+edge, Cornelli et al. has attempted to present a secure pro-                        tually taken place between two peers while rating re-
+tocol P2PRep [12] at message level in addition to a trust                           port phase.
+model. Their protocol is based on a polling mechanism
+and uses public key cryptography to provide various secu-                       We discuss the implementation choices that were made for
+rity features. TrustMe [6] is designed to provide secure, re-                   security and eﬃciency reasons and use attack analysis and
+liable, and accountable distribution and access of trust rat-                   contrastive analysis to evaluate our protocol.
+ings. However, for one peer, its THA (Trust-Holding Agent)
+peers are assigned a pre-shared key for trust management, so                    2.   Elliptic Curve-Based Management Protocol
+
+      Manuscript received February 8, 2013.                                     2.1 Design Overview
+      Manuscript revised December 9, 2013.
+    †
+      The authors are with the School of Computer Science & En-
+                                                                                Considerate that the current trust value of a peer must not be
+gineering, University of Electronic Science and Technology of
+China, Chengdu, Sichuan, China, 611731.                                         computed by and reside at the peer itself, our protocol uses
+   a) E-mail: agchen@uestc.edu.cn                                               a random assignment of Trust-Holding Agent peers (hence-
+      DOI: 10.1587/transinf.E97.D.1656                                          forth called THA peers) as TrustMe [6] does. There is more
+
+                     Copyright 
+                               c 2014 The Institute of Electronics, Information and Communication Engineers
+

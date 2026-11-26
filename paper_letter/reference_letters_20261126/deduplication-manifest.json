@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-26",
+  "scope": "Only byte-identical external IEICE reference PDFs; manuscript/figure/build PDFs and research evidence excluded",
+  "duplicate_pdf_count": 4,
+  "removed_duplicates": [
+    {
+      "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L09.pdf",
+      "kept_path": "paper_letter/reference_letters_20261027/01_spkse_2026.pdf",
+      "doi": "10.1587/transfun.2025DML0001",
+      "sha256": "695e8c6a13ce2a3d1fa84bfd8e1b8d19c450f7502e7f1ab0bc1e2c127849bdc0",
+      "byte_identical": true,
+      "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+    },
+    {
+      "removed_path": "paper_letter/reference_letters_20261103/fiveg_pdf.pdf",
+      "kept_path": "paper_letter/reference_letters_20261103/01_5g_authentication_vulnerability_2020.pdf",
+      "doi": "10.1587/transinf.2019FOL0001",
+      "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
+      "byte_identical": true,
+      "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+    },
+    {
+      "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L01.pdf",
+      "kept_path": "paper_letter/reference_letters_20261103/01_5g_authentication_vulnerability_2020.pdf",
+      "doi": "10.1587/transinf.2019FOL0001",
+      "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
+      "byte_identical": true,
+      "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+    },
+    {
+      "removed_path": "paper_letter/letter_writing_study_20261106/pdfs/L02.pdf",
+      "kept_path": "paper_letter/reference_letters_20261103/04_wimax_secure_handover_2008.pdf",
+      "doi": "10.1093/ietisy/e91-d.12.2875",
+      "sha256": "0f3282503e76ee2758f3d1128c21cde236e6dd5c02a3895901a61f79d67821a6",
+      "byte_identical": true,
+      "reason": "Same complete PDF bytes; keep the descriptive filename and update reading links."
+    }
+  ],
+  "updated_reading_files": [
+    {
+      "path": "paper_letter/letter_writing_study_20261106/README.zh-CN.md",
+      "before_sha256": "4d6db0579f304a0942ffc570f9d953ca03fa773679f472fff2ccd58e998c0334",
+      "after_sha256": "7937e9733221b77e2de093deb32d6cfe0411c1f5d651230f25836312a07a594c"
+    },
+    {
+      "path": "paper_letter/letter_writing_study_20261106/逐篇写作拆解.md",
+      "before_sha256": "39782965a8c1187f7383e914591600b5e125cf3ed0c9520927ca26358b564726",
+      "after_sha256": "374bde9a342bd22370868299846406b16955258dc9c3b4f87267917d232751f4"
+    },
+    {
+      "path": "paper_letter/letter_writing_study_20261106/sources-manifest.json",
+      "before_sha256": "d90ada79a09e99f4ecd4a03fadb98656a7012d31e5cbc6febe4bfdb20693bf8e",
+      "after_sha256": "c0bb3f4c3e3f28c45b2f19eb77eafedbb26a342586f4db6c14d59e9882f12854"
+    }
+  ],
+  "historical_verification_files_modified": false,
+  "restoration": "Every removed PDF can be recreated byte-for-byte by copying its kept_path; sha256 is recorded above."
+}

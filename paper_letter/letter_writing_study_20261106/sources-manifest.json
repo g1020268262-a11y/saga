@@ -13,7 +13,7 @@
       "acquisition": "reused_verified_local_pdf",
       "original_local_path": "D:\\Users\\10202\\Desktop\\saga\\paper_letter\\reference_letters_20261103\\01_5g_authentication_vulnerability_2020.pdf",
       "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E103.D/8/E103.D_2019FOL0001/_pdf/-char/en",
-      "pdf_file": "pdfs/L01.pdf",
+      "pdf_file": "../reference_letters_20261103/01_5g_authentication_vulnerability_2020.pdf",
       "pdf_pages": 4,
       "byte_count": 716073,
       "sha256": "f7dafd88e068b82333f5922c686494d448ccf2e11a3aa76b92c689c0cba90609",
@@ -53,7 +53,7 @@
       "acquisition": "reused_verified_local_pdf",
       "original_local_path": "D:\\Users\\10202\\Desktop\\saga\\paper_letter\\reference_letters_20261103\\04_wimax_secure_handover_2008.pdf",
       "pdf_url": "https://www.jstage.jst.go.jp/article/transinf/E91.D/12/E91.D_12_2875/_pdf/-char/en",
-      "pdf_file": "pdfs/L02.pdf",
+      "pdf_file": "../reference_letters_20261103/04_wimax_secure_handover_2008.pdf",
       "pdf_pages": 5,
       "byte_count": 307963,
       "sha256": "0f3282503e76ee2758f3d1128c21cde236e6dd5c02a3895901a61f79d67821a6",
@@ -323,7 +323,7 @@
       "acquisition": "reused_verified_local_pdf",
       "original_local_path": "D:\\Users\\10202\\Desktop\\saga\\paper_letter\\reference_letters_20261027\\01_spkse_2026.pdf",
       "pdf_url": "https://www.jstage.jst.go.jp/article/transfun/E109.A/9/E109.A_2025DML0001/_pdf/-char/en",
-      "pdf_file": "pdfs/L09.pdf",
+      "pdf_file": "../reference_letters_20261027/01_spkse_2026.pdf",
       "pdf_pages": 3,
       "byte_count": 219545,
       "sha256": "695e8c6a13ce2a3d1fa84bfd8e1b8d19c450f7502e7f1ab0bc1e2c127849bdc0",
@@ -359,5 +359,10 @@
     "sample_method": "Purposive selection spanning protocol security, formal comparison, model-checking methodology, design and solver-based analysis.",
     "selection_limit": "Older D-series Letters provide historical writing examples; all page counts describe the published PDFs."
   },
-  "review_scope": "All 35 page texts extracted and all 35 rendered pages visually checked. Close structural reading of summaries, introductions, chapters, evidence placement and conclusions. Formal arguments and experiments are recorded as authors reports."
+  "review_scope": "All 35 page texts extracted and all 35 rendered pages visually checked. Close structural reading of summaries, introductions, chapters, evidence placement and conclusions. Formal arguments and experiments are recorded as authors reports.",
+  "maintenance_20261126": {
+    "operation": "Remove byte-identical duplicate PDFs and relink to canonical originals",
+    "historical_verification_preserved": true,
+    "record": "../reference_letters_20261126/deduplication-manifest.json"
+  }
 }

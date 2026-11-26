@@ -1,0 +1,71 @@
+                                                                                             IEICE TRANS. INF. & SYST., VOL.E95–D, NO.6 JUNE 2012
+1684
+
+
+LETTER
+On the Security of an Eﬃcient and Secure Dynamic ID-Based
+Remote User Authentication Scheme
+                                                                                Eun-Jun YOON†a) and Kee-Young YOO††b) , Members
+
+
+
+SUMMARY            In 2009, Wang et al. proposed an eﬃcient and secure dy-      • pw: The password of U
+namic ID-based remote user authentication scheme based on the one-way           • ID: The identity of U
+secure hash function. This letter demonstrates that Wang et al.’s scheme is
+                                                                                • S : The remote server
+still vulnerable to impersonation attacks.
+key words: authentication, password, cryptanalysis, hash function, smart-       • x: The secret key of S
+card                                                                            • h(·): A one-way hash function
+                                                                                • ⊕: Bitwise XOR operation
+1.        Introduction                                                          • ⇒: A secure channel
+                                                                                • →: A common channel
+A remote user authentication scheme [1] is used to verify                          Wang et al.’s scheme is composed of four phases; the
+the legitimacy of remote users’ login requests through an                     registration phase, the login phase, the verification phase
+insecure channel. Password-based authentication scheme is                     and the password change phase.
+the most common method to check the validity of the login
+message and authenticate the user. Recently, many authenti-                   2.1   Registration Phase
+cation schemes [1]–[12] have been proposed to improve the
+security and practicability of authentication.                                The user Ui sends the registration request to the remote
+      Quite recently, Wang et al. [12] proposed an eﬃcient                    server S :
+and secure dynamic ID-based remote user authentication
+scheme based on the one-way secure hash function. Wang                         1. Ui ⇒ S : IDi .
+et al. claimed that their scheme has the following merits: 1)                     Ui submits IDi to S .
+it allows users to change and choose passwords freely; 2)                      2. S computes
+server does not maintain any verifier tables because it uses a
+                                                                                        Ni = h(pwi ) ⊕ h(x) ⊕ IDi                            (1)
+smartcard to store a secret key; 3) it provides mutual authen-
+tication between user and remote server; 4) it overcomes the                      where x is the secret key of the remote server, and pwi
+fatal drawback that user’s authentication is independent of                       is the password of Ui chosen by S .
+the password; 5) it is secure to against ID-theft [9]–[11], re-                3. S personalizes the smartcard with the parameters
+play attacks and insider attacks, etc.                                            [h(·), Ni , y], where y is the remote server’s secret num-
+      Unfortunately, we find that Wang et al.’s scheme [12] is                    ber stored in each registered user’s smartcard.
+still vulnerable to impersonation attacks. Accordingly, this                   4. S ⇒ Ui : pwi and smartcard.
+letter demonstrates that Wang et al.’s scheme is vulnerable
+to impersonation attacks, in which an attacker can easily im-
+personate any legal user.                                                     2.2   Login Phase
+
+                                                                              When a user wants to login to the remote server, he/she in-
+2.        Review of Wang et al.’s Scheme
+                                                                              serts the smartcard into the terminal and keys the identity
+                                                                              IDi and the password pwi , then the smartcard will perform
+We briefly recall Wang et al.’s scheme in [12]. The notations                 the following steps:
+used in the scheme are shown as follows:
+                                                                               1. Computes dynamic ID
+     • U: The user
+                                                                                        CIDi = h(pwi ) ⊕ h(Ni ⊕ y ⊕ T ) ⊕ IDi                (2)
+      Manuscript received June 10, 2011.
+      †
+      The author is with the Department of Cyber Security,                        where T is the current date and time.
+Kyungil University, 33 Buho-Ri, Hayang-Ub, Kyungsan-Si,                        2. Ui → S : IDi , CIDi , Ni , T .
+Kyungsangpuk-Do 712–701, South Korea.
+   ††
+      The author is with the School of Electrical Engineering
+and Computer Science, Kyungpook National University, 1370                     2.3   Verification Phase
+Sankyuk-Dong, Buk-Gu, Daegu 702–701, South Korea
+  a) E-mail: ejyoon@kiu.ac.kr
+  b) E-mail: yook@knu.ac.kr (Corresponding author)                            When the remote server S receives the login request
+      DOI: 10.1587/transinf.E95.D.1684                                        (IDi , CIDi , Ni , T ) at time T  , S verifies as:
+
+                     Copyright 
+                               c 2012 The Institute of Electronics, Information and Communication Engineers
+
