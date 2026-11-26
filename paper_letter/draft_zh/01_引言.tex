@@ -5,7 +5,7 @@
 \section{引言}
 \label{sec:introduction}
 
-在多代理系统中，代理间通信需要验证通信双方的身份，据此限制通信建立及后续请求的执行。SAGA~\cite{syros2025saga} 是一种面向 AI Agent 系统的安全架构，通过接触策略决定发送方能否取得接收方的一次性公钥（One-Time Key，OTK），并利用 OTK 建立访问控制令牌（Access Control Token，ACT）。后续请求则由 ACT 的身份绑定、有效期和剩余请求额度进行控制。
+在多代理系统中，代理间通信需要验证通信双方的身份，并限制通信建立及后续请求的执行。SAGA~\cite{syros2025saga} 是一种面向 AI Agent 系统的安全架构，通过接触策略决定发送方能否取得接收方的一次性公钥（One-Time Key，OTK），并由接收方利用 OTK 签发访问控制令牌（Access Control Token，ACT）。后续请求则由 ACT 的身份绑定、有效期和剩余请求额度进行控制。
 
 SAGA 原有研究采用 ProVerif~\cite{blanchet2016proverif} 对代理与 Provider 之间的通信认证、代理间通信认证以及 ACT 机密性进行了形式化分析~\cite{syros2025saga}。然而，通信认证与 ACT 机密性并不足以保证授权机制的正确执行。代理间通信还受到接触策略、OTK 发放与使用以及 ACT 请求额度的限制，因此有必要进一步分析这些授权机制在协议执行过程中的安全性。
 
@@ -13,7 +13,7 @@ SAGA 原有研究采用 ProVerif~\cite{blanchet2016proverif} 对代理与 Provid
 
 （1）接触策略匹配函数未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT。
 
-（2）OTK 未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 建立新的 ACT。
+（2）OTK 未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 获得新的 ACT。
 
 （3）ACT 有效性检查与额度扣减未在同一原子操作内完成，使同一 ACT 的并发使用可能导致接收方处理的请求数超过 ACT 的初始请求额度。
 

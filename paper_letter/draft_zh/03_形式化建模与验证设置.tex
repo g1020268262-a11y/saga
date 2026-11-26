@@ -7,7 +7,7 @@
 
 针对接触策略匹配和 OTK 发放与使用分别建立 Tamarin 符号模型，针对 ACT 请求额度控制建立 TLA$^{+}$ 额度模型，并利用 Tamarin 与 TLA$^{+}$ 模型检查器 TLC 检查相应的安全性质。
 
-两个 Tamarin 模型均将发送方身份与 PAC 的对应关系设为初始事实，使用包含通信双方身份的私有事实表示经过身份认证的 TLS 通信。密码学操作采用 Diffie--Hellman（DH）等式理论、带域标签的哈希密钥派生函数（Key Derivation Function，KDF）和理想对称加密，ACT 密文包含发送方 PAC，以表示令牌与发送方访问控制公钥之间的绑定关系。
+两个 Tamarin 模型均将发送方身份与 PAC 的对应关系设为初始事实，使用包含通信双方身份的私有事实表示经过身份认证的 TLS 通信。模型使用 Diffie--Hellman（DH）等式理论、带域标签的哈希密钥派生函数（Key Derivation Function，KDF）和理想对称加密表示密码学操作。ACT 加密前的明文包含发送方 PAC，以表示令牌与发送方访问控制公钥之间的绑定关系。
 
 \subsection{接触策略匹配模型}
 \label{subsec:policy-evaluation-model}
@@ -43,7 +43,7 @@ lemma policy_budget_agreement:
 
 威胁模型允许 $B$ 将已领取的 OTK 公钥转交给 $C$，并考虑 $C$ 在自身 OTK 领取额度耗尽后，以自身登记身份、PAC 和私钥使用该 OTK 申请 ACT 的执行过程。模型中每枚 OTK 至多转交一次。基准配置中，Provider 与接收方均允许 $B,C$ 通信，并设置禁止 OTK 转交及双方拒绝 $C$ 的对照配置。
 
-模型检查原有的按发送方 OTK 发放次数限制及单枚 OTK 的唯一发放与消费约束，并进一步提出领取者与实际使用者身份一致性这一更强性质。在每个发送方领取额度为 $1$ 的配置下，还额外检查同一发送方成功使用的不同 OTK 数量是否至多为一枚。成功使用以 ACT 签发、发送方解密及其首次应用请求被接收方接受为判据。领取者与实际使用者的身份一致性由以下 Tamarin 引理表达：
+模型检查原有的按发送方 OTK 发放次数限制及每枚 OTK 至多发放一次、消费一次的约束。在这些原有约束之外，检查领取者与实际使用者的身份一致性，并在每个发送方领取额度为 $1$ 的配置下，检查同一发送方成功使用的不同 OTK 数量是否至多为一枚。成功使用以接收方签发 ACT、发送方解密及接收方接受该 ACT 对应的首次应用请求为判据。领取者与实际使用者的身份一致性由以下 Tamarin 引理表达：
 
 \begingroup
 \renewcommand{\verbatimsize}{\footnotesize}
@@ -66,7 +66,7 @@ lemma successful_use_requires_issue_to_same_sender:
 
 ACT 请求额度模型采用 TLA$^{+}$ 描述多个连接共享同一 ACT 请求额度时的执行过程。模型初始化时，发送方与接收方均保存同一 ACT，双方的额度状态均设为令牌的初始额度。接收方的共享余额表示该 ACT 的剩余请求额度；各连接的状态变量记录请求处理阶段，发送方余额和消息交付状态用于描述双端处理过程。
 
-连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中的两个独立持锁临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 要求令牌元数据有效且共享余额非零，使连接进入已检查状态。\texttt{ADebit} 以已检查状态为执行条件，更新共享余额并增加该连接完成额度扣减操作的请求计数。\texttt{Clamp} 将余额保持为非负值。两个动作之间允许其他连接交错执行。TLA$^{+}$ 动作定义如下：
+连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中分别获取并释放同一把锁的两个临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 要求令牌元数据有效且共享余额非零，使连接进入已检查状态。\texttt{ADebit} 以已检查状态为执行条件，更新共享余额并增加该连接完成额度扣减操作的请求计数。\texttt{Clamp} 将余额保持为非负值。两个动作之间允许其他连接交错执行。TLA$^{+}$ 动作定义如下：
 
 \begingroup
 \renewcommand{\verbatimsize}{\footnotesize}

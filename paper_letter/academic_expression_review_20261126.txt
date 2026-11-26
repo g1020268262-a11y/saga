@@ -1,0 +1,501 @@
+SAGA 中英文学术表达优化与一致性检查报告
+日期：2026-11-26；工作分支：my-modification；比较基准：af1568c80f9ca964ddc29066ac4f936f3c5d176a（4.1）。
+
+一、修改结果
+已按用户提供的逐项审查报告优化英文Summary和五章正文；中文仅修改两稿共同存在的技术歧义。未改变研究内容、性质定义、验证结论或实验数据。Summary和正文分别按首次出现采用“缩写（全名/官方工具描述）”。
+英文正文2961→2830词，Summary 156→120词，合计3117→2950词，减少167词（约5.4%）。英文仍为5页，未达到4页目标；中文仍为4页。没有为页数改变模板字体、字号、行距、页边距或删除核心研究内容。
+
+二、同步修正的技术表述及依据
+1. ACT“密文包含PAC”改为“加密前明文包含PAC”。saga/agent.py:324–333先将recipient_pac写入token_dict再调用encrypt_token；proofs/otk_transfer/saga_otk_transfer.spthy:110、124以senc(<ACT,token,pac>,key)表示相同结构。未改实现或模型。
+2. “唯一发放与消费”明确为每枚OTK分别至多发放一次、至多消费一次，避免恰好一次的误读。原有发放上限与身份对应检查仍严格区分；只保留一次必要的性质定位，不反复使用stronger/additional。
+3. 明确接收方签发ACT、发送方获得并解密、接收方接受应用请求。发送方“建立ACT”按语境改为“获得ACT”，流程阶段使用“ACT签发”。
+4. 两个临界区分别获取并释放同一把锁，不是两把锁。依据saga/agent.py:180、348–381、598、604–605的self.active_tokens_lock。
+5. 原子性问题针对检查与扣减的组合，不声称两个步骤各自非原子；Summary也未将“49条串行+2条并发”的实验解释为51条同时并发。
+6. Accepted仍是完成额度扣减步骤的请求计数，不是余额实际减少量或后端调用次数。
+7. 引言区分身份认证与授权控制；结论明确绑定对象是OTK与最初获发该OTK的发送方，而非只给领取额度关联身份。
+
+三、术语、缩写及写作处理
+正文统一采用sender/receiver、most specific matching rule、OTK retrieval quota、quota deduction和exists-trace lemma；模型原生标识符不随正文术语改名。Tamarin、ProVerif、Maude是工具名，不编造全称。
+SAGA采用作者给出的Security Architecture for Governing Agentic Systems；TLA+括号采用Temporal Logic of Actions，不杜撰带Plus的逐字展开。TLC使用官方工具描述the TLA+ model checker，不编造Temporal Logic Checker。
+
+Summary首次展开：
+  SAGA: SAGA (Security Architecture for Governing Agentic Systems)
+  AI: AI (artificial intelligence)
+  ACT: ACT (access control token)
+  OTK: OTKs (one-time public keys)
+  TLA+: TLA$^{+}$ (Temporal Logic of Actions)
+
+main text首次展开：
+  SAGA: SAGA (Security Architecture for Governing Agentic Systems)
+  AI: AI (artificial intelligence)
+  ACT: ACT (access control token)
+  OTK: OTK (one-time public key)
+  ACP: ACP (Agent Contact Policy)
+  AID: AID (agent identifier)
+  TLS: TLS (Transport Layer Security)
+  PAC: PAC (public access control key)
+  TLC: TLC (the TLA$^{+}$ model checker)
+  DH: DH (Diffie--Hellman)
+  KDF: KDF (key derivation function)
+  UID: UID (user identifier)
+  HTTP: HTTP (Hypertext Transfer Protocol)
+  TLA+: TLA$^{+}$ (Temporal Logic of Actions)
+
+术语核对来源：
+  SAGA README.md:12；NDSS正式论文第1页摘要：https://www.ndss-symposium.org/wp-content/uploads/2026-s869-paper.pdf
+  协议版本v2 §IV-A/Table I、§IV-D、§IV-E：https://arxiv.org/html/2504.21034v2
+  TLS：https://www.rfc-editor.org/rfc/rfc8446
+  TLA/TLA+：https://lamport.org/pubs/lamport-actions.pdf；TLC：https://docs.tlapl.us/using:tlc:start
+  TLA+官方VSCode扩展名称采用Temporal Logic of Actions：https://marketplace.visualstudio.com/items?itemName=tlaplus.vscode-ide
+
+四、逐章中英文复核
+Summary：三个发现及其条件保留；拆分长句；首次缩写独立于正文；并发后果仍为累计处理超额。
+第一章：保留原研究的三类ProVerif性质和原文引用；精简方法描述，明确模型各自目标；未将本研究称为首次形式化分析或完整端到端证明。
+第二章：保留Provider身份核验、策略求值、按身份发放计账、接收方本地许可和OTK消费、ACT密钥派生与请求额度流程；将操作主体写清。分析目标未提前加入漏洞根因。
+第三章：保留两套规则选择逻辑、Provider/接收方阈值差别、原生预算一致性引理、OTK身份性质与控制配置、ACT检查/扣减模型以及Accepted解释；未新增评分系数、场景缩写或根因。
+第四章：保留四项策略性质否证、存在性轨迹、三个对照；保留OTK身份反例与原发放限制成立的区分；保留13状态反例和50/51/49、两连接、三次重复等全部数据。模型可达性与参考实现实验分段叙述，后者的策略实验仍止于ACT签发、存储与解密。
+第五章：保留规则优先级、OTK发放身份绑定及ACT组合原子性三个要求，未声称已验证修复效果。
+
+五、词数、编译及验收
+计数方法：TeXcount 3.1.1，text words only；不含标题、参考文献、四个原生代码块、LaTeX命令和数学公式。所有新增加的缩写解释计入正文词数。
+  01_introduction.tex: 385 -> 301
+  02_authorization_workflow_and_objectives.tex: 512 -> 440
+  03_formal_modeling_and_verification_setup.tex: 1069 -> 1071
+  04_results_and_security_analysis.tex: 909 -> 939
+  05_discussion_and_conclusion.tex: 86 -> 79
+  main.tex: 156 -> 120
+  Body: 2961 -> 2830
+  Body + Summary: 3117 -> 2950
+  zh: 4 -> 4页；编译错误=False；未定义引用=False；Overfull=0；Underfull=0；BibTeX警告=0。
+  en: 5 -> 5页；编译错误=False；未定义引用=False；Overfull=0；Underfull=1；BibTeX警告=0。
+英文原有4.1首段Underfull hbox（badness 4229，lines 11–12）与基准逐字相同；没有新增编译警告。中文无警告。两稿均保留6条已引用参考文献。
+两稿的4个原生代码块、所有标签及引用键顺序逐项不变；全部数学环境内的数值片段不变。A/B/C等说明性角色引用因明确主体而增加或拆写，不涉及原生公式。main.tex的模板前导区、标题、作者、单位、关键词、章节输入和参考文献设置均不变，只有Summary文字修改。
+源码、编译和首次缩写检查结果保存于draft_en/build/academic_language_20261126/；最终9页PDF已逐页检查，无裁切、文字重叠或代码溢出。保留IEICE默认纵向伸缩和原有minipage代码块布局，未进行另一次排版压缩。
+参考实现、形式化模型、证明工件、实验脚本、验证日志和历史证据均未修改，也未以语言修改任务重新生成形式化验证结果。
+两稿仍以同一研究目标和同一组验证结果为依据，未发现残留的实质语义偏差或研究结论变化。
+
+六、实际修改位置及逐处前后对照
+下面逐项列出源码变化。行号分别对应基准和修改后文件；原生代码块与不变段落不重复抄录。
+
+[1] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L8–8 / 新L8–8
+修改前：
+In multi-agent systems, communication requires verification of both parties' identities to control communication establishment and the execution of subsequent requests. SAGA~\cite{syros2025saga} is a security architecture for AI agent systems. It uses contact policies to determine whether a sender may obtain a receiving agent's one-time public key (OTK), which is then used to establish an Access Control Token (ACT). Subsequent requests are controlled by the ACT's identity binding, validity period, and remaining request quota.
+修改后：
+Multi-agent communication requires authentication of both parties and control over communication initiation and subsequent requests. SAGA (Security Architecture for Governing Agentic Systems)~\cite{syros2025saga} is a security architecture for AI (artificial intelligence) agents. Its contact policies determine whether a sender may retrieve a receiver's OTK (one-time public key) to obtain an ACT (access control token). Subsequent requests are constrained by the ACT's identity binding, validity period, and request quota.
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[2] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L10–10 / 新L10–10
+修改前：
+The original SAGA study used ProVerif~\cite{blanchet2016proverif} to formally analyze authentication of communication between an agent and the Provider, authentication of inter-agent communication, and ACT confidentiality~\cite{syros2025saga}. However, communication authentication and ACT confidentiality do not suffice to ensure correct authorization enforcement. Agent communication is also subject to contact policies, OTK issuance and use, and ACT request quotas. The security of these authorization mechanisms during protocol execution therefore requires further analysis.
+修改后：
+The original SAGA study used ProVerif~\cite{blanchet2016proverif} to analyze agent--Provider authentication, inter-agent authentication, and ACT confidentiality~\cite{syros2025saga}. These properties do not guarantee correct authorization enforcement. Rule selection, OTK issuance and use, and concurrent ACT quota updates require separate analysis.
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[3] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L12–12 / 新L12–12
+修改前：
+Based on SAGA's protocol specification and reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}, we use Tamarin~\cite{meier2013tamarin} to construct separate models of contact-policy matching and OTK issuance and use. By modeling rule selection and subsequent authorization, we examine whether policy evaluation respects rule priorities and whether subsequent authorization operations comply with the expected decisions. We cross-check the model's evaluation results against an independent policy evaluator and matching results from the reference implementation. By modeling OTK issuance and use, we examine identity correspondence between the sender that retrieves an OTK and its actual user, as well as the relationship between issuance limits and the number of OTKs successfully used. We use TLA$^{+}$~\cite{lamport2002specifying} to model ACT request processing and quota control and check whether concurrent requests violate the request-quota limit. Experiments on the reference implementation examine the effects of incorrect policy matching and ACT quota overruns. The main findings are as follows.
+修改后：
+Using SAGA's protocol specification and reference implementation~\cite{syros2025sagaV2,sagaReferenceImpl2026}, we construct separate Tamarin~\cite{meier2013tamarin} models for contact-policy matching and OTK issuance and use. The policy model captures rule selection and subsequent authorization to check rule priorities and consistency with expected decisions. An independent evaluator and policy-evaluation results from the reference implementation cross-check its outputs. The OTK model checks whether keys are used by the senders to which they were issued and whether issuance limits constrain successful use of distinct OTKs. A TLA$^{+}$ (Temporal Logic of Actions) model~\cite{lamport2002specifying} checks ACT request quotas under concurrency. Reference-implementation experiments assess the effects of incorrect policy matching and ACT quota violations. We identify three issues:
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[4] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L14–14 / 新L14–14
+修改前：
+(1) The contact-policy matching function fails to select the best-matching rule correctly, allowing a sender that should be denied to obtain an ACT.
+修改后：
+(1) The matcher fails to select the most specific matching rule, allowing a sender that should be denied access to obtain an ACT.
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[5] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L16–16 / 新L16–16
+修改前：
+(2) OTKs are not bound to the identities of the senders that retrieved them. A sender permitted to communicate can therefore establish new ACTs using OTKs retrieved and forwarded by other senders, even after exhausting its own OTK retrieval quota.
+修改后：
+(2) OTKs are not bound to the senders to which they are issued. An authorized sender can therefore obtain new ACTs using OTKs issued to and forwarded by other senders after exhausting its own retrieval quota.
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[6] paper_letter/draft_en/01_introduction.tex；\section{Introduction}；原L18–18 / 新L18–18
+修改前：
+(3) ACT validity checking and quota debit are not performed as a single atomic operation. Concurrent use of the same ACT can therefore cause the receiving agent to process more requests than the ACT's initial request quota.
+修改后：
+(3) ACT validation and quota deduction do not form a single atomic operation. Concurrent connections can therefore cause the receiver to process more requests than the token's initial quota permits.
+修改原因：精简身份认证、方法与发现表述；采用标准术语并独立展开正文首次缩写；保留原有性质、方法依据和研究结论。
+
+[7] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Authorization Workflow}；原L11–11 / 新L11–11
+修改前：
+SAGA authorizes communication in three stages: contact-policy matching and OTK issuance, OTK consumption and ACT establishment, and ACT request processing. Let $P$ denote the Provider, and let $A$ and $B$ denote the receiving and sending agents, respectively. Both agents have completed registration and identity binding.
+修改后：
+SAGA's authorization workflow comprises contact-policy matching and OTK issuance, OTK consumption and ACT issuance, and ACT request processing. Let $P$ denote the Provider, $A$ the receiver, and $B$ the sender. Both agents are registered, with their identities bound to their credentials.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[8] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Authorization Workflow}；原L13–13 / 新L13–13
+修改前：
+The user configures an Agent Contact Policy (ACP) for $A$. Each rule contains a matching pattern for an agent identifier (AID) and a budget value. When several rules match the same identity, the budget associated with the best-matching rule should be used~\cite{syros2025sagaV2,sagaReferenceImpl2026}. Agent $A$ generates OTKs in advance, submits signed public-key material to $P$, and stores the corresponding private keys locally. When $B$ requests communication material, $P$ checks its registered identity and TLS client certificate, determines its initial retrieval quota from the contact policy, and checks the remaining quota. If these checks pass and an OTK is available, $P$ issues one OTK, debits $B$'s retrieval quota, and removes the OTK from the available pool. Thus, $P$ maintains OTK retrieval quotas by sending identity, whereas $A$ independently maintains OTK consumption state.
+修改后：
+The user configures an ACP (Agent Contact Policy) for $A$. Each rule specifies an AID (agent identifier) pattern and a budget. The most specific matching rule determines the budget~\cite{syros2025sagaV2,sagaReferenceImpl2026}. Agent $A$ pre-generates OTKs, uploads the signed OTKs to $P$, and retains the corresponding private keys. When $B$ requests communication material, $P$ verifies its registered identity and TLS (Transport Layer Security) client certificate, determines its initial retrieval quota from the policy, and checks the remaining quota. If these checks pass and an OTK is available, $P$ issues one OTK, deducts one credit from $B$'s quota, and removes the OTK from the available pool. Thus, $P$ maintains a separate OTK retrieval quota for each sender, while $A$ tracks OTK consumption independently.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[9] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Authorization Workflow}；原L15–15 / 新L15–15
+修改前：
+After verifying the retrieved communication material, $B$ establishes a TLS connection with $A$ and submits its identity material and the OTK. Agent $A$ verifies the current peer's identity and local contact permission, confirms that the submitted OTK has not been consumed, and removes it from its local set of unconsumed OTKs. It then derives a shared key using the corresponding OTK private key and $B$'s public access-control key (PAC), generates an ACT bound to that public key and containing a validity period and an initial request quota, and stores an active record of the ACT. The ACT is encrypted with the shared key and returned to $B$. Using its private access-control key and the OTK, $B$ derives the same key, decrypts the ACT, and stores it~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+修改后：
+After verifying the retrieved material, $B$ establishes a TLS connection with $A$ and submits its identity material and OTK. Agent $A$ verifies $B$'s identity and authorization under its local contact policy, checks that the OTK is unused, and removes it from the unused-key set. Agent $A$ derives a shared key from the corresponding OTK private key and $B$'s PAC (public access control key), issues an ACT bound to that PAC with a validity period and initial request quota, and records the ACT as active. Agent $A$ encrypts the ACT with the shared key and returns it to $B$. Using its private access control key and the OTK, $B$ derives the same key, decrypts the ACT, and stores it~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[10] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Authorization Workflow}；原L17–17 / 新L17–17
+修改前：
+For subsequent communication, $B$ submits requests carrying the ACT. Agent $A$ checks the public access-control key bound to the token, its validity period, and its remaining request quota, and then debits the quota and processes the request if the checks pass. An ACT can be reused across different connections. Its remaining quota is maintained centrally by $A$, which also sets its initial quota; this quota is independent of the OTK retrieval quota maintained by $P$. The reference implementation handles different connections in separate threads and performs ACT validity checking and quota debit separately~\cite{sagaReferenceImpl2026}.
+修改后：
+For subsequent communication, $B$ sends requests accompanied by the ACT. Agent $A$ checks the bound PAC, validity period, and remaining request quota, then deducts one credit and processes the request if the checks pass. An ACT can be reused across connections, which share the remaining quota maintained by $A$. Agent $A$ sets the initial ACT quota independently of the OTK retrieval quota maintained by $P$. The reference implementation handles connections in separate threads and performs ACT validation and quota deduction separately~\cite{sagaReferenceImpl2026}.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[11] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Analysis Objectives}；原L22–22 / 新L22–22
+修改前：
+We analyze the security of the above authorization workflow from three perspectives.
+修改后：
+We examine three aspects of this authorization workflow.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[12] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Analysis Objectives}；原L24–24 / 新L24–24
+修改前：
+\textbf{ACP:} A contact policy determines a sender's communication permission and OTK retrieval quota from its identity and the policy rules. We analyze rule matching and selection, examining whether rule priorities are enforced and authorization outcomes comply with the policy configuration~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+修改后：
+\textbf{ACP:} Contact policies determine a sender's communication permission and OTK retrieval quota from its identity and policy rules. We examine whether matching respects rule priorities and authorization decisions conform to the specified policy~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[13] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Analysis Objectives}；原L26–26 / 新L26–26
+修改前：
+\textbf{OTK:} An OTK is issued by the Provider and consumed by the receiving agent when establishing an ACT. We analyze the identity and authorization conditions during OTK issuance, OTK use, and ACT issuance, examining the enforcement of OTK issuance limits and one-time use during communication.
+修改后：
+\textbf{OTK:} The Provider issues an OTK, which the receiver consumes when issuing an ACT. We examine the identity and authorization conditions governing OTK issuance, use, and ACT issuance, including issuance limits and one-time consumption.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[14] paper_letter/draft_en/02_authorization_workflow_and_objectives.tex；\subsection{Analysis Objectives}；原L28–28 / 新L28–28
+修改前：
+\textbf{ACT:} An ACT controls subsequent requests in an established communication. Its use is constrained by identity binding, a validity period, and a request quota. We analyze ACT validity checking, request processing, and quota updates to examine the correctness of request-quota control.
+修改后：
+\textbf{ACT:} An ACT restricts subsequent requests through identity binding, a validity period, and a request quota. We examine token validation, request processing, and quota updates to assess quota enforcement.
+修改原因：简化直译搭配；明确Provider/receiver/sender的操作、各端额度和消费状态；首次缩写在前、全名在后；目标不提前揭示根因。
+
+[15] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\section{Formal Modeling and Verification Setup}；原L8–8 / 新L8–8
+修改前：
+We construct separate Tamarin symbolic models for contact-policy matching and OTK issuance and use, and a TLA$^{+}$ quota model for ACT request-quota control. The corresponding security properties are checked using Tamarin and TLC, the TLA$^{+}$ model checker.
+修改后：
+We construct separate Tamarin symbolic models of contact-policy matching and OTK issuance and use, and a TLA$^{+}$ model of ACT request quota control. We check their security properties using Tamarin and TLC (the TLA$^{+}$ model checker).
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[16] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\section{Formal Modeling and Verification Setup}；原L10–10 / 新L10–10
+修改前：
+Both Tamarin models establish the correspondence between a sender's identity and its PAC as initial facts and use private facts containing the identities of both communicating parties to represent authenticated TLS communication. The cryptographic operations use the Diffie--Hellman (DH) equational theory, a hash-based key derivation function (KDF) with a domain-separation tag, and ideal symmetric encryption. The ACT ciphertext contains the sender's PAC to represent the binding between the token and the sender's public access-control key.
+修改后：
+Both Tamarin models represent the binding between a sender's identity and its PAC using initial facts. Private facts carrying both endpoints' identities represent authenticated TLS communication. The models represent cryptographic operations using the DH (Diffie--Hellman) equational theory, a domain-separated hash-based KDF (key derivation function), and ideal symmetric encryption. The ACT plaintext includes the sender's PAC, modeling the binding between the token and the sender's public access control key.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[17] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Contact-Policy Matching Model}；原L15–15 / 新L15–15
+修改前：
+A contact policy determines a budget from the sender's AID and an ordered rule set. When several rules match, the highest-scoring rule should be selected~\cite{syros2025sagaV2,sagaReferenceImpl2026}. The model generator identifies matching rules and encodes their order, budgets, and score comparisons as Tamarin inputs.
+修改后：
+A contact policy evaluates an ordered rule set against the sender's AID to determine a budget. The most specific matching rule takes precedence when several rules match~\cite{syros2025sagaV2,sagaReferenceImpl2026}. The model generator identifies matching rules, computes their scores, and encodes their order, budgets, and score comparisons in Tamarin.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[18] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Contact-Policy Matching Model}；原L17–17 / 新L17–17
+修改前：
+Linear facts record the traversal position, recorded best score, and current budget. We model rule selection according to the required rule priorities and the state-update logic of the reference matching function, respectively. Each step selects or skips a rule according to the score comparison and advances to the next position. The modeled Provider and receiver separately execute the implementation's rule-selection logic. Results from an independent policy evaluator and the reference matching function on identical inputs cross-check the expected and implementation-side evaluations, respectively.
+修改后：
+Linear facts track the current rule position, stored best score, and budget. We define two rule-selection processes: one follows the specified rule priorities, and the other follows the state-update logic of the matching function in the reference implementation. Each step uses the score comparison to select or skip the current rule and advances to the next position. The modeled Provider and receiver separately execute the process based on the implementation logic. Results from the independent policy evaluator and the matching function in the reference implementation, obtained for the same inputs, are used to check the model's expected evaluation and its evaluation under the implementation logic, respectively.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[19] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Contact-Policy Matching Model}；原L19–19 / 新L19–19
+修改前：
+The model considers initial communication authorization between a fixed pair of agents. Following the reference implementation, the Provider requires a positive budget, whereas the receiver rejects only negative budgets~\cite{sagaReferenceImpl2026}. The following Tamarin lemma checks budget agreement:
+修改后：
+The model captures authorization of the first communication between two fixed agents. Following the reference implementation, the Provider requires a positive budget, whereas the receiver rejects only negative budgets~\cite{sagaReferenceImpl2026}. Budget agreement is expressed by the following Tamarin lemma:
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[20] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Contact-Policy Matching Model}；原L35–35 / 新L35–35
+修改前：
+\texttt{SpecDecision} and \texttt{ProviderBudget} record expected and Provider policy evaluations, respectively. The lemma requires their budgets to agree for the same execution and communicating parties. We also check whether OTK issuance, ACT issuance, and request acceptance have corresponding prior expected allow decisions, whether request acceptance is reachable despite expected denial, and whether acceptance corresponds to prior ACT issuance and decryption.
+修改后：
+\texttt{SpecDecision} records the expected policy evaluation, whereas \texttt{ProviderBudget} records the Provider's evaluation under the implementation logic. The lemma requires these budgets to agree for the same execution and communicating parties. We also check whether OTK issuance, ACT issuance, and request acceptance have prior allow decisions under the expected policy evaluation, whether request acceptance is reachable despite expected denial, and whether acceptance corresponds to prior ACT issuance and decryption.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[21] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Contact-Policy Matching Model}；原L37–37 / 新L37–37
+修改前：
+Verification covers both orderings of a name-wildcard deny rule with a fixed user identifier (UID) and a universal wildcard allow rule, as well as single universal wildcard allow and deny rules. Experiments on the reference implementation examine the effects of policy matching on subsequent communication authorization.
+修改后：
+Verification covers both rule orders of a name-wildcard deny rule with a fixed UID (user identifier) and a universal wildcard allow rule, as well as configurations with a single universal wildcard allow or deny rule. Experiments on the reference implementation examine how policy matching affects subsequent communication authorization.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[22] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{OTK Issuance and Use Model}；原L42–42 / 新L42–42
+修改前：
+The model includes Provider $P$, receiver $A$, and senders $B,C$. Initially, $A$ holds two OTKs, and $B$ and $C$ each have a nonrenewable quota of one OTK retrieval. Linear facts represent the Provider's retrieval quota, OTKs awaiting issuance, and OTKs not yet consumed by the receiver. Issuing an OTK consumes the corresponding retrieval credit and available key at the Provider, while issuing an ACT consumes the corresponding OTK at the receiver. Senders retain obtained OTK public keys through persistent facts.
+修改后：
+The model includes Provider $P$, receiver $A$, and senders $B,C$. Initially, $A$ holds two OTKs, and $B$ and $C$ each have an OTK retrieval quota of one, without replenishment. Linear facts represent the Provider's per-sender retrieval quotas, available OTKs, and the receiver's unconsumed OTKs. Issuing an OTK uses the sender's retrieval credit and removes the key from the Provider's available set; issuing an ACT consumes the corresponding OTK at the receiver. Persistent facts record OTK public keys held by each sender.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[23] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{OTK Issuance and Use Model}；原L44–44 / 新L44–44
+修改前：
+The threat model allows $B$ to forward an OTK public key that it has retrieved to $C$. It considers executions in which, after exhausting its own OTK retrieval quota, $C$ uses that OTK to request an ACT with its own registered identity, PAC, and private key. Each OTK can be forwarded at most once in the model. In the baseline configuration, both the Provider and receiver permit communication by $B,C$. Control configurations disable OTK forwarding or have both the Provider and receiver deny $C$.
+修改后：
+The threat model permits $B$ to forward an OTK public key to $C$ after retrieving it. We consider executions in which $C$, after exhausting its OTK retrieval quota, uses the forwarded key to request an ACT with its own registered identity, PAC, and private key. Each OTK can be forwarded at most once in the model. In the baseline configuration, both the Provider and receiver authorize $B,C$ to communicate. In the controls, either OTK forwarding is disabled or both the Provider and receiver deny access to $C$.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[24] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{OTK Issuance and Use Model}；原L46–46 / 新L46–46
+修改前：
+The model checks the original per-sender OTK issuance limit and the unique issuance and consumption of each OTK. It additionally considers the stronger property that the OTK retriever and its actual user have the same identity. With each sender's retrieval quota set to $1$, it also checks the additional property that the same sender successfully uses at most one distinct OTK. Successful use is determined by ACT issuance, decryption by the sender, and the receiver's acceptance of the ACT's first application request. The following Tamarin lemma expresses identity correspondence between the retriever and actual user:
+修改后：
+The model checks the original per-sender OTK issuance limit, together with the requirement that each OTK be issued and consumed at most once. Beyond these original constraints, it checks whether an OTK was issued to the sender that successfully uses it. With each sender's retrieval quota set to $1$, it also checks whether that sender successfully uses at most one distinct OTK. Successful use requires ACT issuance by the receiver, decryption by the sender, and acceptance by the receiver of the first application request using that ACT. The following Tamarin lemma expresses the identity requirement:
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[25] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{OTK Issuance and Use Model}；原L62–62 / 新L62–62
+修改前：
+The event \texttt{ProviderIssue} records OTK issuance at the Provider, whereas \texttt{RequestAccepted} records acceptance of an application request at the receiver. The property requires every successfully accepted application request to correspond to an earlier event in which the same OTK was issued to the same sender. The model also checks the correspondence of request acceptance with the corresponding ACT issuance and sender decryption.
+修改后：
+The event \texttt{ProviderIssue} denotes OTK issuance by the Provider, and \texttt{RequestAccepted} denotes application-request acceptance by the receiver. The lemma requires every accepted application request to be preceded by issuance of the same OTK to the same sender. The model also checks that request acceptance is preceded by the corresponding ACT issuance and sender decryption.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[26] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Concurrent ACT Request Quota Model}；原L67–67 / 新L67–67
+修改前：
+The ACT request-quota model uses TLA$^{+}$ to describe execution when multiple connections share the request quota of the same ACT. At initialization, the sender and receiver store the same ACT, and their quota states are both set to the token's initial quota. The receiver's shared balance represents the ACT's remaining request quota; each connection's state variables record its request-processing stage. The sender's balance and message-delivery state describe processing at both ends.
+修改后：
+The TLA$^{+}$ model captures concurrent use of the same ACT by multiple connections. Initially, the sender and receiver store the same ACT, and both quotas are set to its initial request quota. A shared balance records the receiver's remaining quota, while per-connection state variables track request processing. The sender's balance and message-delivery state capture processing at both endpoints.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[27] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Concurrent ACT Request Quota Model}；原L69–69 / 新L69–69
+修改前：
+When a connection is established, the receiver checks the token metadata and remaining request quota. After parsing a request, the model represents validity checking and quota debit as two atomic actions, \texttt{ACheck} and \texttt{ADebit}, corresponding to two independently locked critical sections in the reference implementation~\cite{sagaReferenceImpl2026}. The \texttt{ACheck} action requires valid token metadata and a nonzero shared balance and moves the connection into the checked state. The \texttt{ADebit} action is enabled by that checked state, updates the shared balance, and increments the connection's count of requests completing the quota-debit operation. The \texttt{Clamp} operator keeps the balance nonnegative. Other connections can execute between these two actions. The TLA$^{+}$ actions are defined as follows:
+修改后：
+At connection establishment, the receiver checks the token metadata and remaining request quota. After request parsing, validation and quota deduction are modeled as atomic actions \texttt{ACheck} and \texttt{ADebit}, corresponding to two critical sections that use separate acquisitions of the same lock in the reference implementation~\cite{sagaReferenceImpl2026}. The \texttt{ACheck} action requires valid token metadata and a nonzero shared balance, then moves the connection into the checked state. The \texttt{ADebit} action is enabled when the connection is in that state. It updates the shared balance and increments the count of requests that complete the quota deduction step. The \texttt{Clamp} operator keeps the balance nonnegative. The two actions permit interleaving across connections. The TLA$^{+}$ actions are defined as follows:
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[28] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Concurrent ACT Request Quota Model}；原L98–98 / 新L98–98
+修改前：
+The model checks whether the total number of requests that pass ACT validity checking and execute the quota-debit operation across all connections exceeds the ACT's initial request quota. The request-quota safety invariant is defined in TLA$^{+}$ as follows:
+修改后：
+The model checks whether the number of requests that pass ACT validation and complete the quota deduction step exceeds the ACT's initial request quota. The request quota safety invariant is defined as follows in TLA$^{+}$:
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[29] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Concurrent ACT Request Quota Model}；原L114–114 / 新L114–114
+修改前：
+Here, \texttt{Accepted} denotes the total number of requests for which connections complete the quota-debit operation, namely, the cumulative number of executions of \texttt{ADebit}. It is neither the actual decrease in the balance nor the number of backend calls. TLC checks the request-quota safety invariant, the state types, and consistency between quota states and request counts. The finite-state check sets the initial request quota to $1$, uses two connections, permits each connection to submit at most one request, keeps the token metadata valid, and uses a configuration without transport faults.
+修改后：
+\texttt{Accepted} counts requests that complete the quota deduction step, or equivalently executions of \texttt{ADebit}. It does not measure the decrease in the balance or the number of backend calls. TLC checks this request quota safety invariant, type correctness, and consistency between quota states and request counts. The finite-state configuration sets the initial request quota to $1$, uses two connections, allows at most one request per connection, keeps token metadata valid, and uses fault-free message delivery.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[30] paper_letter/draft_en/03_formal_modeling_and_verification_setup.tex；\subsection{Concurrent ACT Request Quota Model}；原L116–116 / 新L116–116
+修改前：
+Serial and concurrent request experiments based on the reference implementation use in-memory byte streams to transmit messages and a test backend that records call counts. In the concurrent experiment, a thread barrier is placed after the native ACT validity check returns successfully and before the quota-debit lock is acquired. This ensures that both connections pass validity checking before executing quota debit. The experiments record the number of backend calls and the remaining request quota.
+修改后：
+Serial and concurrent experiments on the reference implementation use in-memory byte streams for message transport and a test backend that counts calls. The concurrent experiment places a thread barrier after the ACT validity check in the reference implementation returns successfully and before the lock for quota deduction is acquired. Both connections therefore pass the check before either executes the quota deduction step. The experiments record backend call counts and the remaining request quota.
+修改原因：明确模型表示、两套规则选择逻辑和原生事件含义；避免retriever/actual user歧义；准确说明至多一次、原有约束与身份检查、同一锁和扣减步骤计数；术语统一。
+
+[31] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{Incorrect Contact-Policy Matching}；原L11–11 / 新L11–11
+修改前：
+For the sender \nolinkurl{alice@example.com:agent}, the rule \nolinkurl{alice@example.com:*} has a budget of $-1$, while the universal wildcard rule has a budget of $10$. When the deny rule precedes the allow rule, Tamarin returns \texttt{falsified} for four security properties: Provider budget agreement and the requirements that OTK issuance, ACT issuance, and request acceptance each have a preceding expected allow decision. The existential lemma for request acceptance despite expected denial returns \texttt{verified}.
+修改后：
+For the sender \nolinkurl{alice@example.com:agent}, the rule \nolinkurl{alice@example.com:*} has a budget of $-1$, while the universal wildcard rule has a budget of $10$. When the deny rule precedes the allow rule, Tamarin falsifies four security properties: agreement between the expected and Provider-evaluated budgets, and the requirements that OTK issuance, ACT issuance, and request acceptance be preceded by an allow decision under the expected policy evaluation. Tamarin verifies the exists-trace lemma for request acceptance despite expected denial.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[32] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{Incorrect Contact-Policy Matching}；原L13–13 / 新L13–13
+修改前：
+In the counterexample, the expected evaluation returns $-1$, whereas the Provider returns $10$ and issues an OTK, reducing the retrieval quota to $9$. The receiver also returns $10$ and issues an ACT. The sender decrypts the ACT, and its application request is accepted. Correspondence between request acceptance and prior ACT issuance and decryption is \texttt{verified}.
+修改后：
+In the counterexample, the expected policy evaluation yields $-1$, whereas the Provider evaluates the policy to a budget of $10$ and issues an OTK, reducing the OTK retrieval quota to $9$. The receiver also evaluates the budget to $10$ and issues an ACT. The sender decrypts the ACT, and the receiver accepts its application request. Tamarin verifies the correspondence properties linking request acceptance to prior ACT issuance and decryption.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[33] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{Incorrect Contact-Policy Matching}；原L17–17 / 新L17–17
+修改前：
+Reversing the rule order causes the Provider to reject OTK issuance. Request acceptance is reachable with a single universal wildcard allow rule, whereas OTK issuance is rejected with a single universal wildcard deny rule. Request acceptance despite expected denial is unreachable in all three control configurations.
+修改后：
+Reversing the rule order causes the Provider to reject OTK issuance. Request acceptance is reachable with a single universal wildcard allow rule, whereas the Provider rejects OTK issuance with a single universal wildcard deny rule. In all three control configurations, Tamarin finds no trace in which a request is accepted despite expected denial.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[34] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{Incorrect Contact-Policy Matching}；原L19–19 / 新L19–19
+修改前：
+In reference-implementation experiments, placing the specific deny rule before the universal wildcard allow rule causes both the Provider and receiver to return $10$. The \texttt{/access} request returns HTTP 200, and the ACT is issued, stored, and successfully decrypted, with its contents matching the receiver's record. Reversing the rule order produces a budget of $-1$ and HTTP 403 at the Provider. With two matching allow rules, ACT issuance, storage, and decryption complete normally.
+修改后：
+In the reference-implementation experiments, placing the specific deny rule before the universal wildcard allow rule caused both the Provider and receiver to return a budget of $10$. The Provider responded to \texttt{/access} with HTTP (Hypertext Transfer Protocol) status~200. The ACT was issued, stored, and successfully decrypted, and its contents matched the receiver's record. Reversing the rule order caused the Provider to return a budget of $-1$ and reject the request with HTTP 403. With two matching allow rules, ACT issuance, storage, and decryption completed successfully.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[35] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{Incorrect Contact-Policy Matching}；原L21–21 / 新L21–21
+修改前：
+\subsection{OTKs Not Bound to Retrievers' Identities}
+修改后：
+\subsection{OTK Issuance Without Sender Binding}
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[36] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{OTK Issuance Without Sender Binding}；原L24–24 / 新L24–24
+修改前：
+In the configuration that permits OTK transfer and in which both the Provider and the receiving agent allow $B,C$ to communicate, a sending agent can still establish new ACTs using OTKs retrieved by other sending agents after exhausting its own OTK retrieval quota. Tamarin returns \texttt{falsified} for both identity correspondence between an OTK's retriever and its actual user and the property that, with a retrieval quota of $1$, a sending agent successfully uses at most one distinct OTK. The existential lemma for completing communication with a transferred OTK after quota exhaustion returns \texttt{verified}.
+修改后：
+When OTK forwarding is enabled and both the Provider and receiver authorize $B$ and $C$ to communicate, a sender can obtain new ACTs using OTKs issued to other senders even after exhausting its own OTK retrieval quota. Tamarin falsifies two properties: successful use of an OTK requires prior issuance to the same sender, and a sender with a retrieval quota of $1$ must successfully use at most one distinct OTK. Tamarin verifies the exists-trace lemma for successful communication using a forwarded OTK after quota exhaustion.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[37] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{OTK Issuance Without Sender Binding}；原L26–26 / 新L26–26
+修改前：
+In the counterexample, the Provider issues one OTK to $B$ and one to $C$. Using the OTK that it retrieved, $C$ completes ACT issuance, decryption, and acceptance of the first application request. The Provider subsequently refuses further issuance because $C$ has exhausted its retrieval quota. $B$ transfers the public key of its retrieved but unconsumed OTK to $C$. Using its own registered identity, PAC, and private key, $C$ requests an ACT, successfully decrypts the token, and has its first application request accepted by the receiving agent. Thus, the Provider has issued $C$ a total of $1$ OTK, whereas $C$ has successfully used $2$ distinct OTKs. The correspondence property relating request acceptance to preceding ACT issuance and decryption returns \texttt{verified}.
+修改后：
+In the counterexample, the Provider issues one OTK to $B$ and one to $C$. Using the OTK issued to it, $C$ obtains an ACT issued by the receiver, decrypts it, and submits its first application request, which the receiver accepts. The Provider subsequently rejects further issuance because $C$ has exhausted its OTK retrieval quota. $B$ forwards the public key of its unused OTK to $C$. Using its own registered identity, PAC, and private key, $C$ obtains and decrypts another ACT. The receiver then accepts the first application request submitted with that ACT. Thus, the Provider issues $C$ only $1$ OTK, whereas $C$ successfully uses $2$ distinct OTKs. Tamarin verifies the correspondence property linking request acceptance to prior ACT issuance and decryption.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[38] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{OTK Issuance Without Sender Binding}；原L28–28 / 新L28–28
+修改前：
+This issue arises because OTKs are not bound to their retrievers' identities. The Provider maintains OTK retrieval quotas by sending-agent identity, whereas the receiving agent checks the current sending agent's identity, local contact permission, and OTK consumption state when issuing an ACT. These checks cannot determine whether the current sending agent retrieved that OTK. In this configuration, the per-sender OTK issuance limit and the unique issuance and consumption of each OTK all return \texttt{verified}, yet transfer still enables $C$ to successfully use a number of OTKs exceeding its own retrieval quota.
+修改后：
+The issue arises because an OTK is not bound to the identity of the sender to which the Provider issued it. The Provider maintains an OTK retrieval quota for each sender, whereas the receiver checks the current sender's identity, authorization under its local contact policy, and the OTK's consumption state before issuing an ACT. These checks do not establish that the Provider issued the OTK to the current sender. Tamarin verifies the original per-sender OTK issuance limit and the properties that each OTK is issued at most once and consumed at most once. Nevertheless, forwarding enables $C$ to successfully use more OTKs than its own OTK retrieval quota.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[39] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{OTK Issuance Without Sender Binding}；原L30–30 / 新L30–30
+修改前：
+When OTK transfer is disabled, normal communication by both $B,C$ is reachable, and the two security properties return \texttt{verified}. When both the Provider and the receiving agent deny $C$, $C$ cannot use an OTK to complete ACT issuance and application-request acceptance, whereas normal communication by $B$ remains reachable; the two security properties also return \texttt{verified} in this configuration.
+修改后：
+When OTK forwarding is disabled, successful communication remains reachable for both $B$ and $C$, and Tamarin verifies these two properties. When both the Provider and receiver deny $C$, the receiver issues no ACT to $C$ in response to an OTK-based request and accepts no application requests from that sender, while successful communication by $B$ remains reachable. Tamarin also verifies both properties in this configuration.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[40] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{OTK Issuance Without Sender Binding}；原L32–32 / 新L32–32
+修改前：
+\subsection{ACT Request Quota Exceeded under Concurrency}
+修改后：
+\subsection{ACT Quota Violations under Concurrency}
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[41] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{ACT Quota Violations under Concurrency}；原L35–35 / 新L35–35
+修改前：
+When multiple connections concurrently use the same ACT, the receiving agent may process more requests than the token's initial request quota. In a configuration with an initial quota of $1$ and two connections each submitting one request, TLC detects a violation of the \texttt{ReceiverQuotaSafety} invariant and generates a counterexample trace containing $13$ states.
+修改后：
+When multiple connections use the same ACT concurrently, the receiver may process more requests than the token's initial request quota. With an initial quota of $1$ and two connections each submitting one request, TLC identifies a violation of \texttt{ReceiverQuotaSafety} and produces a $13$-state counterexample trace.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[42] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{ACT Quota Violations under Concurrency}；原L37–37 / 新L37–37
+修改前：
+In state $11$, connections $c_1$ and $c_2$ have both passed token checking, the receiving agent's remaining quota is $1$, and the number of requests that have completed quota-debit operations is $0$. In state $12$, $c_1$ executes \texttt{ADebit}, the remaining quota becomes $0$, and the request count increases to $1$. In state $13$, $c_2$ executes the same action. The remaining quota stays at $0$, but the request count increases to $2$, exceeding the initial request quota.
+修改后：
+In state $11$, connections $c_1$ and $c_2$ have both passed ACT validation, the receiver's remaining quota is $1$, and the number of requests completing the quota deduction operation is $0$. In state $12$, $c_1$ executes \texttt{ADebit}, reducing the remaining quota to $0$ and increasing the request count to $1$. In state $13$, $c_2$ executes the same action. The remaining quota stays at $0$, but the request count increases to $2$, exceeding the initial request quota.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[43] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{ACT Quota Violations under Concurrency}；原L39–39 / 新L39–39
+修改前：
+ACT validity checking and quota debit are not completed within the same atomic operation. The function \texttt{token\_is\_valid()} checks the token and remaining request quota while holding a lock, then releases the lock. The function \texttt{receive\_conversation()} subsequently reacquires the lock and performs the quota-debit operation without checking the current remaining quota again. Two connections can therefore pass checking against the same remaining quota, perform their quota-debit operations in turn, and proceed to request processing. Even though the balance after debit is kept nonnegative, the receiving agent may still process more requests than the initial request quota.
+修改后：
+ACT validation and quota deduction are not performed atomically. The function \texttt{token\_is\_valid()} checks the token and remaining quota while holding a lock, then releases it. The function \texttt{receive\_conversation()} subsequently reacquires the same lock and deducts quota without rechecking the remaining balance. Two connections can therefore pass validation using the same remaining quota, each perform the quota deduction operation, and proceed to request processing. Keeping the remaining quota nonnegative does not prevent the receiver from processing requests beyond the initial quota.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[44] paper_letter/draft_en/04_results_and_security_analysis.tex；\subsection{ACT Quota Violations under Concurrency}；原L41–41 / 新L41–41
+修改前：
+The serial and concurrent experiments based on the reference implementation use separately issued ACTs, each with an initial request quota of $50$. In the serial experiment, submitting $51$ requests produces $50$ backend calls. In the concurrent experiment, $49$ requests are first processed sequentially. A thread barrier then ensures that both connections pass checking against the single remaining unit of quota before each performs its quota-debit operation. The experiment records $51$ backend calls and a remaining quota of $0$, with the same result in three repetitions.
+修改后：
+The serial and concurrent experiments on the reference implementation used separately issued ACTs, each with an initial request quota of $50$. In the serial experiment, $51$ requests produced $50$ backend calls. In the concurrent experiment, $49$ requests were first processed sequentially. A thread barrier then ensured that both connections passed validation against the last available request credit before each performed quota deduction. The experiment recorded $51$ backend calls and a remaining quota of $0$. All three repetitions produced the same result.
+修改原因：工具作为结果报告主体；预算返回对象明确；直接叙述OTK签发/使用者与接收方动作；统一quota deduction、sender/receiver、exists-trace；保留反例、对照、数值及模型/实验区别。
+
+[45] paper_letter/draft_en/05_discussion_and_conclusion.tex；\section{Discussion and Conclusion}；原L8–8 / 新L8–8
+修改前：
+We formally analyzed SAGA's contact-policy matching, OTK issuance and use, and ACT request-quota control. The results show that, beyond communication authentication and ACT confidentiality, authorization requires correct enforcement of contact-policy rule priorities, the combination of per-sender OTK retrieval quotas with binding OTKs to the identities of the senders that retrieve them, and atomic execution of ACT validity checking and quota debit. These requirements address incorrect policy matching, excessive OTK use through forwarding, and ACT request-quota overruns under concurrency, respectively, and inform improvements to SAGA's authorization mechanism.
+修改后：
+We formally analyzed SAGA's contact-policy matching, OTK issuance and use, and ACT request-quota control. Beyond authentication and ACT confidentiality, the results highlight three requirements for secure authorization: enforcing contact-policy rule priorities, combining per-sender OTK retrieval quotas with binding each OTK to the sender to which it was issued, and performing ACT validation and quota deduction atomically. These requirements address incorrect policy matching, excessive OTK use through forwarding, and concurrent ACT quota violations, and guide improvements to SAGA's authorization mechanism.
+修改原因：改用平行结构；明确OTK绑定与按身份领取额度配合；保留三个改进依据和结论。
+
+[46] paper_letter/draft_en/main.tex；Summary；原L42–42 / 新L42–42
+修改前：
+SAGA is a security architecture for AI agent systems. The formal analysis in the original SAGA study focused primarily on communication authentication and the confidentiality of Access Control Tokens (ACTs). We use Tamarin and TLA$^{+}$ to formally analyze SAGA's authorization mechanism and combine this analysis with experiments on the reference implementation. We identify three security issues: the contact-policy matching function fails to select the best-matching rule correctly, allowing a sender that should be denied to obtain an ACT; one-time public keys (OTKs) are not bound to the identities of the senders that retrieved them, allowing a sender permitted to communicate to establish new ACTs using OTKs retrieved and forwarded by other senders after exhausting its own OTK retrieval quota; and ACT validity checking and quota debit are not performed as a single atomic operation, allowing concurrent use of the same ACT to cause the receiving agent to process more requests than the ACT's initial request quota.
+修改后：
+SAGA (Security Architecture for Governing Agentic Systems) is a security architecture for AI (artificial intelligence) agent systems. Its original formal analysis focused on authentication and ACT (access control token) confidentiality. We analyze its authorization mechanism using Tamarin and TLA$^{+}$ (Temporal Logic of Actions), complemented by reference-implementation experiments. Incorrect enforcement of contact-policy rule priorities allows a sender that should be denied access to obtain an ACT. OTKs (one-time public keys) lack binding to the senders to which they are issued: an authorized sender can obtain new ACTs using OTKs issued to and forwarded by others after exhausting its own retrieval quota. Separating ACT validation from quota deduction allows the receiver to process requests beyond the token's initial quota under concurrent use.
+修改原因：拆分长复合句；统一协议术语；Summary独立展开首次缩写；准确表达组合原子性和累计处理超额。
+
+[47] paper_letter/draft_zh/01_引言.tex；\section{引言}；原L8–8 / 新L8–8
+修改前：
+在多代理系统中，代理间通信需要验证通信双方的身份，据此限制通信建立及后续请求的执行。SAGA~\cite{syros2025saga} 是一种面向 AI Agent 系统的安全架构，通过接触策略决定发送方能否取得接收方的一次性公钥（One-Time Key，OTK），并利用 OTK 建立访问控制令牌（Access Control Token，ACT）。后续请求则由 ACT 的身份绑定、有效期和剩余请求额度进行控制。
+修改后：
+在多代理系统中，代理间通信需要验证通信双方的身份，并限制通信建立及后续请求的执行。SAGA~\cite{syros2025saga} 是一种面向 AI Agent 系统的安全架构，通过接触策略决定发送方能否取得接收方的一次性公钥（One-Time Key，OTK），并由接收方利用 OTK 签发访问控制令牌（Access Control Token，ACT）。后续请求则由 ACT 的身份绑定、有效期和剩余请求额度进行控制。
+修改原因：区分身份认证与授权执行，并明确ACT签发/获得主体。
+
+[48] paper_letter/draft_zh/01_引言.tex；\section{引言}；原L16–16 / 新L16–16
+修改前：
+（2）OTK 未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 建立新的 ACT。
+修改后：
+（2）OTK 未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 获得新的 ACT。
+修改原因：区分身份认证与授权执行，并明确ACT签发/获得主体。
+
+[49] paper_letter/draft_zh/02_授权流程与分析目标.tex；\subsection{授权流程}；原L13–13 / 新L13–13
+修改前：
+SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT 建立以及 ACT 请求处理三个阶段。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
+修改后：
+SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT 签发以及 ACT 请求处理三个阶段。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
+修改原因：将含糊的ACT建立改为接收方执行的ACT签发，协议流程不变。
+
+[50] paper_letter/draft_zh/02_授权流程与分析目标.tex；\subsection{分析目标}；原L28–28 / 新L28–28
+修改前：
+\textbf{OTK:} OTK 由 Provider 发放，并由接收方在建立 ACT 时消费。分析 OTK 发放、使用及 ACT 签发过程中的身份与授权条件，考察 OTK 发放次数和一次性使用等要求在通信过程中的执行情况。
+修改后：
+\textbf{OTK:} OTK 由 Provider 发放，并由接收方在签发 ACT 时消费。分析 OTK 发放、使用及 ACT 签发过程中的身份与授权条件，考察 OTK 发放次数和一次性使用等要求在通信过程中的执行情况。
+修改原因：将含糊的ACT建立改为接收方执行的ACT签发，协议流程不变。
+
+[51] paper_letter/draft_zh/03_形式化建模与验证设置.tex；\section{形式化建模与验证设置}；原L10–10 / 新L10–10
+修改前：
+两个 Tamarin 模型均将发送方身份与 PAC 的对应关系设为初始事实，使用包含通信双方身份的私有事实表示经过身份认证的 TLS 通信。密码学操作采用 Diffie--Hellman（DH）等式理论、带域标签的哈希密钥派生函数（Key Derivation Function，KDF）和理想对称加密，ACT 密文包含发送方 PAC，以表示令牌与发送方访问控制公钥之间的绑定关系。
+修改后：
+两个 Tamarin 模型均将发送方身份与 PAC 的对应关系设为初始事实，使用包含通信双方身份的私有事实表示经过身份认证的 TLS 通信。模型使用 Diffie--Hellman（DH）等式理论、带域标签的哈希密钥派生函数（Key Derivation Function，KDF）和理想对称加密表示密码学操作。ACT 加密前的明文包含发送方 PAC，以表示令牌与发送方访问控制公钥之间的绑定关系。
+修改原因：同步消除模型/密码操作主语、PAC明文、OTK至多一次、成功使用主体和同一锁等技术歧义；保留原有约束与身份性质的区分。
+
+[52] paper_letter/draft_zh/03_形式化建模与验证设置.tex；\subsection{OTK 发放与使用模型}；原L46–46 / 新L46–46
+修改前：
+模型检查原有的按发送方 OTK 发放次数限制及单枚 OTK 的唯一发放与消费约束，并进一步提出领取者与实际使用者身份一致性这一更强性质。在每个发送方领取额度为 $1$ 的配置下，还额外检查同一发送方成功使用的不同 OTK 数量是否至多为一枚。成功使用以 ACT 签发、发送方解密及其首次应用请求被接收方接受为判据。领取者与实际使用者的身份一致性由以下 Tamarin 引理表达：
+修改后：
+模型检查原有的按发送方 OTK 发放次数限制及每枚 OTK 至多发放一次、消费一次的约束。在这些原有约束之外，检查领取者与实际使用者的身份一致性，并在每个发送方领取额度为 $1$ 的配置下，检查同一发送方成功使用的不同 OTK 数量是否至多为一枚。成功使用以接收方签发 ACT、发送方解密及接收方接受该 ACT 对应的首次应用请求为判据。领取者与实际使用者的身份一致性由以下 Tamarin 引理表达：
+修改原因：同步消除模型/密码操作主语、PAC明文、OTK至多一次、成功使用主体和同一锁等技术歧义；保留原有约束与身份性质的区分。
+
+[53] paper_letter/draft_zh/03_形式化建模与验证设置.tex；\subsection{ACT 并发请求额度模型}；原L69–69 / 新L69–69
+修改前：
+连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中的两个独立持锁临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 要求令牌元数据有效且共享余额非零，使连接进入已检查状态。\texttt{ADebit} 以已检查状态为执行条件，更新共享余额并增加该连接完成额度扣减操作的请求计数。\texttt{Clamp} 将余额保持为非负值。两个动作之间允许其他连接交错执行。TLA$^{+}$ 动作定义如下：
+修改后：
+连接建立时，接收方检查令牌元数据和剩余请求额度。请求解析后，模型将有效性检查与额度扣减分别表示为 \texttt{ACheck} 和 \texttt{ADebit} 两个原子动作，对应参考实现中分别获取并释放同一把锁的两个临界区~\cite{sagaReferenceImpl2026}。\texttt{ACheck} 要求令牌元数据有效且共享余额非零，使连接进入已检查状态。\texttt{ADebit} 以已检查状态为执行条件，更新共享余额并增加该连接完成额度扣减操作的请求计数。\texttt{Clamp} 将余额保持为非负值。两个动作之间允许其他连接交错执行。TLA$^{+}$ 动作定义如下：
+修改原因：同步消除模型/密码操作主语、PAC明文、OTK至多一次、成功使用主体和同一锁等技术歧义；保留原有约束与身份性质的区分。
+
+[54] paper_letter/draft_zh/04_验证结果与安全分析.tex；\subsection{OTK 未与领取者身份绑定}；原L24–24 / 新L24–24
+修改前：
+在允许 OTK 转交且 Provider 与接收方均允许 $B,C$ 通信的配置中，发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取的 OTK 建立新的 ACT。Tamarin 对领取者与实际使用者身份一致性及领取额度为 $1$ 时同一发送方至多成功使用一枚不同 OTK 的两项安全性质均返回 \texttt{falsified}；额度耗尽后利用转交 OTK 完成通信的存在性引理返回 \texttt{verified}。
+修改后：
+在允许 OTK 转交且 Provider 与接收方均允许 $B,C$ 通信的配置中，发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取的 OTK 获得新的 ACT。Tamarin 对领取者与实际使用者身份一致性及领取额度为 $1$ 时同一发送方至多成功使用一枚不同 OTK 的两项安全性质均返回 \texttt{falsified}；额度耗尽后利用转交 OTK 完成通信的存在性引理返回 \texttt{verified}。
+修改原因：明确ACT操作主体、OTK至多一次与重新获取同一锁；数值和验证结果不变。
+
+[55] paper_letter/draft_zh/04_验证结果与安全分析.tex；\subsection{OTK 未与领取者身份绑定}；原L26–26 / 新L26–26
+修改前：
+反例中，Provider 分别向 $B$ 和 $C$ 发放一枚 OTK。$C$ 使用自己领取的 OTK 完成 ACT 签发、解密及首次应用请求接受。随后，Provider 因 $C$ 的领取额度耗尽而拒绝再次发放。$B$ 将自己领取且尚未消费的 OTK 公钥转交给 $C$；$C$ 以自身登记身份、PAC 和私钥申请 ACT，成功解密令牌并使其首次应用请求被接收方接受。由此，Provider 向 $C$ 发放了 $1$ 枚 OTK，而 $C$ 成功使用了 $2$ 枚不同的 OTK。请求接受与此前 ACT 签发及解密的对应性质返回 \texttt{verified}。
+修改后：
+反例中，Provider 分别向 $B$ 和 $C$ 发放一枚 OTK。$C$ 使用自己领取的 OTK 获得并解密接收方签发的 ACT，随后提交的首次应用请求由接收方接受。随后，Provider 因 $C$ 的领取额度耗尽而拒绝再次发放。$B$ 将自己领取且尚未消费的 OTK 公钥转交给 $C$；$C$ 以自身登记身份、PAC 和私钥申请 ACT，成功解密令牌并使其首次应用请求被接收方接受。由此，Provider 向 $C$ 发放了 $1$ 枚 OTK，而 $C$ 成功使用了 $2$ 枚不同的 OTK。请求接受与此前 ACT 签发及解密的对应性质返回 \texttt{verified}。
+修改原因：明确ACT操作主体、OTK至多一次与重新获取同一锁；数值和验证结果不变。
+
+[56] paper_letter/draft_zh/04_验证结果与安全分析.tex；\subsection{OTK 未与领取者身份绑定}；原L28–28 / 新L28–28
+修改前：
+该问题源于 OTK 未与领取者身份绑定。Provider 按发送方身份维护 OTK 领取额度，而接收方在签发 ACT 时检查当前发送方的身份、本地接触许可及 OTK 消费状态，无法据此判断该 OTK 是否由当前发送方领取。在上述配置中，按发送方限制 OTK 发放次数、单枚 OTK 的唯一发放与消费均返回 \texttt{verified}，但转交仍使 $C$ 成功使用超过自身领取额度的 OTK。
+修改后：
+该问题源于 OTK 未与领取者身份绑定。Provider 按发送方身份维护 OTK 领取额度，而接收方在签发 ACT 时检查当前发送方的身份、本地接触许可及 OTK 消费状态，无法据此判断该 OTK 是否由当前发送方领取。在上述配置中，按发送方限制 OTK 发放次数，以及单枚 OTK 至多发放一次和至多消费一次的性质均返回 \texttt{verified}，但转交仍使 $C$ 成功使用超过自身领取额度的 OTK。
+修改原因：明确ACT操作主体、OTK至多一次与重新获取同一锁；数值和验证结果不变。
+
+[57] paper_letter/draft_zh/04_验证结果与安全分析.tex；\subsection{OTK 未与领取者身份绑定}；原L30–30 / 新L30–30
+修改前：
+在禁止 OTK 转交的配置中，$B,C$ 的正常通信均可达，两项安全性质返回 \texttt{verified}；当 Provider 与接收方均拒绝 $C$ 时，$C$ 无法利用 OTK 完成 ACT 签发及应用请求接受，而 $B$ 的正常通信仍可达；该配置中两项安全性质返回 \texttt{verified}。
+修改后：
+在禁止 OTK 转交的配置中，$B,C$ 的正常通信均可达，两项安全性质返回 \texttt{verified}；当 Provider 与接收方均拒绝 $C$ 时，$C$ 无法利用 OTK 获得接收方签发的 ACT，其应用请求也不被接收方接受，而 $B$ 的正常通信仍可达；该配置中两项安全性质返回 \texttt{verified}。
+修改原因：明确ACT操作主体、OTK至多一次与重新获取同一锁；数值和验证结果不变。
+
+[58] paper_letter/draft_zh/04_验证结果与安全分析.tex；\subsection{ACT 并发请求额度超限}；原L39–39 / 新L39–39
+修改前：
+ACT 有效性检查与额度扣减未在同一原子操作内完成。\texttt{token\_is\_valid()} 在持锁期间检查令牌及剩余请求额度，检查完成后释放锁；\texttt{receive\_conversation()} 随后重新获取锁并执行额度扣减，但不再检查当前剩余额度。因此，两个连接可基于同一剩余额度分别通过检查，先后执行扣减操作并进入请求处理。即使扣减后的余额被限制为非负值，接收方仍可能处理超过初始请求额度的请求。
+修改后：
+ACT 有效性检查与额度扣减未在同一原子操作内完成。\texttt{token\_is\_valid()} 在持锁期间检查令牌及剩余请求额度，检查完成后释放锁；\texttt{receive\_conversation()} 随后重新获取同一把锁并执行额度扣减，但不再检查当前剩余额度。因此，两个连接可基于同一剩余额度分别通过检查，先后执行扣减操作并进入请求处理。即使扣减后的余额被限制为非负值，接收方仍可能处理超过初始请求额度的请求。
+修改原因：明确ACT操作主体、OTK至多一次与重新获取同一锁；数值和验证结果不变。
+
+[59] paper_letter/draft_zh/05_讨论与结论.tex；\section{讨论与结论}；原L8–8 / 新L8–8
+修改前：
+本文对 SAGA 的接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制进行了形式化分析。研究结果表明，通信认证与 ACT 机密性之外，授权机制还需要正确执行接触策略的规则优先级，将按发送方维护的 OTK 领取额度与领取者身份绑定相结合，并在同一原子操作内完成 ACT 有效性检查与额度扣减。上述要求分别针对策略匹配错误、OTK 转交导致的使用数量超限以及 ACT 并发请求额度超限，为改进 SAGA 的授权机制提供依据。
+修改后：
+本文对 SAGA 的接触策略匹配、OTK 发放与使用以及 ACT 请求额度控制进行了形式化分析。研究结果表明，通信认证与 ACT 机密性之外，授权机制还需要正确执行接触策略的规则优先级，将按发送方维护的 OTK 领取额度与 OTK 对原始领取者的身份绑定相结合，并在同一原子操作内完成 ACT 有效性检查与额度扣减。上述要求分别针对策略匹配错误、OTK 转交导致的使用数量超限以及 ACT 并发请求额度超限，为改进 SAGA 的授权机制提供依据。
+修改原因：明确OTK与原始领取者绑定是与按身份额度配合的机制。
+
+[60] paper_letter/draft_zh/main.tex；Summary；原L36–36 / 新L36–36
+修改前：
+SAGA 是一种面向 AI Agent 系统的安全架构，其原有研究主要对通信认证与访问控制令牌（Access Control Token，ACT）的机密性进行形式化分析。本文采用 Tamarin 和 TLA$^{+}$ 对 SAGA 的授权机制进行形式化分析，并结合参考实现实验，发现三个安全问题：接触策略匹配函数未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT；一次性公钥（One-Time Key，OTK）未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 建立新的 ACT；ACT 有效性检查与额度扣减未在同一原子操作内完成，使同一 ACT 的并发使用可能导致接收方处理的请求数超过 ACT 的初始请求额度。
+修改后：
+SAGA 是一种面向 AI Agent 系统的安全架构，其原有研究主要对通信认证与访问控制令牌（Access Control Token，ACT）的机密性进行形式化分析。本文采用 Tamarin 和 TLA$^{+}$ 对 SAGA 的授权机制进行形式化分析，并结合参考实现实验，发现三个安全问题：接触策略匹配函数未能正确选择最匹配的规则，使本应被拒绝的发送方能够获得 ACT；一次性公钥（One-Time Key，OTK）未与领取者身份绑定，使获准通信的发送方在自身 OTK 领取额度耗尽后，仍可使用其他发送方领取并转交的 OTK 获得新的 ACT；ACT 有效性检查与额度扣减未在同一原子操作内完成，使同一 ACT 的并发使用可能导致接收方处理的请求数超过 ACT 的初始请求额度。
+修改原因：明确发送方获得ACT；签发仍由接收方执行。
+
+七、附属说明文件
+draft_en/README.txt仅更新本轮基准、日期、首次缩写和页数说明，并链接本报告；构建命令与模板设置不变。
