@@ -14,7 +14,10 @@
   wire/.style={fill=white,inner xsep=0.4mm,inner ysep=0.15mm},
   local/.style={draw=black,line width=0.4pt,fill=white,
     align=center,inner xsep=0.6mm,inner ysep=0.55mm,anchor=north},
-  senderstep/.style={fill=white,align=center,inner sep=0.3mm},
+  actionbox/.style={local,minimum height=3.4mm,inner ysep=0.35mm},
+  quota/.style={draw=black,densely dashed,line width=0.4pt,fill=white,
+    text width=27.3mm,minimum height=17mm,align=center,
+    inner xsep=0.6mm,inner ysep=0.3mm,anchor=north west},
   phase/.style={anchor=west,fill=white,inner xsep=0.5mm,
     inner ysep=0.2mm,font=\bfseries\fontsize{8}{9.2}\selectfont}
 ]
@@ -26,49 +29,63 @@
   \node[actor] at (40,2.3) {Sender $B$};
   \node[actor] at (70,2.3) {Receiver $A$};
   \node[fill=white,inner sep=0.2mm] at (40,8)
-    {Registered agents; $P$: signed OTKs $k$; $A$: private keys.};
+    {Registered agents; pre-generated OTKs.};
 
   \draw[line width=0.4pt] (0,12.5) -- (80,12.5);
   \node[phase] at (0.5,12.5) {I. Policy evaluation and OTK issuance};
   \draw[msg] (40,18.6) -- node[wire,above=0.3mm]
-    {OTK request for $A$} (10,18.6);
+    {Request OTK for $A$} (10,18.6);
   \node[local,text width=34mm] at (18,20.3) {
-    Check identity, ACP,\\
-    retrieval quota, available $k$.\\
-    Issue $k$; debit quota; remove $k$.
+    Check identity, ACP and quota\\
+    Require available $k$\\
+    Issue $k$; debit quota; remove $k$
   };
   \draw[msg] (10,33.5) -- node[wire,above=0.3mm]
     {Signed $k$ + $A$ metadata} (40,33.5);
-  \node[senderstep] at (40,36.6) {Verify retrieved material};
+  \node[actionbox,text width=28.8mm] at (40,34.9)
+    {Verify retrieved material};
 
-  \draw[line width=0.4pt] (0,41.2) -- (80,41.2);
-  \node[phase] at (0.5,41.2) {II. OTK consumption and ACT issuance};
-  \draw[msg] (40,47) -- node[wire,above=0.3mm]
-    {Identity material, $k$} (70,47);
-  \node[local,text width=32.6mm] at (62.5,48.8) {
-    Check identity, local ACP;\\
-    consume unused $k$; derive $K$.\\
-    Bind ACT to $B$'s PAC;\\
-    set expiry/quota; issue/store.
+  \draw[line width=0.4pt] (0,40.5) -- (80,40.5);
+  \node[phase] at (0.5,40.5) {II. OTK consumption and ACT issuance};
+  \draw[msg] (40,45.8) -- node[wire,above=0.3mm]
+    {Identity material, $k$} (70,45.8);
+  \node[local,text width=32.6mm] at (62.5,47.3) {
+    Check identity and local ACP\\
+    Consume unused $k$; derive $K$\\
+    Issue and store ACT
   };
-  \draw[msg] (70,65) -- node[wire,above=0.3mm]
-    {Encrypted ACT $t$} (40,65);
-  \node[senderstep] at (40,68.2) {Derive $K$; decrypt $t$; retain $t$};
+  \node[quota] at (0.5,45.5) {
+    {\bfseries\fontsize{8}{9.2}\selectfont OTK retrieval quota}\\
+    Per sender\\
+    Maintained by $P$
+  };
+  \draw[msg] (70,61.1) -- node[wire,above=0.3mm]
+    {Encrypted ACT $t$} (40,61.1);
+  \node[actionbox,text width=34.8mm] at (40,63.1)
+    {Derive $K$; decrypt $t$; retain $t$};
 
-  \draw[line width=0.4pt] (0,73) -- (80,73);
-  \node[phase] at (0.5,73) {III. ACT request processing};
-  \draw[msg] (40,78.8) -- node[wire,above=0.3mm]
-    {Request $(t,\mathrm{msg})$} (70,78.8);
-  \node[local,text width=32.6mm] at (62.5,80.5) {
-    Validate ACT: PAC,\\
-    expiry and request quota.\\
-    Debit quota; process request.
+  \draw[line width=0.4pt] (0,68.5) -- (80,68.5);
+  \node[phase] at (0.5,68.5) {III. ACT request processing};
+  \node[actionbox,text width=19.6mm] at (40,70.6)
+    {Check local quota};
+  \draw[msg] (40,77.7) -- node[wire,above=0.3mm]
+    {Request $(t,\mathrm{msg})$} (70,77.7);
+  % The sender's debit and the receiver's processing have no cross-party edge.
+  % Separate receiver boxes represent local steps, not one atomic operation.
+  \node[actionbox,text width=19.6mm] at (40,79.1)
+    {Debit local quota};
+  \node[actionbox,text width=24.8mm] at (66,79.1)
+    {Validate ACT};
+  \node[actionbox,text width=24.8mm] at (66,83.4)
+    {Debit request quota};
+  \node[actionbox,text width=24.8mm] at (66,87.7)
+    {Process request};
+  \node[quota] at (0.5,77) {
+    {\bfseries\fontsize{8}{9.2}\selectfont ACT request quota}\\
+    Per token\\
+    Shared across connections\\
+    at receiver $A$
   };
-  \draw[msg] (70,94) -- node[wire,above=0.3mm]
-    {Response} (40,94);
-  \node[anchor=north west,align=left,fill=white,
-    text width=32mm,inner sep=0.4mm] at (0.5,82) {
-    Repeat requests while\\
-    the ACT remains valid.
-  };
+  \draw[msg] (70,94.3) -- node[wire,above=0.3mm]
+    {Response} (40,94.3);
 \end{tikzpicture}
