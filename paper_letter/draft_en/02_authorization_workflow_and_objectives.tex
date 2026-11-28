@@ -8,13 +8,20 @@
 \subsection{Authorization Workflow}
 \label{subsec:authorization-workflow}
 
-SAGA's authorization workflow comprises contact-policy matching and OTK issuance, OTK consumption and ACT issuance, and ACT request processing. Let $P$ denote the Provider, $A$ the receiver, and $B$ the sender. Both agents are registered, with their identities bound to their credentials.
+Fig.~\ref{fig:saga-authorization-workflow} illustrates SAGA's authorization workflow. Let $P$ denote the Provider, $A$ the receiver, and $B$ the sender. Both agents are registered, with their identities bound to their credentials.
 
-The user configures an ACP (Agent Contact Policy) for $A$. Each rule specifies an AID (agent identifier) pattern and a budget. The most specific matching rule determines the budget~\cite{syros2025sagaV2,sagaReferenceImpl2026}. Agent $A$ pre-generates OTKs, uploads the signed OTKs to $P$, and retains the corresponding private keys. When $B$ requests communication material, $P$ verifies its registered identity and TLS (Transport Layer Security) client certificate, determines its initial retrieval quota from the policy, and checks the remaining quota. If these checks pass and an OTK is available, $P$ issues one OTK, deducts one credit from $B$'s quota, and removes the OTK from the available pool. Thus, $P$ maintains a separate OTK retrieval quota for each sender, while $A$ tracks OTK consumption independently.
+\begin{figure}[tb]
+  \centering
+  \input{figures/saga_authorization_compact.tikz}
+  \caption{Authorization workflow of SAGA.}
+  \label{fig:saga-authorization-workflow}
+\end{figure}
 
-After verifying the retrieved material, $B$ establishes a TLS connection with $A$ and submits its identity material and OTK. Agent $A$ verifies $B$'s identity and authorization under its local contact policy, checks that the OTK is unused, and removes it from the unused-key set. Agent $A$ derives a shared key from the corresponding OTK private key and $B$'s PAC (public access control key), issues an ACT bound to that PAC with a validity period and initial request quota, and records the ACT as active. Agent $A$ encrypts the ACT with the shared key and returns it to $B$. Using its private access control key and the OTK, $B$ derives the same key, decrypts the ACT, and stores it~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+The receiver's ACP (Agent Contact Policy) defines contact permission through AID (agent identifier) patterns and budgets. The most specific matching rule determines the budget. Signed OTKs are uploaded to $P$, while $A$ retains the corresponding private keys. The Provider verifies $B$'s registered identity and TLS (Transport Layer Security) client certificate, maintains a per-sender OTK retrieval quota, and removes the issued key and deducts one credit upon issuance~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
 
-For subsequent communication, $B$ sends requests accompanied by the ACT. Agent $A$ checks the bound PAC, validity period, and remaining request quota, then deducts one credit and processes the request if the checks pass. An ACT can be reused across connections; $A$ sets its initial request quota and maintains the shared remaining quota independently of the OTK retrieval quota maintained by $P$~\cite{sagaReferenceImpl2026}.
+After verifying the retrieved material, $B$ establishes a TLS connection with $A$ and submits its identity material and OTK. Agent $A$ checks the sender's identity and local contact permission, consumes the unused OTK, and derives a shared key from its OTK private key and $B$'s PAC (public access control key) to issue an ACT bound to that PAC. Agent $B$ derives the same key using its private access control key and the OTK, decrypts the ACT, and retains the ciphertext and token metadata~\cite{syros2025sagaV2,sagaReferenceImpl2026}.
+
+Subsequent requests carry the retained ACT ciphertext and are subject to identity binding, expiration, and request quotas. An ACT can be reused across connections; the receiver still checks identity, local contact permission, and ACT validity at each new connection. Agent $A$ sets the initial request quota and maintains the shared remaining quota; $B$ checks its local quota before sending and deducts a credit afterward. The ACT request quota is independent of the OTK retrieval quota maintained by $P$~\cite{sagaReferenceImpl2026}.
 
 \subsection{Analysis Objectives}
 \label{subsec:analysis-objectives-assumptions}

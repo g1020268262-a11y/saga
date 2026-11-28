@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-26",
+  "new_pdfs": 10,
+  "total_new_pdf_pages": 40,
+  "unique_library_papers": 25,
+  "letters": 23,
+  "full_papers": 2,
+  "removed_byte_identical_duplicates": 4,
+  "all_catalog_paths_exist": true,
+  "all_catalog_dois_and_hashes_unique": true,
+  "retained_files_match_duplicate_hashes": true,
+  "protected_manuscripts_unchanged": true,
+  "obsolete_reading_links_absent": true,
+  "new_pdf_headers_visually_inspected": 10,
+  "new_pdf_all_pages_text_checked": true,
+  "new_pdf_type": "Official original LETTER PDFs",
+  "git_commit_or_push_executed": false,
+  "scope": "Reference PDF collection and reading indexes only; no manuscript, formal model, implementation, experimental data or evidence modifications."
+}

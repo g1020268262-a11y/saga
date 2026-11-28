@@ -10,13 +10,20 @@
 \subsection{授权流程}
 \label{subsec:authorization-workflow}
 
-SAGA 的通信授权包括接触策略匹配与 OTK 发放、OTK 消费与 ACT 签发以及 ACT 请求处理三个阶段。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
+SAGA 的通信授权流程如图~\ref{fig:saga-authorization-workflow} 所示。设 Provider 为 $P$，接收方和发送方代理分别为 $A$ 和 $B$，两者均已完成注册与身份绑定。
 
-用户为 $A$ 配置代理接触策略（Agent Contact Policy，ACP），每条规则包含代理标识符（AID）的匹配模式及对应的预算值。当多条规则匹配同一身份时，应采用最匹配的规则对应的预算~\cite{syros2025sagaV2,sagaReferenceImpl2026}。$A$ 预先生成 OTK，将签名后的公钥材料提交给 $P$，并在本地保存对应私钥。$B$ 请求通信材料时，$P$ 核验其登记身份与 TLS 客户端证书，根据接触策略确定其初始领取额度，并检查剩余额度。检查通过且 OTK 可用时，$P$ 发放一枚 OTK，扣减 $B$ 的领取额度，并将该 OTK 从可发放集合中移除。$P$ 按发送方身份维护 OTK 领取额度，$A$ 则独立维护 OTK 的消费状态。
+\begin{figure}[tb]
+  \centering
+  \input{figures/saga_authorization_compact.tikz}
+  \caption{SAGA 的授权流程。}
+  \label{fig:saga-authorization-workflow}
+\end{figure}
 
-$B$ 验证取得的通信材料后，与 $A$ 建立 TLS 连接并提交身份材料和 OTK。$A$ 验证当前连接者的身份与本地接触许可，确认提交的 OTK 尚未消费后，将其从本地尚未消费的 OTK 集合中移除。随后，$A$ 使用对应的 OTK 私钥与 $B$ 的访问控制公钥（PAC）派生共享密钥，生成绑定该公钥、包含有效期与初始请求额度的 ACT，并保存其活动记录。ACT 经共享密钥加密后返回，$B$ 利用自身访问控制私钥与 OTK 派生相同密钥，解密并保存 ACT~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
+接收方的代理接触策略（Agent Contact Policy，ACP）以代理标识符（AID）的匹配模式及预算定义通信许可。多条规则匹配时，应采用最匹配规则的预算。接收方的 OTK 预先生成，签名公钥材料提交给 $P$，对应私钥由 $A$ 保存。$P$ 核验 $B$ 的登记身份与 TLS 客户端证书，按发送方身份维护 OTK 领取额度，并在发放时移除相应公钥及扣减额度~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
 
-后续通信中，$B$ 携带 ACT 提交请求，$A$ 核验令牌绑定的访问控制公钥、有效期及剩余请求额度，通过后扣减额度并处理请求。ACT 可在不同连接中复用，其初始请求额度由 $A$ 设置，剩余额度由 $A$ 统一维护，与 $P$ 维护的 OTK 领取额度相互独立~\cite{sagaReferenceImpl2026}。
+$B$ 验证通信材料后，与 $A$ 建立 TLS 连接并提交身份材料及 OTK。$A$ 核验当前发送方身份与本地接触许可，消费尚未使用的 OTK，并利用对应私钥与 $B$ 的访问控制公钥（PAC）派生共享密钥，签发绑定该公钥的 ACT。$B$ 利用自身访问控制私钥与 OTK 派生相同密钥，解密 ACT，并保存原密文及令牌元数据~\cite{syros2025sagaV2,sagaReferenceImpl2026}。
+
+后续请求携带原 ACT 密文，受到身份绑定、有效期和请求额度约束。同一 ACT 可在不同连接中复用，新连接中 $A$ 仍需核验身份、本地接触许可与 ACT 有效性。其初始请求额度由 $A$ 设置，共享剩余额度由 $A$ 维护；$B$ 在发送前检查本地额度，并在发送后扣减。ACT 请求额度与 $P$ 维护的 OTK 领取额度相互独立~\cite{sagaReferenceImpl2026}。
 
 \subsection{分析目标}
 \label{subsec:analysis-objectives-assumptions}
